@@ -1,7 +1,6 @@
 #include "orderdataprocessing.h"
 #include <iostream>
 
-
 void OrderDataProcessing()
 {
 	std::string inputType;
@@ -26,24 +25,30 @@ void OrderDataProcessing()
 		std::cout << "wrong input type!" << std::endl;
 		return;
 	}
-	std::shared_ptr<std::vector<std::string>> orders = orderInputSource->getOrderFromSource();
+	std::shared_ptr<std::vector<std::string>> stringOrders = orderInputSource->getOrderFromSource();
 	
-	std::shared_ptr<std::vector<std::string>> csvStringOrders = std::make_shared<std::vector<std::string>>();
-	std::shared_ptr<std::vector<std::string>> pipeDelimitedStringOrders = std::make_shared<std::vector<std::string>>();
+	//std::shared_ptr<std::vector<std::string>> csvStringOrders = std::make_shared<std::vector<std::string>>();
+	//std::shared_ptr<std::vector<std::string>> pipeDelimitedStringOrders = std::make_shared<std::vector<std::string>>();
+	std::shared_ptr<std::vector<std::pair<int, std::string>>> csvStringOrders = std::make_shared<std::vector<std::pair<int, std::string>>>();
+	std::shared_ptr<std::vector<std::pair<int, std::string>>> pipeDelimitedStringOrders = std::make_shared<std::vector<std::pair<int, std::string>>>();
 	std::unique_ptr<CSVOrderAnalysis> csvAnalysis = std::make_unique<CSVOrderAnalysis>();
 	std::unique_ptr<PipedDelimitedOrderAnalysis> pipeDelimitedAnalysis = std::make_unique<PipedDelimitedOrderAnalysis>();
-	for (const auto &order : *orders)
+	std::unique_ptr<OrderStatistics> orderStatisticsInstance = std::make_unique<OrderStatistics>(static_cast<int>(stringOrders->size()));
+	std::string singleStringOrder;
+	for (int i = 0; i < stringOrders->size(); i++)
 	{
-		if (order.find(',') != std::string::npos)
+		singleStringOrder = stringOrders->at(i);
+		if (singleStringOrder.find(ORDERANALYSISDELIMITERCSV) != std::string::npos)
 		{
-			csvStringOrders->push_back(order);
+			csvStringOrders->push_back(std::pair<int,std::string>(i + 1, singleStringOrder));
 		}
-		else if (order.find('|') != std::string::npos)
+		else if (stringOrders->at(i).find(ORDERANALYSISDELIMITERPIPE) != std::string::npos)
 		{
-			pipeDelimitedStringOrders->push_back(order);
+			pipeDelimitedStringOrders->push_back(std::pair<int, std::string>(i + 1, singleStringOrder));
 		}
 		else
 		{
+			orderStatisticsInstance->addInvalidOrderLineAndReason(i, ORDERINVALIDREASONINVALIDORDERSTRINGFORMAT);
 			continue;
 		}
 	}
@@ -51,23 +56,28 @@ void OrderDataProcessing()
 	std::shared_ptr<std::vector<Order>> pipeDelimitedOrders = pipeDelimitedAnalysis->analyse(pipeDelimitedStringOrders);
 	csvOrders->insert(csvOrders->begin(), pipeDelimitedOrders->begin(), pipeDelimitedOrders->end());
 	std::shared_ptr<std::vector<Order>> allOrders = csvOrders;
-	std::unique_ptr<OrderValider> orderValider;
-	std::string invalidReason;
-	std::shared_ptr<std::vector<int>> validOrderIndexVec;
-	std::shared_ptr<std::vector<std::pair<int, std::string>>> invalidOrderIndexVec;
-	for (int i = 0; i < allOrders->size(); i++)
+	std::sort(allOrders->begin(), allOrders->end(), Order::compareLineIndex);
+	std::unique_ptr<OrderValider> orderValider = std::make_unique<OrderValider>();
+	for (auto& order : *allOrders)
 	{
-		if (orderValider->isValid(allOrders->at(i), invalidReason) == true)
-		{
-			validOrderIndexVec->push_back(i);
-		}
-		else
-		{
-			invalidOrderIndexVec->push_back(std::pair<int, std::string>(i, invalidReason));
-		}
+		orderValider->isValid(order);
 	}
-	std::unique_ptr<OrderStatistics> orderStatisticsInstance;
-	orderStatisticsInstance->statisticsAndOutput(allOrders, validOrderIndexVec, invalidOrderIndexVec);
+	orderStatisticsInstance->statisticsAndOutput(allOrders);
+	//std::string invalidReason;
+	//std::shared_ptr<std::vector<int>> validOrderIndexVec;
+	//std::shared_ptr<std::vector<std::pair<int, std::string>>> invalidOrderIndexVec;
+	//for (int i = 0; i < allOrders->size(); i++)
+	//{
+	//	if (orderValider->isValid(allOrders->at(i), invalidReason) == true)
+	//	{
+	//		validOrderIndexVec->push_back(i);
+	//	}
+	//	else
+	//	{
+	//		invalidOrderIndexVec->push_back(std::pair<int, std::string>(i, invalidReason));
+	//	}
+	//}
+	//orderStatisticsInstance->statisticsAndOutput(allOrders, validOrderIndexVec, invalidOrderIndexVec);
 }
 
 int main()

@@ -1,0 +1,10 @@
+0001,100.0,completed  
+0002,200.0,pending  
+0003,150.0,canceled  
+0004,-50.0,completed  
+0005,300.0,invalid  
+0006|350.0|completed  
+0001|350.0|canceled  
+0008|400.0|pending  
+0009|abc|pending  
+0010|500.0|shipped
