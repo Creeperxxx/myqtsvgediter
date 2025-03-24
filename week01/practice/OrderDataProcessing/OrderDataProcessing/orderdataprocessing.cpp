@@ -454,7 +454,7 @@ void OrderValider::isValid(Order& order)
 	//std::string invalidReason = "";
 	bool isvalid = true;
 	
-	std::vector<bool(OrderValider::*)(Order&,std::ostringstream&)>validators =
+	std::vector<bool(OrderValider::*)(const Order&,std::ostringstream&)>validators =
 	{
 		&OrderValider::validateFieldCount,
 		&OrderValider::validateOrderIdMatch,
@@ -618,7 +618,7 @@ void OrderStatistics::outputAllInvalidOrderLineIndexAndReason()
 //	, m_status(status)
 //	, m_isValidFieldCount(isValidFieldCount) {}
 
-bool OrderValider::validateFieldCount(Order& order, std::ostringstream& oss)
+bool OrderValider::validateFieldCount(const Order& order, std::ostringstream& oss)
 {
 	if (order.getIsVaildFieldCount() == false)
 	{
@@ -630,7 +630,7 @@ bool OrderValider::validateFieldCount(Order& order, std::ostringstream& oss)
 		return true;
 	}
 }
-bool OrderValider::validateOrderIdMatch(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderIdMatch(const Order& order, std::ostringstream& oss)
 {
 	std::string orderId = order.getStringOrderId();
 	//std::regex integerRegex(R"(^[+-]?\d+$)");
@@ -646,12 +646,13 @@ bool OrderValider::validateOrderIdMatch(Order& order, std::ostringstream& oss)
 	}
 	else
 	{
-		order.setOrderId(std::stoi(orderId));
+		Order* inconstOrder = const_cast<Order*>(&order);
+		inconstOrder->setOrderId(std::stoi(orderId));
 		return true;
 	}
 
 }
-bool OrderValider::validateOrderIdRange(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderIdRange(const Order& order, std::ostringstream& oss)
 {
 	int id = order.getOrderId();
 	if (id < 0)
@@ -664,7 +665,7 @@ bool OrderValider::validateOrderIdRange(Order& order, std::ostringstream& oss)
 		return true;
 	}
 }
-bool OrderValider::validateOrderIdUnDuplicated(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderIdUnDuplicated(const Order& order, std::ostringstream& oss)
 {
 	int id = order.getOrderId();
 	if (true == isOrderIdDuplicated(id))
@@ -678,7 +679,7 @@ bool OrderValider::validateOrderIdUnDuplicated(Order& order, std::ostringstream&
 		return true;
 	}
 }
-bool OrderValider::validateOrderAmountMatch(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderAmountMatch(const Order& order, std::ostringstream& oss)
 {
 	std::string orderAmountString = order.getStringOrderAmount();
 	static std::regex floatRegex(ORDERISVALIDORDERAMOUNTFORMAT);
@@ -689,11 +690,12 @@ bool OrderValider::validateOrderAmountMatch(Order& order, std::ostringstream& os
 	}
 	else
 	{
-		order.setOrderAmount(std::stod(orderAmountString));
+		Order* inconstOrder = const_cast<Order*>(&order);
+		inconstOrder->setOrderAmount(std::stod(orderAmountString));
 		return true;
 	}
 }
-bool OrderValider::validateOrderAmountRange(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderAmountRange(const Order& order, std::ostringstream& oss)
 {
 	double amount = order.getOrderAmount();
 	if (amount < 0)
@@ -706,7 +708,7 @@ bool OrderValider::validateOrderAmountRange(Order& order, std::ostringstream& os
 		return true;
 	}
 }
-bool OrderValider::validateOrderStatue(Order& order, std::ostringstream& oss)
+bool OrderValider::validateOrderStatue(const Order& order, std::ostringstream& oss)
 {
 	OrderStatus orderStatusEnum = Order::orderStatusStringToEnum(order.getStringStatus());
 	if (OrderStatus::OrderStatusWrong == orderStatusEnum)

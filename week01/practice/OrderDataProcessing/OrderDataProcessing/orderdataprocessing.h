@@ -112,13 +112,13 @@ class OrderValider
 {
 private:
 	//bool isValidOrderStatusString(const std::string& status);
-	bool validateFieldCount(Order& order, std::ostringstream& oss);
-	bool validateOrderIdMatch(Order& order, std::ostringstream& oss);
-	bool validateOrderIdRange(Order& order, std::ostringstream& oss);
-	bool validateOrderIdUnDuplicated(Order& order, std::ostringstream& oss);
-	bool validateOrderAmountMatch(Order& order, std::ostringstream& oss);
-	bool validateOrderAmountRange(Order& order, std::ostringstream& oss);
-	bool validateOrderStatue(Order& order, std::ostringstream& oss);
+	bool validateFieldCount(const Order& order, std::ostringstream& oss);
+	bool validateOrderIdMatch(const Order& order, std::ostringstream& oss);
+	bool validateOrderIdRange(const Order& order, std::ostringstream& oss);
+	bool validateOrderIdUnDuplicated(const Order& order, std::ostringstream& oss);
+	bool validateOrderAmountMatch(const Order& order, std::ostringstream& oss);
+	bool validateOrderAmountRange(const Order& order, std::ostringstream& oss);
+	bool validateOrderStatue(const Order& order, std::ostringstream& oss);
 
 	std::unordered_set<int> m_ids;
 public:
