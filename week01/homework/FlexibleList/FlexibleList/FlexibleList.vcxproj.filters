@@ -27,4 +27,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="codelines.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="clocbat.bat">
+      <Filter>资源文件</Filter>
+    </Text>
+  </ItemGroup>
 </Project>
