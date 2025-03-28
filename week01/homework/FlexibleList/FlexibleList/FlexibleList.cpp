@@ -208,18 +208,18 @@ FlexibleList::Iterator& FlexibleList::Iterator::operator=(FlexibleList::Iterator
 }
 FlexibleList::Iterator::~Iterator()  noexcept {}
 
-FlexibleList::Node& FlexibleList::Iterator::operator*() const noexcept
-{
-	if (m_node == nullptr)
-	{
-		static FlexibleList::Node node; //这里不想用异常处理。用下面方法代替：如果该迭代器为空，则返回一个空节点
-		return node;
-	}
-	else
-	{
-		return *m_node;
-	}
-}
+//FlexibleList::Node& FlexibleList::Iterator::operator*() const noexcept
+//{
+//	if (m_node == nullptr)
+//	{
+//		static FlexibleList::Node node; //这里不想用异常处理。用下面方法代替：如果该迭代器为空，则返回一个空节点
+//		return node;
+//	}
+//	else
+//	{
+//		return *m_node;
+//	}
+//}
 
 FlexibleList::Node* FlexibleList::Iterator::operator->() const noexcept
 {
@@ -257,15 +257,13 @@ bool FlexibleList::Iterator::operator==(const Iterator& other) const noexcept
 	{
 		return false;
 	}
-	if ((*m_node == *other.m_node) && (m_node->getPrev() == other.m_node->getPrev()) && (m_node->getNext() == other.m_node->getNext())) // 只需要比较值相等就够了吗？
+	if (!m_node || !other.m_node)
 	{
-		return true;
+		return !m_node && !other.m_node;
 	}
-	else
-	{
-		return false;
-	}
+	return m_node->isSameNode(other.m_node);
 }
+
 bool FlexibleList::Iterator::operator!=(const Iterator& other) const noexcept
 {
 	if (*this == other)
@@ -584,7 +582,7 @@ bool FlexibleList::operator==(const FlexibleList& other) const noexcept
 
 	while (otherIt.isValid() && thisIt.isValid())
 	{
-		if (*otherIt != *thisIt)
+		if (otherIt != thisIt)
 		{
 			return false;
 		}
@@ -596,7 +594,7 @@ bool FlexibleList::operator==(const FlexibleList& other) const noexcept
 	}
 	if (!otherIt.isValid() || !thisIt.isValid())
 		return !otherIt.isValid() && !thisIt.isValid();
-	return false; //如果两个都有效那么怎么从循环中出来？
+	return false; //如果两个都有效那么是怎么从循环中出来?
 }
 bool FlexibleList::operator!=(const FlexibleList& other) const noexcept
 {
@@ -720,7 +718,7 @@ void FlexibleList::Node::swap(Node* n)
 
 FlexibleList::Iterator FlexibleList::end() const noexcept
 {
-	return FlexibleList::Iterator(nullptr);
+	return FlexibleList::Iterator(nullptr, this);
 }
 
 void FlexibleList::insertNodeEnd(Node* n)
@@ -786,15 +784,16 @@ void FlexibleList::setEndPoint(Node* node)
 
 bool FlexibleList::Iterator::operator<(const Iterator& other) const
 {
+	if (!isValid() || !other.isValid())
+	{
+		throw std::runtime_error("进行两个迭代器之间<比较时，某个迭代器无效");
+	}
 	if (false == isSameContainer(other))
 	{
 		throw std::runtime_error("两个迭代器并不来自同一容器对象");
 		return false;
 	}
-	else
-	{
-		return *m_node < *other;
-	}
+	return *m_node < *(other.m_node);
 }
 
 bool FlexibleList::Iterator::operator<=(const Iterator& other) const
@@ -825,4 +824,16 @@ bool FlexibleList::Iterator::isSameContainer(const Iterator& other) const
 FlexibleList::Node* FlexibleList::Iterator::getNodePoint() const
 {
 	return m_node;
+}
+
+bool FlexibleList::Node::isSameNode(const Node* node)
+{
+	if (node == nullptr)
+	{
+		return false;
+	}
+	else
+	{
+		return (*this == *node) && (m_prve == node->m_prve) && (m_next == node->m_next);
+	}
 }

@@ -4,6 +4,11 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <functional>
+#include <type_traits>
+#include <utility>
+
+
+//#include <tuple>
 
 // todo : noexcept 是否有函数缺少该关键字
 
@@ -74,7 +79,7 @@ public:
 
 	//template <typename T>
 	//T& frontElement() noexcept; // 这里不好弄啊，T不知道有没有默认构造函数，所以T以指针存储而不是变量，但是这又导致无法返回引用，毕竟T*可以为nullptr，只能返回指针然后由用户解引用了
-	//template <typename T>
+	//template <typename T>       // 如果要返回T&的话就得使用异常，但编码规范又不让用异常
 	//T& backElement() noexcept;
 	//template <typename T>
 	//const T& frontElementConst() const noexcept;
@@ -125,7 +130,9 @@ public:
 		Iterator& operator=(Iterator&& other) noexcept;
 		~Iterator() noexcept;
 
-		FlexibleList::Node& operator*() const noexcept;
+		//FlexibleList::Node& operator*() const noexcept;
+		template <typename T>
+		const T& operator*() const;
 		FlexibleList::Node* operator->() const noexcept;
 
 		Iterator& operator++() noexcept;
@@ -142,10 +149,10 @@ public:
 		Iterator operator+(int n) noexcept;
 		//int operator-(const Iterator& other) const noexcept;  //计算迭代器之间距离麻烦
 
-		bool operator<(const Iterator& other) const ;
-		bool operator<=(const Iterator& other) const ;
-		bool operator>(const Iterator& other) const ;
-		bool operator>=(const Iterator& other) const ;
+		bool operator<(const Iterator& other) const;
+		bool operator<=(const Iterator& other) const;
+		bool operator>(const Iterator& other) const;
+		bool operator>=(const Iterator& other) const;
 
 
 		bool isValid() const noexcept;
@@ -165,6 +172,8 @@ public:
 		bool isSameContainer(const Iterator& other) const;
 
 		Node* getNodePoint() const;
+		template <typename T>
+		const T& getValue()const;
 
 	private:
 		FlexibleList::Node* m_node;
@@ -207,6 +216,8 @@ private:
 		template <typename T>
 		//const T& getValue() const noexcept;
 		const T* getValuePoint() const;
+		template <typename T>
+		const T& getValue() const;
 
 		const Node* getConstNext() const;
 		const Node* getConstPrev() const;
@@ -217,6 +228,8 @@ private:
 		void setPrev(Node* n);
 
 		void swap(Node* n);
+
+		bool isSameNode(const Node* node);
 
 	private:
 		std::unique_ptr<IBaseElement> m_data;
@@ -273,8 +286,9 @@ std::unique_ptr<IBaseElement> DataElement<T>::clone() const noexcept
 }
 
 template <typename T>
-FlexibleList::FlexibleList(std::initializer_list<T> init) noexcept
+FlexibleList::FlexibleList(std::initializer_list<T> init) noexcept : m_head(new Node()), m_size(0)
 {
+	m_tail = m_head;
 	for (const T& val : init)
 	{
 		pushBack(val);
@@ -343,11 +357,13 @@ bool DataElement<T>::isEqual(const IBaseElement& other) const
 	try
 	{
 		const DataElement<T>& transfromOther = dynamic_cast<const DataElement<T>&>(other);
-		const T* otherValuePoint = transfromOther.getValuePoint();
-		const T* myValuePoint = getValuePoint();
-		if (!otherValuePoint || !myValuePoint)
-			return !otherValuePoint && !myValuePoint;
-		return *otherValuePoint == *myValuePoint;
+		//return getValue<T>() == transfromOther.getValue<T>();
+		return getValue() == transfromOther.getValue();
+		//const T* otherValuePoint = transfromOther.getValuePoint();
+		//const T* myValuePoint = getValuePoint();
+		//if (!otherValuePoint || !myValuePoint)
+		//	return !otherValuePoint && !myValuePoint;
+		//return *otherValuePoint == *myValuePoint;
 	}
 	catch (const std::bad_cast&)
 	{
@@ -451,79 +467,279 @@ void FlexibleList::pushBack(T&& val)
 	insertNodeEnd(newNode);
 }
 
+//template <typename Compare>
+//void FlexibleList::FlexibleListSort(Compare comp)
+//{
+//	if (size() <= 1) return;
+//
+//	std::function<FlexibleList::Node*(FlexibleList::Node*, FlexibleList::Node*)> merge = [comp,this](FlexibleList::Node* a, FlexibleList::Node* b) -> FlexibleList::Node*
+//	{
+//		FlexibleList::Node dummy;
+//		FlexibleList::Node* tail = &dummy;
+//
+//		while (a && b) 
+//		{
+//			if (comp(Iterator(a, this),Iterator(b, this))) 
+//			{
+//				tail->setNext(a);
+//				a->setPrev(tail);
+//				tail = a;
+//				a = a->getNext();
+//			}
+//			else 
+//			{
+//				tail->setNext(b);
+//				b->setPrev(tail);
+//				tail = b;
+//				b = b->getNext();
+//			}
+//		}
+//		tail->setNext(a ? a: b);
+//		return dummy.getNext();
+//	};
+//
+//	size_t block_size = 1;
+//	while (true) 
+//	{
+//		FlexibleList::Node* current = begin().getNodePoint();
+//		FlexibleList::Node* next_block = current;
+//		FlexibleList::Node dummy_head;
+//		FlexibleList::Node* tail = &dummy_head;
+//		size_t merged_count = 0;
+//
+//		while (current) 
+//		{
+//			FlexibleList::Node* left = current;
+//			for (size_t i = 1; i < block_size && current->getNext(); ++i)
+//				current = current->getNext();
+//
+//			FlexibleList::Node* right = current->getNext();
+//			current->setNext(nullptr);
+//			if (right)
+//				right->setPrev(nullptr);
+//			current = right;
+//
+//			for (size_t i = 1; i < block_size && current; ++i)
+//				current = current->getNext();
+//
+//			FlexibleList::Node* next = current ? current->getNext() : nullptr;
+//			if (current) current->setNext(nullptr);
+//
+//			FlexibleList::Node* merged = merge(left, right);
+//			tail->setNext(merged);
+//			merged->setPrev(tail);
+//			while (tail->getNext())
+//				tail = tail->getNext();
+//
+//			current = next;
+//			++merged_count;
+//		}
+//
+//		if (merged_count <= 1) 
+//			break;
+//		block_size *= 2;
+//		m_head->setNext(dummy_head.getNext());
+//		dummy_head.getNext()->setPrev(m_head);
+//		setEndPoint(tail);
+//	}
+//}
+
+
+// 辅助结构体用于从任意可调用对象中提取第一个参数类型
+template<typename Callable, typename = void>
+struct ExtractFirstParamType;
+
+// 特化版本：针对普通函数指针或函数类型
+template<typename ReturnType, typename Arg, typename... Args>
+struct ExtractFirstParamType<ReturnType(*)(Arg, Args...), void> {
+	using RawParamType = std::decay_t<Arg>;
+};
+
+// 特化版本：针对成员函数指针
+template<typename ClassType, typename ReturnType, typename Arg, typename... Args>
+struct ExtractFirstParamType<ReturnType(ClassType::*)(Arg, Args...), void> {
+	using RawParamType = std::decay_t<Arg>;
+};
+
+// 特化版本：针对所有其他可调用对象（如lambda）
+template<typename Callable>
+struct ExtractFirstParamType<Callable, std::void_t<decltype(&Callable::operator())>> {
+private:
+	using CallableOperator = decltype(&Callable::operator());
+
+	template<typename T>
+	struct ExtractArg;
+
+	template<typename Ret, typename Class, typename Arg, typename... Args>
+	struct ExtractArg<Ret(Class::*)(Arg, Args...) const> {
+		using type = Arg;
+	};
+
+	template<typename Ret, typename Class, typename Arg, typename... Args>
+	struct ExtractArg<Ret(Class::*)(Arg, Args...)> {
+		using type = Arg;
+	};
+
+public:
+	using RawParamType = std::decay_t<typename ExtractArg<CallableOperator>::type>;
+};
+
+
 template <typename Compare>
-void FlexibleList::FlexibleListSort(Compare comp)
-{
-	if (size() <= 1) return;
+void FlexibleList::FlexibleListSort(Compare comp) {
+	using ParamType = typename ExtractFirstParamType<Compare>::RawParamType;
 
-	std::function<FlexibleList::Node*(FlexibleList::Node*, FlexibleList::Node*)> merge = [comp,this](FlexibleList::Node* a, FlexibleList::Node* b) -> FlexibleList::Node*
+	auto getMiddle = [](Node* head) -> Node*
 	{
-		FlexibleList::Node dummy;
-		FlexibleList::Node* tail = &dummy;
+		if (!head || !head->getNext()) return head;
 
-		while (a && b) 
+		Node* slow = head;
+		Node* fast = head;
+		while (fast->getNext() && fast->getNext()->getNext())
 		{
-			if (comp(Iterator(a, this),Iterator(b, this))) 
-			{
-				tail->setNext(a);
-				a->setPrev(tail);
-				tail = a;
-				a = a->getNext();
-			}
-			else 
-			{
-				tail->setNext(b);
-				b->setPrev(tail);
-				tail = b;
-				b = b->getNext();
-			}
+			slow = slow->getNext();
+			fast = fast->getNext()->getNext();
 		}
-		tail->setNext(a ? a: b);
+		return slow;
+		//Node* slow = head, * fast = head->getNext();
+		//while (fast != nullptr) {
+			//fast = fast->getNext();
+			//if (fast != nullptr) {
+				//slow = slow->getNext();
+				//fast = fast->getNext();
+			//}
+		//}
+		//return slow;
+	};
+
+	//// 创建迭代器的辅助函数      //这一步没用了，每次都创建迭代器麻烦
+	//auto makeIterator = [this](Node* node) -> Iterator {
+	//	return Iterator(node, this);
+	//};
+
+
+	auto merge = [&](Node* left, Node* right) -> Node* {
+		Node dummy;
+		Node* tail = &dummy;
+
+		while (left && right)
+		{
+			//if (comp(makeIterator(left), makeIterator(right)))
+			//这里说明以下，首先comp是一个模板比较器，意为用户传入的自定义比较函数，但该函数一开始设计为传入参数为迭代器，后来发现不对
+			//因为自定义比较器的意义是用户自定义比较规则，如果传入迭代器，那么和自定义比较规则不沾边了，毕竟这时比较规一步步向下，最终隐藏于T对<>的重载了，所以传入迭代器只能决定正序还是倒序，不能决定比较规则
+			//但是问题又来了，如果comp的参数是数据T，就要推导出T的类型，也就是getValue要传入T的实际类型，所以要从comp的参数中提取出数据类型，并去除const 引用，得到原始类型ParamType,即类型萃取
+			//类型萃取属于模板元编程特别复杂级别的，实在研究不明白了我甚至连ai给出的代码都看不懂只能交给ai生成了
+			if (comp(left->getValue<ParamType>(), right->getValue<ParamType>()))
+			{
+				tail->setNext(left);
+				left->setPrev(tail);
+				left = left->getNext();
+			}
+			else
+			{
+				tail->setNext(right);
+				right->setPrev(tail);
+				right = right->getNext();
+			}
+			tail = tail->getNext();
+		}
+		if (left)
+		{
+			tail->setNext(left);
+			left->setPrev(tail);
+			//left->setNext(nullptr); //这里不用置空了，不然后面的节点会丢失
+		}
+		else
+		{
+			tail->setNext(right);
+			right->setPrev(tail);
+			//right->setNext(nullptr);
+		}
+
+		//tail->setNext((left != nullptr) ? left : right);
+		//dummy.getNext()->setPrev(nullptr);
+		//tail = tail->getNext();
+		//tail->setNext(nullptr);
+		dummy.getNext()->setPrev(nullptr);
 		return dummy.getNext();
 	};
 
-	size_t block_size = 1;
-	while (true) 
+	// 递归的归并排序函数
+	std::function<Node* (Node*)> mergeSort = [&](Node* head) -> Node*
 	{
-		FlexibleList::Node* current = begin().getNodePoint();
-		FlexibleList::Node* next_block = current;
-		FlexibleList::Node dummy_head;
-		FlexibleList::Node* tail = &dummy_head;
-		size_t merged_count = 0;
+		if (!head || !head->getNext())
+			return head;
 
-		while (current) 
+		Node* middle = getMiddle(head);
+		Node* nextOfMiddle = middle->getNext();
+
+		middle->setNext(nullptr);
+
+		Node* left = mergeSort(head);
+		Node* right = mergeSort(nextOfMiddle);
+
+		return merge(left, right);
+
+		//Node* sortedListStart = merge(left, right);
+		//head->setNext(sortedListStart); 
+
+		//// 找到排序后的新尾节点
+		//Node* newTail = head;
+		//while (newTail->getNext() != nullptr) {
+		//	newTail = newTail->getNext();
+		//}
+		//return newTail;
+	};
+
+	if (m_head->getNext() != nullptr)
+	{
+		Node* firstNode = mergeSort(m_head->getNext());
+		m_head->setNext(firstNode);
+		firstNode->setPrev(m_head);
+		while (firstNode->getNext())
 		{
-			FlexibleList::Node* left = current;
-			for (size_t i = 1; i < block_size && current->getNext(); ++i)
-				current = current->getNext();
-
-			FlexibleList::Node* right = current->getNext();
-			current->setNext(nullptr);
-			if (right)
-				right->setPrev(nullptr);
-			current = right;
-
-			for (size_t i = 1; i < block_size && current; ++i)
-				current = current->getNext();
-
-			FlexibleList::Node* next = current ? current->getNext() : nullptr;
-			if (current) current->setNext(nullptr);
-
-			FlexibleList::Node* merged = merge(left, right);
-			tail->setNext(merged);
-			merged->setPrev(tail);
-			while (tail->getNext())
-				tail = tail->getNext();
-
-			current = next;
-			++merged_count;
+			firstNode = firstNode->getNext();
 		}
+		m_tail = firstNode;
+	}
+}
 
-		if (merged_count <= 1) 
-			break;
-		block_size *= 2;
-		setHeadPoint(dummy_head.getNext());
-		dummy_head.getNext()->setPrev(nullptr);
-		setEndPoint(tail);
+template <typename T>
+const T& FlexibleList::Iterator::operator*() const
+{
+	return getValue();
+}
+
+template <typename T>
+const T& FlexibleList::Node::getValue() const
+{
+	if (m_data == nullptr)
+	{
+		throw std::runtime_error("尝试从地址解引用，但地址为nullptr");
+	}
+	else
+	{
+		try
+		{
+			const DataElement<T>& d = dynamic_cast<const DataElement<T>&>(*m_data);
+			return d.getValue();
+		}
+		catch (const std::exception&)
+		{
+			throw std::runtime_error("尝试dynamic_cast获取值，但转换失败");
+		}
+	}
+}
+
+template <typename T>
+const T& FlexibleList::Iterator::getValue() const
+{
+	if (m_node == nullptr)
+	{
+		throw std::runtime_error("迭代器尝试getvalue，但节点地址为空");
+	}
+	else
+	{
+		return m_node->getValue<T>();
 	}
 }
