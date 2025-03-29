@@ -31,7 +31,7 @@
     <Text Include="codelines.txt">
       <Filter>资源文件</Filter>
     </Text>
-    <Text Include="clocbat.bat">
+    <Text Include="record.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

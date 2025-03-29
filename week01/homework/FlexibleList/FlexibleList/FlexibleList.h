@@ -6,6 +6,11 @@
 #include <functional>
 #include <type_traits>
 #include <utility>
+#include <typeindex>
+
+constexpr bool FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE = true;  //这个是决定非比较类型的数据是放在容器前面还是后面
+constexpr bool FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER = true; //这个是决定两个数据都是非比较类型时如何排序的，是按原顺序还是非原顺序
+constexpr bool FLEXIBLELISTSORTCOMPASC = true; //这个只是方便我看排列顺序的，降序还是逆序
 
 
 //#include <tuple>
@@ -21,6 +26,7 @@ public:
 	virtual std::unique_ptr<IBaseElement> clone() const noexcept = 0;
 	virtual bool isEqual(const IBaseElement& other) const = 0;
 	virtual bool less(const IBaseElement& other) const = 0;
+	virtual const std::type_index& getTypeIndex() const = 0;
 };
 
 //为每个类或结构体都配备了无参 左右参 左右拷贝 运算符=左右重载 析构 
@@ -49,6 +55,7 @@ public:
 	const T& getValue() const;
 	bool isEqual(const IBaseElement& other) const override;
 	bool less(const IBaseElement& other) const override;
+	const std::type_index& getTypeIndex() const override;
 private:
 	//T m_value; // todo : 这里可以使用std::unique_ptr<T> m_value
 	std::unique_ptr<T> m_value;
@@ -117,6 +124,8 @@ public:
 	template <typename Compare>
 	void FlexibleListSort(Compare comp);
 
+	bool isSameTypeElement(const Iterator& a, const Iterator& b) const;
+
 	class Iterator
 	{
 	public:
@@ -175,6 +184,8 @@ public:
 		template <typename T>
 		const T& getValue()const;
 
+		const std::type_index& getValueTypeIndex() const;
+
 	private:
 		FlexibleList::Node* m_node;
 		const FlexibleList* m_container; //得确认两个迭代器来自统一容器
@@ -229,7 +240,10 @@ private:
 
 		void swap(Node* n);
 
-		bool isSameNode(const Node* node);
+		bool isSameNode(const Node* node) const;
+		bool isSameNode(const Node& other) const;
+		bool isSameDataType(const Node& other) const;
+		const std::type_index& getDataTypeIndex() const;
 
 	private:
 		std::unique_ptr<IBaseElement> m_data;
@@ -354,21 +368,29 @@ DataElement<T>::~DataElement() noexcept {}
 template<typename T>
 bool DataElement<T>::isEqual(const IBaseElement& other) const
 {
-	try
-	{
-		const DataElement<T>& transfromOther = dynamic_cast<const DataElement<T>&>(other);
-		//return getValue<T>() == transfromOther.getValue<T>();
-		return getValue() == transfromOther.getValue();
-		//const T* otherValuePoint = transfromOther.getValuePoint();
-		//const T* myValuePoint = getValuePoint();
-		//if (!otherValuePoint || !myValuePoint)
-		//	return !otherValuePoint && !myValuePoint;
-		//return *otherValuePoint == *myValuePoint;
-	}
-	catch (const std::bad_cast&)
+	if (getTypeIndex() != other.getTypeIndex())
 	{
 		return false;
 	}
+	else
+	{
+		return getValue() == (dynamic_cast<const DataElement<T>&>(other)).getValue();
+	}
+	//try
+	//{
+	//	const DataElement<T>& transfromOther = dynamic_cast<const DataElement<T>&>(other);
+	//	//return getValue<T>() == transfromOther.getValue<T>();
+	//	return getValue() == transfromOther.getValue();
+	//	//const T* otherValuePoint = transfromOther.getValuePoint();
+	//	//const T* myValuePoint = getValuePoint();
+	//	//if (!otherValuePoint || !myValuePoint)
+	//	//	return !otherValuePoint && !myValuePoint;
+	//	//return *otherValuePoint == *myValuePoint;
+	//}
+	//catch (const std::bad_cast&)
+	//{
+	//	return false;
+	//}
 }
 template <typename T>
 template <typename... Args>
@@ -588,6 +610,29 @@ public:
 template <typename Compare>
 void FlexibleList::FlexibleListSort(Compare comp) {
 	using ParamType = typename ExtractFirstParamType<Compare>::RawParamType;
+	std::type_index ParamTypeIndex = typeid(ParamType);
+
+	auto compWithTypeIndex = [&](Node* left, Node* right) -> bool // 这里就定义了ParamType型数据和非ParamType型数据的比较规则
+	{
+		std::type_index lTypeIndex = left->getDataTypeIndex();
+		std::type_index rTypeIndex = right->getDataTypeIndex();
+		if ((lTypeIndex == ParamTypeIndex) && (rTypeIndex == ParamTypeIndex))
+		{
+			return comp(left->getValue<ParamType>(), right->getValue<ParamType>());
+		}
+		else if ((lTypeIndex == ParamTypeIndex) && (rTypeIndex != ParamTypeIndex))
+		{
+			return FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE; //认为ParamType型数据更小
+		}
+		else if ((lTypeIndex != ParamTypeIndex) && (rTypeIndex == ParamTypeIndex))
+		{
+			return !FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE;
+		}
+		else
+		{
+			return FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER; //如果都是非ParamType型数据，则保持原样，应该是这样
+		}
+	};
 
 	auto getMiddle = [](Node* head) -> Node*
 	{
@@ -629,7 +674,8 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 			//因为自定义比较器的意义是用户自定义比较规则，如果传入迭代器，那么和自定义比较规则不沾边了，毕竟这时比较规一步步向下，最终隐藏于T对<>的重载了，所以传入迭代器只能决定正序还是倒序，不能决定比较规则
 			//但是问题又来了，如果comp的参数是数据T，就要推导出T的类型，也就是getValue要传入T的实际类型，所以要从comp的参数中提取出数据类型，并去除const 引用，得到原始类型ParamType,即类型萃取
 			//类型萃取属于模板元编程特别复杂级别的，实在研究不明白了我甚至连ai给出的代码都看不懂只能交给ai生成了
-			if (comp(left->getValue<ParamType>(), right->getValue<ParamType>()))
+			//if (comp(left->getValue<ParamType>(), right->getValue<ParamType>()))
+			if(compWithTypeIndex(left, right))
 			{
 				tail->setNext(left);
 				left->setPrev(tail);
@@ -742,4 +788,11 @@ const T& FlexibleList::Iterator::getValue() const
 	{
 		return m_node->getValue<T>();
 	}
+}
+
+template <typename T>
+const std::type_index& DataElement<T>::getTypeIndex() const
+{
+	static std::type_index t = typeid(T);
+	return t;
 }

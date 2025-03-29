@@ -826,7 +826,7 @@ FlexibleList::Node* FlexibleList::Iterator::getNodePoint() const
 	return m_node;
 }
 
-bool FlexibleList::Node::isSameNode(const Node* node)
+bool FlexibleList::Node::isSameNode(const Node* node) const
 {
 	if (node == nullptr)
 	{
@@ -834,6 +834,33 @@ bool FlexibleList::Node::isSameNode(const Node* node)
 	}
 	else
 	{
-		return (*this == *node) && (m_prve == node->m_prve) && (m_next == node->m_next);
+		return isSameNode(*node);
 	}
+}
+
+bool FlexibleList::isSameTypeElement(const Iterator& a, const Iterator& b) const
+{
+	return a.getValueTypeIndex() == b.getValueTypeIndex();
+}
+
+bool FlexibleList::Node::isSameDataType(const Node& other) const
+{
+	if (!m_data || !other.m_data)
+		return false;
+	return m_data->getTypeIndex() == other.m_data->getTypeIndex();
+}
+
+bool FlexibleList::Node::isSameNode(const Node& other) const
+{
+	return (*this == other) && (m_prve == other.m_prve) && (m_next == other.m_next);
+}
+
+const std::type_index& FlexibleList::Node::getDataTypeIndex() const
+{
+	return m_data->getTypeIndex();
+}
+
+const std::type_index& FlexibleList::Iterator::getValueTypeIndex() const
+{
+	return m_node->getDataTypeIndex();
 }
