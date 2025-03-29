@@ -10,7 +10,7 @@
 
 constexpr bool FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE = true;  //这个是决定非比较类型的数据是放在容器前面还是后面
 constexpr bool FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER = true; //这个是决定两个数据都是非比较类型时如何排序的，是按原顺序还是非原顺序
-constexpr bool FLEXIBLELISTSORTCOMPASC = true; //这个只是方便我看排列顺序的，降序还是逆序
+constexpr bool FLEXIBLELISTSORTCOMPASC = false; //这个只是方便我看排列顺序的，降序还是逆序
 
 
 //#include <tuple>
@@ -96,10 +96,9 @@ public:
 	const T* frontElement() noexcept;
 	template <typename T>
 	const T* backElement() noexcept;
-	FlexibleList::Iterator erase(FlexibleList::Iterator it) noexcept;
+	FlexibleList::Iterator erase(FlexibleList::Iterator& it);
 	template <typename T>
 	void insertFrontIt(FlexibleList::Iterator it, const T& val) noexcept;
-	template <typename T>
 	void popBack();
 	Iterator begin() const noexcept;
 	Iterator back() const noexcept;
@@ -125,7 +124,9 @@ public:
 	void FlexibleListSort(Compare comp);
 
 	bool isSameTypeElement(const Iterator& a, const Iterator& b) const;
+	bool isMyIterator(const Iterator& it) const noexcept;
 
+	//迭代器
 	class Iterator
 	{
 	public:
@@ -193,6 +194,8 @@ public:
 	};
 
 
+
+
 private:
 	void clear();
 	void deepCopy(const FlexibleList& other);
@@ -200,6 +203,10 @@ private:
 	void insertNodeEnd(Node* n);
 	void destory() noexcept;
 
+
+
+
+	//Node
 	class Node //节点node就相当于是对底层数据的一层封装吧，FlexibleList不应该直接和数据T交互，而是通过node和T进行交互，也就是FlexibleList->node->T,FlexibleList不应该能够接触T
 	{
 	public:
@@ -250,6 +257,11 @@ private:
 		Node* m_next; // todo : 也许可以用一个shared_ptr指向pre，一个weak_ptr指向nxt
 		Node* m_prve;
 	};
+
+
+
+
+
 	Node* m_head;
 	Node* m_tail;
 	size_t m_size;
@@ -566,6 +578,7 @@ void FlexibleList::pushBack(T&& val)
 //	}
 //}
 
+//以下是为了获取模板函数的参数类型
 
 // 辅助结构体用于从任意可调用对象中提取第一个参数类型
 template<typename Callable, typename = void>
@@ -612,7 +625,8 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 	using ParamType = typename ExtractFirstParamType<Compare>::RawParamType;
 	std::type_index ParamTypeIndex = typeid(ParamType);
 
-	auto compWithTypeIndex = [&](Node* left, Node* right) -> bool // 这里就定义了ParamType型数据和非ParamType型数据的比较规则
+	//auto compWithTypeIndex = [&](Node* left, Node* right) -> bool // 这里就定义了ParamType型数据和非ParamType型数据的比较规则
+	std::function<bool(Node*, Node*)> compWithTypeIndex = [&](Node* left, Node* right)->bool
 	{
 		std::type_index lTypeIndex = left->getDataTypeIndex();
 		std::type_index rTypeIndex = right->getDataTypeIndex();
@@ -622,7 +636,7 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 		}
 		else if ((lTypeIndex == ParamTypeIndex) && (rTypeIndex != ParamTypeIndex))
 		{
-			return FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE; //认为ParamType型数据更小
+			return FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE; //认为ParamType型数据更小更大？
 		}
 		else if ((lTypeIndex != ParamTypeIndex) && (rTypeIndex == ParamTypeIndex))
 		{
@@ -634,7 +648,8 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 		}
 	};
 
-	auto getMiddle = [](Node* head) -> Node*
+	//auto getMiddle = [](Node* head) -> Node*
+	std::function<Node*(Node*)> getMiddle = [](Node* head) -> Node*
 	{
 		if (!head || !head->getNext()) return head;
 
@@ -663,7 +678,8 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 	//};
 
 
-	auto merge = [&](Node* left, Node* right) -> Node* {
+	//auto merge = [&](Node* left, Node* right) -> Node* {
+	std::function<Node*(Node*, Node*)> merge = [&](Node* left, Node* right) -> Node* {
 		Node dummy;
 		Node* tail = &dummy;
 

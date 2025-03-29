@@ -21,6 +21,9 @@
     <ClCompile Include="FlexibleList.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="TestFlexibleList.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlexibleList.h">
@@ -32,6 +35,12 @@
       <Filter>资源文件</Filter>
     </Text>
     <Text Include="record.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="benchmarkTestResult.txt">
+      <Filter>资源文件</Filter>
+    </Text>
+    <Text Include="FlexibleList-vs-stdlist.txt">
       <Filter>资源文件</Filter>
     </Text>
   </ItemGroup>

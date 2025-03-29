@@ -37,7 +37,7 @@ public:
 	{
 		return m_age == other.m_age;
 	}
-	bool operator<(const person& other) const 
+	bool operator<(const person& other) const
 	{
 		return m_age < other.m_age;
 	}
@@ -53,28 +53,76 @@ private:
 	int m_age;
 };
 
+
+
 bool personCompare(const person& a, const person& b)
 {
 	return a.getAge() > b.getAge();
 }
 
+//int main()
+//{
+//	FlexibleList l;
+//	for (int i = 0; i < 10; ++i)
+//	{
+//		l.pushBack(i);
+//	}
+//	FlexibleList::Iterator it = l.begin();
+//	while (!l.empty())
+//	{
+//		it = l.erase(it); // 假设有合适的 erase 方法
+//	}
+//	return 0;
+//}
+
+
+
 int main()
 {
 	FlexibleList l;
-	//int a = 1;
-	//int b = 2;
-	//int c = 3;
-	//int d = 4;
-	//double e = 5.5;
-	//double f = 6.6;
-	//double g = 7.7;
-	//l.pushBack(a);
-	//l.pushBack(b);
-	//l.pushBack(c);
-	//l.pushBack(d);
-	//l.pushBack(e);
-	//l.pushBack(f);
-	//l.pushBack(g);
+	int a = 1;
+	int b = 2;
+	int c = 3;
+	int d = 4;
+	double e = 5.5;
+	double f = 6.6;
+	double g = 7.7;
+	l.pushBack(a);
+	l.pushBack(b);
+	l.pushBack(c);
+	l.pushBack(d);
+	l.pushBack(e);
+	l.pushBack(f);
+	l.pushBack(g);
+	std::cout << "原来为：";
+	for (auto it = l.begin(); it != l.end(); ++it)
+	{
+		if (it.getValueTypeIndex() == typeid(int))
+		{
+			std::cout << it.getValue<int>() << " ";
+		}
+		else if (it.getValueTypeIndex() == typeid(double))
+		{
+			std::cout << it.getValue<double>() << " ";
+		}
+	}
+	std::cout << std::endl;
+	l.FlexibleListSort(intCompare);
+	std::cout << "后来为：";
+	for (auto it = l.begin(); it != l.end(); ++it)
+	{
+		if (it.getValueTypeIndex() == typeid(int))
+		{
+			std::cout << it.getValue<int>() << " ";
+		}
+		else if (it.getValueTypeIndex() == typeid(double))
+		{
+			std::cout << it.getValue<double>() << " ";
+		}
+	}
+	std::cout << std::endl;
+	return 0;
+}
 	//std::ofstream file("record.txt", std::ios::app);
 	//file << "比较顺序：" << (FLEXIBLELISTSORTCOMPASC ? "升序true" : "降序false") << " " << "参数类型正确的排在" << (FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE ? "前面true" : "后面false")<< " " << "两个非正常参数类型数据：" << (FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER ? "顺序true" : "非顺序false") << "\n";
 	//file << "原来为：";
@@ -105,7 +153,7 @@ int main()
 	//}
 	//file << "\n";
 	//file << "\n";
-	return 0;
+	//return 0;
 	// a > b : 6.6 5.5 4 3 2 1
 	// a < b : 6.6 5.5 1 2 3 4
 	// a < b : 1 2 3 4 5.5 6.6
@@ -169,4 +217,4 @@ int main()
 	//it++;
 	//std::cout << *(it.getValuePoint<int>()) << std::endl;
 	//return 0;
-}
+//}

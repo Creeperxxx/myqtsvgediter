@@ -202,7 +202,7 @@ FlexibleList::Iterator& FlexibleList::Iterator::operator=(FlexibleList::Iterator
 		m_node = other.m_node;
 		m_container = other.m_container;
 		other.m_node = nullptr;
-		other.m_container;
+		other.m_container = nullptr;
 	}
 	return *this;
 }
@@ -445,7 +445,8 @@ size_t FlexibleList::size() const noexcept
 }
 bool FlexibleList::empty() const noexcept
 {
-	if (0 == m_size && m_head == m_tail)
+	//if (0 == m_size || m_head == m_tail)
+	if( 0 == m_size)
 	{
 		return true;
 	}
@@ -495,29 +496,58 @@ void FlexibleList::destory() noexcept
 	m_head = nullptr;
 	m_tail = m_head;
 }
-FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator it) noexcept
+FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator& it) 
 {
-	if (it == begin())
+	//if(it.isSameContainer())
+	if (!isMyIterator(it))
 	{
-		//头节点不允许删除
-		return it + 1;
+		return end();
 	}
-	Iterator tailIt = back();
-	if (it == tailIt)
+	Node* itNodePoint = it.getNodePoint();
+	if (itNodePoint == m_tail)
 	{
-		FlexibleList::Iterator tailPre = tailIt.getPrev();
-		tailIt.destory();
-		tailPre.setNext(nullptr);
-		tailIt = tailPre;
-		m_size--;
-		return tailIt;
+		popBack();
+		return back();
 	}
+	if (itNodePoint == m_head)
+	{
+		return begin();
+	}
+	//if (itNodePoint == m_tail)
+	//{
+	//	popBack();
+	//	return Iterator(m_tail, this);
+	//}
 	Iterator itNext = it.getNext();
-	it.getPrev().setNext(itNext);
-	itNext.setPrev(it.getPrev());
+	Iterator itPrev = it.getPrev();
+	itNext.setPrev(itPrev);
+	itPrev.setNext(itNext);
 	it.destory();
 	m_size--;
 	return itNext;
+
+
+	//if (it == begin())
+	//{
+	//	//头节点不允许删除
+	//	return it + 1;
+	//}
+	//Iterator tailIt = back();
+	//if (it == tailIt)
+	//{
+	//	FlexibleList::Iterator tailPre = tailIt.getPrev();
+	//	tailIt.destory();
+	//	tailPre.setNext(nullptr);
+	//	tailIt = tailPre;
+	//	m_size--;
+	//	return tailIt;
+	//}
+	//Iterator itNext = it.getNext();
+	//it.getPrev().setNext(itNext);
+	//itNext.setPrev(it.getPrev());
+	//it.destory();
+	//m_size--;
+	//return itNext;
 }
 
 void FlexibleList::Iterator::destory() noexcept
@@ -542,7 +572,6 @@ void FlexibleList::insertFrontIt(FlexibleList::Iterator it, const T& val) noexce
 	it.setPrev(newIt);
 	m_size++;
 }
-template <typename T>
 //T FlexibleList::popBack() 
 void FlexibleList::popBack()
 {
@@ -550,12 +579,18 @@ void FlexibleList::popBack()
 	{
 		return;
 	}
-	Iterator tailIt = back();
-	Iterator tailPre = tailIt.getPrev();
-	tailIt.destory();
-	tailPre.setNext(nullptr);
-	m_tail = tailPre.m_node;
+	Node* newTail = m_tail->getPrev();
+	newTail->setNext(nullptr);
+	delete m_tail;
+	m_tail = newTail;
 	m_size--;
+
+	//Iterator tailIt = back();
+	//Iterator tailPre = tailIt.getPrev();
+	//tailIt.destory();
+	//tailPre.setNext(nullptr);
+	//m_tail = tailPre.m_node;
+	//m_size--;
 }
 FlexibleList::Iterator FlexibleList::begin() const noexcept
 {
@@ -629,7 +664,8 @@ FlexibleList::Iterator FlexibleList::Iterator::getPrev() const noexcept
 
 FlexibleList::Iterator FlexibleList::Iterator::getNext() const noexcept
 {
-	return FlexibleList::Iterator(m_node->getPrev(), m_container);
+	//return FlexibleList::Iterator(m_node->getPrev(), m_container); //这里简直逆天，直接复制上一句忘记改了，搞得我debug了半天
+	return FlexibleList::Iterator(m_node->getNext(), m_container);
 }
 
 void FlexibleList::Iterator::setNext(const Iterator& next) noexcept
@@ -863,4 +899,16 @@ const std::type_index& FlexibleList::Node::getDataTypeIndex() const
 const std::type_index& FlexibleList::Iterator::getValueTypeIndex() const
 {
 	return m_node->getDataTypeIndex();
+}
+
+bool FlexibleList::isMyIterator(const FlexibleList::Iterator& it) const noexcept
+{
+	if (it.getContainerPoint() == this)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

@@ -1,0 +1,79 @@
+2025-03-29T19:24:19+08:00
+Running D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week01\homework\FlexibleList\x64\Release\FlexibleList.exe
+Run on (12 X 2688 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x6)
+  L1 Instruction 32 KiB (x6)
+  L2 Unified 1280 KiB (x6)
+  L3 Unified 12288 KiB (x1)
+--------------------------------------------------------------------------------
+Benchmark                                      Time             CPU   Iterations
+--------------------------------------------------------------------------------
+benchFlexibleListInsert/1                    161 ns          112 ns     10000000
+benchFlexibleListInsert/8                   2396 ns         2187 ns       407273
+benchFlexibleListInsert/64                 13690 ns        11719 ns        56000
+benchFlexibleListInsert/512                89545 ns        87193 ns         8960
+benchFlexibleListInsert/4096              597076 ns       488281 ns         1120
+benchFlexibleListInsert/32768            4084897 ns      3667840 ns          213
+benchFlexibleListInsert/262144          37379280 ns     34375000 ns           20
+benchFlexibleListInsert/1048576        159373517 ns    145833333 ns            6
+benchListInsert/1                           77.7 ns         70.3 ns     10000000
+benchListInsert/8                            361 ns          321 ns      2240000
+benchListInsert/64                          4257 ns         2386 ns       235789
+benchListInsert/512                        34288 ns        20403 ns        29867
+benchListInsert/4096                      188262 ns       125558 ns         5600
+benchListInsert/32768                    1357875 ns       878514 ns          747
+benchListInsert/262144                  12301614 ns     10742188 ns           64
+benchListInsert/1048576                 50975053 ns     46052632 ns           19
+
+benchmarkFlexibleListTraverse/1             8.51 ns         7.32 ns     89600000
+benchmarkFlexibleListTraverse/8             61.2 ns         50.0 ns     10000000
+benchmarkFlexibleListTraverse/64             485 ns          462 ns      1723077
+benchmarkFlexibleListTraverse/512           4018 ns         3069 ns       203636
+benchmarkFlexibleListTraverse/4096         33181 ns        29018 ns        28000
+benchmarkFlexibleListTraverse/32768       318873 ns       253906 ns         3200
+benchmarkFlexibleListTraverse/262144     4497534 ns      4178779 ns          172
+benchmarkFlexibleListTraverse/1048576   17338010 ns     15000000 ns           50
+benchmarkStdListTraverse/1                  1.11 ns        0.854 ns    896000000
+benchmarkStdListTraverse/8                  4.06 ns         3.74 ns    213333333
+benchmarkStdListTraverse/64                 87.4 ns         69.8 ns      8960000
+benchmarkStdListTraverse/512                 643 ns          558 ns      1120000
+benchmarkStdListTraverse/4096               9555 ns         8281 ns       100000
+benchmarkStdListTraverse/32768             80894 ns        64523 ns         8960
+benchmarkStdListTraverse/262144          1544532 ns      1506024 ns          498
+benchmarkStdListTraverse/1048576         7921974 ns      6944444 ns           90
+
+benchmarkFlexibleListErase/1               0.375 ns        0.308 ns   2133333333
+benchmarkFlexibleListErase/8               0.376 ns        0.313 ns   1947826087
+benchmarkFlexibleListErase/64              0.375 ns        0.345 ns   2488888889
+benchmarkFlexibleListErase/512             0.378 ns        0.356 ns   2240000000
+benchmarkFlexibleListErase/4096            0.378 ns        0.311 ns   2357894737
+benchmarkFlexibleListErase/32768           0.377 ns        0.369 ns   1947826087
+benchmarkFlexibleListErase/262144          0.386 ns        0.345 ns   2036363636
+benchmarkFlexibleListErase/1048576         0.421 ns        0.314 ns   1642805521
+benchmarkStdListErase/1                    0.399 ns        0.353 ns   1947826087
+benchmarkStdListErase/8                    0.401 ns        0.310 ns   1866666667
+benchmarkStdListErase/64                   0.413 ns        0.268 ns   1866666667
+benchmarkStdListErase/512                  0.411 ns        0.338 ns   2357894737
+benchmarkStdListErase/4096                 0.409 ns        0.324 ns   2986666667
+benchmarkStdListErase/32768                0.409 ns        0.285 ns   1866666667
+benchmarkStdListErase/262144               0.411 ns        0.329 ns   1947826087
+benchmarkStdListErase/1048576              0.414 ns        0.375 ns   1792000000
+
+benchmarkFlexibleListPopback/1             0.473 ns        0.322 ns   2036363636
+benchmarkFlexibleListPopback/8             0.461 ns        0.386 ns   1659259259
+benchmarkFlexibleListPopback/64            0.548 ns        0.500 ns   1000000000
+benchmarkFlexibleListPopback/512           0.516 ns        0.496 ns   1544827586
+benchmarkFlexibleListPopback/4096          0.569 ns        0.547 ns   1000000000
+benchmarkFlexibleListPopback/32768         0.564 ns        0.530 ns   1445161290
+benchmarkFlexibleListPopback/262144        0.538 ns        0.500 ns   1000000000
+benchmarkFlexibleListPopback/1048576       0.592 ns        0.567 ns   1102834790
+benchmarkStdlistPopback/1                  0.398 ns        0.361 ns   2036363636
+benchmarkStdlistPopback/8                  0.398 ns        0.351 ns   2357894737
+benchmarkStdlistPopback/64                 0.388 ns        0.363 ns   2240000000
+benchmarkStdlistPopback/512                0.399 ns        0.368 ns   2036363636
+benchmarkStdlistPopback/4096               0.396 ns        0.297 ns   1947826087
+benchmarkStdlistPopback/32768              0.398 ns        0.396 ns   2133333333
+benchmarkStdlistPopback/262144             0.407 ns        0.293 ns   1866666667
+benchmarkStdlistPopback/1048576            0.420 ns        0.356 ns   2280727273
+

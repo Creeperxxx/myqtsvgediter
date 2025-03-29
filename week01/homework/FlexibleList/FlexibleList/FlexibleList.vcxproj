@@ -144,12 +144,15 @@
   <ItemGroup>
     <ClCompile Include="FlexibleList.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="TestFlexibleList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FlexibleList.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="benchmarkTestResult.txt" />
     <Text Include="codelines.txt" />
+    <Text Include="FlexibleList-vs-stdlist.txt" />
     <Text Include="record.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
