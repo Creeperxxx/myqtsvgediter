@@ -62,10 +62,10 @@ FlexibleList::FlexibleList(const FlexibleList& other)  noexcept : m_size(0)
 FlexibleList::FlexibleList(FlexibleList&& other) noexcept : m_size(other.m_size)
 {
 	m_head = new Node();
-	m_tail = m_head;
 	m_head->setPrev(nullptr);
-	m_head->setNext(nullptr);
+	//m_head->setNext(nullptr);
 	m_head->setNext(other.m_head->getNext());
+	m_head->getNext()->setPrev(m_head);
 	m_tail = other.m_tail;
 	other.m_head->setNext(nullptr);
 	other.m_tail = m_head;
@@ -141,12 +141,19 @@ void FlexibleList::deepCopy(const FlexibleList& other)
 FlexibleList& FlexibleList::operator=(FlexibleList&& other) noexcept
 {
 	clear();
-	m_head = other.m_head;
+	m_head->setNext(other.m_head->getNext());
+	m_head->getNext()->setPrev(m_head);
 	m_tail = other.m_tail;
 	m_size = other.m_size;
-	other.m_head = nullptr;
-	other.m_tail = nullptr;
+	other.m_head->setNext(nullptr);
+	other.m_tail = other.m_head;
 	other.m_size = 0;
+	//m_head = other.m_head;
+	//m_tail = other.m_tail;
+	//m_size = other.m_size;
+	//other.m_head = nullptr;
+	//other.m_tail = nullptr;
+	//other.m_size = 0;
 	return *this;
 }
 
@@ -161,17 +168,23 @@ FlexibleList::Node::Node(Node&& other) noexcept : m_data(std::move(other.m_data)
 
 FlexibleList::Node& FlexibleList::Node::operator=(const Node& other) noexcept
 {
-	m_data = other.m_data == nullptr ? nullptr : other.m_data->clone();
-	m_prve = nullptr;
-	m_next = nullptr;
+	if (&other != this)
+	{
+		m_data = other.m_data == nullptr ? nullptr : other.m_data->clone();
+		m_prve = nullptr;
+		m_next = nullptr;
+	}
 	return *this;
 }
 
 FlexibleList::Node& FlexibleList::Node::operator=(Node&& other) noexcept
 {
-	m_data = std::move(other.m_data);
-	m_prve = nullptr;
-	m_next = nullptr;
+	if (&other != this)
+	{
+		m_data = std::move(other.m_data);
+		m_prve = nullptr;
+		m_next = nullptr;
+	}
 	return *this;
 }
 
@@ -221,30 +234,47 @@ FlexibleList::Iterator::~Iterator()  noexcept {}
 //	}
 //}
 
-FlexibleList::Node* FlexibleList::Iterator::operator->() const noexcept
-{
-	return m_node; // 这里很想像*重载那样判断以下合法性，但还是交给使用者判断吧。
-}
+//FlexibleList::Node* FlexibleList::Iterator::operator->() const noexcept
 
-FlexibleList::Iterator& FlexibleList::Iterator::operator++() noexcept // 前置++
+//{
+	//return m_node; // 这里很想像*重载那样判断以下合法性，但还是交给使用者判断吧。
+//}
+
+FlexibleList::Iterator& FlexibleList::Iterator::operator++()  // 前置++
 {
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
 	m_node = m_node->getNext();
 	return *this;
 }
-FlexibleList::Iterator FlexibleList::Iterator::operator++(int) noexcept
+FlexibleList::Iterator FlexibleList::Iterator::operator++(int) 
 {
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
 	FlexibleList::Iterator it = *this;
 	//m_node = m_node->m_next; //这一步可以被之前实现的前置++代替，妙
 	++(*this);
 	return it;
 }
-FlexibleList::Iterator& FlexibleList::Iterator::operator--() noexcept
+FlexibleList::Iterator& FlexibleList::Iterator::operator--() 
 {
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
 	m_node = m_node->getPrev();
 	return *this;
 }
-FlexibleList::Iterator FlexibleList::Iterator::operator--(int) noexcept
+FlexibleList::Iterator FlexibleList::Iterator::operator--(int) 
 {
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
 	FlexibleList::Iterator it = *this;
 	//m_node = m_node->m_prve; //与++同理
 	--(*this);
@@ -261,7 +291,7 @@ bool FlexibleList::Iterator::operator==(const Iterator& other) const noexcept
 	{
 		return !m_node && !other.m_node;
 	}
-	return m_node->isSameNode(other.m_node);
+	return m_node->isSameNodeTotally(other.m_node);
 }
 
 bool FlexibleList::Iterator::operator!=(const Iterator& other) const noexcept
@@ -445,8 +475,7 @@ size_t FlexibleList::size() const noexcept
 }
 bool FlexibleList::empty() const noexcept
 {
-	//if (0 == m_size || m_head == m_tail)
-	if( 0 == m_size)
+	if (0 == m_size || m_head == m_tail)
 	{
 		return true;
 	}
@@ -456,17 +485,17 @@ bool FlexibleList::empty() const noexcept
 	}
 }
 
-template <typename T>
-const T* FlexibleList::frontElement() noexcept
-{
-	return begin().getValuePoint();
-}
-
-template <typename T>
-const T* FlexibleList::backElement() noexcept
-{
-	return back().getValuePoint();
-}
+//template <typename T>
+//const T* FlexibleList::frontElement() noexcept
+//{
+//	return begin().getValuePoint();
+//}
+//
+//template <typename T>
+//const T* FlexibleList::backElement() noexcept
+//{
+//	return back().getValuePoint();
+//}
 //template <typename T>
 //const T* FlexibleList::frontElement() noexcept
 //{
@@ -496,7 +525,7 @@ void FlexibleList::destory() noexcept
 	m_head = nullptr;
 	m_tail = m_head;
 }
-FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator& it) 
+FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator& it)
 {
 	//if(it.isSameContainer())
 	if (!isMyIterator(it))
@@ -522,7 +551,7 @@ FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator& it)
 	Iterator itPrev = it.getPrev();
 	itNext.setPrev(itPrev);
 	itPrev.setNext(itNext);
-	it.destory();
+	it.deleteElement();
 	m_size--;
 	return itNext;
 
@@ -550,28 +579,28 @@ FlexibleList::Iterator FlexibleList::erase(FlexibleList::Iterator& it)
 	//return itNext;
 }
 
-void FlexibleList::Iterator::destory() noexcept
+void FlexibleList::Iterator::deleteElement() noexcept
 {
 	if (m_node != nullptr)
 	{
 		delete m_node;
 	}
 }
-template <typename T>
-void FlexibleList::insertFrontIt(FlexibleList::Iterator it, const T& val) noexcept
-{
-	if (it == begin())
-	{
-		return;
-	}
-	Node* newNode = new Node(val);
-	Iterator newIt = Iterator(newNode);
-	it.getPrev().setNext(newIt);
-	newIt.setPrev(it.getPrev());
-	newIt.setNext(it);
-	it.setPrev(newIt);
-	m_size++;
-}
+//template <typename T>
+//void FlexibleList::insertFrontIt(FlexibleList::Iterator it, const T& val) noexcept
+//{
+//	if (it == begin())
+//	{
+//		return;
+//	}
+//	Node* newNode = new Node(val);
+//	Iterator newIt = Iterator(newNode);
+//	it.getPrev().setNext(newIt);
+//	newIt.setPrev(it.getPrev());
+//	newIt.setNext(it);
+//	it.setPrev(newIt);
+//	m_size++;
+//}
 //T FlexibleList::popBack() 
 void FlexibleList::popBack()
 {
@@ -659,17 +688,29 @@ void FlexibleList::swap(FlexibleList& other) noexcept
 
 FlexibleList::Iterator FlexibleList::Iterator::getPrev() const noexcept
 {
+	if (false == isValid())
+	{
+		return *this;
+	}
 	return FlexibleList::Iterator(m_node->getPrev(), m_container);
 }
 
 FlexibleList::Iterator FlexibleList::Iterator::getNext() const noexcept
 {
 	//return FlexibleList::Iterator(m_node->getPrev(), m_container); //这里简直逆天，直接复制上一句忘记改了，搞得我debug了半天
+	if (false == isValid())
+	{
+		return *this;
+	}
 	return FlexibleList::Iterator(m_node->getNext(), m_container);
 }
 
 void FlexibleList::Iterator::setNext(const Iterator& next) noexcept
 {
+	if (!isValid() || !next.isValid())
+	{
+		return;
+	}
 	if (isSameContainer(next) == false)
 		return;
 	m_node->setNext(next.m_node);
@@ -677,6 +718,10 @@ void FlexibleList::Iterator::setNext(const Iterator& next) noexcept
 
 void FlexibleList::Iterator::setPrev(const Iterator& prev) noexcept
 {
+	if (!isValid() || !prev.isValid())
+	{
+		return;
+	}
 	if (isSameContainer(prev) == false)
 		return;
 	m_node->setPrev(prev.m_node);
@@ -684,11 +729,19 @@ void FlexibleList::Iterator::setPrev(const Iterator& prev) noexcept
 
 void FlexibleList::Iterator::setNext(Node* node) noexcept
 {
+	if (false == isValid())
+	{
+		return;
+	}
 	m_node->setNext(node);
 }
 
 void FlexibleList::Iterator::setPrev(Node* node) noexcept
 {
+	if (false == isValid())
+	{
+		return;
+	}
 	m_node->setPrev(node);
 }
 
@@ -766,11 +819,13 @@ void FlexibleList::insertNodeEnd(Node* n)
 }
 bool FlexibleList::Node::operator<(const Node& other) const noexcept
 {
-	return (*m_data).less(*(other.m_data));
+	//return (*m_data).less(*(other.m_data));
+	return m_data->less(*(other.m_data));
 }
 bool FlexibleList::Node::operator>(const Node& other) const noexcept
 {
-	return !(*m_data).less(*(other.m_data));
+	//return !(*m_data).less(*(other.m_data));
+	return (!(*this < other)) && (*this != other);
 }
 bool FlexibleList::Node::operator<=(const Node& other) const noexcept
 {
@@ -791,7 +846,7 @@ void FlexibleList::setBeginNode(Node* node)
 	Iterator it = begin();
 	while (it.isValid() == true)
 	{
-		it = erase(it); 
+		it = erase(it);
 	}
 	m_head->setNext(node);
 	node->setPrev(m_head);
@@ -827,7 +882,6 @@ bool FlexibleList::Iterator::operator<(const Iterator& other) const
 	if (false == isSameContainer(other))
 	{
 		throw std::runtime_error("两个迭代器并不来自同一容器对象");
-		return false;
 	}
 	return *m_node < *(other.m_node);
 }
@@ -862,7 +916,7 @@ FlexibleList::Node* FlexibleList::Iterator::getNodePoint() const
 	return m_node;
 }
 
-bool FlexibleList::Node::isSameNode(const Node* node) const
+bool FlexibleList::Node::isSameNodeTotally(const Node* node) const
 {
 	if (node == nullptr)
 	{
@@ -870,7 +924,7 @@ bool FlexibleList::Node::isSameNode(const Node* node) const
 	}
 	else
 	{
-		return isSameNode(*node);
+		return isSameNodeTotally(*node);
 	}
 }
 
@@ -886,7 +940,7 @@ bool FlexibleList::Node::isSameDataType(const Node& other) const
 	return m_data->getTypeIndex() == other.m_data->getTypeIndex();
 }
 
-bool FlexibleList::Node::isSameNode(const Node& other) const
+bool FlexibleList::Node::isSameNodeTotally(const Node& other) const
 {
 	return (*this == other) && (m_prve == other.m_prve) && (m_next == other.m_next);
 }

@@ -105,6 +105,7 @@ int main()
 		{
 			std::cout << it.getValue<double>() << " ";
 		}
+		
 	}
 	std::cout << std::endl;
 	l.FlexibleListSort(intCompare);
@@ -121,6 +122,7 @@ int main()
 		}
 	}
 	std::cout << std::endl;
+	system("pause");
 	return 0;
 }
 	//std::ofstream file("record.txt", std::ios::app);

@@ -55,5 +55,5 @@
 
 对 `FlexibleList` 和 `std::list` 在插入、删除、遍历等方面的性能进行了对比测试。具体信息请参见：
 
-- [FlexibleList/FlexibleList/benchmarkTestResult.txt](./benchmarkTestResult.txt)
-- [FlexibleList/FlexibleList/FlexibleList-vs-stdlist.txt](./FlexibleList-vs-stdlist.txt)
+- [benchmark性能测试结果](./FlexibleList/FlexibleList/benchmarkTestResult.txt)
+- [FlexibleList vs std::list 具体分析结果](./FlexibleList/FlexibleList/FlexibleList-vs-stdlist.txt)

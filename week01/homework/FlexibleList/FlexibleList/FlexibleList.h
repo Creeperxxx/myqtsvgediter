@@ -27,6 +27,7 @@ public:
 	virtual bool isEqual(const IBaseElement& other) const = 0;
 	virtual bool less(const IBaseElement& other) const = 0;
 	virtual const std::type_index& getTypeIndex() const = 0;
+
 };
 
 //为每个类或结构体都配备了无参 左右参 左右拷贝 运算符=左右重载 析构 
@@ -35,13 +36,15 @@ template <typename T>
 class DataElement : public IBaseElement
 {
 public:
-	DataElement();
+	//DataElement(); //这个模板类就不能提供默认构造的
 	//explicit要加，防止隐式类型转换，我觉得自定义类的隐式类型转换其实就是调用隐式的调用有参构造函数吧，例如person a = 5等价于person a = person(5);
-	explicit DataElement(const T& val);
-	explicit DataElement(T&& val);
+	//explicit DataElement(const T& val); //这个没必要提供了
+	//explicit DataElement(T&& val); //这个不是万能引用，因为T的类型不需要推导了已经明确了
+	template <typename U>
+	explicit DataElement(U&& value);
 	//还得加模板参数包构造，毕竟T还可以是接收构造参数的自定义类
 	template <typename... Args>
-	explicit DataElement(Args&&... args) noexcept;
+	explicit DataElement(Args&&... args);
 
 	//explicit DataElement(T& val) noexcept;
 	DataElement(const DataElement& other);
@@ -51,14 +54,26 @@ public:
 	std::unique_ptr<IBaseElement> clone() const noexcept override;
 	~DataElement() noexcept;
 
-	const T* getValuePoint() const;
+	//const T* getValuePoint() const;
 	const T& getValue() const;
+	T& getValueReference();
 	bool isEqual(const IBaseElement& other) const override;
 	bool less(const IBaseElement& other) const override;
 	const std::type_index& getTypeIndex() const override;
+
+	//记住观察node的构造函
+
+	//void updateValue(T&& value);
+	template <typename U>
+	void updateValue(U&& value);
 private:
 	//T m_value; // todo : 这里可以使用std::unique_ptr<T> m_value
-	std::unique_ptr<T> m_value;
+	//std::unique_ptr<T> m_value;  //当初这里用unique_ptr，主要是因为返回value时value可能为空，所以就像用指针代替变量，但后来一想，
+							     //当创建一个DataElement对象时,是因为要创建一个node节点，而创建一个node节点是因为有值要push进容器里，
+								 //换句话说，只要dataElement对象存储，那么值是定然存在的根本不需要考虑value为空，所以可以直接存储值对象
+
+	T m_tempvalue; //之前对于这里一直有个担心，就是在node中构造dataElement时，T的类型是通过node传入的参数推导的，如果参数带const，那么T推导时岂不是
+				   //也带const，这样就不能updatevalue，而且两个dataElement因为const而导致类型不同也难受，后来发现decay_t就能解决这个问题
 };
 
 
@@ -77,8 +92,8 @@ public:
 	FlexibleList(std::initializer_list<T> init) noexcept;
 	~FlexibleList() noexcept;
 
-	template <typename T>
-	void pushBack(const T& val);
+	//template <typename T>
+	//void pushBack(const T& val);//有万能引用就不需要这个了
 	template <typename T>
 	void pushBack(T&& val);
 	size_t size() const noexcept;
@@ -93,12 +108,15 @@ public:
 	//template <typename T>
 	//const T& backElementConst() const noexcept;
 	template <typename T>
-	const T* frontElement() noexcept;
+	//const T* frontElement() noexcept;
+	const T& frontData();
 	template <typename T>
-	const T* backElement() noexcept;
+	const T& backData();
+	//const T* backElement() noexcept;
 	FlexibleList::Iterator erase(FlexibleList::Iterator& it);
 	template <typename T>
-	void insertFrontIt(FlexibleList::Iterator it, const T& val) noexcept;
+	//void insertFrontIt(FlexibleList::Iterator it, const T& val) noexcept;
+	Iterator insertFrontIt(FlexibleList::Iterator &it, T&& val);
 	void popBack();
 	Iterator begin() const noexcept;
 	Iterator back() const noexcept;
@@ -142,13 +160,16 @@ public:
 
 		//FlexibleList::Node& operator*() const noexcept;
 		template <typename T>
-		const T& operator*() const;
-		FlexibleList::Node* operator->() const noexcept;
+		T& operator*();
+		//FlexibleList::Node* operator->() const noexcept;
+		template <typename T>
+		T* operator->();
+		//const T& operator->();
 
-		Iterator& operator++() noexcept;
-		Iterator operator++(int) noexcept;
-		Iterator& operator--() noexcept;
-		Iterator operator--(int) noexcept;
+		Iterator& operator++() ;
+		Iterator operator++(int) ;
+		Iterator& operator--() ;
+		Iterator operator--(int) ;
 
 		bool operator==(const Iterator& other) const noexcept;
 		bool operator!=(const Iterator& other) const noexcept;
@@ -166,17 +187,17 @@ public:
 
 
 		bool isValid() const noexcept;
-		void destory() noexcept;
+		void deleteElement() noexcept;
 
 		Iterator getPrev() const noexcept;
 		Iterator getNext() const noexcept;
 		void setPrev(const Iterator& prev) noexcept;
 		void setNext(const Iterator& next) noexcept;
-		void setNext(FlexibleList::Node* node) noexcept;
-		void setPrev(FlexibleList::Node* node) noexcept;
+		void setNext(FlexibleList::Node* node)noexcept;
+		void setPrev(FlexibleList::Node* node)noexcept;
 
-		template <typename T>
-		const T* getValuePoint() const;
+		//template <typename T>
+		//const T* getValuePoint() const;
 
 		const FlexibleList* getContainerPoint() const;
 		bool isSameContainer(const Iterator& other) const;
@@ -186,14 +207,15 @@ public:
 		const T& getValue()const;
 
 		const std::type_index& getValueTypeIndex() const;
+		
+		template <typename T>
+		bool updateData(T&& value);
 
 	private:
 		FlexibleList::Node* m_node;
 		const FlexibleList* m_container; //得确认两个迭代器来自统一容器
 
 	};
-
-
 
 
 private:
@@ -211,10 +233,10 @@ private:
 	{
 	public:
 		Node() noexcept;
+		//template <typename T>
+		//explicit Node(const T& val) noexcept; //这个没有必要
 		template <typename T>
-		explicit Node(const T& val) noexcept;
-		template <typename T>
-		explicit Node(T&& val) noexcept;
+		explicit Node(T&& val) noexcept; //用这个万能引用就好了
 		template <typename T, typename... Args>
 		explicit Node(Args&&... args);
 
@@ -231,11 +253,13 @@ private:
 		bool operator<=(const Node& other) const noexcept;
 		bool operator>=(const Node& other) const noexcept;
 
-		template <typename T>
+		//template <typename T>
 		//const T& getValue() const noexcept;
-		const T* getValuePoint() const;
+		//const T* getValuePoint() const;
 		template <typename T>
 		const T& getValue() const;
+		template <typename T>
+		T& getValueReference();
 
 		const Node* getConstNext() const;
 		const Node* getConstPrev() const;
@@ -247,10 +271,13 @@ private:
 
 		void swap(Node* n);
 
-		bool isSameNode(const Node* node) const;
-		bool isSameNode(const Node& other) const;
+		bool isSameNodeTotally(const Node* node) const;
+		bool isSameNodeTotally(const Node& other) const;
 		bool isSameDataType(const Node& other) const;
 		const std::type_index& getDataTypeIndex() const;
+
+		template <typename T>
+		bool updateData(T&& value);
 
 	private:
 		std::unique_ptr<IBaseElement> m_data;
@@ -259,51 +286,44 @@ private:
 	};
 
 
-
-
-
 	Node* m_head;
 	Node* m_tail;
 	size_t m_size;
 };
 
-template <typename T>
-void FlexibleList::pushBack(const T& val)
-{
-	FlexibleList::Node* node = new Node(val);
-	insertNodeEnd(node);
-}
+//template <typename T>
+//void FlexibleList::pushBack(const T& val)
+//{
+//	FlexibleList::Node* node = new Node(val);
+//	insertNodeEnd(node);
+//}
 
-template <typename T>
-FlexibleList::Node::Node(const T& val) noexcept
-{
-	// 我去，这里std::forward<T>(val)是错的，应该是std::forward<const T>(val)，查了好久
-	// 二改，在学习了一上午万能引用和完美转发后，终于搞明白了。这里应该是std::forward<T>(val)，val有三种类型，const T&,T&,T&&,DataElement需要提供以上三种构造。  后面发现不对，const T&的构造包含了T&，前者可以传入普通左值和常量左值，右者只能传入普通左值。
-	// 三改，彻底搞明白了。首先，完美转发是配合万能引用T&&一起使用的，这里本身用的不合适，其次，无论传入val的是左值引用，还是常量左值引用，还是右值引用，val的类型都与其
-	//无关，因为val的类型是由const T&决定的，它是个常量左值引用，该引用可以绑定任何参数（左值，常量左值，右值），其中T被推导为原始类型（也就是去掉const和引用）。
-	// 所以对于这个函数而言，第一，不需要完美转发，第二，就算使用完美转发，也应该是std::forward<const T>(val)，保障其val的const属性。
-	//m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<const T>(val));//这种也可以，不过就像之前说的这里不是万能引用没必要用完美转发，虽说用了可以和那个构造函数保持一致看着舒服
-	m_data = std::make_unique<DataElement<std::decay_t<T>>>(val);
-	//m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<T>(val)); //decay_t意为类型退化，例如传入数组，那么T就代表数组的类型，需要退化到单个元素的指针类型。
-	//m_data = std::make_unique<DataElement<T>>(std::forward<T>(val));
-	m_next = nullptr;
-	m_prve = nullptr;
-}
+//这个构造函数没有必要的，可以使用万能引用那个构造函数代替
+//template <typename T>
+//FlexibleList::Node::Node(const T& val) noexcept
+//{
+//	//m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<const T>(val));
+//	m_data = std::make_unique<DataElement<std::decay_t<T>>>(val);
+//	//m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<T>(val)); //decay_t意为类型退化，例如传入数组，那么T就代表数组的类型，需要退化到单个元素的指针类型。
+//	//m_data = std::make_unique<DataElement<T>>(std::forward<T>(val));
+//	m_next = nullptr;
+//	m_prve = nullptr;
+//}
 
 
-template <typename T>
-//const T& DataElement<T>::getValue() const 
-const T* DataElement<T>::getValuePoint() const
-{
-	try
-	{
-		return m_value.get();
-	}
-	catch (const std::exception&)
-	{
-		return nullptr;
-	}
-}
+//template <typename T>
+////const T& DataElement<T>::getValue() const 
+//const T* DataElement<T>::getValuePoint() const
+//{
+//	try
+//	{
+//		return m_value.get();
+//	}
+//	catch (const std::exception&)
+//	{
+//		return nullptr;
+//	}
+//}
 
 template <typename T>
 std::unique_ptr<IBaseElement> DataElement<T>::clone() const noexcept
@@ -315,16 +335,20 @@ template <typename T>
 FlexibleList::FlexibleList(std::initializer_list<T> init) noexcept : m_head(new Node()), m_size(0)
 {
 	m_tail = m_head;
-	for (const T& val : init)
+	for (auto&& val : init)
 	{
-		pushBack(val);
+		pushBack(std::move(val));
 	}
 }
 
 template <typename T>
 FlexibleList::Node::Node(T&& val) noexcept
 {
-	m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<T>(val));//使用了万能引用T&&，需要用的完美转发，
+	//这里dataElement内的m_value的参数类型推导不是靠传入的参数val决定的，而是靠尖括号内std::decay_t<T>决定的，所以即使传入const类型的值，m_value
+	//也不会被推导为带const属性，因为decay_t意为类型退化，如果传入const &类型的值，T会被推导为这种类型，如果直接以T类型构造dataElement，那么
+	//m_value也会带上const，我们希望m_value是T的原始类型，例如传入参数是const int& ,T被推倒为const int&，我们希望m_value是去掉const和引用的int，
+	//那么就使用decay_g
+	m_data = std::make_unique<DataElement<std::decay_t<T>>>(std::forward<T>(val));//使用了万能引用T&&，需要用的完美转发
 	//m_data = std::make_unique<DataElement<T>>(std::forward<T>(val));
 	m_next = nullptr;
 	m_prve = nullptr;
@@ -333,7 +357,8 @@ template <typename T>
 DataElement<T>& DataElement<T>::operator=(const DataElement<T>& other)
 {
 	if (&other != this)
-		m_value = std::make_unique<T>(*(other.m_value));
+		//m_value = std::make_unique<T>(*(other.m_value));
+		m_tempvalue = other.m_tempvalue;
 	return *this;
 }
 
@@ -341,34 +366,38 @@ template <typename T>
 DataElement<T>& DataElement<T>::operator=(DataElement<T>&& other)
 {
 	if (&other != this)
-		m_value = std::move(other.m_value);
+		//m_value = std::move(other.m_value);
+		m_tempvalue = std::move(other.m_tempvalue);
 	return *this;
 }
 
-template <typename T>
-DataElement<T>::DataElement()
-{
-	try
-	{
-		m_value = std::make_unique<T>(); // 没有默认构造就返回nullptr吧
-	}
-	catch (const std::exception& e)
-	{
-		m_value = nullptr;
-	}
-}
+//template <typename T>
+//DataElement<T>::DataElement()
+//{
+//	//try
+//	//{
+//		//m_value = std::make_unique<T>(); // 没有默认构造就返回nullptr吧
+//	//}
+//	//catch (const std::exception& e)
+//	//{
+//		//m_value = nullptr;
+//	//}
+//}
+
+//template <typename T>
+//DataElement<T>::DataElement(const T& val) : m_value(std::make_unique<T>(val)) {}
 
 template <typename T>
-DataElement<T>::DataElement(const T& val) : m_value(std::make_unique<T>(val)) {}
+//DataElement<T>::DataElement(const DataElement& other) : m_value(std::make_unique<T>(*(other.m_value))) {}
+DataElement<T>::DataElement(const DataElement& other) : m_tempvalue(other.m_tempvalue) {}
+
+//template <typename T>
+//DataElement<T>::DataElement(T&& val) : m_value(std::make_unique<T>(std::forward<T>(val))) {}
+//DataElement<T>::DataElement(T&& val) : m_tempvalue(std::forward<T>(val)) {}
 
 template <typename T>
-DataElement<T>::DataElement(const DataElement& other) : m_value(std::make_unique<T>(*(other.m_value))) {}
-
-template <typename T>
-DataElement<T>::DataElement(T&& val) : m_value(std::make_unique<T>(std::forward<T>(val))) {}
-
-template <typename T>
-DataElement<T>::DataElement(DataElement<T>&& other) : m_value(std::move(other.m_value)) {}
+//DataElement<T>::DataElement(DataElement<T>&& other) : m_value(std::move(other.m_value)) {}
+DataElement<T>::DataElement(DataElement&& other) : m_tempvalue(std::move(other.m_tempvalue)) {}
 
 template <typename T>
 DataElement<T>::~DataElement() noexcept {}
@@ -386,6 +415,7 @@ bool DataElement<T>::isEqual(const IBaseElement& other) const
 	}
 	else
 	{
+		//const DataElement<T>* otherPoint = dynamic_cast<const DataElement<T>*>(other);
 		return getValue() == (dynamic_cast<const DataElement<T>&>(other)).getValue();
 	}
 	//try
@@ -406,7 +436,8 @@ bool DataElement<T>::isEqual(const IBaseElement& other) const
 }
 template <typename T>
 template <typename... Args>
-DataElement<T>::DataElement(Args&&... args) noexcept : m_value(std::make_unique<T>(std::forward<Args>(args)...)) {};
+DataElement<T>::DataElement(Args&&... args) : m_tempvalue(std::forward<Args>(args)...) {}
+//DataElement<T>::DataElement(Args&&... args) noexcept : m_value(std::make_unique<T>(std::forward<Args>(args)...)) {};
 
 template <typename T, typename... Args>
 FlexibleList::Node::Node(Args&&... args) : m_data(std::make_unique<DataElement<T>>(std::forward<Args>(args)...)), m_next(nullptr), m_prve(nullptr) {};
@@ -415,29 +446,30 @@ template <typename T, typename... Args>
 FlexibleList::Iterator FlexibleList::emplaceBack(Args&&... args)
 {
 	Node* node = new Node(std::forward<Args>(args)...);
-	node->m_prve = m_tail;
-	m_tail->m_next = node;
-	m_tail = node;
-	m_size++;
+	insertNodeEnd(node);
+	//node->m_prve = m_tail;
+	//m_tail->m_next = node;
+	//m_tail = node;
+	//m_size++;
 	return Iterator(node, this);
 }
 
-template <typename T>
-const T* FlexibleList::Node::getValuePoint() const
-{
-	if (nullptr == m_data)
-	{
-		return nullptr;
-	}
-	const DataElement<T>* p = dynamic_cast<const DataElement<T>*>(m_data.get());
-	if (nullptr == p)
-	{
-		return nullptr;
-	}
-	else
-	{
-		return p->getValuePoint();
-	}
+//template <typename T>
+//const T* FlexibleList::Node::getValuePoint() const
+//{
+//	if (nullptr == m_data)
+//	{
+//		return nullptr;
+//	}
+//	const DataElement<T>* p = dynamic_cast<const DataElement<T>*>(m_data.get());
+//	if (nullptr == p)
+//	{
+//		return nullptr;
+//	}
+//	else
+//	{
+//		return p->getValuePoint();
+//	}
 	//try
 	//{
 	//	if (m_data == nullptr)
@@ -452,53 +484,63 @@ const T* FlexibleList::Node::getValuePoint() const
 	//{
 	//	return nullptr;
 	//}
-}
+//}
 
-template <typename T>
-const T* FlexibleList::Iterator::getValuePoint() const
-{
-	if (true == isValid())
-	{
-		return (*m_node).getValuePoint<T>();
-	}
-	else
-	{
-		return nullptr;
-	}
-}
+//template <typename T>
+//const T* FlexibleList::Iterator::getValuePoint() const
+//{
+//	if (true == isValid())
+//	{
+//		return (*m_node).getValuePoint<T>();
+//	}
+//	else
+//	{
+//		return nullptr;
+//	}
+//}
 
 template <typename T>
 const T& DataElement<T>::getValue() const
 {
-	try
-	{
-		return *m_value;
-	}
-	catch (const std::exception&)
-	{
-		throw std::runtime_error("DataElement中value为空");
-	}
+	return m_tempvalue;
+	//try
+	//{
+		//return *m_value;
+	//}
+	//catch (const std::exception&)
+	//{
+		//throw std::runtime_error("DataElement中value为空");
+	//}
 }
 
 template <typename T>
 bool DataElement<T>::less(const IBaseElement& other) const
 {
-	try
+	if (getTypeIndex() != other.getTypeIndex())
 	{
-		const DataElement<T>& p = dynamic_cast<const DataElement<T>&>(other);
-		return *m_value < *(p.m_value);
+		return FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER;
 	}
-	catch (const std::exception&)
+	else
 	{
-		throw std::runtime_error("转换失败");
+		return m_tempvalue < (dynamic_cast<const DataElement<T>&>(other)).getValue();
 	}
+
+	//try
+	//{
+		//const DataElement<T>& p = dynamic_cast<const DataElement<T>&>(other);
+		//return *m_value < *(p.m_value);
+	//}
+	//catch (const std::exception&)
+	//{
+		//throw std::runtime_error("转换失败,比较两个DataElement时请确认内部存储的元素类型相同");
+	//}
 }
 
 template <typename T>
 void FlexibleList::pushBack(T&& val)
 {
-	Node* newNode = new Node(std::forward<T>(val));
-	insertNodeEnd(newNode);
+	;
+	insertNodeEnd(new Node(std::forward<T>(val)));
 }
 
 //template <typename Compare>
@@ -649,7 +691,7 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 	};
 
 	//auto getMiddle = [](Node* head) -> Node*
-	std::function<Node*(Node*)> getMiddle = [](Node* head) -> Node*
+	std::function<Node* (Node*)> getMiddle = [](Node* head) -> Node*
 	{
 		if (!head || !head->getNext()) return head;
 
@@ -679,7 +721,7 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 
 
 	//auto merge = [&](Node* left, Node* right) -> Node* {
-	std::function<Node*(Node*, Node*)> merge = [&](Node* left, Node* right) -> Node* {
+	std::function<Node* (Node*, Node*)> merge = [&](Node* left, Node* right) -> Node* {
 		Node dummy;
 		Node* tail = &dummy;
 
@@ -691,7 +733,7 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 			//但是问题又来了，如果comp的参数是数据T，就要推导出T的类型，也就是getValue要传入T的实际类型，所以要从comp的参数中提取出数据类型，并去除const 引用，得到原始类型ParamType,即类型萃取
 			//类型萃取属于模板元编程特别复杂级别的，实在研究不明白了我甚至连ai给出的代码都看不懂只能交给ai生成了
 			//if (comp(left->getValue<ParamType>(), right->getValue<ParamType>()))
-			if(compWithTypeIndex(left, right))
+			if (compWithTypeIndex(left, right))
 			{
 				tail->setNext(left);
 				left->setPrev(tail);
@@ -766,11 +808,11 @@ void FlexibleList::FlexibleListSort(Compare comp) {
 	}
 }
 
-template <typename T>
-const T& FlexibleList::Iterator::operator*() const
-{
-	return getValue();
-}
+//template <typename T>
+//T& FlexibleList::Iterator::operator*();
+//{
+//	return getValue();
+//}
 
 template <typename T>
 const T& FlexibleList::Node::getValue() const
@@ -781,15 +823,28 @@ const T& FlexibleList::Node::getValue() const
 	}
 	else
 	{
-		try
+		if (m_data->getTypeIndex() != typeid(T))
 		{
-			const DataElement<T>& d = dynamic_cast<const DataElement<T>&>(*m_data);
-			return d.getValue();
+			throw std::runtime_error("尝试获取数据但以错误的数据类型");
 		}
-		catch (const std::exception&)
+		else
 		{
-			throw std::runtime_error("尝试dynamic_cast获取值，但转换失败");
+			const DataElement<T>* d = dynamic_cast<const DataElement<T>*>(m_data.get());
+			if (d == nullptr)
+			{
+				throw std::runtime_error("转换失败");
+			}
+			return d->getValue();
 		}
+		//try
+		//{
+			//const DataElement<T>& d = dynamic_cast<const DataElement<T>&>(*m_data);
+			//return d.getValue();
+		//}
+		//catch (const std::exception&)
+		//{
+			//throw std::runtime_error("尝试dynamic_cast获取值，但转换失败");
+		//}
 	}
 }
 
@@ -811,4 +866,171 @@ const std::type_index& DataElement<T>::getTypeIndex() const
 {
 	static std::type_index t = typeid(T);
 	return t;
+}
+
+//template <typename T>
+//void DataElement<T>::updateValue(T&& value)
+//{
+//	m_tempvalue = std::forward<T>(value);
+//	return true;
+//}
+
+template <typename T>
+const T& FlexibleList::frontData()
+{
+	if (empty())
+	{
+		throw std::runtime_error("容器为空，不能返回首数据");
+	}
+	return m_head->getNext()->getValue();
+}
+
+template <typename T>
+const T& FlexibleList::backData()
+{
+	if (empty())
+	{
+		throw std::runtime_error("容器为空，不能返回尾数据");
+	}
+	return m_tail->getValue();
+}
+
+template <typename T>
+bool FlexibleList::Node::updateData(T&& value)
+{
+	//if (m_data->getTypeIndex() == typeid(std::decay_t<T>))
+	if(m_data->getTypeIndex() == typeid(T)) //这里好像不用担心T不是原始类型的问题。T&&是万能引用，value可能带const和引用，那么T会被推到为const和引用，
+	{									    //那么这种情况得到的typeindex还是和原始类型的typeindex一样吗。但发现，typeid好像会去掉const和引用类型，所以无需decay_t
+		DataElement<std::decay_t<T>>* dtElement = dynamic_cast<DataElement<std::decay_t<T>>*>(m_data.get());
+
+		if (dtElement != nullptr)
+		{
+			dtElement->updateValue(std::forward<T>(value));
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		return false;
+	}
+}
+
+template <typename T>
+template <typename U>
+DataElement<T>::DataElement(U&& value) :m_tempvalue(std::forward<U>(value)) {}
+
+template <typename T>
+template <typename U>
+void DataElement<T>::updateValue(U&& value)
+{
+	m_tempvalue = std::forward<U>(value);
+}
+
+template <typename T>
+bool FlexibleList::Iterator::updateData(T&& value)
+{
+	if (isValid() == true)
+	{
+		return m_node->updateData(std::forward<T>(value));	
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//template <typename T>
+//const T& FlexibleList::Iterator::operator->() const noexcept
+//{
+//	return *(*this);
+//}
+
+template <typename T>
+T& DataElement<T>::getValueReference()
+{
+	return m_tempvalue;
+}
+
+template <typename T>
+T& FlexibleList::Node::getValueReference()
+{
+	if (nullptr == m_data)
+	{
+		throw std::runtime_error("指针为空,无法返回数据");
+	}
+	if (typeid(T) != m_data->getTypeIndex())
+	{
+		throw std::runtime_error("数据类型对不上");
+	}
+	DataElement<T>* p = dynamic_cast<DataElement<T>*>(m_data.get());
+	if (nullptr == p)
+	{
+		throw std::runtime_error("数据类型对不上");
+	}
+	return p->getValueReference();
+}
+
+template <typename T>
+T& FlexibleList::Iterator::operator*()
+{
+	//return m_node->getValueReference();
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
+	return m_node->getValueReference();
+	/*if (m_node != nullptr)
+	{
+		return m_node->getValueReference();
+	}
+	else
+	{
+		throw std::runtime_error("迭代器指向空元素，不允许获取元素引用");
+	}*/
+}
+
+template <typename T>
+T* FlexibleList::Iterator::operator->()
+{
+	if (!isValid())
+	{
+		throw std::runtime_error("迭代器非法");
+	}
+	return &(m_node->getValueReference<T>());
+	//return &(m_node->getValueReference);
+	/*if (m_node != nullptr)
+	{
+		return &(m_node->getValueReference());
+	}
+	else
+	{
+		throw std::runtime_error("迭代器指向空元素，不允许返回元素引用");
+	}*/
+}
+
+template <typename T>
+FlexibleList::Iterator FlexibleList::insertFrontIt(Iterator& it, T&& val)
+{
+	if (false == it.isValid())
+	{
+		return it;
+	}
+	if (false == isMyIterator(it))
+	{
+		return it;
+	}
+	if (it.m_node == m_head)
+	{
+		return it;
+	}
+	Node* newNode = new Node(std::forward<T>(val));
+	newNode->setPrev(it.m_node->getPrev());
+	newNode->setNext(it.m_node);
+	newNode->getPrev()->setNext(newNode);
+	it.setPrev(newNode);
+	return Iterator(newNode, this);
 }
