@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35826.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtChartFlow", "QtChartFlow\QtChartFlow.vcxproj", "{B0614510-BF07-41DB-A8BC-994DABFA824F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B0614510-BF07-41DB-A8BC-994DABFA824F}.Debug|x64.ActiveCfg = Debug|x64
+		{B0614510-BF07-41DB-A8BC-994DABFA824F}.Debug|x64.Build.0 = Debug|x64
+		{B0614510-BF07-41DB-A8BC-994DABFA824F}.Release|x64.ActiveCfg = Release|x64
+		{B0614510-BF07-41DB-A8BC-994DABFA824F}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0B7880D-48AC-44D8-9ED5-7278411B8E17}
+	EndGlobalSection
+EndGlobal
