@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MyMainWindowClass</class>
- <widget class="QWidget" name="MyMainWindowClass">
+ <class>MyMainWindow</class>
+ <widget class="QWidget" name="MyMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>837</width>
-    <height>689</height>
+    <width>752</width>
+    <height>475</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,10">
    <item>
-    <widget class="QWidget" name="first" native="true">
+    <widget class="QWidget" name="MenuWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>
@@ -24,21 +24,21 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QPushButton" name="kaishi">
+       <widget class="QPushButton" name="StartButton">
         <property name="text">
          <string>开始</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pailie">
+       <widget class="QPushButton" name="ArrangeButton">
         <property name="text">
          <string>排列</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="yemian">
+       <widget class="QPushButton" name="PageButton">
         <property name="text">
          <string>页面</string>
         </property>
@@ -48,7 +48,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="second" native="true">
+    <widget class="QWidget" name="ToolWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
        <horstretch>0</horstretch>
@@ -70,7 +70,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QStackedWidget" name="stackedWidget">
+       <widget class="QStackedWidget" name="ToolStackedWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="kaishipage">
+        <widget class="QWidget" name="StartPage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -127,7 +127,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="pailiepage">
+        <widget class="QWidget" name="ArrangePage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -157,7 +157,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page">
+        <widget class="QWidget" name="PagePage">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -206,26 +206,26 @@
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="third" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0,5">
+    <widget class="QWidget" name="MainWidget" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0">
       <item>
        <widget class="QWidget" name="tuxingku" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout_7">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(120, 120, 120)</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QWidget" name="widget_2" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="text">
-            <string>图形库</string>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(248, 248, 248)</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="textEdit_2"/>
          </item>
         </layout>
        </widget>
@@ -233,51 +233,40 @@
       <item>
        <widget class="Line" name="line_3">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Shadow::Sunken</enum>
-        </property>
-        <property name="lineWidth">
-         <number>1</number>
-        </property>
         <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+         <enum>Qt::Orientation::Vertical</enum>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="huabu" native="true">
+       <widget class="QWidget" name="huabushijie" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(120, 120, 120)</string>
+        </property>
         <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="huabu" name="widget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="text">
-            <string>画布</string>
+           <property name="styleSheet">
+            <string notr="true">color: rgb(248, 248, 248);</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <widget class="QTextEdit" name="textEdit"/>
          </item>
         </layout>
        </widget>
@@ -288,6 +277,14 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>huabu</class>
+   <extends>QWidget</extends>
+   <header>huabu.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

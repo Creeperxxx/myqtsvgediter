@@ -92,14 +92,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="tuxing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <QtUic Include="huabu.ui" />
     <QtUic Include="MyMainWindow.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="huabu.h" />
+    <ClInclude Include="tuxing.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="juxing.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="qt.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="qtdpsk.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
