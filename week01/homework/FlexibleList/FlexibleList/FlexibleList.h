@@ -10,14 +10,15 @@
 
 constexpr bool FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE = true;  //这个是决定非比较类型的数据是放在容器前面还是后面
 constexpr bool FLEXIBLELISTSORTCOMPNONPARAMTYPEORDER = true; //这个是决定两个数据都是非比较类型时如何排序的，是按原顺序还是非原顺序
-constexpr bool FLEXIBLELISTSORTCOMPASC = false; //这个只是方便我看排列顺序的，降序还是逆序
+constexpr bool FLEXIBLELISTSORTCOMPASC = false; //这个只是方便看排列顺序的，降序还是逆序
 
 
 //#include <tuple>
 
-// todo : noexcept 是否有函数缺少该关键字
-
-//3.27 : FlexibleList重载==运算符开始写
+// todo : noexcept const 是否有函数缺少该关键字
+// todo : 迭代器可以分为常和非常来区分实现
+// todo ：容器相比std容器还有很多方法未实现
+// todo ： 容器效率相比std容器差非常多，虽说是因为多态和模板引起的，但也许还能进一步优化
 
 class IBaseElement
 {
@@ -224,8 +225,6 @@ private:
 	void swapNode(Node* a, Node* b);
 	void insertNodeEnd(Node* n);
 	void destory() noexcept;
-
-
 
 
 	//Node

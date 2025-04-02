@@ -1,4 +1,5 @@
 以下是比较int型数据，double型数据表示参数类型不正常
+分别对应FlexibleList.h中的constexpr常量 FLEXIBLELISTSORTCOMPPARAMTYPEBEFORE, LEXIBLELISTSORTCOMPNONPARAMTYPEORDER, FLEXIBLELISTSORTCOMPASC
 
 比较顺序：降序false 参数类型正确的排在后面false 两个非正常参数类型数据：非顺序false
 原来为：1 2 3 4 5.5 6.6 7.7 
