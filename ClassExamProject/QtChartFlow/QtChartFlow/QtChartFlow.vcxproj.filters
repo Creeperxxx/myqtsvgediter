@@ -35,12 +35,18 @@
     <ClCompile Include="huabu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tuxingjiedian.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="huabu.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tuxing.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>
@@ -51,9 +57,12 @@
     <QtUic Include="huabu.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+    <QtUic Include="juxingitem.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tuxing.h">
+    <ClInclude Include="tuxingjiedian.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

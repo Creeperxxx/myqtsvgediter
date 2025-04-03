@@ -96,17 +96,20 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
     <ClCompile Include="tuxing.cpp" />
+    <ClCompile Include="tuxingjiedian.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="huabu.ui" />
+    <QtUic Include="juxingitem.ui" />
     <QtUic Include="MyMainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />
-    <ClInclude Include="tuxing.h" />
+    <QtMoc Include="tuxing.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="juxing.png" />

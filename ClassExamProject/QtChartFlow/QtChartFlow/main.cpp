@@ -17,5 +17,7 @@ int main(int argc, char *argv[])
     //}
 
     //label.show();
+    MyMainWindow w;
+    w.show();
     return a.exec();
 }
