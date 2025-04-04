@@ -6,9 +6,12 @@
 class Ituxingjiedian
 {
 public:
-	Ituxingjiedian(QPoint topleft, QSize size);
+	Ituxingjiedian(QPoint mousepoint, QSize size);
 	virtual void draw(QPainter* painter) const = 0;
 protected:
+	void calcuTopleftFromMousePoint();
+
+	QPoint m_mousePoint;
 	QPoint m_topleft;
 	QSize m_size;
 };
@@ -16,6 +19,6 @@ protected:
 class juxingjiedian : public Ituxingjiedian
 {
 public:
-	juxingjiedian(QPoint topleft);
+	juxingjiedian(QPoint mousepoint, QSize size = QSize(100,50));
 	virtual void draw(QPainter* painter) const;
 };

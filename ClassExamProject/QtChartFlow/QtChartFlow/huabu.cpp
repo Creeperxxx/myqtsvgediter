@@ -12,7 +12,7 @@ huabu::~huabu()
 
 void huabu::dragEnterEvent(QDragEnterEvent* event)
 {
-	if (true == event->mimeData()->hasFormat("application/x-custom-shape"))
+	if (true == event->mimeData()->hasFormat(mymimetype))
 	{
 		event->acceptProposedAction();
 	}
@@ -21,32 +21,27 @@ void huabu::dragEnterEvent(QDragEnterEvent* event)
 void huabu::dropEvent(QDropEvent* event)
 {
 	//获取信息，这个事件要做什么
+
 	//重绘
 	
-	QByteArray array = event->mimeData()->data("application/x-custom-shape");
+	QByteArray array = event->mimeData()->data(mymimetype);
 	bool flag;
 	int typeint = array.toInt(&flag);
 	ShapeType type;
-	if (flag)
+	if (!flag)
 	{	
-		type = static_cast<ShapeType>(typeint);
-	}
-	else
-	{
-		qDebug() << "cuowu";
 		return;
 	}
-	if (type == ShapeType::juxing)
-	{
-		m_tuxingvec.push_back(new juxingjiedian(event->position().toPoint()));;
-	}
+	type = static_cast<ShapeType>(typeint);
+	Ituxingjiedian* tuxingjiedian = tuxingjiedianfactory::createtuxignjiedian(type, event);
+	m_tuxingvec.push_back(tuxingjiedian);
 	update(); //触发重绘，会调用paintEvent，可以选择重绘部分区域
 	event->acceptProposedAction();
 }
 
 void huabu::dragMoveEvent(QDragMoveEvent* event)
 {
-	if (true == event->mimeData()->hasFormat("application/x-custom-shape"))
+	if (true == event->mimeData()->hasFormat(mymimetype))
 	{
 		event->acceptProposedAction();
 	}
@@ -56,7 +51,7 @@ void huabu::paintEvent(QPaintEvent* event)
 {
 	//drawBaseBackground(m_painter);
 	QPainter* painter = initPainter();
-	painter->fillRect(this->rect(), Qt::white);
+	//painter->fillRect(this->rect(), Qt::white);
 	for (const auto& tuxing : m_tuxingvec)
 	{
 		tuxing->draw(painter);
@@ -90,4 +85,14 @@ QPainter* huabu::initPainter()
 	return painter;
 	//设置合成模式
 	//m_painter->setCompositionMode()
+}
+
+Ituxingjiedian* tuxingjiedianfactory::createtuxignjiedian(ShapeType type, QDropEvent* event)
+{
+	switch (type)
+	{
+	default:
+	case ShapeType::juxing:
+		return new juxingjiedian(event->position().toPoint());
+	}
 }

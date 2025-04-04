@@ -103,10 +103,10 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="huabu.ui" />
-    <QtUic Include="juxingitem.ui" />
     <QtUic Include="MyMainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />
     <QtMoc Include="tuxing.h" />
@@ -119,6 +119,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="qtdpsk.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="image.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

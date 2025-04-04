@@ -5,7 +5,7 @@ MyMainWindow::MyMainWindow(QWidget *parent)
 {
 	ui.setupUi(this);
 	init();
-	initPageSwitch();
+		
 }
 
 MyMainWindow::~MyMainWindow()
@@ -30,6 +30,8 @@ void MyMainWindow::initPageSwitch()
 void MyMainWindow::init()
 {
 	menuButtonGroup = new QButtonGroup(this);
+	initPageSwitch();
+	initalltuxing();
 }
 
 void MyMainWindow::pageSwitch(int id)
@@ -50,4 +52,10 @@ void MyMainWindow::pageSwitch(int id)
 		qDebug() << "未知按钮组中按钮id";
 		break;
 	}
+}
+
+void MyMainWindow::initalltuxing()
+{
+	IDiagramItem* juxing = new IDiagramItem(ShapeType::juxing, imagepathjuxing, ui.tuxingku);
+	ui.tuxingkugridLayout->addWidget(juxing);
 }

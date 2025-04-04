@@ -5,10 +5,19 @@
 #include <qevent.h>
 #include <qmimedata.h>
 #include <qdebug.h>
-#include "tuxing.h"
 #include <qvector.h>
 #include "tuxingjiedian.h"
 #include <qpalette.h>
+#include "config.h"
+#include "tuxing.h"
+
+
+class tuxingjiedianfactory
+{
+public:
+	static Ituxingjiedian* createtuxignjiedian(ShapeType type, QDropEvent* event);
+};
+
 
 class huabu : public QWidget
 {
@@ -24,7 +33,7 @@ public:
 
 private:
 	void init();
-	QPainter* initPainter();
+	QPainter* initPainter(); //todo ： 从某个类中读取画笔配置
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
 	//void drawBaseBackground(QPainter* painter);

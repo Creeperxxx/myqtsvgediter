@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/tuxingku">
+        <file>juxing.png</file>
+    </qresource>
+</RCC>

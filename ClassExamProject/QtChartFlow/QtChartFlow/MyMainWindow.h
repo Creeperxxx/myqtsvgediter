@@ -5,6 +5,8 @@
 #include <ui_MyMainWindow.h>
 #include <qbuttongroup.h>
 #include <qdebug.h>
+#include "tuxing.h"
+#include <qsizepolicy.h>
 
 
 class MyMainWindow : public QWidget
@@ -17,6 +19,7 @@ public:
 
 private:
 	void init();
+	void initalltuxing();
 	enum class MenuButtonId
 	{
 		MenuButtonIdPageStart = 0,
