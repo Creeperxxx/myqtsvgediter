@@ -1,9 +1,9 @@
 #include "huabu.h"
 
-huabu::huabu(QWidget *parent)
+huabu::huabu(QWidget* parent)
 	: QWidget(parent)
 {
-	ui.setupUi(this);
+	//ui.setupUi(this);
 	init();
 }
 
@@ -21,22 +21,60 @@ void huabu::dragEnterEvent(QDragEnterEvent* event)
 void huabu::dropEvent(QDropEvent* event)
 {
 	//获取信息，这个事件要做什么
-
 	//重绘
-	
 	QByteArray array = event->mimeData()->data(mymimetype);
+	ShapeType type = getshapetypefrombytearray(array);
+	std::unique_ptr<tuxingjiedianparams> params = maketuxingparams(type, event);
+	std::unique_ptr<Ituxingjiedian> tuxingjiedian = tuxingjiedianfactory::createtuxingjiedian(type, std::move(params));
+	//tuxingjiedian->setmousepoint(event->position().toPoint());
+	//tuxingjiedian->setspacesize(QSize(huabutuxingwith, huabutuxingheight));
+	m_tuxingvec.push_back(std::move(tuxingjiedian));
+	update(); //触发重绘，会调用paintEvent，可以选择重绘部分区域
+	event->acceptProposedAction();
+}
+
+std::unique_ptr<tuxingjiedianparams> huabu::maketuxingparams(ShapeType type, QDropEvent* event)
+{
+	switch (type)
+	{
+	default:
+	case ShapeType::juxing:
+		//return std::make_unique<tuxingjiedianparamsjuxing>(event->position().toPoint(), m_tuxingspacesize, m_pen, m_brush, m_juxingradio);
+	{
+		auto p = std::make_unique<tuxingjiedianparamsjuxing>();
+		p->m_mousepoint = event->position().toPoint();
+		p->m_size = m_tuxingspacesize;
+		p->m_radio = m_juxingradio; //todo : juxingparams初始化
+		return std::move(p);
+
+	}
+	break;
+	case ShapeType::yuanxing:
+		//return std::make_unique<tuxingjiedianparamsyuanxing>(event->position().toPoint(), m_tuxingspacesize, m_pen, m_brush);
+	{
+		auto p = std::make_unique<tuxingjiedianparamsyuanxing>();
+		p->m_mousepoint = event->position().toPoint();
+		p->m_size = m_tuxingspacesize;
+		return std::move(p);//todo:yuanxingparams初始化
+	}
+	break;
+	}
+}
+
+ShapeType huabu::getshapetypefrombytearray(QByteArray array)
+{
 	bool flag;
 	int typeint = array.toInt(&flag);
 	ShapeType type;
 	if (!flag)
-	{	
-		return;
+	{
+		type = ShapeType::juxing;
 	}
-	type = static_cast<ShapeType>(typeint);
-	Ituxingjiedian* tuxingjiedian = tuxingjiedianfactory::createtuxignjiedian(type, event);
-	m_tuxingvec.push_back(tuxingjiedian);
-	update(); //触发重绘，会调用paintEvent，可以选择重绘部分区域
-	event->acceptProposedAction();
+	else
+	{
+		type = static_cast<ShapeType>(typeint);
+	}
+	return type;
 }
 
 void huabu::dragMoveEvent(QDragMoveEvent* event)
@@ -51,12 +89,14 @@ void huabu::paintEvent(QPaintEvent* event)
 {
 	//drawBaseBackground(m_painter);
 	QPainter* painter = initPainter();
+	for (auto it = m_tuxingvec.begin(); it != m_tuxingvec.end(); ++it)
+		(*it)->draw(painter);
 	//painter->fillRect(this->rect(), Qt::white);
-	for (const auto& tuxing : m_tuxingvec)
-	{
-		tuxing->draw(painter);
-	}
-	QWidget::paintEvent(event);
+
+	//for (auto& tuxing : m_tuxingvec) //不允许复制好像，但加const就会对draw限制
+	//{
+		//tuxing->draw(painter);
+	//}
 }
 
 //void huabu::drawBaseBackground(QPainter* painter)
@@ -71,15 +111,18 @@ void huabu::init()
 {
 	setAcceptDrops(true);
 	drawBaseBackground();
+	initpenandbrush(huabupencolor, huabupenwidth, huabubrush);
+	m_tuxingspacesize = QSize(huabutuxingwith, huabutuxingheight);
+	m_juxingradio = huabujuxingradio;
 }
 
 QPainter* huabu::initPainter()
 {
 	QPainter* painter = new QPainter(this);
 	// 设置画笔
-	painter->setPen(QPen(Qt::black, 2));
+	painter->setPen(m_pen);
 	//设置画刷
-	painter->setBrush(QBrush(Qt::white, Qt::SolidPattern));
+	painter->setBrush(m_brush);
 	//设置抗锯齿
 	painter->setRenderHint(QPainter::Antialiasing, true);
 	return painter;
@@ -87,12 +130,29 @@ QPainter* huabu::initPainter()
 	//m_painter->setCompositionMode()
 }
 
-Ituxingjiedian* tuxingjiedianfactory::createtuxignjiedian(ShapeType type, QDropEvent* event)
+//Ituxingjiedian* tuxingjiedianfactory::createtuxignjiedian(ShapeType type, QDropEvent* event)
+std::unique_ptr<Ituxingjiedian> tuxingjiedianfactory::createtuxingjiedian(ShapeType type, std::unique_ptr<tuxingjiedianparams> params)
 {
 	switch (type)
 	{
 	default:
 	case ShapeType::juxing:
-		return new juxingjiedian(event->position().toPoint());
+		return std::make_unique<juxingjiedian>(params.get());
+		break;
+	case ShapeType::yuanxing:
+		return std::make_unique<yuanxingjiedian>(params.get());
+		break;
+		//return new yuanxingjiedian(params.get());
 	}
 }
+
+void huabu::initpenandbrush(QBrush pencolor, int penwidth, QBrush brush)
+{
+	m_pen = QPen(pencolor, penwidth);
+	m_brush = brush;
+}
+
+
+
+
+

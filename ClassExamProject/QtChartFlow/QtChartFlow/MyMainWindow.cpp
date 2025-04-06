@@ -58,4 +58,6 @@ void MyMainWindow::initalltuxing()
 {
 	IDiagramItem* juxing = new IDiagramItem(ShapeType::juxing, imagepathjuxing, ui.tuxingku);
 	ui.tuxingkugridLayout->addWidget(juxing);
+	IDiagramItem* yuanxing = new IDiagramItem(ShapeType::yuanxing, imagepathyuanxing, ui.tuxingku);
+	ui.tuxingkugridLayout->addWidget(yuanxing);
 }

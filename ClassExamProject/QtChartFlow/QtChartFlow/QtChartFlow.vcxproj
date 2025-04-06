@@ -102,7 +102,6 @@
     <QtMoc Include="MyMainWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="huabu.ui" />
     <QtUic Include="MyMainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="qt.md" />
+    <Text Include="todo.md" />
   </ItemGroup>
   <ItemGroup>
     <None Include="qtdpsk.md" />

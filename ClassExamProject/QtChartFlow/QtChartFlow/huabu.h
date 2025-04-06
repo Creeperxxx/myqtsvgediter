@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QWidget>
-#include "ui_huabu.h"
+//#include "ui_huabu.h"
 #include <qevent.h>
 #include <qmimedata.h>
 #include <qdebug.h>
@@ -10,12 +10,13 @@
 #include <qpalette.h>
 #include "config.h"
 #include "tuxing.h"
-
+#include <vector>
 
 class tuxingjiedianfactory
 {
 public:
-	static Ituxingjiedian* createtuxignjiedian(ShapeType type, QDropEvent* event);
+	//static Ituxingjiedian* createtuxignjiedian(ShapeType type, tuxingjiedianparams* params);
+	static std::unique_ptr<Ituxingjiedian> createtuxingjiedian(ShapeType type, std::unique_ptr<tuxingjiedianparams> params);
 };
 
 
@@ -34,11 +35,21 @@ public:
 private:
 	void init();
 	QPainter* initPainter(); //todo ： 从某个类中读取画笔配置
+	void initpenandbrush(QBrush color, int penwidth, QBrush brush);
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
 	//void drawBaseBackground(QPainter* painter);
 	void drawBaseBackground();
-	Ui::huabuClass ui;
-	QVector<Ituxingjiedian*> m_tuxingvec;
+	ShapeType getshapetypefrombytearray(QByteArray array);
+	std::unique_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QDropEvent* event);
+	//std::shared_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QDropEvent* event);
+
+	//Ui::huabuClass ui;
+	//QVector<Ituxingjiedian*> m_tuxingvec;
+	std::vector<std::unique_ptr<Ituxingjiedian>> m_tuxingvec; //不能用qvector，提示说qvector的元素必须支持复制操作，？？？
 	//QPainter* m_painter; //有点逆天，painter只能在paintevent函数中使用？？？
+	QPen m_pen;
+	QBrush m_brush;
+	QSize m_tuxingspacesize;//每个图形分配的区域
+	float m_juxingradio;
 };
