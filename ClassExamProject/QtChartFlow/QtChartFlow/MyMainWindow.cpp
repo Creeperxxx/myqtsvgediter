@@ -1,15 +1,15 @@
 #include "MyMainWindow.h"
 
-MyMainWindow::MyMainWindow(QWidget *parent)
+MyMainWindow::MyMainWindow(QWidget* parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
 	init();
-		
+
 }
 
 MyMainWindow::~MyMainWindow()
-{	
+{
 }
 
 void MyMainWindow::initPageSwitch()
@@ -56,8 +56,45 @@ void MyMainWindow::pageSwitch(int id)
 
 void MyMainWindow::initalltuxing()
 {
-	IDiagramItem* juxing = new IDiagramItem(ShapeType::juxing, imagepathjuxing, ui.tuxingku);
-	ui.tuxingkugridLayout->addWidget(juxing);
-	IDiagramItem* yuanxing = new IDiagramItem(ShapeType::yuanxing, imagepathyuanxing, ui.tuxingku);
-	ui.tuxingkugridLayout->addWidget(yuanxing);
+	diagramitemparams juxing(isdiagramitemsizefix
+		, QSize(diagramitemwidth, diagramitemheight)
+		, QSize(diagramitemmaxwidth, diagramitemmaxheight)
+		, QSize(diatramitemminwidth, diatramitemminheight)
+		, QPen(diagramitempencolor, diagramitempenwidth)
+		, QBrush(diagramitembrush)
+		, mymimetype
+		, diagramitembackgroundcolor
+		, imagepathjuxing
+		, diagramitemjuxingradio
+		, QSize(huabutuxingwith, huabutuxingheight)
+		, QPen(huabutuxingpencolor, huabutuxingpenwidth)
+		, QBrush(huabutuxingbrush)
+		//, huabubackgroundcolor
+		, diagramitemradio
+		, ShapeType::juxing);
+	diagramitemparams yuanxing(isdiagramitemsizefix
+		, QSize(diagramitemwidth, diagramitemheight)
+		, QSize(diagramitemmaxwidth, diagramitemmaxheight)
+		, QSize(diatramitemminwidth, diatramitemminheight)
+		, QPen(diagramitempencolor, diagramitempenwidth)
+		, QBrush(diagramitembrush)
+		, mymimetype
+		, diagramitembackgroundcolor
+		, imagepathyuanxing
+		, std::nullopt
+		, QSize(huabutuxingwith, huabutuxingheight)
+		, QPen(huabutuxingpencolor, huabutuxingpenwidth)
+		, QBrush(huabutuxingbrush)
+		//, huabubackgroundcolor
+		, diagramitemradio
+		, ShapeType::yuanxing);
+
+	//IDiagramItem* juxing = new IDiagramItem(ShapeType::juxing, imagepathjuxing, ui.tuxingku);
+	IDiagramItem* juxingitem = new IDiagramItem(juxing);
+	ui.tuxingkugridLayout->addWidget(juxingitem);
+	IDiagramItem* yuanxingitem = new IDiagramItem(yuanxing);
+	ui.tuxingkugridLayout->addWidget(yuanxingitem);
+	//IDiagramItem* yuanxing = new IDiagramItem(ShapeType::yuanxing, imagepathyuanxing, ui.tuxingku);
+	//IDiagramItem* yuanxingitem = new IDiagramItem(yuanxing);
+	//ui.tuxingkugridLayout->addWidget(yuanxingitem);
 }

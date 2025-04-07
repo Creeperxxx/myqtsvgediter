@@ -4,27 +4,27 @@
 #include <qpainter.h>
 #include "config.h"
 #include <qdebug.h>
+#include <stdexcept>
+
+enum class ShapeType
+{
+	juxing,
+	yuanxing
+};
 
 class tuxingjiedianparams
 {
 public:
-	//tuxingjiedianparams(QPoint mousepoint, QSize size, QPen pen, QBrush);
-	//tuxingjiedianparams(QPoint mousepoint, QSize size);
 	virtual ~tuxingjiedianparams() {}
-	QPoint m_mousepoint;
-	QSize m_size;
-	//const QPen m_pen;
-	//const QBrush m_brush;
+	QPoint m_center;
+	QSize m_spacesize;
+	ShapeType m_type;
+	QPainter* m_painter;
 };
 
 class tuxingjiedianparamsjuxing : public tuxingjiedianparams
 {
 public:
-	//tuxingjiedianparamsjuxing(QPoint mousepoint
-		//, QSize size
-		//, QPen pen
-		//, QBrush brush
-		//, float radio);
 	~tuxingjiedianparamsjuxing() {}
 	float m_radio;
 };
@@ -32,14 +32,27 @@ public:
 class tuxingjiedianparamsyuanxing :public tuxingjiedianparams
 {
 public:
-	//tuxingjiedianparamsyuanxing(QPoint mousepoint
-	//	, QSize size
-	//	, QPen pen
-	//	, QBrush brush);
 	~tuxingjiedianparamsyuanxing() {}
-
 };
 
+class tuxingdrawreturn
+{
+public:
+	QPen m_painterpen;
+	QBrush m_painterbrush;
+};
+
+class tuxingdrawreturnjuxing : public tuxingdrawreturn
+{
+public:
+	QRectF m_rect;
+};
+
+class tuxingdrawreturnyuanxing :public tuxingdrawreturn
+{
+public:
+	int m_r;
+};
 
 
 class Ituxingjiedian
@@ -47,16 +60,12 @@ class Ituxingjiedian
 public:
 	//Ituxingjiedian(QPoint mousepoint, QSize size);
 	//Ituxingjiedian(std::unique_ptr<tuxingjiedianparams> params);
-	Ituxingjiedian(tuxingjiedianparams* params);
-	virtual void draw(QPainter* painter) = 0;
+	virtual std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params) = 0;
+	//virtual void draw(QPainter* painter) = 0;
 	//void setmousepoint(QPoint mousepoint);
 	//void setspacesize(QSize size);
-protected:
 	//QPoint calcuTopleftFromMousePoint(); 
-
-	QPoint m_mousePoint;
 	//QPoint m_topleft;
-	QSize m_size;
 	//QPen m_pen;
 	//QBrush m_brush;
 };
@@ -66,20 +75,37 @@ class juxingjiedian : public Ituxingjiedian
 public:
 	//juxingjiedian(QPoint mousepoint, QSize size = QSize(100,50));
 	//juxingjiedian(std::unique_ptr<tuxingjiedianparams> params);
-	juxingjiedian(tuxingjiedianparams* params);
-	void draw(QPainter* painter) override;
+	//void draw(QPainter* painter) override;
 	//void setRadio(float radio);
-	QSize calcusuitablerectsize(QSize spacesize, int penwidth, float juxingradio);
+	std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params) override;
 private:
-	QRect calcurect(QSize spacesize, int penwidth, float radio);
-	float m_radio;
+	//QSize calcusuitablerectsize(QSize spacesize, int penwidth, float juxingradio);
+	//QRect calcurect(QSize spacesize, int penwidth, float radio);
+	QRectF calcurect(tuxingjiedianparamsjuxing* params);
+	QSizeF calcusuitablerectsize(tuxingjiedianparamsjuxing* params);
 };
 
 class yuanxingjiedian : public Ituxingjiedian
 {
 public:
-	yuanxingjiedian(tuxingjiedianparams* params);
-	void draw(QPainter* painter) override;
+	//yuanxingjiedian(tuxingjiedianparams* params);
+	//void draw(QPainter* painter) override;
+	std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params)override;
 private:
-	int calcuyuanxingbanjing(QSize spacesize, int penwidth);
+	int calcuyuanxingbanjing(tuxingjiedianparamsyuanxing* params);
+	//int calcuyuanxingbanjing(QSize spacesize, int penwidth);
+};
+
+class factorytuxingjiedian
+{
+public:
+	static std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params);
+private:
+	static std::shared_ptr<Ituxingjiedian> create(ShapeType type);
+};
+
+class factorytuxingparams
+{
+public:
+	static std::shared_ptr<tuxingjiedianparams> create(ShapeType type);
 };

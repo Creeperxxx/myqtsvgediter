@@ -38,6 +38,9 @@
     <ClCompile Include="tuxingjiedian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="drawtuxing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h">
@@ -60,6 +63,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawtuxing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

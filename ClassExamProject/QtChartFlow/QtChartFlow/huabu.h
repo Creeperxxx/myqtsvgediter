@@ -12,12 +12,23 @@
 #include "tuxing.h"
 #include <vector>
 
-class tuxingjiedianfactory
+//class tuxingjiedianfactory
+//{
+//public:
+//	//static Ituxingjiedian* createtuxignjiedian(ShapeType type, tuxingjiedianparams* params);
+//	static std::unique_ptr<Ituxingjiedian> createtuxingjiedian(ShapeType type, std::unique_ptr<tuxingjiedianparams> params);
+//};
+
+
+
+class huabutuxing
 {
+
 public:
-	//static Ituxingjiedian* createtuxignjiedian(ShapeType type, tuxingjiedianparams* params);
-	static std::unique_ptr<Ituxingjiedian> createtuxingjiedian(ShapeType type, std::unique_ptr<tuxingjiedianparams> params);
+	std::shared_ptr<tuxingjiedianparams> m_params;
+	std::shared_ptr<tuxingdrawreturn> m_ret;
 };
+
 
 
 class huabu : public QWidget
@@ -31,6 +42,7 @@ public:
 	void dragMoveEvent(QDragMoveEvent* event) override; //拖动操作在控件中移动时触发，通常用于限制
 	void dropEvent(QDropEvent* event) override; //完成拖动时触发，完成数据交换
 	void paintEvent(QPaintEvent* event) override;
+	std::unique_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QPoint mousepoint);
 
 private:
 	void init();
@@ -39,15 +51,16 @@ private:
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
 	//void drawBaseBackground(QPainter* painter);
-	void drawBaseBackground();
+	//void drawBaseBackground();
 	ShapeType getshapetypefrombytearray(QByteArray array);
-	std::unique_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QDropEvent* event);
+	std::shared_ptr<tuxingjiedianparams> createtuxingparams(ShapeType type);
 	//std::shared_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QDropEvent* event);
 
 	//Ui::huabuClass ui;
 	//QVector<Ituxingjiedian*> m_tuxingvec;
-	std::vector<std::unique_ptr<Ituxingjiedian>> m_tuxingvec; //不能用qvector，提示说qvector的元素必须支持复制操作，？？？
+	//std::vector<std::unique_ptr<Ituxingjiedian>> m_tuxingvec; //不能用qvector，提示说qvector的元素必须支持复制操作，？？？
 	//QPainter* m_painter; //有点逆天，painter只能在paintevent函数中使用？？？
+	std::vector<std::shared_ptr<huabutuxing>> m_tuxingvec;
 	QPen m_pen;
 	QBrush m_brush;
 	QSize m_tuxingspacesize;//每个图形分配的区域

@@ -1,16 +1,14 @@
 #pragma once
-constexpr const char* imagepathjuxing = ":/tuxingku/juxing.png";
 constexpr const char* imagepathyuanxing = ":/tuxingku/yuanxing.png";
 constexpr const char* mymimetype = "application/x-custom-shape";
 constexpr float diagramitemradio = 1;	
-constexpr int diagramitemwidth = 30;
+constexpr int diagramitemwidth = 50;
 constexpr int diagramitemheight = diagramitemwidth / diagramitemradio;
-constexpr bool isdiagramitemsizefix = true;
+constexpr bool isdiagramitemsizefix = false;
 constexpr int diagramitemmaxwidth = 40;
 constexpr int diagramitemmaxheight = diagramitemmaxwidth;
 constexpr int diatramitemminwidth = 20;
 constexpr int diatramitemminheight = diatramitemminwidth;
-constexpr float diagramitemjuxingradio = 2;
 constexpr Qt::GlobalColor diagramitempencolor = Qt::black;
 constexpr int diagramitempenwidth = 2;
 constexpr Qt::GlobalColor diagramitembrush = Qt::transparent;
@@ -20,7 +18,15 @@ constexpr Qt::GlobalColor huabutuxingbrush = Qt::transparent;
 constexpr Qt::GlobalColor huabupencolor = Qt::black;
 constexpr int huabupenwidth = 2;
 constexpr Qt::GlobalColor huabubrush = Qt::transparent;
-constexpr int huabutuxingwith = 50;
+constexpr int huabutuxingwith = 100;
 constexpr float huabutuxingradio = 1;
 constexpr int huabutuxingheight = huabutuxingwith / huabutuxingradio;
 constexpr float huabujuxingradio = 2;
+
+//tuxing.h
+constexpr const char* imagepathjuxing = ":/tuxingku/juxing.png";
+constexpr float diagramitemjuxingradio = 2;
+constexpr Qt::GlobalColor diagramitembackgroundcolor = Qt::white;
+
+//huabu.h
+constexpr Qt::GlobalColor huabubackgroundcolor = Qt::white;
