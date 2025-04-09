@@ -38,7 +38,7 @@
     <ClCompile Include="tuxingjiedian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="drawtuxing.cpp">
+    <ClCompile Include="configmanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,7 +65,7 @@
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drawtuxing.h">
+    <ClInclude Include="configmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -86,6 +86,7 @@
     <None Include="qtdpsk.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="config.json" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="image.qrc">

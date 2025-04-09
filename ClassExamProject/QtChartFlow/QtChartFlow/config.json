@@ -1,0 +1,63 @@
+{
+  "imagepath": 
+  {
+    "juxing": ":/tuxingku/juxing.png",
+    "yuanxing": "/tuxingku/yuanxing.png"
+  },
+  "tuxingku": 
+  {
+    "diagramwidget": 
+    {
+      "backgroundcolor": "#FFFFFF",
+      "issizefix": true,
+      "radio": 1,
+      "fixwidth": 30,
+      "maxwidth": 40,
+      "minwidth": 20,
+      "pen": 
+      {
+        "width": 2,
+        "color": "#000000"
+      },
+      "brush": "#00000000",
+      "isdrawbypainter": true
+    },
+    "tuxing": 
+    {
+      "juxing": {
+        "drawbypainter": true,
+        "drawbyloadpic": true,
+        "radio": 2
+      }
+    }
+  },
+  "huabu": 
+  {
+    "backgroundcolor": "#FFFFFF",
+    "width": 900,
+    "radio": 1,
+    "tuxingspace": 
+    {
+      "spacewidth": 100,
+      "spaceradio": 1,
+      "pen": 
+      {
+        "width": 2,
+        "color": "#000000"
+      },
+      "brush": "#00000000"
+    },
+    "tuxing": 
+    {
+      "juxing": 
+      {
+        "radio": 2
+      }
+    }
+  },
+  "mimetype": "application/x-custom-shape",
+  "tuxingtypename": {
+    "juxing": "juxing",
+    "yuanxign": "yuanxing"
+  }
+}

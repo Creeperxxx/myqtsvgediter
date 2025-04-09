@@ -1,7 +1,7 @@
 #include "tuxing.h"
 
 
-void IDiagramItem::mousePressEvent(QMouseEvent* event)
+void DiagramItem::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
@@ -9,7 +9,7 @@ void IDiagramItem::mousePressEvent(QMouseEvent* event)
 	}
 }
 
-void IDiagramItem::mouseMoveEvent(QMouseEvent* event)
+void DiagramItem::mouseMoveEvent(QMouseEvent* event)
 {
 	if (!(event->buttons() & Qt::LeftButton))
 	{
@@ -19,8 +19,8 @@ void IDiagramItem::mouseMoveEvent(QMouseEvent* event)
 		return;
 
 	QDrag* drag = new QDrag(this);
-	drag->setMimeData(createMimedata());
-	drag->setPixmap(createPixmap());
+	drag->setMimeData(createDragMimeData());
+	drag->setPixmap(drawDiagramPixmap());
 	//drag->setHotSpot(QPoint(25, 25));
 	drag->setHotSpot(drag->pixmap().rect().center());
 	drag->exec(Qt::CopyAction);
@@ -31,63 +31,181 @@ void IDiagramItem::mouseMoveEvent(QMouseEvent* event)
 //	m_mimetype = mimetype;
 //}
 
-QMimeData* IDiagramItem::createMimedata()
+QMimeData* DiagramItem::createDragMimeData()
 {
 	if (m_params.m_mimetype.isEmpty())
 	{
 		throw std::runtime_error("error");//todo:except
 	}
-	QMimeData* mimeData = new QMimeData();
-	mimeData->setData(m_params.m_mimetype, QByteArray::number(static_cast<int>(m_params.m_type)));
-	return mimeData;
+	QMimeData* diagramDragMimedata = new QMimeData();
+	diagramDragMimedata->setData(m_params.m_mimetype, QByteArray::number(static_cast<int>(m_params.m_type)));
+	return diagramDragMimedata;
 }
 
-std::shared_ptr<tuxingjiedianparams> IDiagramItem::createpixmapparams()
+//std::shared_ptr<tuxingjiedianparams> DiagramItem::createpixmapparams()
+//{
+//	switch (m_params.m_type)
+//	{
+//	default:
+//	case ShapeType::juxing:
+//	{
+//		std::shared_ptr<tuxingjiedianparamsjuxing> p = std::make_shared<tuxingjiedianparamsjuxing>();
+//		if (!m_params.m_juxingradio.has_value())
+//			throw std::runtime_error("error");//todo:except
+//
+//		p->m_radio = m_params.m_juxingradio.value();
+//		return p;
+//	}
+//	break;
+//	case ShapeType::yuanxing:
+//	{
+//		std::shared_ptr<tuxingjiedianparamsyuanxing> p = std::make_shared<tuxingjiedianparamsyuanxing>();
+//		return p;
+//	}
+//	break;
+//	}
+//}
+
+//QPainter* DiagramItem::getDiagramItemPainter()
+//{
+//	QPainter* painter = new QPainter(this);
+//	painter->setPen(m_params.m_pen);
+//	painter->setBrush(m_params.m_brush);
+//	painter->setRenderHint(QPainter::Antialiasing, true);
+//	return painter;
+//}
+
+float DiagramItem::getHuabuRectRadio()
 {
-	switch (m_params.m_type)
+	if (!m_params.m_juxingradio.has_value())
+		throw std::runtime_error("error");
+	return m_params.m_juxingradio.value();
+}
+
+std::shared_ptr<IDidgramDrawParams> buildDiagramPixmapParamsRect::specialbuild(DiagramItem* item)
+{
+	std::shared_ptr<DiagramDrawParamsRect> params = std::make_shared<DiagramDrawParamsRect>();
+	params->m_radio = item->getHuabuRectRadio();
+	return params;
+}
+
+
+std::shared_ptr<IDidgramDrawParams> buildDiagramPixmapParamsCircle::specialbuild(DiagramItem* item)
+{
+	std::shared_ptr < DiagramDrawParamsCircle > params = std::make_shared < DiagramDrawParamsCircle>();
+	return params;
+}
+
+std::unique_ptr<IbuildDiagramPixmapParams> FactoryBuildDiagramPixmapParams::create(ShapeType type)
+{
+	switch (type)
 	{
 	default:
 	case ShapeType::juxing:
-	{
-		std::shared_ptr<tuxingjiedianparamsjuxing> p = std::make_shared<tuxingjiedianparamsjuxing>();
-		if (!m_params.m_juxingradio.has_value())
-			throw std::runtime_error("error");//todo:except
-
-		p->m_radio = m_params.m_juxingradio.value();
-		return p;
-	}
-	break;
+		return std::make_unique<buildDiagramPixmapParamsRect>();
+		break;
 	case ShapeType::yuanxing:
-	{
-		std::shared_ptr<tuxingjiedianparamsyuanxing> p = std::make_shared<tuxingjiedianparamsyuanxing>();
-		return p;
-	}
-	break;
+		return std::make_unique<buildDiagramPixmapParamsCircle>();
+		break;
 	}
 }
 
-
-//QPixmap IDiagramItem::createPixmap(QSize targetwidgetsize, QPen targetpen, QBrush targetbrush, QColor targetbackgroundcolor)
-QPixmap IDiagramItem::createPixmap()
+QSize DiagramItem::getPixmapSpaceSize()
 {
-	QPixmap pixmap(m_params.m_huabutuxingspacesize);
-	//pixmap.fill(m_params.m_huabubackgroundcolor);
-	pixmap.fill(Qt::transparent);
-	QPainter painter(&pixmap);
+	return m_params.m_huabutuxingspacesize;
+}
+
+std::shared_ptr<IDidgramDrawParams> IbuildDiagramPixmapParams::build(DiagramItem* item)
+{
+	std::shared_ptr<IDidgramDrawParams> params = specialbuild(item);
+	params->m_center = item->getPixmapCenter();
+	//params->m_painter = item->getDiagramItemPixmapPainter();
+	params->m_spacesize = item->getPixmapSpaceSize();
+	params->m_type = item->gettype();
+	params->m_pen = item->gethuabupen();
+	params->m_brush = item->gethuabubrush();
+	return params;
+}
+
+QPen DiagramItem::gethuabupen()
+{
+	return m_params.m_huabutuxingpen;
+}
+
+QBrush DiagramItem::gethuabubrush()
+{
+	return m_params.m_huabutuxingbrush;
+}
+
+QPen DiagramItem::getdiagrampen()
+{
+	return m_params.m_pen;
+}
+
+QBrush DiagramItem::getdiagrambrush()
+{
+	return m_params.m_brush;
+}
+
+
+QPoint DiagramItem::getPixmapCenter()
+{
+	//return QPoint(m_diagramDragPixmap->width() / 2, m_diagramDragPixmap->height() / 2);
+	return QPoint(m_params.m_huabutuxingspacesize.width() / 2, m_params.m_huabutuxingspacesize.height() / 2);
+}
+
+void DiagramItem::initDiagramPainter(QPainter& painter)
+{
+	painter.setPen(m_params.m_pen);
+	painter.setBrush(m_params.m_brush);
+	painter.setRenderHint(QPainter::Antialiasing, true);
+}
+
+void DiagramItem::initDiagramPixmapPainter(QPainter& painter)
+{
 	painter.setPen(m_params.m_huabutuxingpen);
 	painter.setBrush(m_params.m_huabutuxingbrush);
 	painter.setRenderHint(QPainter::Antialiasing, true);
-	//std::shared_ptr<tuxingjiedianparams> params = factorytuxingparams::create(m_params.m_type);
-	std::shared_ptr<tuxingjiedianparams> params = createpixmapparams();
-	params->m_center = QPoint(pixmap.rect().x() + pixmap.width() / 2, pixmap.rect().y() + pixmap.height() / 2);
-	params->m_spacesize = (m_params.m_huabutuxingspacesize);
-	params->m_type = m_params.m_type;
-	params->m_painter = &painter;
-
-	factorytuxingjiedian::draw(params);
-	//painter.fillRect(pixmap.rect(), Qt::white);
-	return pixmap;
 }
+
+//QPixmap IDiagramItem::createPixmap(QSize targetwidgetsize, QPen targetpen, QBrush targetbrush, QColor targetbackgroundcolor)
+//void DiagramItem::drawDiagramPixmap()
+QPixmap DiagramItem::drawDiagramPixmap()
+{
+	//initDiagramPixmap();
+	QPixmap pixmap(m_params.m_huabutuxingspacesize);
+	pixmap.fill(Qt::transparent);
+
+	QPainter painter(&pixmap);
+	initDiagramPixmapPainter(painter);
+
+	DiagramDrawInterface::draw(painter, FactoryBuildDiagramPixmapParams::create(m_params.m_type)->build(this));
+
+	return pixmap;
+
+	//QPixmap pixmap(m_params.m_huabutuxingspacesize);
+	////pixmap.fill(m_params.m_huabubackgroundcolor);
+	//pixmap.fill(Qt::transparent);
+	//QPainter painter(&pixmap);
+	//painter.setPen(m_params.m_huabutuxingpen);
+	//painter.setBrush(m_params.m_huabutuxingbrush);
+	//painter.setRenderHint(QPainter::Antialiasing, true);
+	////std::shared_ptr<tuxingjiedianparams> params = factorytuxingparams::create(m_params.m_type);
+	//std::shared_ptr<tuxingjiedianparams> params = createpixmapparams();
+	//params->m_center = QPoint(pixmap.rect().x() + pixmap.width() / 2, pixmap.rect().y() + pixmap.height() / 2);
+	//params->m_spacesize = (m_params.m_huabutuxingspacesize);
+	//params->m_type = m_params.m_type;
+	//params->m_painter = &painter;
+
+	//DiagramDrawInterface::draw(params);
+	////painter.fillRect(pixmap.rect(), Qt::white);
+	//return pixmap;
+}
+//
+//void DiagramItem::initDiagramPixmap()
+//{
+//	m_diagramDragPixmap = new QPixmap(m_params.m_huabutuxingspacesize);
+//}
 //QPixmap IDiagramItem::drawPixmap()
 //{
 	//QImage image("D:/Database/Code/vs/c++/KDevelop-Training/KDevelop-Training/ClassExamProject/QtChartFlow/QtChartFlow/juxing.png");
@@ -121,10 +239,12 @@ QPixmap IDiagramItem::createPixmap()
 //	init();
 //}
 
-void IDiagramItem::init()
+void DiagramItem::init()
 {
 	initWidgetSize();
-	inittuxingzujian();
+	initDiagramDrawer();
+	createDragMimeData();
+	//initDiagramPixmap();
 }
 
 //void IDiagramItem::init(QColor pencolor, int penwidth, QBrush penbrush, QSize widgetsize)
@@ -213,19 +333,26 @@ void IDiagramItem::init()
 //	setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 //}
 
-void IDiagramItem::paintEvent(QPaintEvent* event)
+void DiagramItem::paintEvent(QPaintEvent* event)
 {
 	//drawmyself();
-
 	//QWidget::paintEvent(event);
-	QPainter* painter = new QPainter(this);
-	painter->setPen(m_params.m_pen);
-	painter->setBrush(m_params.m_brush);
-	painter->setRenderHint(QPainter::Antialiasing, true);
-	updatetuxingsize();
-	painter->fillRect(this->rect(), m_params.m_backgroundcolor);
-	m_tuxing->draw(painter);
+	//updatetuxingsize();
+	//QPainter* painter = getDiagramItemPainter();
+	QPainter painter(this);
+	initDiagramPainter(painter);
+	painter.fillRect(this->rect(), m_params.m_backgroundcolor);
+	m_diagramDrawer->draw(painter, this);
 }
+
+//QPainter* DiagramItem::getDiagramItemPixmapPainter()
+//{
+//	QPainter* painter = new QPainter(m_diagramDragPixmap);
+//	painter->setPen(m_params.m_huabutuxingpen);
+//	painter->setBrush(m_params.m_huabutuxingbrush);
+//	painter->setRenderHint(QPainter::Antialiasing, true);
+//	return painter;
+//}
 
 //void IDiagramItem::loadpictureasmyself(QString path)
 //{
@@ -259,29 +386,21 @@ void IDiagramItem::paintEvent(QPaintEvent* event)
 //	painter->drawPixmap(topleft, newpixmap);
 //}
 
-void drawtuxingkuzujian::draw(QPainter* painter)
+//void GfxLibDiagramitemDrawer::draw(QPainter* painter, std::shared_ptr<GfxLibDiagramItemParams> params)
+void GfxLibDiagramitemDrawer::draw(QPainter& painter, DiagramItem* item)
 {
-	if (m_drawByPainter)
-	{
-		drawByDraw(painter);
-	}
+	if (!item)
+		throw std::runtime_error("error");//todo
+	if (m_isdrawByPainter && m_drawByPainter)
+		drawByDraw(painter, item);
 	else if (m_drawByLoadpic)
-	{
-		drawByLoadpic(painter);
-	}
+		drawByLoadpic(painter, item);
 	else
-	{
-		return;
-	}
+		throw std::runtime_error("error");
 }
 
-void drawtuxingkuzujianjuxing::drawByDraw(QPainter* painter)
-{
-	m_params->m_painter = painter;
-	factorytuxingjiedian::draw(m_params);
-	//m_rect = calcusuitablerect(painter->pen().width());
-	//painter->drawRect(m_rect);
-}
+//m_rect = calcusuitablerect(painter->pen().width());
+//painter->drawRect(m_rect);
 
 //QRect drawtuxingkuzujianjuxing::getSuitableRect()
 //{
@@ -293,23 +412,32 @@ void drawtuxingkuzujianjuxing::drawByDraw(QPainter* painter)
 //	return QRect(topleft, newsize);
 //}
 
-void drawtuxingkuzujian::drawByLoadpic(QPainter* painter)
+QString DiagramItem::getpicpath()
 {
-
-	QPixmap newpixmap = getSuitablePicPixmap(QPixmap(m_picpath));
-	if (!m_params)
-		throw std::runtime_error("error");//todo:except
-	QPoint topleft = QPoint((m_params->m_spacesize.width() - newpixmap.width()) / 2, (m_params->m_spacesize.height() - newpixmap.height()) / 2);
-	painter->drawPixmap(topleft, newpixmap);
+	if (m_params.m_picpath.has_value())
+		return m_params.m_picpath.value();
+	else
+		return QString();
 }
 
-QPixmap drawtuxingkuzujian::getSuitablePicPixmap(QPixmap pixmap)
-{
-	if (!m_params)
-		throw std::runtime_error("error");//todo:except
+void GfxLibDiagramitemDrawer::drawByLoadpic(QPainter& painter, DiagramItem* item) {
+	QString picpath = item->getpicpath();
+	if (picpath.isEmpty())
+		throw std::runtime_error("error");
 
-	int targetwidth = m_params->m_spacesize.width();
-	int targetheight = m_params->m_spacesize.height();
+	QPixmap newpixmap = getSuitablePicPixmap(QPixmap(picpath), item);
+	QPoint center = item->getcenter();
+	QPoint topleft = QPoint(center.x() - newpixmap.width() / 2, center.y() - newpixmap.height() / 2);
+
+	painter.drawPixmap(topleft, newpixmap);
+}
+
+QPixmap GfxLibDiagramitemDrawer::getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item)
+{
+	QSize space = item->getspacesize();
+
+	int targetwidth = space.width();
+	int targetheight = space.height();
 
 	QSize originalsize = pixmap.size();
 	double scalefactor = qMin(static_cast<double>(targetwidth) / originalsize.width(), static_cast<double>(targetheight) / originalsize.height());
@@ -317,10 +445,87 @@ QPixmap drawtuxingkuzujian::getSuitablePicPixmap(QPixmap pixmap)
 	return pixmap.scaled(newsize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 }
 
-void drawtuxingkuzujian::drawByDraw(QPainter* painter)
+
+//std::shared_ptr<tuxingjiedianparams> buildtuxingjiedianparamsfordiagramcircle::build(DiagramItem* item)
+//{
+//	std::shared_ptr<tuxingjiedianparamsyuanxing> params = std::make_shared<tuxingjiedianparamsyuanxing>();
+//	return params;
+//}
+
+ShapeType DiagramItem::gettype()
 {
-	painter->drawRect(0, 0, 10, 10);
+	return m_params.m_type;
 }
+
+
+std::shared_ptr<IDidgramDrawParams> Ibuildtuxingjiedianparamsfordiagram::build(DiagramItem* item)
+{
+	std::shared_ptr<IDidgramDrawParams> params = specialbuild(item);
+	params->m_center = item->getcenter();
+	//params->m_painter = painter;
+	params->m_spacesize = item->getspacesize();
+	params->m_type = item->gettype();
+	params->m_pen = item->getdiagrampen();
+	params->m_brush = item->getdiagrambrush();
+	return params;
+}
+
+
+std::shared_ptr<IDidgramDrawParams> buildtuxingjiedianparamsfrodiagramrect::specialbuild(DiagramItem* item)
+{
+	std::shared_ptr<DiagramDrawParamsRect> params = std::make_shared<DiagramDrawParamsRect>();
+	params->m_radio = item->getDiagramItemRectRadio();
+	return params;
+}
+
+
+std::shared_ptr<IDidgramDrawParams> buildtuxingjiedianparamsfordiagramcircle::specialbuild(DiagramItem* item)
+{
+	std::shared_ptr<DiagramDrawParamsCircle> params = std::make_shared<DiagramDrawParamsCircle>();
+	return params;
+}
+
+float DiagramItem::getDiagramItemRectRadio()
+{
+	if (!m_params.m_juxingradio.has_value())
+		throw std::runtime_error("error");
+	return m_params.m_juxingradio.value();
+}
+
+
+std::unique_ptr<Ibuildtuxingjiedianparamsfordiagram> factorybuildtuxingjiedianparamsfordiagram::create(ShapeType type)
+{
+	switch (type)
+	{
+	default:
+	case ShapeType::juxing:
+		return std::make_unique<buildtuxingjiedianparamsfrodiagramrect>();
+		break;
+	case ShapeType::yuanxing:
+		return std::make_unique<buildtuxingjiedianparamsfordiagramcircle>();
+		break;
+	}
+}
+
+std::shared_ptr<IDidgramDrawParams> GfxLibDiagramitemDrawer::buildparams(DiagramItem* item)
+{
+	return factorybuildtuxingjiedianparamsfordiagram::create(item->gettype())->build(item);
+}
+
+void GfxLibDiagramitemDrawer::drawByDraw(QPainter& painter, DiagramItem* item)
+{
+	DiagramDrawInterface::draw(painter, buildparams(item));
+}
+
+GfxLibDiagramitemDrawer::GfxLibDiagramitemDrawer(bool drawbypainter, bool drawbyloadpic, bool isdrawbypainter)
+	:m_drawByPainter(drawbypainter)
+	, m_drawByLoadpic(drawbyloadpic)
+	, m_isdrawByPainter(isdrawbypainter) {}
+
+//void GfxLibDiagramitemDrawer::drawByDraw(QPainter* painter)
+//{
+//	painter->drawRect(0, 0, 10, 10);
+//}
 
 //std::unique_ptr<drawtuxingkuzujian> drawtuxingkuzujianfactory::createtuxingzujian(ShapeType type)
 //{
@@ -358,7 +563,7 @@ void drawtuxingkuzujian::drawByDraw(QPainter* painter)
 
 //void IDiagramItem::initWidgetSize(QSize size)
 //void IDiagramItem::initWidgetSize(std::optional<QSize> fixsize, std::optional<QSize> maxsize, std::optional<QSize> minsize)
-void IDiagramItem::initWidgetSize()
+void DiagramItem::initWidgetSize()
 {
 	if (m_params.m_issizefixed)
 	{
@@ -400,7 +605,7 @@ void IDiagramItem::initWidgetSize()
 }
 
 //void IDiagramItem::initmaxandminsize(QSize maxsize, QSize minsize)
-void IDiagramItem::initmaxandminsize()
+void DiagramItem::initmaxandminsize()
 {
 	if (!m_params.m_maxsize.has_value() || !m_params.m_minsize.has_value())
 		throw std::runtime_error("error");//todo:except
@@ -408,12 +613,12 @@ void IDiagramItem::initmaxandminsize()
 	setMinimumSize(m_params.m_minsize.value());
 }
 
-void IDiagramItem::setsizepolicyexpanding()
+void DiagramItem::setsizepolicyexpanding()
 {
 	this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
-void IDiagramItem::resizeEvent(QResizeEvent* event)
+void DiagramItem::resizeEvent(QResizeEvent* event)
 {
 	//if (!m_iswidgetsizefixed)
 	if (!m_params.m_issizefixed)
@@ -470,67 +675,72 @@ void IDiagramItem::resizeEvent(QResizeEvent* event)
 //		break;
 //	}
 //}
-QSize IDiagramItem::getspacesize()
+QSize DiagramItem::getspacesize()
 {
 	return size();
 }
 
-QPoint IDiagramItem::calculatebujiancentor()
+QPoint DiagramItem::getcenter()
 {
 	return QPoint(this->rect().x() + width() / 2, rect().y() + height() / 2);
 }
 
-std::shared_ptr<drawtuxingkuzujian> IDiagramItem::createtuxing()
+void DiagramItem::initDiagramDrawer()
 {
-	switch (m_params.m_type)
-	{
-	default:
-	case ShapeType::juxing:
-	{
-		std::shared_ptr<drawtuxingkuzujianjuxing> p = std::make_shared<drawtuxingkuzujianjuxing>();
-		p->m_params = std::make_shared<tuxingjiedianparamsjuxing>();
-		dynamic_cast<tuxingjiedianparamsjuxing*>(p->m_params.get())->m_radio = m_params.m_juxingradio.value_or(diagramitemjuxingradio);
-		return p;
-	}
-	break;
-	case ShapeType::yuanxing:
-	{
-		std::shared_ptr<drawtuxingkuzujianyuanxing> p = std::make_shared<drawtuxingkuzujianyuanxing>();
-		p->m_params = std::make_shared<tuxingjiedianparamsyuanxing>();
-		return p;
-	}
-	break;
-	}
+	m_diagramDrawer = std::make_shared<GfxLibDiagramitemDrawer>(m_params.m_drawByPainter, m_params.m_drawByloadpic, m_params.m_isdrawByPainter);
 }
 
-void IDiagramItem::inittuxingzujian()
-{
-	m_tuxing = createtuxing();
-	m_tuxing->m_picpath = m_params.m_picpath.value_or(imagepathjuxing);
-	m_tuxing->m_params->m_center = calculatebujiancentor();
-	m_tuxing->m_params->m_spacesize = getspacesize();
-	m_tuxing->m_params->m_type = m_params.m_type;
-	//m_tuxing = factorydrawtuxingkuzujian::create(m_shapetype);
-	//m_tuxing->m_picpath = m_picturePath;
-	//m_tuxing->m_params->m_spacesize = getspacesize();
-	//m_tuxing->m_params->m_center = calculatebujiancentor();
-	//m_tuxing->m_params->m_type = m_shapetype;
-	//m_tuxing = drawtuxingkuzujianfactory::createtuxingzujian(m_shapetype);
-	//m_tuxing->setSourcewidgetsize(this->size());
-	//m_tuxing->setpicpath(m_picturePath);
-}
+//std::shared_ptr<GfxLibDiagramitemDrawer> DiagramItem::createtuxing()
+//{
+//	switch (m_params.m_type)
+//	{
+//	default:
+//	case ShapeType::juxing:
+//	{
+//		std::shared_ptr<GfxLibDiagramItemDrawerRect> p = std::make_shared<GfxLibDiagramItemDrawerRect>();
+//		p->m_params = std::make_shared<tuxingjiedianparamsjuxing>();
+//		dynamic_cast<tuxingjiedianparamsjuxing*>(p->m_params.get())->m_radio = m_params.m_juxingradio.value_or(diagramitemjuxingradio);
+//		return p;
+//	}
+//	break;
+//	case ShapeType::yuanxing:
+//	{
+//		std::shared_ptr<GfxLibDiagramItemDrawerCircle> p = std::make_shared<GfxLibDiagramItemDrawerCircle>();
+//		p->m_params = std::make_shared<tuxingjiedianparamsyuanxing>();
+//		return p;
+//	}
+//	break;
+//	}
+//}
 
-IDiagramItem::IDiagramItem(diagramitemparams params)
-	:m_params(params)
+//void DiagramItem::inittuxingzujian()
+//{
+//	m_diagramDrawer = createtuxing();
+//	m_diagramDrawer->m_picpath = m_params.m_picpath.value_or(imagepathjuxing);
+//	m_diagramDrawer->m_params->m_center = getcenter();
+//	m_diagramDrawer->m_params->m_spacesize = getspacesize();
+//	m_diagramDrawer->m_params->m_type = m_params.m_type;
+//	//m_tuxing = factorydrawtuxingkuzujian::create(m_shapetype);
+//	//m_tuxing->m_picpath = m_picturePath;
+//	//m_tuxing->m_params->m_spacesize = getspacesize();
+//	//m_tuxing->m_params->m_center = calculatebujiancentor();
+//	//m_tuxing->m_params->m_type = m_shapetype;
+//	//m_tuxing = drawtuxingkuzujianfactory::createtuxingzujian(m_shapetype);
+//	//m_tuxing->setSourcewidgetsize(this->size());
+//	//m_tuxing->setpicpath(m_picturePath);
+//}
+
+DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
+	:m_params(params), QWidget(parent)
 {
 	init();
 }
 
-drawtuxingkuzujianjuxing::drawtuxingkuzujianjuxing()
-{
-	m_drawByPainter = true;
-	m_drawByLoadpic = true;
-}
+//GfxLibDiagramItemDrawerRect::GfxLibDiagramItemDrawerRect()
+//{
+//	m_drawByPainter = true;
+//	m_drawByLoadpic = true;
+//}
 
 //// 建议的改进版本
 //QRect drawtuxingkuzujianjuxing::calcusuitablerect(int penWidth)
@@ -591,19 +801,19 @@ drawtuxingkuzujianjuxing::drawtuxingkuzujianjuxing()
 //	return (qMin(m_sourceWidgetSize.height(), m_sourceWidgetSize.width()) - penwidth) / 2;
 //}
 
-void drawtuxingkuzujianyuanxing::drawByDraw(QPainter* painter)
-{
-	m_params->m_painter = painter;
-	factorytuxingjiedian::draw(m_params);
+//void GfxLibDiagramItemDrawerCircle::drawByDraw(QPainter* painter)
+//{
+	//m_params->m_painter = painter;
+	//DiagramDrawInterface::draw(m_params);
 	//m_r = calcusuitable(painter->pen().width());
 	//QPoint center = QPoint(m_sourceWidgetSize.width() / 2, m_sourceWidgetSize.height() / 2);
 	//painter->drawEllipse(center, m_r, m_r);
-}
+//}
 
-drawtuxingkuzujianyuanxing::drawtuxingkuzujianyuanxing()
-{
-	m_drawByPainter = true;
-}
+//GfxLibDiagramItemDrawerCircle::GfxLibDiagramItemDrawerCircle()
+//{
+	//m_drawByPainter = true;
+//}
 
 //void IDiagramItem::initpenandbrush(QColor color, int penwidth, QBrush brush)
 //void IDiagramItem::initpenandbrush()
@@ -615,16 +825,16 @@ drawtuxingkuzujianyuanxing::drawtuxingkuzujianyuanxing()
 
 //}
 
-void IDiagramItem::updatetuxingsize()
-{
+//void DiagramItem::updatetuxingsize()
+//{
 	//if (!m_iswidgetsizefixe)
-	if (!m_params.m_issizefixed)
-	{
-		m_tuxing->m_params->m_spacesize = getspacesize();
-		m_tuxing->m_params->m_center = calculatebujiancentor();
-	}
-}
-diagramitemparams::diagramitemparams(bool issizefixed
+	//if (!m_params.m_issizefixed)
+	//{
+		//m_tuxing->m_params->m_spacesize = getspacesize();
+		//m_tuxing->m_params->m_center = calculatebujiancentor();
+	//}
+//}
+GfxLibDiagramItemParams::GfxLibDiagramItemParams(bool issizefixed
 	, std::optional<QSize> fixsize
 	, std::optional<QSize> maxsize
 	, std::optional<QSize> minsize
@@ -639,7 +849,10 @@ diagramitemparams::diagramitemparams(bool issizefixed
 	, QBrush huabutuxingbrush
 	//, QColor haububackgroundcolor
 	, std::optional<float> widgetradio
-	, ShapeType type)
+	, ShapeType type
+	, bool drawbypainter
+	, bool drawbyloadpic
+	, bool isdrawbypainter)
 	: m_issizefixed(issizefixed)
 	, m_fixsize(fixsize)
 	, m_maxsize(maxsize)
@@ -654,5 +867,82 @@ diagramitemparams::diagramitemparams(bool issizefixed
 	, m_juxingradio(juxingradio)
 	, m_huabutuxingspacesize(huabutuxingspacesize)
 	, m_huabutuxingpen(huabutuxingpen)
-	, m_huabutuxingbrush(huabutuxingbrush) {}
-	//, m_huabubackgroundcolor(huabubackgroundcolor) {}
+	, m_huabutuxingbrush(huabutuxingbrush)
+	, m_drawByPainter(drawbypainter)
+	, m_drawByloadpic(drawbyloadpic)
+	, m_isdrawByPainter(isdrawbypainter) {}
+//, m_huabubackgroundcolor(huabubackgroundcolor) {}
+
+GfxLibDiagramItemParams::builder::builder()
+{
+	defaultinit();
+}
+
+void GfxLibDiagramItemParams::builder::defaultinit()
+{
+	m_issizefixed = cfggetval<bool>(qtcf::diagramWidgetIsSizeFix);
+	m_fixsize = QSize(cfggetval<int>(qtcf::diagramWidgetFixWidth), cfggetval<int>(qtcf::diagramWidgetFixWidth) / cfggetval<float>(qtcf::diagramWidgetRadio));
+	m_maxsize = QSize(cfggetval<int>(qtcf::diagramWidgetMaxWidth), cfggetval<int>(qtcf::diagramWidgetMaxWidth) / cfggetval<float>(qtcf::diagramWidgetRadio));
+	m_minsize = QSize(cfggetval<int>(qtcf::diagramWidgetMinWidth), cfggetval<int>(qtcf::diagramWidgetMinWidth) / cfggetval<float>(qtcf::diagramWidgetRadio));
+	m_pen = QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::diagramWidgetPenColor))), cfggetval<int>(qtcf::diagramWidgetPenWidth));
+	m_brush = QBrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::diagramWidgetBrush))));
+	m_mimetype = QString::fromStdString(cfggetval<std::string>(qtcf::mimeType));
+	m_backgroundcolor = QColor(QString::fromStdString(cfggetval<std::string>(qtcf::diagramWidgetBackgroundColor)));
+	m_widgetradio = cfggetval<float>(qtcf::diagramWidgetRadio);
+	m_huabutuxingspacesize = QSize(cfggetval<int>(qtcf::huabuTuxingSpaceSpaceWidth), cfggetval<int>(qtcf::huabuTuxingSpaceSpaceWidth) / cfggetval<float>(qtcf::huabuTuxingSpaceSpaceradio));
+	m_huabutuxingpen = QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabuTuxingSpacePenColor))), cfggetval<int>(qtcf::huabuTuxingSpacePenWidth));
+	m_huabutuxingbrush = QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabuTuxingSpaceBrush)));
+	m_isdrawByPainter = cfggetval<bool>(qtcf::diagramWidgetIsDrawByPainter);
+}
+
+GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::settype(ShapeType type)
+{
+	m_type = type;
+	return *this;
+}
+
+GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::setpicpath(QString path)
+{
+	m_picpath = path;
+	return *this;
+}
+
+GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::setjuxingradio(float radio)
+{
+	m_juxingradio = radio;
+	return *this;
+}
+
+GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::setdrawbypainter(bool flag)
+{
+	m_drawByPainter = flag;
+	return *this;
+}
+
+GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::setdrawbyloadpic(bool flag)
+{
+	m_drawByloadpic = flag;
+	return *this;
+}
+
+GfxLibDiagramItemParams GfxLibDiagramItemParams::builder::build()
+{
+	return GfxLibDiagramItemParams(m_issizefixed,
+		m_fixsize,
+		m_maxsize,
+		m_minsize,
+		m_pen,
+		m_brush,
+		m_mimetype,
+		m_backgroundcolor,
+		m_picpath,
+		m_juxingradio,
+		m_huabutuxingspacesize,
+		m_huabutuxingpen,
+		m_huabutuxingbrush,
+		m_widgetradio,
+		m_type,
+		m_drawByPainter,
+		m_drawByloadpic,
+		m_isdrawByPainter);
+}

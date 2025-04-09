@@ -92,7 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="drawtuxing.cpp" />
+    <ClCompile Include="configmanager.cpp" />
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
@@ -107,7 +107,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
-    <ClInclude Include="drawtuxing.h" />
+    <ClInclude Include="configmanager.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />
     <QtMoc Include="tuxing.h" />
@@ -120,6 +120,7 @@
     <Text Include="todo.md" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="config.json" />
     <None Include="qtdpsk.md" />
   </ItemGroup>
   <ItemGroup>

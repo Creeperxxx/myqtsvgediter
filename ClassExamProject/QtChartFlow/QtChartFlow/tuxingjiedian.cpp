@@ -13,19 +13,21 @@
 //	//painter->restore();
 //}
 
-std::shared_ptr<tuxingdrawreturn> juxingjiedian::draw(std::shared_ptr<tuxingjiedianparams> params)
+//std::shared_ptr<tuxingdrawreturn> DiagramDrawerRect::draw(std::shared_ptr<IDidgramDrawParams> params)
+
+std::shared_ptr<tuxingdrawreturn> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) 
 {
 	if (!params)
 		throw std::runtime_error("error");//todo:except
-	tuxingjiedianparamsjuxing* p = dynamic_cast<tuxingjiedianparamsjuxing*>(params.get());
+	DiagramDrawParamsRect* p = dynamic_cast<DiagramDrawParamsRect*>(params.get());
 	if(!p)
 		throw std::runtime_error("error");//todo:except
 
 	QRectF rect = calcurect(p);
-	p->m_painter->drawRect(rect);
+	painter.drawRect(rect);
 
-	QPen pen = p->m_painter->pen();
-	QBrush brush = p->m_painter->brush();
+	QPen pen = painter.pen();
+	QBrush brush = painter.brush();
 
 	auto ret = std::make_unique<tuxingdrawreturnjuxing>();
 	ret->m_painterpen = pen;
@@ -77,25 +79,25 @@ std::shared_ptr<tuxingdrawreturn> juxingjiedian::draw(std::shared_ptr<tuxingjied
 //}
 
 
-int yuanxingjiedian::calcuyuanxingbanjing(tuxingjiedianparamsyuanxing* params)
+int DiagramDrawerYuanxing::calcuyuanxingbanjing(DiagramDrawParamsCircle* params)
 {
-	return (qMin(params->m_spacesize.width(), params->m_spacesize.height()) - params->m_painter->pen().width()) / 2;
+	return (qMin(params->m_spacesize.width(), params->m_spacesize.height()) - params->m_pen.widthF()) / 2;
 }
 
-std::shared_ptr<tuxingdrawreturn> yuanxingjiedian::draw(std::shared_ptr<tuxingjiedianparams> params)
+std::shared_ptr<tuxingdrawreturn> DiagramDrawerYuanxing::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
 	if(!params)
 		throw std::runtime_error("error");//todo:except
-	auto p = dynamic_cast<tuxingjiedianparamsyuanxing*>(params.get());
+	auto p = dynamic_cast<DiagramDrawParamsCircle*>(params.get());
 	if(!p)
 		throw std::runtime_error("error");//todo:except
 
 	auto r = calcuyuanxingbanjing(p);
-	p->m_painter->drawEllipse(p->m_center, r, r);
+	painter.drawEllipse(p->m_center, r, r);
 
 	auto ret = std::make_unique<tuxingdrawreturnyuanxing>();
-	ret->m_painterbrush = p->m_painter->brush();
-	ret->m_painterpen = p->m_painter->pen();
+	ret->m_painterbrush = painter.brush();
+	ret->m_painterpen = painter.pen();
 	ret->m_r = r;
 
 	return std::move(ret);
@@ -114,7 +116,7 @@ std::shared_ptr<tuxingdrawreturn> yuanxingjiedian::draw(std::shared_ptr<tuxingji
 //}
 
 
-QRectF juxingjiedian::calcurect(tuxingjiedianparamsjuxing* params)
+QRectF DiagramDrawerRect::calcurect(DiagramDrawParamsRect* params)
 {
 
 	QSizeF size = calcusuitablerectsize(params);
@@ -142,10 +144,10 @@ QRectF juxingjiedian::calcurect(tuxingjiedianparamsjuxing* params)
 //	m_radio = radio;
 //}
 
-QSizeF juxingjiedian::calcusuitablerectsize(tuxingjiedianparamsjuxing* params)
+QSizeF DiagramDrawerRect::calcusuitablerectsize(DiagramDrawParamsRect* params)
 {
-	float availablewidth = params->m_spacesize.width() - 2 * params->m_painter->pen().widthF();
-	float availableheight = params->m_spacesize.height() - 2 * params->m_painter->pen().widthF();
+	float availablewidth = params->m_spacesize.width() - 2 * params->m_pen.widthF();
+	float availableheight = params->m_spacesize.height() - 2 * params->m_pen.widthF();
 
 	float rectwidth, rectheight;
 	if (availablewidth / availableheight > params->m_radio)
@@ -244,36 +246,46 @@ QSizeF juxingjiedian::calcusuitablerectsize(tuxingjiedianparamsjuxing* params)
 //	: tuxingjiedianparams(mousepoint, size, pen, brush) {}
 
 
-std::shared_ptr<tuxingdrawreturn> factorytuxingjiedian::draw(std::shared_ptr<tuxingjiedianparams> params)
+std::shared_ptr<tuxingdrawreturn> DiagramDrawInterface::draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)
 {
-	return std::move(create(params->m_type)->draw(std::move(params)));
+	return create(params->m_type)->draw(painter, params);
 }
 
 
-std::shared_ptr<Ituxingjiedian> factorytuxingjiedian::create(ShapeType type)
+std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::create(ShapeType type)
 {
 	switch (type)
 	{
 	default:
 	case ShapeType::juxing:
-		return std::make_unique<juxingjiedian>();
+		return std::make_unique<DiagramDrawerRect>();
 		break;
 	case ShapeType::yuanxing:
-		return std::make_unique<yuanxingjiedian>();
+		return std::make_unique<DiagramDrawerYuanxing>();
 		break;
 	}
 }
 
-std::shared_ptr<tuxingjiedianparams> factorytuxingparams::create(ShapeType type)
+//std::shared_ptr<IDidgramDrawParams> factorytuxingparams::create(ShapeType type)
+//{
+//	switch (type)
+//	{
+//	default:
+//	case ShapeType::juxing:
+//		return std::make_shared<DiagramDrawParamsRect>();
+//		break;
+//	case ShapeType::yuanxing:
+//		return std::make_shared<DiagramDrawParamsCircle>();
+//		break;
+//	}
+//}
+
+ShapeType Tool::shapetypestringtoenum(const std::string& str)
 {
-	switch (type)
-	{
-	default:
-	case ShapeType::juxing:
-		return std::make_shared<tuxingjiedianparamsjuxing>();
-		break;
-	case ShapeType::yuanxing:
-		return std::make_shared<tuxingjiedianparamsyuanxing>();
-		break;
-	}
+	if (str.compare(cfggetval<std::string>(qtcf::tuxingTypeNameJuxing)) == 0)
+		return ShapeType::juxing;
+	else if (str.compare(cfggetval<std::string>(qtcf::tuxingTypeNameYuanxing)) == 0)
+		return ShapeType::yuanxing;
+	else
+		throw std::runtime_error("error");
 }

@@ -5,6 +5,7 @@
 #include "config.h"
 #include <qdebug.h>
 #include <stdexcept>
+#include "configmanager.h"
 
 enum class ShapeType
 {
@@ -12,27 +13,35 @@ enum class ShapeType
 	yuanxing
 };
 
-class tuxingjiedianparams
+class Tool
 {
 public:
-	virtual ~tuxingjiedianparams() {}
+	static ShapeType shapetypestringtoenum(const std::string& str);
+};
+
+class IDidgramDrawParams
+{
+public:
+	virtual ~IDidgramDrawParams() {}
 	QPoint m_center;
 	QSize m_spacesize;
 	ShapeType m_type;
-	QPainter* m_painter;
+	QPen m_pen;
+	QBrush m_brush;
+	//QPainter* m_painter;
 };
 
-class tuxingjiedianparamsjuxing : public tuxingjiedianparams
+class DiagramDrawParamsRect : public IDidgramDrawParams
 {
 public:
-	~tuxingjiedianparamsjuxing() {}
+	~DiagramDrawParamsRect() {}
 	float m_radio;
 };
 
-class tuxingjiedianparamsyuanxing :public tuxingjiedianparams
+class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
-	~tuxingjiedianparamsyuanxing() {}
+	~DiagramDrawParamsCircle() {}
 };
 
 class tuxingdrawreturn
@@ -55,12 +64,12 @@ public:
 };
 
 
-class Ituxingjiedian
+class IDiagramDrawer
 {
 public:
 	//Ituxingjiedian(QPoint mousepoint, QSize size);
 	//Ituxingjiedian(std::unique_ptr<tuxingjiedianparams> params);
-	virtual std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params) = 0;
+	virtual std::shared_ptr<tuxingdrawreturn> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params) = 0;
 	//virtual void draw(QPainter* painter) = 0;
 	//void setmousepoint(QPoint mousepoint);
 	//void setspacesize(QSize size);
@@ -70,42 +79,42 @@ public:
 	//QBrush m_brush;
 };
 
-class juxingjiedian : public Ituxingjiedian
+class DiagramDrawerRect : public IDiagramDrawer
 {
 public:
 	//juxingjiedian(QPoint mousepoint, QSize size = QSize(100,50));
 	//juxingjiedian(std::unique_ptr<tuxingjiedianparams> params);
 	//void draw(QPainter* painter) override;
 	//void setRadio(float radio);
-	std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params) override;
+	std::shared_ptr<tuxingdrawreturn> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) override;
 private:
 	//QSize calcusuitablerectsize(QSize spacesize, int penwidth, float juxingradio);
 	//QRect calcurect(QSize spacesize, int penwidth, float radio);
-	QRectF calcurect(tuxingjiedianparamsjuxing* params);
-	QSizeF calcusuitablerectsize(tuxingjiedianparamsjuxing* params);
+	QRectF calcurect(DiagramDrawParamsRect* params);
+	QSizeF calcusuitablerectsize(DiagramDrawParamsRect* params);
 };
 
-class yuanxingjiedian : public Ituxingjiedian
+class DiagramDrawerYuanxing : public IDiagramDrawer
 {
 public:
 	//yuanxingjiedian(tuxingjiedianparams* params);
 	//void draw(QPainter* painter) override;
-	std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params)override;
+	std::shared_ptr<tuxingdrawreturn> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)override;
 private:
-	int calcuyuanxingbanjing(tuxingjiedianparamsyuanxing* params);
+	int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
 	//int calcuyuanxingbanjing(QSize spacesize, int penwidth);
 };
 
-class factorytuxingjiedian
+class DiagramDrawInterface
 {
 public:
-	static std::shared_ptr<tuxingdrawreturn> draw(std::shared_ptr<tuxingjiedianparams> params);
+	static std::shared_ptr<tuxingdrawreturn> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params);
 private:
-	static std::shared_ptr<Ituxingjiedian> create(ShapeType type);
+	static std::shared_ptr<IDiagramDrawer> create(ShapeType type);
 };
 
-class factorytuxingparams
-{
-public:
-	static std::shared_ptr<tuxingjiedianparams> create(ShapeType type);
-};
+//class factorytuxingparams
+//{
+//public:
+//	static std::shared_ptr<IDidgramDrawParams> create(ShapeType type);
+//};

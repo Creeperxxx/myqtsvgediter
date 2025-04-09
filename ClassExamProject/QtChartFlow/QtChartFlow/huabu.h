@@ -10,6 +10,7 @@
 #include <qpalette.h>
 #include "config.h"
 #include "tuxing.h"
+#include "configmanager.h"
 #include <vector>
 
 //class tuxingjiedianfactory
@@ -25,9 +26,13 @@ class huabutuxing
 {
 
 public:
-	std::shared_ptr<tuxingjiedianparams> m_params;
+	std::shared_ptr<IDidgramDrawParams> m_params;
 	std::shared_ptr<tuxingdrawreturn> m_ret;
 };
+
+
+
+
 
 
 
@@ -42,18 +47,20 @@ public:
 	void dragMoveEvent(QDragMoveEvent* event) override; //拖动操作在控件中移动时触发，通常用于限制
 	void dropEvent(QDropEvent* event) override; //完成拖动时触发，完成数据交换
 	void paintEvent(QPaintEvent* event) override;
-	std::unique_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QPoint mousepoint);
+	//std::unique_ptr<IDidgramDrawParams> maketuxingparams(ShapeType type, QPoint mousepoint);
 
 private:
 	void init();
 	QPainter* initPainter(); //todo ： 从某个类中读取画笔配置
+	void initPainter(QPainter& painter);
+	
 	void initpenandbrush(QBrush color, int penwidth, QBrush brush);
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
 	//void drawBaseBackground(QPainter* painter);
 	//void drawBaseBackground();
 	ShapeType getshapetypefrombytearray(QByteArray array);
-	std::shared_ptr<tuxingjiedianparams> createtuxingparams(ShapeType type);
+	std::shared_ptr<IDidgramDrawParams> createtuxingparams(ShapeType type);
 	//std::shared_ptr<tuxingjiedianparams> maketuxingparams(ShapeType type, QDropEvent* event);
 
 	//Ui::huabuClass ui;
@@ -65,4 +72,5 @@ private:
 	QBrush m_brush;
 	QSize m_tuxingspacesize;//每个图形分配的区域
 	float m_juxingradio;
+	QString m_mimetype;
 };
