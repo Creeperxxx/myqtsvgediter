@@ -63,21 +63,21 @@ void MyMainWindow::pageSwitch(int id)
 
 void MyMainWindow::initalltuxing()
 {
-	GfxLibDiagramItemParams juxing = GfxLibDiagramItemParams::builder()
-		.settype(ShapeType::juxing)
+	GfxLibDiagramItemParams Rect = GfxLibDiagramItemParams::builder()
+		.settype(ShapeType::Rect)
 		.setpicpath(QString::fromStdString(cfggetval<std::string>(qtcf::imagePathJuxing)))
 		.setjuxingradio(cfggetval<float>(qtcf::tuxingJuxingRadio))
 		.setdrawbypainter(cfggetval<bool>(qtcf::tuxingJuxingDrawByPainter))
 		.setdrawbyloadpic(cfggetval<bool>(qtcf::tuxingJuxingDrawByLoadpic)).build();
-	DiagramItem* juxingdiagram = new DiagramItem(juxing, ui->tuxingku);
+	DiagramItem* juxingdiagram = new DiagramItem(Rect, ui->tuxingku);
 	ui->tuxingkugridLayout->addWidget(juxingdiagram);
-	GfxLibDiagramItemParams yuanxing = GfxLibDiagramItemParams::builder()
-		.settype(ShapeType::yuanxing)
+	GfxLibDiagramItemParams Circle = GfxLibDiagramItemParams::builder()
+		.settype(ShapeType::Circle)
 		.setpicpath(QString::fromStdString(cfggetval<std::string>(qtcf::imagePathYuanxing)))
 		.setjuxingradio(cfggetval<float>(qtcf::tuxingJuxingRadio))
 		.setdrawbypainter(cfggetval<bool>(qtcf::tuxingJuxingDrawByPainter))
 		.setdrawbyloadpic(cfggetval<bool>(qtcf::tuxingJuxingDrawByLoadpic)).build();
-	DiagramItem* yuanxingdiagram = new DiagramItem(yuanxing, ui->tuxingku);
+	DiagramItem* yuanxingdiagram = new DiagramItem(Circle, ui->tuxingku);
 	ui->tuxingkugridLayout->addWidget(yuanxingdiagram);
 
 }

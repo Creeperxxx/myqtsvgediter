@@ -82,50 +82,18 @@ float DiagramItem::getHuabuRectRadio()
 	return m_params.m_juxingradio.value();
 }
 
-std::shared_ptr<IDidgramDrawParams> buildDiagramPixmapParamsRect::specialbuild(DiagramItem* item)
-{
-	std::shared_ptr<DiagramDrawParamsRect> params = std::make_shared<DiagramDrawParamsRect>();
-	params->m_radio = item->getHuabuRectRadio();
-	return params;
-}
 
 
-std::shared_ptr<IDidgramDrawParams> buildDiagramPixmapParamsCircle::specialbuild(DiagramItem* item)
-{
-	std::shared_ptr < DiagramDrawParamsCircle > params = std::make_shared < DiagramDrawParamsCircle>();
-	return params;
-}
 
-std::unique_ptr<IbuildDiagramPixmapParams> FactoryBuildDiagramPixmapParams::create(ShapeType type)
-{
-	switch (type)
-	{
-	default:
-	case ShapeType::juxing:
-		return std::make_unique<buildDiagramPixmapParamsRect>();
-		break;
-	case ShapeType::yuanxing:
-		return std::make_unique<buildDiagramPixmapParamsCircle>();
-		break;
-	}
-}
+
+
 
 QSize DiagramItem::getPixmapSpaceSize()
 {
 	return m_params.m_huabutuxingspacesize;
 }
 
-std::shared_ptr<IDidgramDrawParams> IbuildDiagramPixmapParams::build(DiagramItem* item)
-{
-	std::shared_ptr<IDidgramDrawParams> params = specialbuild(item);
-	params->m_center = item->getPixmapCenter();
-	//params->m_painter = item->getDiagramItemPixmapPainter();
-	params->m_spacesize = item->getPixmapSpaceSize();
-	params->m_type = item->gettype();
-	params->m_pen = item->gethuabupen();
-	params->m_brush = item->gethuabubrush();
-	return params;
-}
+
 
 QPen DiagramItem::gethuabupen()
 {
@@ -146,6 +114,11 @@ QBrush DiagramItem::getdiagrambrush()
 {
 	return m_params.m_brush;
 }
+
+
+
+
+
 
 
 QPoint DiagramItem::getPixmapCenter()
@@ -179,7 +152,8 @@ QPixmap DiagramItem::drawDiagramPixmap()
 	QPainter painter(&pixmap);
 	initDiagramPixmapPainter(painter);
 
-	DiagramDrawInterface::draw(painter, FactoryBuildDiagramPixmapParams::create(m_params.m_type)->build(this));
+	//DiagramDrawInterface::draw(painter, FactoryBuildDiagramPixmapParams::create(m_params.m_type)->build(this));
+	DiagramDrawInterface::draw(painter, factoryall::create(DiagramItemType::tuxingkupixmap, m_params.m_type)->build(this));
 
 	return pixmap;
 
@@ -458,32 +432,13 @@ ShapeType DiagramItem::gettype()
 }
 
 
-std::shared_ptr<IDidgramDrawParams> Ibuildtuxingjiedianparamsfordiagram::build(DiagramItem* item)
-{
-	std::shared_ptr<IDidgramDrawParams> params = specialbuild(item);
-	params->m_center = item->getcenter();
-	//params->m_painter = painter;
-	params->m_spacesize = item->getspacesize();
-	params->m_type = item->gettype();
-	params->m_pen = item->getdiagrampen();
-	params->m_brush = item->getdiagrambrush();
-	return params;
-}
 
 
-std::shared_ptr<IDidgramDrawParams> buildtuxingjiedianparamsfrodiagramrect::specialbuild(DiagramItem* item)
-{
-	std::shared_ptr<DiagramDrawParamsRect> params = std::make_shared<DiagramDrawParamsRect>();
-	params->m_radio = item->getDiagramItemRectRadio();
-	return params;
-}
 
 
-std::shared_ptr<IDidgramDrawParams> buildtuxingjiedianparamsfordiagramcircle::specialbuild(DiagramItem* item)
-{
-	std::shared_ptr<DiagramDrawParamsCircle> params = std::make_shared<DiagramDrawParamsCircle>();
-	return params;
-}
+
+
+
 
 float DiagramItem::getDiagramItemRectRadio()
 {
@@ -493,23 +448,12 @@ float DiagramItem::getDiagramItemRectRadio()
 }
 
 
-std::unique_ptr<Ibuildtuxingjiedianparamsfordiagram> factorybuildtuxingjiedianparamsfordiagram::create(ShapeType type)
-{
-	switch (type)
-	{
-	default:
-	case ShapeType::juxing:
-		return std::make_unique<buildtuxingjiedianparamsfrodiagramrect>();
-		break;
-	case ShapeType::yuanxing:
-		return std::make_unique<buildtuxingjiedianparamsfordiagramcircle>();
-		break;
-	}
-}
+
 
 std::shared_ptr<IDidgramDrawParams> GfxLibDiagramitemDrawer::buildparams(DiagramItem* item)
 {
-	return factorybuildtuxingjiedianparamsfordiagram::create(item->gettype())->build(item);
+	//return factorybuildtuxingjiedianparamsfordiagram::create(item->gettype())->build(item);
+	return factoryall::create(DiagramItemType::tuxingku, item->gettype())->build(item);
 }
 
 void GfxLibDiagramitemDrawer::drawByDraw(QPainter& painter, DiagramItem* item)

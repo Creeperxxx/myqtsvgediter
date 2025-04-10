@@ -11,71 +11,21 @@
 //#include "ui_juxingitem.h"
 #include <qlabel.h>
 #include <qboxlayout.h>
-#include "config.h"
 #include <qsizepolicy.h>
 #include <memory>
 #include <qcolor.h>
 #include <optional>
 #include <stdexcept>
-#include "tuxingjiedian.h"
 #include "configmanager.h"
 #include "config.h"
+#include "drawtool.h"
+#include "tuxingjiedian.h"
+
+//class factory
+
 
 class DiagramItem;
-
-class Ibuildtuxingjiedianparamsfordiagram
-{
-public:
-	std::shared_ptr<IDidgramDrawParams> build(DiagramItem* item);
-private:
-	virtual std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) = 0;
-};
-
-class buildtuxingjiedianparamsfrodiagramrect : public Ibuildtuxingjiedianparamsfordiagram
-{
-private:
-	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
-};
-
-class buildtuxingjiedianparamsfordiagramcircle : public Ibuildtuxingjiedianparamsfordiagram
-{
-private:
-	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
-};
-
-class factorybuildtuxingjiedianparamsfordiagram
-{
-public:
-	static std::unique_ptr<Ibuildtuxingjiedianparamsfordiagram> create(ShapeType type);
-};
-
-class IbuildDiagramPixmapParams
-{
-public:
-	std::shared_ptr<IDidgramDrawParams> build(DiagramItem* item);
-private:
-	virtual std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) = 0;
-};
-
-class buildDiagramPixmapParamsRect : public IbuildDiagramPixmapParams
-{
-private:
-	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
-};
-
-class buildDiagramPixmapParamsCircle :public IbuildDiagramPixmapParams
-{
-private:
-	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
-};
-
-class FactoryBuildDiagramPixmapParams
-{
-public:
-	static std::unique_ptr<IbuildDiagramPixmapParams> create(ShapeType type);
-};
-
-
+//class IDiagramDrawParams;
 
 
 class GfxLibDiagramitemDrawer

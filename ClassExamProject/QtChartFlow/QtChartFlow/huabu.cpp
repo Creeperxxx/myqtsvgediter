@@ -16,21 +16,42 @@ void huabu::dragEnterEvent(QDragEnterEvent* event)
 	{
 		event->acceptProposedAction();
 	}
+
 }
+
+//std::unique_ptr<IbuildAllDiagramParams> FactoryBuildDiagramParams::create(DiagramItemType type)
+//{
+//	switch (type)
+//	{
+//	case DiagramItemType::tuxingku:
+//		return std::make_unique<Ibuildtuxingjiedianparamsfordiagram>();
+//		break;
+//	case DiagramItemType::tuxingkupixmap:
+//		return std::make_unique<IbuildDiagramPixmapParams>();
+//		break;
+//	case DiagramItemType::huabu:
+//		break;
+//	default:
+//		throw std::runtime_error("error");
+//		break;
+//	}
+//}
+
+
 
 std::shared_ptr<IDidgramDrawParams> huabu::createtuxingparams(ShapeType type)
 {
 	switch (type)
 	{
 	default:
-	case ShapeType::juxing:
+	case ShapeType::Rect:
 	{
 		std::shared_ptr<DiagramDrawParamsRect> p = std::make_shared<DiagramDrawParamsRect>();
 		p->m_radio = m_juxingradio;
 		return p;
 	}
 	break;
-	case ShapeType::yuanxing:
+	case ShapeType::Circle:
 	{
 		std::shared_ptr<DiagramDrawParamsCircle> p = std::make_shared<DiagramDrawParamsCircle>();
 		return p;
@@ -101,7 +122,7 @@ ShapeType huabu::getshapetypefrombytearray(QByteArray array)
 	ShapeType type;
 	if (!flag)
 	{
-		type = ShapeType::juxing;
+		type = ShapeType::Rect;
 	}
 	else
 	{

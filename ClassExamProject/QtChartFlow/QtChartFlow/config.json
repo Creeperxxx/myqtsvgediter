@@ -2,14 +2,14 @@
   "imagepath": 
   {
     "juxing": ":/tuxingku/juxing.png",
-    "yuanxing": "/tuxingku/yuanxing.png"
+    "yuanxing": ":/tuxingku/yuanxing.png"
   },
   "tuxingku": 
   {
     "diagramwidget": 
     {
       "backgroundcolor": "#FFFFFF",
-      "issizefix": true,
+      "issizefix": false,
       "radio": 1,
       "fixwidth": 30,
       "maxwidth": 40,

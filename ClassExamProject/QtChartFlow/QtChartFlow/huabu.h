@@ -27,7 +27,7 @@ class huabutuxing
 
 public:
 	std::shared_ptr<IDidgramDrawParams> m_params;
-	std::shared_ptr<tuxingdrawreturn> m_ret;
+	std::shared_ptr<DrawResult> m_ret;
 };
 
 
