@@ -56,6 +56,26 @@ public:
 	~DiagramDrawParamsCircle() {}
 };
 
+class DiagramDrawParamsTriangle : public IDidgramDrawParams
+{
+public:
+	enum class EdgeType
+	{
+		Left,
+		Right,
+		Bottom	
+	};
+	~DiagramDrawParamsTriangle() {}
+	struct TriangleSizeRadios
+	{
+		double m_bottom;
+		double m_left;
+		double m_right;
+	};
+	TriangleSizeRadios m_triangleSizeRadios;
+	EdgeType m_edgetype;
+	qreal m_rotationAngle;
+};
 
 
 
@@ -69,8 +89,6 @@ class IbuildAllDiagramParams
 public:
 	virtual std::shared_ptr<IDidgramDrawParams> build(QWidget* item) = 0;
 };
-
-
 
 
 
@@ -99,7 +117,11 @@ private:
 	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
 };
 
-
+class buildtuxingjiedianparamsfordiagramtriangle : public Ibuildtuxingjiedianparamsfordiagram
+{
+private:
+	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
+};
 
 
 
@@ -111,8 +133,6 @@ class factorybuildtuxingjiedianparamsfordiagram
 public:
 	static std::unique_ptr<Ibuildtuxingjiedianparamsfordiagram> create(ShapeType type);
 };
-
-
 
 
 

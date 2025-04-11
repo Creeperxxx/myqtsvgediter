@@ -837,6 +837,7 @@ void GfxLibDiagramItemParams::builder::defaultinit()
 	m_huabutuxingpen = QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabuTuxingSpacePenColor))), cfggetval<int>(qtcf::huabuTuxingSpacePenWidth));
 	m_huabutuxingbrush = QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabuTuxingSpaceBrush)));
 	m_isdrawByPainter = cfggetval<bool>(qtcf::diagramWidgetIsDrawByPainter);
+	m_triangleSideRadios = 
 }
 
 GfxLibDiagramItemParams::builder& GfxLibDiagramItemParams::builder::settype(ShapeType type)

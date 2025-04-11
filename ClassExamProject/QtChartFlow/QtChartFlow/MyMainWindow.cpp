@@ -71,6 +71,7 @@ void MyMainWindow::initalltuxing()
 		.setdrawbyloadpic(cfggetval<bool>(qtcf::tuxingJuxingDrawByLoadpic)).build();
 	DiagramItem* juxingdiagram = new DiagramItem(Rect, ui->tuxingku);
 	ui->tuxingkugridLayout->addWidget(juxingdiagram);
+
 	GfxLibDiagramItemParams Circle = GfxLibDiagramItemParams::builder()
 		.settype(ShapeType::Circle)
 		.setpicpath(QString::fromStdString(cfggetval<std::string>(qtcf::imagePathYuanxing)))
@@ -79,6 +80,13 @@ void MyMainWindow::initalltuxing()
 		.setdrawbyloadpic(cfggetval<bool>(qtcf::tuxingJuxingDrawByLoadpic)).build();
 	DiagramItem* yuanxingdiagram = new DiagramItem(Circle, ui->tuxingku);
 	ui->tuxingkugridLayout->addWidget(yuanxingdiagram);
+
+	GfxLibDiagramItemParams triangle = GfxLibDiagramItemParams::builder()
+		.setdrawbyloadpic(false)
+		.setdrawbypainter(true)
+		.settype(ShapeType::Triangle).build();
+	DiagramItem* triangleitem = new DiagramItem(triangle, ui->tuxingku);
+	ui->tuxingkugridLayout->addWidget(triangleitem);
 
 }
 //{

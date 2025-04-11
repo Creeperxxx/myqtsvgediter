@@ -28,6 +28,9 @@
         "drawbypainter": true,
         "drawbyloadpic": true,
         "radio": 2
+      },
+      "yuanxing": {
+        "drawbypainter"
       }
     }
   },

@@ -2,6 +2,7 @@
 #include <QtWidgets/QApplication>
 #include "MyMainWindow.h"
 #include <qlabel.h>
+#include <iostream>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

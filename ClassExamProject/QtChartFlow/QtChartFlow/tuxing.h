@@ -60,6 +60,8 @@ public:
 		builder& setjuxingradio(float radio);
 		builder& setdrawbypainter(bool flag);
 		builder& setdrawbyloadpic(bool flag);
+		builder& setTriangleSideRadios(double bottom, double left, double right);
+		builder& setTriangleEdgeTypeAndRotate(DiagramDrawParamsTriangle::EdgeType type, double rorate);
 		GfxLibDiagramItemParams build();
 	private:
 		void defaultinit();
@@ -80,7 +82,9 @@ public:
 		QBrush m_huabutuxingbrush;
 		bool m_drawByPainter;
 		bool m_drawByloadpic;
-		bool m_isdrawByPainter;
+		DiagramDrawParamsTriangle::TriangleSizeRadios m_triangleSideRadios;
+		DiagramDrawParamsTriangle::EdgeType m_triangleEdgeType;
+		double m_triangleEdgeRotate;	bool m_isdrawByPainter;
 	};
 	GfxLibDiagramItemParams(bool issizefixed
 		, std::optional<QSize> fixsize
@@ -119,6 +123,10 @@ public:
 	bool m_drawByPainter;
 	bool m_drawByloadpic;
 	bool m_isdrawByPainter;
+	DiagramDrawParamsTriangle::TriangleSizeRadios m_triangleSideRadios;
+	DiagramDrawParamsTriangle::EdgeType m_triangleEdgeType;
+	double m_triangleEdgeRotate;
+
 	//QColor m_huabubackgroundcolor;
 };
 

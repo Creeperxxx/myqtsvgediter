@@ -96,9 +96,147 @@ std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::create(ShapeType type)
 		break;
 	case ShapeType::Circle:
 		return std::make_unique<DiagramDrawerCircle>();
+	case ShapeType::Triangle:
+		return std::make_unique<DiagramDrawerTriangle>();
 		break;
 	}
 }
+
+std::shared_ptr<DrawResult> DiagramDrawerTriangle::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
+{
+	if (!params)
+		throw std::runtime_error("error");//todo:except
+	auto p = dynamic_cast<DiagramDrawParamsTriangle*>(params.get());
+	if (!p)
+		throw std::runtime_error("error");//todo:except
+	QPolygonF triangle = calcuTriangle(p);
+	painter.drawPolygon(triangle);
+
+	std::shared_ptr<DrawResultTriangle> ret = std::make_shared<DrawResultTriangle>();
+	ret->m_painterbrush = painter.brush();
+	ret->m_painterpen = painter.pen();
+	ret->m_triangle = triangle;
+	return ret;
+}
+
+QRectF DiagramDrawerTriangle::calcuwidgetrect(QPointF cente, QSizeF size)
+{
+	QRectF widgetrect = QRectF(cente.x() - size.width() / 2, cente.y() - size.height() / 2, size.width(), size.height());
+	return widgetrect;
+}
+
+QPolygonF DiagramDrawerTriangle::calcuTriangle(DiagramDrawParamsTriangle* params)
+{
+	QPolygonF triangle = calcuUpsidedowntriangle(params->m_triangleSizeRadios.m_bottom, params->m_triangleSizeRadios.m_left, params->m_triangleSizeRadios.m_right);
+	QTransform rotateTransform = calcuRotateTransform(params->m_triangleSizeRadios.m_bottom,params->m_triangleSizeRadios.m_left, params->m_triangleSizeRadios.m_right, params->m_edgetype, params->m_rotationAngle);
+	QTransform translateTransform = calcuTranslateTransfrom(triangle.boundingRect().center(), params->m_center);
+
+	triangle = triangle * rotateTransform * translateTransform;
+	QTransform scaleTransform = calcuScaleTransform(triangle.boundingRect(), calcuwidgetrect(params->m_center, params->m_spacesize));
+	triangle = triangle * scaleTransform;
+	return triangle;
+}
+
+QTransform DiagramDrawerTriangle::calcuTranslateTransfrom(QPointF trianglecenter, QPointF widgetcenter)
+{
+	QTransform translateTransform;
+	translateTransform.translate(widgetcenter.x() - trianglecenter.x(), widgetcenter.y() - trianglecenter.y());
+	return translateTransform;
+}
+
+QTransform DiagramDrawerTriangle::calcuScaleTransform(QRectF trianglerect, QRectF widget)
+{
+	QTransform scaleTransform;
+	qreal scalex = widget.width() / trianglerect.width();
+	qreal scaley = widget.height() / trianglerect.height();
+	qreal scale = qMin(scalex, scaley) * 0.9;
+
+	scaleTransform.translate(trianglerect.center().x(), trianglerect.center().y());
+	scaleTransform.scale(scale, scale);
+	scaleTransform.translate(-trianglerect.center().x(), -trianglerect.center().y());
+
+	return scaleTransform;
+}
+
+
+QPolygonF DiagramDrawerTriangle::calcuUpsidedowntriangle(double bottom, double left, double right)
+{
+	QPointF topleft = QPointF(0, 0);
+	QPointF topright = QPointF(bottom, 0);
+	qreal constheta = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
+	constheta = qBound(-1.0, constheta, 1.0);
+	qreal theta = acos(constheta);
+	qreal x = left * cos(theta);
+	qreal y = left * sin(theta);
+	QPointF bottompoint = QPointF(x, y);
+
+	QPolygonF triangle;
+	triangle << topleft << topright << bottompoint;
+	return triangle;
+}
+
+QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double left, double right, DiagramDrawParamsTriangle::EdgeType edgetype, double angle)
+{
+	// 验证三角形边长是否有效
+	if (bottom <= 0 || left <= 0 || right <= 0 ||
+		bottom + left <= right || bottom + right <= left || left + right <= bottom) {
+		return QTransform(); // 返回单位矩阵表示无效输入
+	}
+
+	// 计算顶点C的坐标
+	double cosA = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
+	double sinA = qSqrt(1 - cosA * cosA);
+	QPointF C(left * cosA, left * sinA);
+
+	// 计算各边的方向
+	double targetsin = qSin(qDegreesToRadians(angle));
+	double targetcos = qCos(qDegreesToRadians(angle));
+
+	double newsin = 0;
+	double newcos = 1; // 默认为无旋转
+
+	switch (edgetype) 
+	{
+	case DiagramDrawParamsTriangle::EdgeType::Bottom: 
+	{ // 边AB (A→B)
+		double cosAB = 1.0;  // 方向 (a,0)
+		double sinAB = 0.0;
+		newsin = targetsin * cosAB - targetcos * sinAB;
+		newcos = targetcos * cosAB + targetsin * sinAB;
+		break;
+	}
+	case DiagramDrawParamsTriangle::EdgeType::Left: 
+	{ // 边AC (A→C)
+		double cosAC = cosA;
+		double sinAC = sinA;
+		newsin = targetsin * cosAC - targetcos * sinAC;
+		newcos = targetcos * cosAC + targetsin * sinAC;
+		break;
+	}
+	case DiagramDrawParamsTriangle::EdgeType::Right: 
+	{ // 边BC (B→C)
+		double bcX = C.x() - bottom; // B→C 的向量
+		double bcY = C.y();
+		double lengthBC = qSqrt(bcX * bcX + bcY * bcY);
+		double cosBC = bcX / lengthBC;
+		double sinBC = bcY / lengthBC;
+		newsin = targetsin * cosBC - targetcos * sinBC;
+		newcos = targetcos * cosBC + targetsin * sinBC;
+		break;
+	}
+	default:
+		break; // 无效输入，保持无旋转
+	}
+
+	QTransform rotateTransform;
+	rotateTransform.scale(1, -1);
+	QTransform transform;
+	transform.setMatrix(newcos, -newsin, 0,
+		newsin, newcos, 0,
+		0, 0, 1);
+	return rotateTransform * transform;
+}
+
 
 
 

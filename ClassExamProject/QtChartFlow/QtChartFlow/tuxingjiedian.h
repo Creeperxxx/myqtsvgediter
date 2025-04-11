@@ -33,7 +33,7 @@ public:
 class DrawResultTriangle :public DrawResult
 {
 public:
-
+	QPolygonF m_triangle;
 };
 
 class DrawResultRightTriangle :public DrawResult
@@ -71,14 +71,14 @@ class DiagramDrawerTriangle : public IDiagramDrawer
 {
 public:
 	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
+private:
+	QPolygonF calcuTriangle(DiagramDrawParamsTriangle* params);
+	QPolygonF calcuUpsidedowntriangle(double bottom, double left, double right);
+	QTransform calcuRotateTransform(double bottom, double left, double right, DiagramDrawParamsTriangle::EdgeType edgetype, double angle);
+	QTransform calcuTranslateTransfrom(QPointF trianglecenter, QPointF widgetcenter);
+	QTransform calcuScaleTransform(QRectF trianglerect, QRectF widget);
+	QRectF calcuwidgetrect(QPointF cente, QSizeF size);
 };
-
-class DiagramDrawerRightTriangle :public IDiagramDrawer
-{
-public:
-	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
-};
-
 
 
 

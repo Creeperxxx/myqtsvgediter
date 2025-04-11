@@ -43,6 +43,8 @@ std::unique_ptr<Ibuildtuxingjiedianparamsfordiagram> factorybuildtuxingjiedianpa
 		break;
 	case ShapeType::Circle:
 		return std::make_unique<buildtuxingjiedianparamsfordiagramcircle>();
+	case ShapeType::Triangle:
+		return std::make_unique<buildtuxingjiedianparamsfordiagramtriangle>();
 		break;
 	}
 }
@@ -103,6 +105,19 @@ std::unique_ptr<IbuildAllDiagramParams> factoryall::create(DiagramItemType widge
 		break;
 	}
 }
+
+
+std::shared_ptr<IDidgramDrawParams> buildtuxingjiedianparamsfordiagramtriangle::specialbuild(DiagramItem* item)
+{
+	std::shared_ptr<DiagramDrawParamsTriangle> params = std::make_shared<DiagramDrawParamsTriangle>();
+	params->m_bottom = 5;
+	params->m_left = 3;
+	params->m_right = 4;
+	params->m_edgetype = DiagramDrawParamsTriangle::EdgeType::Left;
+	params->m_rotationAngle = 90;
+	return params;
+}
+
 
 ShapeType Tool::shapetypestringtoenum(const std::string& str)
 {
