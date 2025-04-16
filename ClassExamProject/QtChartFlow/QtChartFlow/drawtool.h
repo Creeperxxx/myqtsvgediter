@@ -3,6 +3,7 @@
 #include <qpoint.h>
 #include <qbrush.h>
 #include <qpen.h>
+//#include "huabu.h"
 //#include "tuxing.h"
 //#include "huabu.h"
 
@@ -13,8 +14,7 @@ enum class ShapeType
 {
 	Rect,
 	Circle,
-	Triangle,
-	RightTriangle
+	Triangle
 };
 
 enum class DiagramItemType
@@ -24,19 +24,19 @@ enum class DiagramItemType
 	huabu
 };
 
-class Tool
-{
-public:
-	static ShapeType shapetypestringtoenum(const std::string& str);
-};
+//class Tool
+//{
+//public:
+//	static ShapeType shapetypestringtoenum(const std::string& str);
+//};
 
 
 class IDidgramDrawParams
 {
 public:
 	virtual ~IDidgramDrawParams() {}
-	QPoint m_center;
-	QSize m_spacesize;
+	QPointF m_center;
+	QSizeF m_spacesize;
 	ShapeType m_type;
 	QPen m_pen;
 	QBrush m_brush;
@@ -47,27 +47,33 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 {
 public:
 	~DiagramDrawParamsRect() {}
-	float m_radio;
+	double m_boundingrectradio;
 };
 
 class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
+	double m_boundingrectradio;
 	~DiagramDrawParamsCircle() {}
 };
 
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
 {
 public:
+	
 	enum class EdgeType
 	{
 		Left,
 		Right,
 		Bottom	
 	};
+	static EdgeType edgetypestringtoenum(const std::string& edgetype);
 	~DiagramDrawParamsTriangle() {}
-	struct TriangleSizeRadios
+	class TriangleSizeRadios
 	{
+	public:
+		TriangleSizeRadios() {};
+		TriangleSizeRadios(double bottom, double left, double right);
 		double m_bottom;
 		double m_left;
 		double m_right;
@@ -159,6 +165,12 @@ private:
 	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
 };
 
+class buildDiagramPixmapParamsTriangle : public IbuildDiagramPixmapParams
+{
+private:
+	std::shared_ptr<IDidgramDrawParams> specialbuild(DiagramItem* item) override;
+};
+
 
 
 enum class ShapeType;
@@ -177,6 +189,41 @@ public:
 //{
 //	static std::unique_ptr<IbuildAllDiagramParams> create(DiagramItemType type);
 //};
+
+class huabu;
+
+class IbuildHuabuParams : public IbuildAllDiagramParams
+{
+public:
+	std::shared_ptr<IDidgramDrawParams> build(QWidget* item) override;
+private:
+	virtual std::shared_ptr<IDidgramDrawParams> specialbuild(huabu* item) = 0;
+};
+
+class buildHuabuParamsRect : public IbuildHuabuParams
+{
+private:
+	std::shared_ptr<IDidgramDrawParams> specialbuild(huabu* item) override;
+};
+
+class buildHuabuParamsCircle : public IbuildHuabuParams
+{
+private:
+	std::shared_ptr<IDidgramDrawParams> specialbuild(huabu* item) override;
+};
+
+class buildHuabuParamsTriangle : public IbuildHuabuParams
+{
+private:
+	std::shared_ptr<IDidgramDrawParams> specialbuild(huabu* item) override;
+};
+
+class FactorybuildHuabuParams
+{
+public:
+	static std::unique_ptr<IbuildHuabuParams> create(ShapeType type);
+};
+
 
 class factoryall
 {

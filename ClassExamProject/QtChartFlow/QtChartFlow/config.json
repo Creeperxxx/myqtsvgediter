@@ -1,66 +1,63 @@
 {
-  "imagepath": 
-  {
-    "juxing": ":/tuxingku/juxing.png",
-    "yuanxing": ":/tuxingku/yuanxing.png"
-  },
-  "tuxingku": 
-  {
-    "diagramwidget": 
-    {
+  "tuxingku": {
+    "diagramwidget": {
       "backgroundcolor": "#FFFFFF",
-      "issizefix": false,
-      "radio": 1,
-      "fixwidth": 30,
+      "issizefix": true,
+      "widgetradio": 2,
+      "fixwidth": 50,
+      "fixheight": 25,
       "maxwidth": 40,
+      "maxheight": 20,
       "minwidth": 20,
-      "pen": 
-      {
+      "minheight": 10,
+      "pen": {
         "width": 2,
         "color": "#000000"
       },
       "brush": "#00000000",
       "isdrawbypainter": true
-    },
-    "tuxing": 
-    {
-      "juxing": {
-        "drawbypainter": true,
-        "drawbyloadpic": true,
-        "radio": 2
-      },
-      "yuanxing": {
-        "drawbypainter"
-      }
     }
   },
-  "huabu": 
-  {
+  "huabu": {
     "backgroundcolor": "#FFFFFF",
     "width": 900,
-    "radio": 1,
-    "tuxingspace": 
-    {
+    "height": 900,
+    "tuxingspace": {
       "spacewidth": 100,
-      "spaceradio": 1,
-      "pen": 
-      {
+      "spaceheight": 100,
+      "pen": {
         "width": 2,
         "color": "#000000"
       },
       "brush": "#00000000"
-    },
-    "tuxing": 
-    {
-      "juxing": 
-      {
-        "radio": 2
-      }
     }
   },
   "mimetype": "application/x-custom-shape",
-  "tuxingtypename": {
-    "juxing": "juxing",
-    "yuanxign": "yuanxing"
+  "tuxing": {
+    "rectangle": {
+      "radio": 2,
+      "drawbypainter": true,
+      "drawbyloadpic": true,
+      "imagepath": ":/tuxingku/juxing.png"
+    },
+    "circle": {
+      "boundingrectradio": 1,
+      "drawbypainter": true,
+      "drawbyloadpic": true,
+      "imagepath": ":/tuxingku/yuanxing.png"
+    },
+    "triangle": {
+      "edgeradio": {
+        "bottom": 1,
+        "left": 1,
+        "right": 1
+      },
+      "edgetype": "bottom",
+      "totate": 180,
+      "drawbypainter": true,
+      "drawbyloadpic": true,
+      "imagepath": ":/tuxingku/sanjiaoxing.png"
+    }
+    
   }
 }

@@ -44,6 +44,9 @@
     <ClCompile Include="drawtool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DiagramMimedata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="drawtool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DiagramMimedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

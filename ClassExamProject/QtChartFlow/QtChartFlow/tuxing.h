@@ -20,6 +20,7 @@
 #include "config.h"
 #include "drawtool.h"
 #include "tuxingjiedian.h"
+#include "DiagramMimedata.h"
 
 //class factory
 
@@ -50,82 +51,101 @@ private:
 
 class GfxLibDiagramItemParams
 {
+//public:
+	//class builder
+	//{
+	//public:
+	//	builder();
+	//	builder& settype(ShapeType type);
+	//	builder& setpicpath(QString path);
+	//	builder& setjuxingradio(float radio);
+	//	builder& setdrawbypainter(bool flag);
+	//	builder& setdrawbyloadpic(bool flag);
+	//	builder& setTriangleSideRadios(double bottom, double left, double right);
+	//	builder& setTriangleEdgeTypeAndRotate(DiagramDrawParamsTriangle::EdgeType type, double rorate);
+	//	GfxLibDiagramItemParams build();
+	//private:
+	//	void defaultinit();
+	//	void setsomethingaftertype(ShapeType type);	
+	//	//也许可以为参数分类
+	//	bool m_issizefixed;
+	//	std::optional<QSizeF> m_fixsize = std::nullopt;
+	//	std::optional<QSizeF> m_maxsize = std::nullopt;
+	//	std::optional<QSizeF> m_minsize = std::nullopt;
+	//	QPen m_pen;
+	//	QBrush m_brush;
+	//	QString m_mimetype;
+	//	QColor m_backgroundcolor;
+	//	//std::optional<float> m_widgetradio = std::nullopt;
+	//	ShapeType m_type; //todo
+	//	std::optional<QString> m_picpath = std::nullopt;
+	//	std::optional<float> m_juxingradio = std::nullopt; //todo
+	//	QSizeF m_huabutuxingspacesize; 
+	//	QPen m_huabutuxingpen;
+	//	QBrush m_huabutuxingbrush; //todo:好像没必要，毕竟是透明
+	//	bool m_drawByPainter;
+	//	bool m_drawByloadpic;
+	//	DiagramDrawParamsTriangle::TriangleSizeRadios m_triangleSideRadios;//todo
+	//	DiagramDrawParamsTriangle::EdgeType m_triangleEdgeType; //todo
+	//	double m_triangleEdgeRotate; //todo
+	//	bool m_isdrawByPainter; 
+	//};
+	//GfxLibDiagramItemParams(bool issizefixed
+	//	, std::optional<QSizeF> fixsize
+	//	, std::optional<QSizeF> maxsize
+	//	, std::optional<QSizeF> minsize
+	//	, QPen pen
+	//	, QBrush brush
+	//	, QString mimetype
+	//	, QColor backgroundcolor
+	//	, std::optional<QString> picpath
+	//	, std::optional<float> juxingradio
+	//	, QSizeF huabutuxingspacesize
+	//	, QPen huabutuxingpen
+	//	, QBrush huabutuxingbrush
+	//	//, std::optional<float> widgetradio
+	//	, ShapeType type
+	//	, bool drawbypainter
+	//	, bool drawbyloacpic
+	//	, bool isdrawbypainter);
+	
 public:
-	class builder
-	{
-	public:
-		builder();
-		builder& settype(ShapeType type);
-		builder& setpicpath(QString path);
-		builder& setjuxingradio(float radio);
-		builder& setdrawbypainter(bool flag);
-		builder& setdrawbyloadpic(bool flag);
-		builder& setTriangleSideRadios(double bottom, double left, double right);
-		builder& setTriangleEdgeTypeAndRotate(DiagramDrawParamsTriangle::EdgeType type, double rorate);
-		GfxLibDiagramItemParams build();
-	private:
-		void defaultinit();
-		bool m_issizefixed;
-		std::optional<QSize> m_fixsize = std::nullopt;
-		std::optional<QSize> m_maxsize = std::nullopt;
-		std::optional<QSize> m_minsize = std::nullopt;
-		QPen m_pen;
-		QBrush m_brush;
-		QString m_mimetype;
-		QColor m_backgroundcolor;
-		std::optional<float> m_widgetradio = std::nullopt;
-		ShapeType m_type;
-		std::optional<QString> m_picpath = std::nullopt;
-		std::optional<float> m_juxingradio = std::nullopt;
-		QSize m_huabutuxingspacesize;
-		QPen m_huabutuxingpen;
-		QBrush m_huabutuxingbrush;
-		bool m_drawByPainter;
-		bool m_drawByloadpic;
-		DiagramDrawParamsTriangle::TriangleSizeRadios m_triangleSideRadios;
-		DiagramDrawParamsTriangle::EdgeType m_triangleEdgeType;
-		double m_triangleEdgeRotate;	bool m_isdrawByPainter;
-	};
-	GfxLibDiagramItemParams(bool issizefixed
-		, std::optional<QSize> fixsize
-		, std::optional<QSize> maxsize
-		, std::optional<QSize> minsize
-		, QPen pen
-		, QBrush brush
-		, QString mimetype
-		, QColor backgroundcolor
-		, std::optional<QString> picpath
-		, std::optional<float> juxingradio
-		, QSize huabutuxingspacesize
-		, QPen huabutuxingpen
-		, QBrush huabutuxingbrush
-		, std::optional<float> widgetradio
-		, ShapeType type
-		, bool drawbypainter
-		, bool drawbyloacpic
-		, bool isdrawbypainter);
-
+	GfxLibDiagramItemParams(ShapeType type);
 	bool m_issizefixed;
-	std::optional<QSize> m_fixsize;
-	std::optional<QSize> m_maxsize;
-	std::optional<QSize> m_minsize;
+	std::optional<double> m_widgetradio;
+	std::optional<QSizeF> m_fixsize;
+	std::optional<QSizeF> m_maxsize;
+	std::optional<QSizeF> m_minsize;
 	QPen m_pen;
 	QBrush m_brush;
 	QString m_mimetype;
 	QColor m_backgroundcolor;
-	std::optional<float> m_widgetradio;
 	ShapeType m_type;
-	std::optional<QString> m_picpath;
-	std::optional<float> m_juxingradio;
-	QSize m_huabutuxingspacesize;
+	std::optional<QString> m_picpath; 
+	QSizeF m_huabutuxingspacesize;
 	QPen m_huabutuxingpen;
 	QBrush m_huabutuxingbrush;
-	bool m_drawByPainter;
-	bool m_drawByloadpic;
+	bool m_drawByPainter; 
+	bool m_drawByloadpic; 
 	bool m_isdrawByPainter;
-	DiagramDrawParamsTriangle::TriangleSizeRadios m_triangleSideRadios;
-	DiagramDrawParamsTriangle::EdgeType m_triangleEdgeType;
-	double m_triangleEdgeRotate;
+	
+	
+	std::optional<float> m_juxingradio;
+	void setJuxingRadio(double radio);
+
+	std::optional<DiagramDrawParamsTriangle::TriangleSizeRadios> m_triangleSideRadios; 
+	void setTriangleSideRadio(double bottom, double left, double right);
+	std::optional<DiagramDrawParamsTriangle::EdgeType> m_triangleEdgeType; 
+	void setTriangleEdgeType(const std::string& edgetype);
+	std::optional<double> m_triangleEdgeRotate;
+	void setTriangleRotate(double rotate);
+
+	std::optional<double> m_circleboundingrectradio; 
+	void setCircleRadio(double radio);
+private:
+	void defaultinit();
+	void otherInitAfterType();
+
 
 	//QColor m_huabubackgroundcolor;
 };
@@ -139,21 +159,26 @@ public:
 	//IDiagramItem(ShapeType type,QString picturePath = imagepathjuxing, QWidget* parent = nullptr);
 	//IDiagramItem(ShapeType type, QString picturepath = imagepathjuxing, QColor* backgroundcolor, QWidget* parent = nullptr);
 	virtual ~DiagramItem() {}
-	DiagramItem(GfxLibDiagramItemParams params, QWidget* parent);
+	DiagramItem(GfxLibDiagramItemParams params, QWidget* parent = nullptr);
 	QString getpicpath();
-	QSize getspacesize();
+	QSizeF getspacesize();
 	QPoint getcenter();
 	ShapeType gettype();
-	float getDiagramItemRectRadio();
-	float getHuabuRectRadio();
+	double getDiagramItemRectRadio();
+
+	//float getHuabuRectRadio();
 	//QPainter* getDiagramItemPainter();
 	//QPainter* getDiagramItemPixmapPainter();
 	QPoint getPixmapCenter();
-	QSize getPixmapSpaceSize();
+	QSizeF getPixmapSpaceSize();
 	QPen gethuabupen();
 	QBrush gethuabubrush();
 	QPen getdiagrampen();
 	QBrush getdiagrambrush();
+	double getCircleBoundingrectradio();
+	DiagramDrawParamsTriangle::TriangleSizeRadios gettrianglesideradio();
+	DiagramDrawParamsTriangle::EdgeType getedgetype();
+	double getTriangleRotate();
 
 private:
 	void mousePressEvent(QMouseEvent* event) override;
@@ -168,6 +193,7 @@ private:
 	void init();
 	QPixmap drawDiagramPixmap(); //创建拖动预览
 	QMimeData* createDragMimeData(); //创建拖动mimedata
+	QByteArray createDiagramMimedataDeliveryparams();
 	void setsizepolicyexpanding();
 	void initWidgetSize();
 	void initmaxandminsize();
@@ -175,6 +201,10 @@ private:
 	//void initDiagramPixmap();
 	void initDiagramPainter(QPainter& painter);
 	void initDiagramPixmapPainter(QPainter& painter);
+
+	void buildRectMimedata(DiagramMimedata& data);
+	void buildCircleMimedata(DiagramMimedata& data);
+	void buildTriangleMimedata(DiagramMimedata& data);
 	//void inittuxingzujian();
 
 	//std::shared_ptr<GfxLibDiagramitemDrawer> createtuxing();

@@ -98,6 +98,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp" />
+    <ClCompile Include="DiagramMimedata.cpp" />
     <ClCompile Include="drawtool.cpp" />
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
@@ -114,6 +115,7 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="configmanager.h" />
+    <ClInclude Include="DiagramMimedata.h" />
     <ClInclude Include="drawtool.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />

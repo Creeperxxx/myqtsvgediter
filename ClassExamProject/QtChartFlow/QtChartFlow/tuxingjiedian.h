@@ -26,7 +26,7 @@ public:
 class DrawResultCircle :public DrawResult
 {
 public:
-	int m_r;
+	QRectF m_boundrect;
 	//center
 };
 
@@ -36,10 +36,6 @@ public:
 	QPolygonF m_triangle;
 };
 
-class DrawResultRightTriangle :public DrawResult
-{
-
-};
 
 
 
@@ -64,7 +60,9 @@ class DiagramDrawerCircle : public IDiagramDrawer
 public:
 	std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)override;
 private:
-	int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
+	//int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
+	QRectF calcuboundingrect(DiagramDrawParamsCircle* params);
+	QSizeF calcuboundingrectsize(DiagramDrawParamsCircle* params);
 };
 
 class DiagramDrawerTriangle : public IDiagramDrawer

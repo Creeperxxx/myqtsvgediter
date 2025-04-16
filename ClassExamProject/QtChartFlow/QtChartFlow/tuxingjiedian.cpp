@@ -1,12 +1,12 @@
 #include "tuxingjiedian.h"
 
 
-std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) 
+std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
 	if (!params)
 		throw std::runtime_error("error");//todo:except
 	DiagramDrawParamsRect* p = dynamic_cast<DiagramDrawParamsRect*>(params.get());
-	if(!p)
+	if (!p)
 		throw std::runtime_error("error");//todo:except
 
 	QRectF rect = calcurect(p);
@@ -23,29 +23,49 @@ std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shar
 	return std::move(ret);
 }
 
-
-int DiagramDrawerCircle::calcuyuanxingbanjing(DiagramDrawParamsCircle* params)
+QSizeF DiagramDrawerCircle::calcuboundingrectsize(DiagramDrawParamsCircle* params)
 {
-	return (qMin(params->m_spacesize.width(), params->m_spacesize.height()) - params->m_pen.widthF()) / 2;
+	float availablewidth = params->m_spacesize.width() - 2 * params->m_pen.widthF();
+	float availableheight = params->m_spacesize.height() - 2 * params->m_pen.widthF();
+
+	float rectwidth, rectheight;
+	if (availablewidth / availableheight > params->m_boundingrectradio)
+	{
+		rectheight = availableheight;
+		rectwidth = rectheight * params->m_boundingrectradio;
+	}
+	else
+	{
+		rectwidth = availablewidth;
+		rectheight = rectwidth / params->m_boundingrectradio;
+	}
+	return QSizeF(rectwidth, rectheight);
 }
+
+
+//int DiagramDrawerCircle::calcuyuanxingbanjing(DiagramDrawParamsCircle* params)
+//{
+//	return (qMin(params->m_spacesize.width(), params->m_spacesize.height()) - params->m_pen.widthF()) / 2;
+//}
 
 std::shared_ptr<DrawResult> DiagramDrawerCircle::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
-	if(!params)
+	if (!params)
 		throw std::runtime_error("error");//todo:except
 	auto p = dynamic_cast<DiagramDrawParamsCircle*>(params.get());
-	if(!p)
+	if (!p)
 		throw std::runtime_error("error");//todo:except
 
-	auto r = calcuyuanxingbanjing(p);
-	painter.drawEllipse(p->m_center, r, r);
+	//auto r = calcuyuanxingbanjing(p);
+	QRectF boundingrect = calcuboundingrect(p);
+	painter.drawEllipse(boundingrect);
 
 	auto ret = std::make_unique<DrawResultCircle>();
 	ret->m_painterbrush = painter.brush();
 	ret->m_painterpen = painter.pen();
-	ret->m_r = r;
+	ret->m_boundrect = boundingrect;
 
-	return std::move(ret);
+	return ret;
 }
 
 
@@ -60,27 +80,36 @@ QRectF DiagramDrawerRect::calcurect(DiagramDrawParamsRect* params)
 
 }
 
+QRectF DiagramDrawerCircle::calcuboundingrect(DiagramDrawParamsCircle* params)
+{
+	QSizeF size = calcuboundingrectsize(params);
+	float x = params->m_center.x() - size.width() / 2;
+	float y = params->m_center.y() - size.height() / 2;
+
+	return QRectF(x, y, size.width(), size.height());
+}
+
 QSizeF DiagramDrawerRect::calcusuitablerectsize(DiagramDrawParamsRect* params)
 {
 	float availablewidth = params->m_spacesize.width() - 2 * params->m_pen.widthF();
 	float availableheight = params->m_spacesize.height() - 2 * params->m_pen.widthF();
 
 	float rectwidth, rectheight;
-	if (availablewidth / availableheight > params->m_radio)
+	if (availablewidth / availableheight > params->m_boundingrectradio)
 	{
 		rectheight = availableheight;
-		rectwidth = rectheight * params->m_radio;
+		rectwidth = rectheight * params->m_boundingrectradio;
 	}
 	else
 	{
 		rectwidth = availablewidth;
-		rectheight = rectwidth / params->m_radio;
+		rectheight = rectwidth / params->m_boundingrectradio;
 	}
 	return QSizeF(rectwidth, rectheight);
 }
 
 
-std::shared_ptr<DrawResult> DiagramDrawInterface::draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)
+std::shared_ptr<DrawResult> DiagramDrawInterface::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
 	return create(params->m_type)->draw(painter, params);
 }
@@ -128,7 +157,7 @@ QRectF DiagramDrawerTriangle::calcuwidgetrect(QPointF cente, QSizeF size)
 QPolygonF DiagramDrawerTriangle::calcuTriangle(DiagramDrawParamsTriangle* params)
 {
 	QPolygonF triangle = calcuUpsidedowntriangle(params->m_triangleSizeRadios.m_bottom, params->m_triangleSizeRadios.m_left, params->m_triangleSizeRadios.m_right);
-	QTransform rotateTransform = calcuRotateTransform(params->m_triangleSizeRadios.m_bottom,params->m_triangleSizeRadios.m_left, params->m_triangleSizeRadios.m_right, params->m_edgetype, params->m_rotationAngle);
+	QTransform rotateTransform = calcuRotateTransform(params->m_triangleSizeRadios.m_bottom, params->m_triangleSizeRadios.m_left, params->m_triangleSizeRadios.m_right, params->m_edgetype, params->m_rotationAngle);
 	QTransform translateTransform = calcuTranslateTransfrom(triangle.boundingRect().center(), params->m_center);
 
 	triangle = triangle * rotateTransform * translateTransform;
@@ -195,9 +224,9 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 	double newsin = 0;
 	double newcos = 1; // 默认为无旋转
 
-	switch (edgetype) 
+	switch (edgetype)
 	{
-	case DiagramDrawParamsTriangle::EdgeType::Bottom: 
+	case DiagramDrawParamsTriangle::EdgeType::Bottom:
 	{ // 边AB (A→B)
 		double cosAB = 1.0;  // 方向 (a,0)
 		double sinAB = 0.0;
@@ -205,7 +234,7 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 		newcos = targetcos * cosAB + targetsin * sinAB;
 		break;
 	}
-	case DiagramDrawParamsTriangle::EdgeType::Left: 
+	case DiagramDrawParamsTriangle::EdgeType::Left:
 	{ // 边AC (A→C)
 		double cosAC = cosA;
 		double sinAC = sinA;
@@ -213,7 +242,7 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 		newcos = targetcos * cosAC + targetsin * sinAC;
 		break;
 	}
-	case DiagramDrawParamsTriangle::EdgeType::Right: 
+	case DiagramDrawParamsTriangle::EdgeType::Right:
 	{ // 边BC (B→C)
 		double bcX = C.x() - bottom; // B→C 的向量
 		double bcY = C.y();
@@ -229,7 +258,8 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 	}
 
 	QTransform rotateTransform;
-	rotateTransform.scale(1, -1);
+	//rotateTransform.scale(1, -1);
+	rotateTransform.scale(-1, 1);
 	QTransform transform;
 	transform.setMatrix(newcos, -newsin, 0,
 		newsin, newcos, 0,

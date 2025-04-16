@@ -1,53 +1,92 @@
 #pragma once
 
+// QtCFConstants.h
+
 namespace qtcf {
 
-	constexpr const char* imagePath = "imagepath";
-	constexpr const char* imagePathJuxing = "imagepath.juxing";
-	constexpr const char* imagePathYuanxing = "imagepath.yuanxing";
+    // tuxingku 图形库相关常量
+    namespace tuxingku {
 
-	constexpr const char* tuxingku = "tuxingku";
-	constexpr const char* diagramWidget = "tuxingku.diagramwidget";
-	constexpr const char* diagramWidgetBackgroundColor = "tuxingku.diagramwidget.backgroundcolor";
-	constexpr const char* diagramWidgetIsSizeFix = "tuxingku.diagramwidget.issizefix";
-	constexpr const char* diagramWidgetRadio = "tuxingku.diagramwidget.radio";
-	constexpr const char* diagramWidgetFixWidth = "tuxingku.diagramwidget.fixwidth";
-	constexpr const char* diagramWidgetMaxWidth = "tuxingku.diagramwidget.maxwidth";
-	constexpr const char* diagramWidgetMinWidth = "tuxingku.diagramwidget.minwidth";
-	constexpr const char* diagramWidgetPen = "tuxingku.diagramwidget.pen";
-	constexpr const char* diagramWidgetPenWidth = "tuxingku.diagramwidget.pen.width";
-	constexpr const char* diagramWidgetPenColor = "tuxingku.diagramwidget.pen.color";
-	constexpr const char* diagramWidgetBrush = "tuxingku.diagramwidget.brush";
-	constexpr const char* diagramWidgetIsDrawByPainter = "tuxingku.diagramwidget.isdrawbypainter";
+        namespace diagramwidget {
+            constexpr auto backgroundcolor = "tuxingku.diagramwidget.backgroundcolor";
+            constexpr auto issizefix = "tuxingku.diagramwidget.issizefix";
+            constexpr auto widgetradio = "tuxingku.diagramwidget.widgetradio";
+            constexpr auto fixwidth = "tuxingku.diagramwidget.fixwidth";
+            constexpr auto fixheight = "tuxingku.diagramwidget.fixheight";
+            constexpr auto maxwidth = "tuxingku.diagramwidget.maxwidth";
+            constexpr auto maxheight = "tuxingku.diagramwidget.maxheight";
+            constexpr auto minwidth = "tuxingku.diagramwidget.minwidth";
+            constexpr auto minheight = "tuxingku.diagramwidget.minheight";
 
-	constexpr const char* tuxing = "tuxingku.tuxing";
-	constexpr const char* tuxingJuxing = "tuxingku.tuxing.juxing";
-	constexpr const char* tuxingJuxingRadio = "tuxingku.tuxing.juxing.radio";
-	constexpr const char* tuxingJuxingDrawByPainter = "tuxingku.tuxing.juxing.drawbypainter";
-	constexpr const char* tuxingJuxingDrawByLoadpic = "tuxingku.tuxing.juxing.drawbyloadpic";
+            namespace pen {
+                constexpr auto width = "tuxingku.diagramwidget.pen.width";
+                constexpr auto color = "tuxingku.diagramwidget.pen.color";
+            }
 
-	constexpr const char* huabu = "huabu";
-	constexpr const char* huabuBackgroundColor = "huabu.backgroundColor";
-	constexpr const char* huabuWidth = "huabu.width";
-	constexpr const char* huabuRadio = "huabu.radio";
-	constexpr const char* huabuTuxingSpace = "huabu.tuxingspace";
-	constexpr const char* huabuTuxingSpaceSpaceWidth = "huabu.tuxingspace.spacewidth";
-	constexpr const char* huabuTuxingSpaceSpaceradio = "huabu.tuxingspace.spaceradio";
-	constexpr const char* huabuTuxingSpacePen = "huabu.tuxingspace.pen";
-	constexpr const char* huabuTuxingSpacePenWidth = "huabu.tuxingspace.pen.width";
-	constexpr const char* huabuTuxingSpacePenColor = "huabu.tuxingspace.pen.color";
-	constexpr const char* huabuTuxingSpaceBrush = "huabu.tuxingspace.brush";
-	constexpr const char* huabuTuxing = "huabu.tuxing";
-	constexpr const char* huabuTuxingJuxing = "huabu.tuxing.juxing";
-	constexpr const char* huabuTuxingJuxingRadio = "huabu.tuxing.juxing.radio";
+            constexpr auto brush = "tuxingku.diagramwidget.brush";
+            constexpr auto isdrawbypainter = "tuxingku.diagramwidget.isdrawbypainter";
+        } // namespace diagramwidget
 
-	constexpr const char* mimeType = "mimetype";
+    } // namespace tuxingku
 
-	constexpr const char* tuxingTypeName = "tuxingtypename";
-	constexpr const char* tuxingTypeNameJuxing = "tuxingtypename.juxing";
-	constexpr const char* tuxingTypeNameYuanxing = "tuxingtypename.yuanxign";
+    // huabu 画布相关常量
+    namespace huabu {
+        constexpr auto backgroundcolor = "huabu.backgroundcolor";
+        constexpr auto width = "huabu.width";
+        constexpr auto height = "huabu.height";
+
+        namespace tuxingspace {
+            constexpr auto spacewidth = "huabu.tuxingspace.spacewidth";
+            constexpr auto spaceheight = "huabu.tuxingspace.spaceheight";
+
+            namespace pen {
+                constexpr auto width = "huabu.tuxingspace.pen.width";
+                constexpr auto color = "huabu.tuxingspace.pen.color";
+            }
+
+            constexpr auto brush = "huabu.tuxingspace.brush";
+        }
+    } // namespace huabu
+
+    // 其他顶层常量
+    constexpr auto mimetype = "mimetype";
+
+    // tuxing 图形相关常量
+    namespace tuxing {
+
+        namespace rectangle {
+            constexpr auto radio = "tuxing.rectangle.radio";
+            constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";
+            constexpr auto drawbyloadpic = "tuxing.rectangle.drawbyloadpic";
+            constexpr auto imagepath = "tuxing.rectangle.imagepath";
+        } // namespace rectangle
+
+        namespace circle {
+            constexpr auto drawbypainter = "tuxing.circle.drawbypainter";
+            constexpr auto drawbyloadpic = "tuxing.circle.drawbyloadpic";
+            constexpr auto imagepath = "tuxing.circle.imagepath";
+            constexpr auto boundingrectradio = "tuxing.circle.boundingrectradio";
+        } // namespace circle
+
+        namespace triangle {
+
+            namespace edgeradio {
+                constexpr auto bottom = "tuxing.triangle.edgeradio.bottom";
+                constexpr auto left = "tuxing.triangle.edgeradio.left";
+                constexpr auto right = "tuxing.triangle.edgeradio.right";
+            }
+
+            constexpr auto edgetype = "tuxing.triangle.edgetype";
+            constexpr auto totate = "tuxing.triangle.totate";
+            constexpr auto drawbypainter = "tuxing.triangle.drawbypainter";
+            constexpr auto drawbyloadpic = "tuxing.triangle.drawbyloadpic";
+            constexpr auto imagepath = "tuxing.triangle.imagepath";
+        } // namespace triangle
+
+    } // namespace tuxing
 
 } // namespace qtcf
+
 
 
 
