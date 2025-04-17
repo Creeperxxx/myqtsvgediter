@@ -36,7 +36,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>qt 6.8</QtInstall>
+    <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
@@ -103,6 +103,7 @@
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="shuxingwidget.cpp" />
     <ClCompile Include="tuxing.cpp" />
     <ClCompile Include="tuxingjiedian.cpp" />
   </ItemGroup>
@@ -117,6 +118,7 @@
     <ClInclude Include="configmanager.h" />
     <ClInclude Include="DiagramMimedata.h" />
     <ClInclude Include="drawtool.h" />
+    <QtMoc Include="shuxingwidget.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />
     <QtMoc Include="tuxing.h" />

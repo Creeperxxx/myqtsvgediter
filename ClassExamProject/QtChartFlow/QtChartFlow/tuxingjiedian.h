@@ -36,6 +36,12 @@ public:
 	QPolygonF m_triangle;
 };
 
+class DrawResultLine : public DrawResult
+{
+public:
+	QLineF m_line;
+};
+
 
 
 
@@ -78,7 +84,13 @@ private:
 	QRectF calcuwidgetrect(QPointF cente, QSizeF size);
 };
 
+class DiagramDrawerLine : public IDiagramDrawer
+{
+public:
+	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
+private:
 
+};
 
 
 

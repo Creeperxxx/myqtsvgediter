@@ -18,12 +18,12 @@ namespace qtcf {
             constexpr auto minwidth = "tuxingku.diagramwidget.minwidth";
             constexpr auto minheight = "tuxingku.diagramwidget.minheight";
 
-            namespace pen {
-                constexpr auto width = "tuxingku.diagramwidget.pen.width";
-                constexpr auto color = "tuxingku.diagramwidget.pen.color";
-            }
+            //namespace pen {
+                //constexpr auto width = "tuxingku.diagramwidget.pen.width";
+                //constexpr auto color = "tuxingku.diagramwidget.pen.color";
+            //}
 
-            constexpr auto brush = "tuxingku.diagramwidget.brush";
+            //constexpr auto brush = "tuxingku.diagramwidget.brush";
             constexpr auto isdrawbypainter = "tuxingku.diagramwidget.isdrawbypainter";
         } // namespace diagramwidget
 
@@ -39,17 +39,26 @@ namespace qtcf {
             constexpr auto spacewidth = "huabu.tuxingspace.spacewidth";
             constexpr auto spaceheight = "huabu.tuxingspace.spaceheight";
 
-            namespace pen {
-                constexpr auto width = "huabu.tuxingspace.pen.width";
-                constexpr auto color = "huabu.tuxingspace.pen.color";
-            }
+            //namespace pen {
+                //constexpr auto width = "huabu.tuxingspace.pen.width";
+                //constexpr auto color = "huabu.tuxingspace.pen.color";
+            //}
 
-            constexpr auto brush = "huabu.tuxingspace.brush";
+            //constexpr auto brush = "huabu.tuxingspace.brush";
         }
     } // namespace huabu
 
     // 其他顶层常量
     constexpr auto mimetype = "mimetype";
+
+    namespace painter
+    {
+        namespace pen {
+            constexpr auto width = "painter.pen.width";
+            constexpr auto color = "painter.pen.color";
+        }
+		constexpr auto brush = "painter.brush";
+    }
 
     // tuxing 图形相关常量
     namespace tuxing {
@@ -82,6 +91,12 @@ namespace qtcf {
             constexpr auto drawbyloadpic = "tuxing.triangle.drawbyloadpic";
             constexpr auto imagepath = "tuxing.triangle.imagepath";
         } // namespace triangle
+        namespace line {
+            constexpr auto drawbypainter = "tuxing.line.drawbypainter";
+            constexpr auto drawbyloadpic = "tuxing.line.drawbyloadpic";
+            constexpr auto imagepath = "tuxing.line.imagepath";
+            constexpr auto rotate = "tuxing.line.rotate";
+        }
 
     } // namespace tuxing
 

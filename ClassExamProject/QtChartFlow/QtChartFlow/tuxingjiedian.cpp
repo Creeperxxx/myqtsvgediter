@@ -119,7 +119,6 @@ std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::create(ShapeType type)
 {
 	switch (type)
 	{
-	default:
 	case ShapeType::Rect:
 		return std::make_unique<DiagramDrawerRect>();
 		break;
@@ -128,6 +127,10 @@ std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::create(ShapeType type)
 	case ShapeType::Triangle:
 		return std::make_unique<DiagramDrawerTriangle>();
 		break;
+	case ShapeType::Line:
+		return std::make_unique<DiagramDrawerLine>();
+	default:
+		throw std::runtime_error("error");
 	}
 }
 
@@ -267,6 +270,72 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 	return rotateTransform * transform;
 }
 
+std::shared_ptr<DrawResult> DiagramDrawerLine::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
+{
+	if (!params)
+		throw std::invalid_argument("Diagram draw parameters cannot be null.");
 
+	auto p = dynamic_cast<DiagramDrawParamsLine*>(params.get());
+	if (!p)
+		throw std::invalid_argument("Invalid diagram draw parameters type.");
 
+	double halfwidth = p->m_spacesize.width() / 2.0;
+	double halfheight = p->m_spacesize.height() / 2.0;
+
+	// Convert rotation angle to radians
+	double radians = qDegreesToRadians(p->m_rotationAngle);
+
+	// Calculate direction vector
+	double dx = std::cos(radians);
+	double dy = std::sin(radians);
+
+	// Avoid division by zero and handle extreme angles
+	if (dx == 0 && dy == 0) {
+		throw std::runtime_error("Direction vector is undefined.");
+	}
+
+	// Calculate scaling factor t for line length based on space size
+	double tWidth = (dx != 0) ? std::abs(halfwidth / dx) : std::numeric_limits<double>::max();
+	double tHeight = (dy != 0) ? std::abs(halfheight / dy) : std::numeric_limits<double>::max();
+	double t = std::min(tWidth, tHeight);
+
+	QPointF start = p->m_center - QPointF(t * dx, t * dy);
+	QPointF end = p->m_center + QPointF(t * dx, t * dy);
+
+	QLineF line(start, end);
+
+	// Draw the line
+	painter.drawLine(line);
+
+	// Prepare the result
+	std::shared_ptr<DrawResultLine> ret = std::make_shared<DrawResultLine>();
+	ret->m_line = line;
+
+	ret->m_painterbrush = painter.brush();
+	ret->m_painterpen = painter.pen();
+
+	return ret;
+	//if (!params)
+	//	throw std::runtime_error("error");//todo:except
+	//auto p = dynamic_cast<DiagramDrawParamsLine*>(params.get());
+	//if (!p)
+	//	throw std::runtime_error("error");//todo:except
+	//
+	//double halfwidth = p->m_spacesize.width() / 2;
+	//double halfheight = p->m_spacesize.height() / 2;
+
+	//double radians = qDegreesToRadians(p->m_rotationAngle);
+
+	//double dx = std::cos(radians);
+	//double dy = std::sin(radians);
+
+	//double t = std::max(std::abs(halfwidth / dx), std::abs(halfheight / dy));
+	//QPointF start = p->m_center - t * QPointF(dx, dy);
+	//QPointF end = p->m_center + t * QPointF(dx, dy);
+
+	//painter.drawLine(start, end);
+
+	//std::shared_ptr<DrawResultLine> ret = std::make_shared<DrawResultLine>();
+	//return ret;
+}
 

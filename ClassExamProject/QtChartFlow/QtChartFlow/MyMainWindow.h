@@ -17,6 +17,8 @@
 #include <qtoolbar.h>
 #include <qscrollbar.h>
 #include <qsizegrip.h>
+#include <qstackedwidget.h>
+#include "shuxingwidget.h"
 
 class MyMainWindow : public QMainWindow
 {

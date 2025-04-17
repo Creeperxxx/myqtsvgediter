@@ -19,5 +19,7 @@ public:
 	std::optional<DiagramDrawParamsTriangle::TriangleSizeRadios> m_triangleSideRadios;
 	std::optional<DiagramDrawParamsTriangle::EdgeType> m_triangleEdgeType;
 	std::optional<double> m_triangleRotate;
+
+	std::optional<double> m_linerotate;
 };
 

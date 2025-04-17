@@ -88,6 +88,9 @@ void MyMainWindow::init()
 
 	GfxLibDiagramItemParams sanjiaoxingparams(ShapeType::Triangle);
 	DiagramItem* sanjiaoxing = new DiagramItem(sanjiaoxingparams);
+
+	GfxLibDiagramItemParams lineparams(ShapeType::Line);
+	DiagramItem* line = new DiagramItem(lineparams);
 	
 	maintoolbar->addWidget(juxing);
 	maintoolbar->addSeparator();
@@ -95,6 +98,17 @@ void MyMainWindow::init()
 	maintoolbar->addSeparator();
 	maintoolbar->addWidget(sanjiaoxing);
 	maintoolbar->addSeparator();
+	maintoolbar->addWidget(line);
+	maintoolbar->addSeparator();
+
+	QStackedWidget* propertywidget = new QStackedWidget(centralwidget);
+	centralwidgetlayout->addWidget(propertywidget);
+	propertywidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	propertywidget->setStyleSheet("background-color: rgb(255,255,255);");
+	
+	shuxingwidget* huabushuxing = new shuxingwidget();
+	
+	propertywidget->addWidget(huabushuxing);
 
 	//QSizeGrip* sizegrip = new QSizeGrip(huabuwidget);
 	//QVBoxLayout* huabulayout = new QVBoxLayout(huabuwidget);

@@ -47,6 +47,9 @@
     <ClCompile Include="DiagramMimedata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shuxingwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h">
@@ -56,6 +59,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="tuxing.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="shuxingwidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

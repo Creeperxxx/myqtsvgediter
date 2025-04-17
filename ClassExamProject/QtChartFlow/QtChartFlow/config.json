@@ -10,13 +10,8 @@
       "maxheight": 20,
       "minwidth": 20,
       "minheight": 10,
-      "pen": {
-        "width": 2,
-        "color": "#000000"
-      },
-      "brush": "#00000000",
       "isdrawbypainter": true
-    }
+    } 
   },
   "huabu": {
     "backgroundcolor": "#FFFFFF",
@@ -24,13 +19,15 @@
     "height": 900,
     "tuxingspace": {
       "spacewidth": 100,
-      "spaceheight": 100,
-      "pen": {
-        "width": 2,
-        "color": "#000000"
-      },
-      "brush": "#00000000"
+      "spaceheight": 100
     }
+  },
+  "painter": {
+    "pen": {
+      "color": "#000000",
+      "width": 2
+    },
+    "brush": "#00000000"
   },
   "mimetype": "application/x-custom-shape",
   "tuxing": {
@@ -57,6 +54,12 @@
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/sanjiaoxing.png"
+    },
+    "line": {
+      "drawbypainter": true,
+      "drawbyloadpic": true,
+      "imagepath": ":/tuxingku/xian.png",
+      "rotate": 0
     }
     
   }

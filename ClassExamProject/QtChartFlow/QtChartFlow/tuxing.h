@@ -33,17 +33,17 @@ class GfxLibDiagramitemDrawer
 {
 	//drawtuxingkuzujian(QSize sourceWidgetSize, QString picpath = imagepathjuxing, bool drawbypainter = false, bool drawbyloadpic = false);
 public:
-	GfxLibDiagramitemDrawer(bool drawbypainter = false, bool drawbyloadpic = false, bool isdrawbypainter = true);
-	void draw(QPainter& painter, DiagramItem* item);
+	//GfxLibDiagramitemDrawer(bool drawbypainter = false, bool drawbyloadpic = false, bool isdrawbypainter = true);
+	static void draw(QPainter& painter, DiagramItem* item);
 private:
-	void drawByLoadpic(QPainter& painter, DiagramItem* item);
-	void drawByDraw(QPainter& painter, DiagramItem* item);
-	QPixmap getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item);
-	std::shared_ptr<IDidgramDrawParams> buildparams(DiagramItem* item);
+	static void drawByLoadpic(QPainter& painter, DiagramItem* item);
+	static void drawByDraw(QPainter& painter, DiagramItem* item);
+	static QPixmap getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item);
+	//std::shared_ptr<IDidgramDrawParams> buildparams(DiagramItem* item);
 
-	bool m_drawByPainter;
-	bool m_drawByLoadpic;
-	bool m_isdrawByPainter;
+	//bool m_drawByPainter;
+	//bool m_drawByLoadpic;
+	//bool m_isdrawByPainter;
 };
 
 
@@ -123,8 +123,8 @@ public:
 	ShapeType m_type;
 	std::optional<QString> m_picpath; 
 	QSizeF m_huabutuxingspacesize;
-	QPen m_huabutuxingpen;
-	QBrush m_huabutuxingbrush;
+	//QPen m_huabutuxingpen;
+	//QBrush m_huabutuxingbrush;
 	bool m_drawByPainter; 
 	bool m_drawByloadpic; 
 	bool m_isdrawByPainter;
@@ -142,6 +142,9 @@ public:
 
 	std::optional<double> m_circleboundingrectradio; 
 	void setCircleRadio(double radio);
+
+	std::optional<double> m_linerotate;
+	void setLineRotate(double rotate);
 private:
 	void defaultinit();
 	void otherInitAfterType();
@@ -161,8 +164,8 @@ public:
 	virtual ~DiagramItem() {}
 	DiagramItem(GfxLibDiagramItemParams params, QWidget* parent = nullptr);
 	QString getpicpath();
-	QSizeF getspacesize();
-	QPoint getcenter();
+	QSizeF getselfdrawspacesize();
+	QPoint getselfdrawcenter();
 	ShapeType gettype();
 	double getDiagramItemRectRadio();
 
@@ -179,6 +182,14 @@ public:
 	DiagramDrawParamsTriangle::TriangleSizeRadios gettrianglesideradio();
 	DiagramDrawParamsTriangle::EdgeType getedgetype();
 	double getTriangleRotate();
+	double getLineRotate();
+
+	std::shared_ptr<IDidgramDrawParams> builddrawparams();
+	std::shared_ptr<IDidgramDrawParams> buildPixmapDrawParams();
+
+	bool getdrawbypainter();
+	bool getdrawbyloadpic();
+	bool getisdrawbypainter();
 
 private:
 	void mousePressEvent(QMouseEvent* event) override;
@@ -197,7 +208,7 @@ private:
 	void setsizepolicyexpanding();
 	void initWidgetSize();
 	void initmaxandminsize();
-	void initDiagramDrawer();
+	//void initDiagramDrawer();
 	//void initDiagramPixmap();
 	void initDiagramPainter(QPainter& painter);
 	void initDiagramPixmapPainter(QPainter& painter);
@@ -205,6 +216,18 @@ private:
 	void buildRectMimedata(DiagramMimedata& data);
 	void buildCircleMimedata(DiagramMimedata& data);
 	void buildTriangleMimedata(DiagramMimedata& data);
+	void buildLineMimedata(DiagramMimedata& data);
+
+	std::shared_ptr<IDidgramDrawParams> builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params);
+	std::shared_ptr<IDidgramDrawParams> builddrawparamsrect();
+	std::shared_ptr<IDidgramDrawParams> builddrawparamscircle();
+	std::shared_ptr<IDidgramDrawParams> builddrawparamstriangle();
+	std::shared_ptr<IDidgramDrawParams> builddrawparamsline();
+
+	std::shared_ptr<IDidgramDrawParams> buildPixmapDrawParamsRest(std::shared_ptr<IDidgramDrawParams> params);
+
+	std::shared_ptr<IDidgramDrawParams> buildspecialbytype();
+
 	//void inittuxingzujian();
 
 	//std::shared_ptr<GfxLibDiagramitemDrawer> createtuxing();
@@ -230,7 +253,10 @@ private:
 
 	QPoint dragstartposition; //鼠标按压时的位置
 	GfxLibDiagramItemParams m_params;
-	std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;
+	QPen m_huabupen;
+	QBrush m_huabubrush;
+	QSizeF m_huabuspacesize;
+	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;
 	//QPixmap* m_diagramDragPixmap;
 	//QMimeData* m_diagramDragMimedata; //貌似一个mimedata只能用一次
 	//QString m_mimetype;

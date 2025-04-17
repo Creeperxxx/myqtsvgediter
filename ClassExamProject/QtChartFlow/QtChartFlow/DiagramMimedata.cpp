@@ -38,6 +38,12 @@ QDataStream& operator<<(QDataStream& out, const DiagramMimedata& myClass)
 		out << myClass.m_triangleRotate.value();
 	}
 
+	out << myClass.m_linerotate.has_value();
+	if (myClass.m_linerotate.has_value())
+	{
+		out << myClass.m_linerotate.value();
+	}
+
 	return out;
 }
 
@@ -104,6 +110,18 @@ QDataStream& operator>>(QDataStream& in, DiagramMimedata& myClass)
 	}
 	else {
 		myClass.m_triangleRotate.reset();
+	}
+
+	in >> hasValue;
+	if (hasValue)
+	{
+		double value;
+		in >> value;
+		myClass.m_linerotate = value;
+	}
+	else
+	{
+		myClass.m_linerotate.reset();
 	}
 
 	return in;

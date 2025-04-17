@@ -61,6 +61,9 @@ QByteArray DiagramItem::createDiagramMimedataDeliveryparams()
 	case ShapeType::Triangle:
 		buildTriangleMimedata(data);
 		break;
+	case ShapeType::Line:
+		buildLineMimedata(data);
+		break;
 	default:
 		throw std::runtime_error("error");
 	}
@@ -116,19 +119,21 @@ QByteArray DiagramItem::createDiagramMimedataDeliveryparams()
 
 QSizeF DiagramItem::getPixmapSpaceSize()
 {
-	return m_params.m_huabutuxingspacesize;
+	return m_huabuspacesize;
 }
 
 
 
 QPen DiagramItem::gethuabupen()
 {
-	return m_params.m_huabutuxingpen;
+	//return m_params.m_huabutuxingpen;
+	return m_huabupen;
 }
 
 QBrush DiagramItem::gethuabubrush()
 {
-	return m_params.m_huabutuxingbrush;
+	//return m_params.m_huabutuxingbrush;
+	return m_huabubrush;
 }
 
 QPen DiagramItem::getdiagrampen()
@@ -162,8 +167,8 @@ void DiagramItem::initDiagramPainter(QPainter& painter)
 
 void DiagramItem::initDiagramPixmapPainter(QPainter& painter)
 {
-	painter.setPen(m_params.m_huabutuxingpen);
-	painter.setBrush(m_params.m_huabutuxingbrush);
+	painter.setPen(m_params.m_pen);
+	painter.setBrush(m_params.m_brush);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 }
 
@@ -196,19 +201,134 @@ void DiagramItem::buildTriangleMimedata(DiagramMimedata& data)
 	data.m_triangleRotate = m_params.m_triangleEdgeRotate.value();
 }
 
+void DiagramItem::buildLineMimedata(DiagramMimedata& data)
+{
+	data.m_linerotate = m_params.m_linerotate;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparams()
+{
+	return builddrawparamsrest(buildspecialbytype());
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::buildPixmapDrawParams()
+{
+	return buildPixmapDrawParamsRest(buildspecialbytype());
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::buildspecialbytype()
+{
+	switch (m_params.m_type)
+	{
+	case ShapeType::Rect:
+		return builddrawparamsrect();
+		break;
+	case ShapeType::Circle:
+		return builddrawparamscircle();
+		break;
+	case ShapeType::Triangle:
+		return builddrawparamstriangle();
+		break;
+	case ShapeType::Line:
+		return builddrawparamsline();
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
+
+bool DiagramItem::getdrawbypainter()
+{
+	return m_params.m_drawByPainter;
+}
+
+bool DiagramItem::getdrawbyloadpic()
+{
+	return m_params.m_drawByloadpic;
+}
+
+bool DiagramItem::getisdrawbypainter()
+{
+	return m_params.m_isdrawByPainter;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
+{
+	params->m_brush = m_params.m_brush;
+	params->m_pen = m_params.m_pen;
+	params->m_center = getselfdrawcenter();
+	params->m_spacesize = getselfdrawspacesize();
+	params->m_type = m_params.m_type;
+	return params;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrect()
+{
+	auto params = std::make_shared<DiagramDrawParamsRect>();
+	if (!m_params.m_juxingradio.has_value())
+		throw std::runtime_error("error");
+	params->m_boundingrectradio = m_params.m_juxingradio.value();
+	return params;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamscircle()
+{
+	auto params = std::make_shared<DiagramDrawParamsCircle>();
+	if(!m_params.m_circleboundingrectradio.has_value())
+		throw std::runtime_error("error");
+	params->m_boundingrectradio = m_params.m_circleboundingrectradio.value();
+	return params;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamstriangle()
+{
+	auto params = std::make_shared<DiagramDrawParamsTriangle>();
+	if (!m_params.m_triangleSideRadios.has_value())
+		throw std::runtime_error("error");
+	params->m_triangleSizeRadios = m_params.m_triangleSideRadios.value();
+	if(!m_params.m_triangleEdgeType.has_value())
+		throw std::runtime_error("error");
+	params->m_edgetype = m_params.m_triangleEdgeType.value();
+	if (!m_params.m_triangleEdgeRotate.has_value())
+		throw std::runtime_error("error");
+	params->m_rotationAngle = m_params.m_triangleEdgeRotate.value();
+	return params;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsline()
+{
+	auto params = std::make_shared<DiagramDrawParamsLine>();
+	if (!m_params.m_linerotate.has_value())
+		throw std::runtime_error("error");
+	params->m_rotationAngle = m_params.m_linerotate.value();
+	return params;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramItem::buildPixmapDrawParamsRest(std::shared_ptr<IDidgramDrawParams> params)
+{
+	params->m_brush = m_huabubrush;
+	params->m_pen = m_huabupen;
+	params->m_center = getPixmapCenter();
+	params->m_spacesize = getPixmapSpaceSize();
+	params->m_type = m_params.m_type;
+	return params;
+}
+
 //QPixmap IDiagramItem::createPixmap(QSize targetwidgetsize, QPen targetpen, QBrush targetbrush, QColor targetbackgroundcolor)
 //void DiagramItem::drawDiagramPixmap()
 QPixmap DiagramItem::drawDiagramPixmap()
 {
 	//initDiagramPixmap();
-	QPixmap pixmap(m_params.m_huabutuxingspacesize.toSize());
+	QPixmap pixmap(getPixmapSpaceSize().toSize());
 	pixmap.fill(Qt::transparent);
 
 	QPainter painter(&pixmap);
 	initDiagramPixmapPainter(painter);
 
 	//DiagramDrawInterface::draw(painter, FactoryBuildDiagramPixmapParams::create(m_params.m_type)->build(this));
-	DiagramDrawInterface::draw(painter, factoryall::create(DiagramItemType::tuxingkupixmap, m_params.m_type)->build(this));
+	//DiagramDrawInterface::draw(painter, factoryall::create(DiagramItemType::tuxingkupixmap, m_params.m_type)->build(this));
+	DiagramDrawInterface::draw(painter, buildPixmapDrawParams());
 
 	return pixmap;
 
@@ -271,7 +391,7 @@ QPixmap DiagramItem::drawDiagramPixmap()
 void DiagramItem::init()
 {
 	initWidgetSize();
-	initDiagramDrawer();
+	//initDiagramDrawer();
 	//createDragMimeData();
 	//initDiagramPixmap();
 }
@@ -371,7 +491,8 @@ void DiagramItem::paintEvent(QPaintEvent* event)
 	QPainter painter(this);
 	initDiagramPainter(painter);
 	painter.fillRect(this->rect(), m_params.m_backgroundcolor);
-	m_diagramDrawer->draw(painter, this);
+	GfxLibDiagramitemDrawer::draw(painter, this);
+	//m_diagramDrawer->draw(painter, this);
 }
 
 //QPainter* DiagramItem::getDiagramItemPixmapPainter()
@@ -420,9 +541,10 @@ void GfxLibDiagramitemDrawer::draw(QPainter& painter, DiagramItem* item)
 {
 	if (!item)
 		throw std::runtime_error("error");//todo
-	if (m_isdrawByPainter && m_drawByPainter)
+	//if (m_isdrawByPainter && m_drawByPainter)
+	if(item->getdrawbypainter() && item->getisdrawbypainter())
 		drawByDraw(painter, item);
-	else if (m_drawByLoadpic)
+	else if (item->getdrawbyloadpic())
 		drawByLoadpic(painter, item);
 	else
 		throw std::runtime_error("error");
@@ -455,7 +577,7 @@ void GfxLibDiagramitemDrawer::drawByLoadpic(QPainter& painter, DiagramItem* item
 		throw std::runtime_error("error");
 
 	QPixmap newpixmap = getSuitablePicPixmap(QPixmap(picpath), item);
-	QPoint center = item->getcenter();
+	QPoint center = item->getselfdrawcenter();
 	QPoint topleft = QPoint(center.x() - newpixmap.width() / 2, center.y() - newpixmap.height() / 2);
 
 	painter.drawPixmap(topleft, newpixmap);
@@ -463,7 +585,7 @@ void GfxLibDiagramitemDrawer::drawByLoadpic(QPainter& painter, DiagramItem* item
 
 QPixmap GfxLibDiagramitemDrawer::getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item)
 {
-	QSizeF space = item->getspacesize();
+	QSizeF space = item->getselfdrawspacesize();
 
 	double targetwidth = space.width();
 	double targetheight = space.height();
@@ -505,22 +627,24 @@ double DiagramItem::getDiagramItemRectRadio()
 
 
 
-std::shared_ptr<IDidgramDrawParams> GfxLibDiagramitemDrawer::buildparams(DiagramItem* item)
-{
-	//return factorybuildtuxingjiedianparamsfordiagram::create(item->gettype())->build(item);
-	return factoryall::create(DiagramItemType::tuxingku, item->gettype())->build(item);
-}
+//std::shared_ptr<IDidgramDrawParams> GfxLibDiagramitemDrawer::buildparams(DiagramItem* item)
+//{
+//	//return factorybuildtuxingjiedianparamsfordiagram::create(item->gettype())->build(item);
+//	//return factoryall::create(DiagramItemType::tuxingku, item->gettype())->build(item);
+//
+//	return item->builddrawparams();
+//}
 
 void GfxLibDiagramitemDrawer::drawByDraw(QPainter& painter, DiagramItem* item)
 {
-	DiagramDrawInterface::draw(painter, buildparams(item));
+	DiagramDrawInterface::draw(painter, item->builddrawparams());
 }
 
-GfxLibDiagramitemDrawer::GfxLibDiagramitemDrawer(bool drawbypainter, bool drawbyloadpic, bool isdrawbypainter)
-	:m_drawByPainter(drawbypainter)
-	, m_drawByLoadpic(drawbyloadpic)
-	, m_isdrawByPainter(isdrawbypainter) {
-}
+//GfxLibDiagramitemDrawer::GfxLibDiagramitemDrawer(bool drawbypainter, bool drawbyloadpic, bool isdrawbypainter)
+	//:m_drawByPainter(drawbypainter)
+	//, m_drawByLoadpic(drawbyloadpic)
+	//, m_isdrawByPainter(isdrawbypainter) {
+//}
 
 //void GfxLibDiagramitemDrawer::drawByDraw(QPainter* painter)
 //{
@@ -675,20 +799,20 @@ void DiagramItem::resizeEvent(QResizeEvent* event)
 //		break;
 //	}
 //}
-QSizeF DiagramItem::getspacesize()
+QSizeF DiagramItem::getselfdrawspacesize()
 {
 	return size();
 }
 
-QPoint DiagramItem::getcenter()
+QPoint DiagramItem::getselfdrawcenter()
 {
 	return QPoint(this->rect().x() + width() / 2, rect().y() + height() / 2);
 }
 
-void DiagramItem::initDiagramDrawer()
-{
-	m_diagramDrawer = std::make_shared<GfxLibDiagramitemDrawer>(m_params.m_drawByPainter, m_params.m_drawByloadpic, m_params.m_isdrawByPainter);
-}
+//void DiagramItem::initDiagramDrawer()
+//{
+	//m_diagramDrawer = std::make_shared<GfxLibDiagramitemDrawer>(m_params.m_drawByPainter, m_params.m_drawByloadpic, m_params.m_isdrawByPainter);
+//}
 
 //std::shared_ptr<GfxLibDiagramitemDrawer> DiagramItem::createtuxing()
 //{
@@ -733,6 +857,9 @@ void DiagramItem::initDiagramDrawer()
 DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
 	:m_params(params), QWidget(parent)
 {
+	m_huabupen = params.m_pen;
+	m_huabubrush = params.m_brush;
+	m_huabuspacesize = params.m_huabutuxingspacesize;
 	init();
 }
 
@@ -858,11 +985,23 @@ double DiagramItem::getTriangleRotate()
 	return m_params.m_triangleEdgeRotate.value();
 }
 
+double DiagramItem::getLineRotate()
+{
+	if(!m_params.m_linerotate.has_value())
+		throw std::runtime_error("error");
+	return m_params.m_linerotate.value();
+}
+
 double DiagramItem::getCircleBoundingrectradio()
 {
 	if (!m_params.m_circleboundingrectradio.has_value())
 		throw std::runtime_error("error");
 	return m_params.m_circleboundingrectradio.value();
+}
+
+void GfxLibDiagramItemParams::setLineRotate(double rotate)
+{
+	m_linerotate = rotate;
 }
 
 void GfxLibDiagramItemParams::defaultinit()
@@ -1041,8 +1180,17 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		m_triangleEdgeRotate = cfggetval<double>(qtcf::tuxing::triangle::totate);
 	}
 	break;
+	case ShapeType::Line:
+	{
+		m_drawByPainter = cfggetval<bool>(qtcf::tuxing::line::drawbypainter);
+		m_drawByloadpic = cfggetval<bool>(qtcf::tuxing::line::drawbyloadpic);
+		if (m_drawByloadpic)
+			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::line::imagepath));
+		m_linerotate = cfggetval<double>(qtcf::tuxing::line::rotate);
+	}
+	break;
 	default:
-		qDebug() << "void GfxLibDiagramItemParams::builder::setDrawByPainterandloadpicandis(ShapeType type)";
+		throw std::runtime_error("error");
 		break;
 	}
 }
@@ -1105,15 +1253,17 @@ GfxLibDiagramItemParams::GfxLibDiagramItemParams(ShapeType type)
 	, m_fixsize(std::nullopt)
 	, m_maxsize(std::nullopt)
 	, m_minsize(std::nullopt)
-	, m_pen(QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::pen::color))), cfggetval<int>(qtcf::tuxingku::diagramwidget::pen::width)))
-	, m_brush(QBrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::brush)))))
+	//, m_pen(QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::pen::color))), cfggetval<int>(qtcf::tuxingku::diagramwidget::pen::width)))
+	//, m_brush(QBrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::brush)))))
+	, m_pen(QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::painter::pen::color))), cfggetval<double>(qtcf::painter::pen::width)))
+	, m_brush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::painter::brush))))
 	, m_mimetype(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype)))
 	, m_backgroundcolor(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::backgroundcolor))))
 	, m_type(type)
 	, m_picpath(std::nullopt)
 	, m_huabutuxingspacesize(QSizeF(cfggetval<double>(qtcf::huabu::tuxingspace::spacewidth), cfggetval<double>(qtcf::huabu::tuxingspace::spaceheight)))
-	, m_huabutuxingpen(QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::tuxingspace::pen::color))), cfggetval<int>(qtcf::huabu::tuxingspace::pen::width)))
-	, m_huabutuxingbrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::tuxingspace::brush))))
+	//, m_huabutuxingpen(QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::tuxingspace::pen::color))), cfggetval<int>(qtcf::huabu::tuxingspace::pen::width)))
+	//, m_huabutuxingbrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::tuxingspace::brush))))
 	, m_drawByPainter(false)
 	, m_drawByloadpic(false)
 	, m_isdrawByPainter(cfggetval<bool>(qtcf::tuxingku::diagramwidget::isdrawbypainter))
@@ -1122,6 +1272,7 @@ GfxLibDiagramItemParams::GfxLibDiagramItemParams(ShapeType type)
 	, m_triangleEdgeType(std::nullopt)
 	, m_triangleEdgeRotate(std::nullopt)
 	, m_circleboundingrectradio(std::nullopt)
+	, m_linerotate(std::nullopt)
 {
 	defaultinit();
 	otherInitAfterType();
