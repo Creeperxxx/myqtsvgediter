@@ -13,8 +13,10 @@ public:
 	ShapeType m_type;
 
 	std::optional<double> m_rectradio;
+	std::optional<int> m_rectRotate;
 
 	std::optional<double> m_circleradio;
+	std::optional<int> m_circlerotate;
 
 	std::optional<DiagramDrawParamsTriangle::TriangleSizeRadios> m_triangleSideRadios;
 	std::optional<DiagramDrawParamsTriangle::EdgeType> m_triangleEdgeType;

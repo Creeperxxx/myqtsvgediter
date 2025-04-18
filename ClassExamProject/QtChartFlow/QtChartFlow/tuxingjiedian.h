@@ -20,13 +20,14 @@ public:
 class DrawResultRect : public DrawResult
 {
 public:
-	QRectF m_rect;
+	//QRectF m_rect;
+	QPolygonF m_rect;
 };
 
 class DrawResultCircle :public DrawResult
 {
 public:
-	QRectF m_boundrect;
+	QPolygonF m_circle;
 	//center
 };
 
@@ -57,8 +58,15 @@ class DiagramDrawerRect : public IDiagramDrawer
 public:
 	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) override;
 private:
-	QRectF calcurect(DiagramDrawParamsRect* params);
-	QSizeF calcusuitablerectsize(DiagramDrawParamsRect* params);
+	//QRectF calcurect(DiagramDrawParamsRect* params);
+	//QSizeF calcusuitablerectsize(DiagramDrawParamsRect* params);
+	QPolygonF calcuRect(DiagramDrawParamsRect* params);
+	QPolygonF calcuBasicalRect(DiagramDrawParamsRect* params);
+	QTransform calcuRotateTransform(DiagramDrawParamsRect* params);
+	QTransform calcuTranslateTransform(QPolygonF diagram, DiagramDrawParamsRect* params);
+	QTransform calcuScaleTransform(QPolygonF diagram, DiagramDrawParamsRect* params);
+
+	
 };
 
 class DiagramDrawerCircle : public IDiagramDrawer
@@ -67,7 +75,11 @@ public:
 	std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)override;
 private:
 	//int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
-	QRectF calcuboundingrect(DiagramDrawParamsCircle* params);
+	//QRectF calcuboundingrect(DiagramDrawParamsCircle* params);
+	QPolygonF calcuBasicalCircle(DiagramDrawParamsCircle* params);
+	QTransform calcurotatetransform(DiagramDrawParamsCircle* params);
+	qreal calcuscaleFactor(DiagramDrawParamsCircle* params, QPolygonF diagram);
+	QTransform calcuscaleTransform(DiagramDrawParamsCircle* params, QPolygonF diagram);
 	QSizeF calcuboundingrectsize(DiagramDrawParamsCircle* params);
 };
 
@@ -89,7 +101,7 @@ class DiagramDrawerLine : public IDiagramDrawer
 public:
 	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
 private:
-
+	QLineF calcuLine(DiagramDrawParamsLine* params);
 };
 
 

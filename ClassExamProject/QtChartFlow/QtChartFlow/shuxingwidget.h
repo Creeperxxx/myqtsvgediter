@@ -6,73 +6,154 @@
 #include <qboxlayout.h>
 #include <qlineedit.h>
 #include <qcombobox.h>
+#include <qmap.h>
+#include <qpainter.h>
+#include <qstackedwidget.h>
+#include <quuid.h>
 
-class propertyItem : public QWidget
+
+//rect radio
+constexpr const double rectRadioMin = 0.1;
+constexpr const double rectRadioMax = 10;
+constexpr const double rectRadioStep = 0.1;
+constexpr const int rectRadioDecimals = 2;
+constexpr const double rectRadioInitvlaue = 2;
+
+
+
+class propertyWidget;
+
+class PropertyWidgetManager
 {
-	Q_OBJECT
-
 public:
-	enum class propertyType
+	enum class propertyobjecttype
 	{
-		String,
-		Int,
-		Double,
-		Boolean,
-		Color,
+		diagramRect,
+		diagramCircle,
+		diagramTriangle,
+		diagramLine,
+
+		huabu,
+		huabuRect,
+		huabuCircle,
+		huabuTriangle,
+		huabuLine
 	};
-	propertyItem(QString name, QVariant value, propertyType type, QWidget* parent = nullptr);
-signals:
-	//信号
-	void valueChanged(const QString& name, const QVariant& value);
-
-private slots:
-	void onValueChanged()
-	{
-		emit valueChanged(m_name, value());
-	}
-
-
-
+	QString createPropertyWidget(propertyobjecttype type, QWidget* widget);
 private:
-	QVariant value()
-	{
-		switch (m_type)
-		{
-		case propertyItem::propertyType::String:
-			return dynamic_cast<QLineEdit*>(m_editWidget)->text();
-			break;
-		case propertyItem::propertyType::Int:
-			return dynamic_cast<QSpinBox*>(m_editWidget)->value();
-			break;
-		case propertyItem::propertyType::Double:
-			return dynamic_cast<QDoubleSpinBox*>(m_editWidget)->value();
-			break;
-		case propertyItem::propertyType::Boolean:
-			return dynamic_cast<QComboBox*>(m_editWidget)->currentData();
-			break;
-		case propertyItem::propertyType::Color:
-			throw std::runtime_error("error");
-			break;
-		default:
-			throw std::runtime_error("error");
-			break;
-		}
-	}
+	propertyWidget* createinitPropertyWidget(propertyobjecttype type, QWidget* widget);
+	void builddiagramRectPropertyWidget(propertyWidget* propertywidget, QWidget* delegatewidget);
+	void builddiagramCirclePropertyWidget(propertyWidget* widget);
+	void builddiagramTrianglePropertyWidget(propertyWidget* widget);
 
-	QString m_name;
-	propertyType m_type;
-	QWidget* m_editWidget;
+
+	QMap<QString, propertyWidget*> m_propertyMap;
+	QStackedWidget* m_propertyStackWidget;
+	
 };
 
 
 
 
-class shuxingwidget : public QWidget
+//class propertyItem : public QWidget
+//{
+//	Q_OBJECT
+//
+//public:
+//	enum class propertyType
+//	{
+//		//String,
+//		//Int,
+//		//Double,
+//		//Boolean,
+//		//Color,
+//		Text,
+//		Color, //QColorDialog::getColor(Qt::white, this, "Choose a color");
+//		File, //QFileDialog::getOpenFileName(this,"Open File","/home","All Files (*);;Text Files (*.txt)");
+//        Boolean,
+//		Enum
+//		//date,
+//		//image
+//		//password
+//		//wenjianjia
+//	};
+//	//propertyItem(QString name, QWidget* widget, propertyType type, QWidget* parent = nullptr);
+//
+//	propertyItem(const QString& name, QWidget* widget, QWidget* parent = nullptr);
+////signals:
+//	//信号
+//	//void valueChanged(const QString& name, const QVariant& value);
+//
+////private slots:
+//	//void onValueChanged();
+//	//{
+//		//emit valueChanged(m_name, value());
+//	//}
+//
+//
+//
+//private:
+//	//QWidget* createTextwidget();
+//
+//
+//
+//
+//	//QVariant value();
+//	//{
+//	//	switch (m_type)
+//	//	{
+//	//	case propertyItem::propertyType::String:
+//	//		return dynamic_cast<QLineEdit*>(m_editWidget)->text();
+//	//		break;
+//	//	case propertyItem::propertyType::Int:
+//	//		return dynamic_cast<QSpinBox*>(m_editWidget)->value();
+//	//		break;
+//	//	case propertyItem::propertyType::Double:
+//	//		return dynamic_cast<QDoubleSpinBox*>(m_editWidget)->value();
+//	//		break;
+//	//	case propertyItem::propertyType::Boolean:
+//	//		return dynamic_cast<QComboBox*>(m_editWidget)->currentData();
+//	//		break;
+//	//	case propertyItem::propertyType::Color:
+//	//		throw std::runtime_error("error");
+//	//		break;
+//	//	default:
+//	//		throw std::runtime_error("error");
+//	//		break;
+//	//	}
+//	//}
+//
+//	QString m_name;
+//	//propertyType m_type;
+//	QWidget* m_editWidget;
+//};
+
+
+
+
+class propertyWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	void huabushuxing();
-	shuxingwidget(QWidget* parent = nullptr);
+	//void huabushuxing();
+	propertyWidget(QWidget* parent = nullptr);
+	//class propertyParams
+	//{
+	//public:
+		//QString m_name;
+		//QVariant m_value;
+		//propertyItem::propertyType m_type;
+	//};
+	void addProperty(const QString& name, QWidget* widget);
+	void paintEvent(QPaintEvent* event) override;
+	void setstackwidgetindex(int index);
+	int getstackwidgetindex();
+//signals:
+	//void propertyChanged(const QString& name, const QVariant& value);
+private:
 	QFormLayout* m_shuxinglayout;
+	QMap<QString, QWidget*> m_propertyMap;
+	//PropertyWidgetManager::propertyobjecttype m_type;
+	int m_stackwidgetindex;
 };
 

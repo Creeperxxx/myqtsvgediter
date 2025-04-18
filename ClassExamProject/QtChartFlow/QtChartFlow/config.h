@@ -68,6 +68,7 @@ namespace qtcf {
             constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";
             constexpr auto drawbyloadpic = "tuxing.rectangle.drawbyloadpic";
             constexpr auto imagepath = "tuxing.rectangle.imagepath";
+            constexpr auto rotate = "tuxing.rectangle.rotate";
         } // namespace rectangle
 
         namespace circle {
@@ -75,6 +76,7 @@ namespace qtcf {
             constexpr auto drawbyloadpic = "tuxing.circle.drawbyloadpic";
             constexpr auto imagepath = "tuxing.circle.imagepath";
             constexpr auto boundingrectradio = "tuxing.circle.boundingrectradio";
+            constexpr auto rotate = "tuxing.circle.rotate";
         } // namespace circle
 
         namespace triangle {

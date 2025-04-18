@@ -101,14 +101,19 @@ void MyMainWindow::init()
 	maintoolbar->addWidget(line);
 	maintoolbar->addSeparator();
 
-	QStackedWidget* propertywidget = new QStackedWidget(centralwidget);
-	centralwidgetlayout->addWidget(propertywidget);
-	propertywidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	propertywidget->setStyleSheet("background-color: rgb(255,255,255);");
+	//QStackedWidget* propertywidget = new QStackedWidget(centralwidget);
+	//centralwidgetlayout->addWidget(propertywidget);
+	//propertywidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 	
-	shuxingwidget* huabushuxing = new shuxingwidget();
-	
-	propertywidget->addWidget(huabushuxing);
+	//属性栏
+	//propertyWidget* shuxing = new propertyWidget();
+	//propertywidget->addWidget(shuxing);
+	//shuxing->addProperty("宽度", 100.0, propertyItem::propertyType::Double);
+	//shuxing->addProperty("高度", 200.0, propertyItem::propertyType::Double);
+
+	//首先某个对象到发出信号，stackwidget切换到对应的属性页
+	//创建某个对象对应的属性页
+	//属性页中发出信号，对象要对信号进行处理，前提是进行绑定
 
 	//QSizeGrip* sizegrip = new QSizeGrip(huabuwidget);
 	//QVBoxLayout* huabulayout = new QVBoxLayout(huabuwidget);

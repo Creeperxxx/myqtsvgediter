@@ -337,6 +337,9 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsRect(const DiagramMime
 	if (!data.m_rectradio.has_value())
 		throw std::runtime_error("error");
 	params->m_boundingrectradio = data.m_rectradio.value();
+	if (!data.m_rectRotate.has_value())
+		throw std::runtime_error("error");
+	params->m_rectrotate = data.m_rectRotate.value();
 	params->m_type = data.m_type;
 	return params;
 }
@@ -347,6 +350,11 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsCircle(const DiagramMi
 	if (!data.m_circleradio.has_value())
 		throw std::runtime_error("error");
 	params->m_boundingrectradio = data.m_circleradio.value();
+
+	if (!data.m_circlerotate.has_value())
+		throw std::runtime_error("error");
+	params->m_circlerotate = data.m_circlerotate.value();
+
 	params->m_type = data.m_type;
 	return params;
 }

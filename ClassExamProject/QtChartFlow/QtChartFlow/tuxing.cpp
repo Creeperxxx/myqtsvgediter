@@ -39,7 +39,13 @@ QMimeData* DiagramItem::createDragMimeData()
 	}
 	QMimeData* diagramDragMimedata = new QMimeData();
 	//diagramDragMimedata->setData(m_params.m_mimetype, QByteArray::number(static_cast<int>(m_params.m_type)));
-	diagramDragMimedata->setData(m_params.m_mimetype, createDiagramMimedataDeliveryparams());
+	QByteArray array = createDiagramMimedataDeliveryparams();
+	QDataStream stream(array);
+	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+	DiagramMimedata data;
+	stream >> data;
+
+	diagramDragMimedata->setData(m_params.m_mimetype, array);
 	return diagramDragMimedata;
 }
 
@@ -174,9 +180,12 @@ void DiagramItem::initDiagramPixmapPainter(QPainter& painter)
 
 void DiagramItem::buildRectMimedata(DiagramMimedata& data)
 {
-	if (!m_params.m_juxingradio.has_value())
+	if (!m_params.m_rectRadio.has_value())
 		throw std::runtime_error("error");
-	data.m_rectradio = m_params.m_juxingradio.value();
+	data.m_rectradio = m_params.m_rectRadio.value();
+	if(!m_params.m_rectRotate.has_value())
+		throw std::runtime_error("error");
+	data.m_rectRotate = m_params.m_rectRotate.value();
 }
 
 void DiagramItem::buildCircleMimedata(DiagramMimedata& data)
@@ -184,6 +193,9 @@ void DiagramItem::buildCircleMimedata(DiagramMimedata& data)
 	if (!m_params.m_circleboundingrectradio.has_value())
 		throw std::runtime_error("error");
 	data.m_circleradio = m_params.m_circleboundingrectradio;
+	if (!m_params.m_circlerotate.has_value())
+		throw std::runtime_error("error");
+	data.m_circlerotate = m_params.m_circlerotate.value();
 }
 
 void DiagramItem::buildTriangleMimedata(DiagramMimedata& data)
@@ -253,6 +265,16 @@ bool DiagramItem::getisdrawbypainter()
 	return m_params.m_isdrawByPainter;
 }
 
+void DiagramItem::onRectRadioChanged(double newradio)
+{
+	m_params.m_rectRadio = newradio;
+}
+
+void DiagramItem::onRectRotateChanged(int newrotate)
+{
+	m_params.m_rectRotate = newrotate;
+}
+
 std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
 {
 	params->m_brush = m_params.m_brush;
@@ -266,9 +288,12 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared
 std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrect()
 {
 	auto params = std::make_shared<DiagramDrawParamsRect>();
-	if (!m_params.m_juxingradio.has_value())
+	if (!m_params.m_rectRadio.has_value())
 		throw std::runtime_error("error");
-	params->m_boundingrectradio = m_params.m_juxingradio.value();
+	params->m_boundingrectradio = m_params.m_rectRadio.value();
+	if (!m_params.m_rectRotate.has_value())
+		throw std::runtime_error("error");
+	params->m_rectrotate = m_params.m_rectRotate.value();
 	return params;
 }
 
@@ -278,6 +303,9 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamscircle()
 	if(!m_params.m_circleboundingrectradio.has_value())
 		throw std::runtime_error("error");
 	params->m_boundingrectradio = m_params.m_circleboundingrectradio.value();
+	if (!m_params.m_circlerotate.has_value())
+		throw std::runtime_error("error");
+	params->m_circlerotate = m_params.m_circlerotate.value();
 	return params;
 }
 
@@ -577,8 +605,8 @@ void GfxLibDiagramitemDrawer::drawByLoadpic(QPainter& painter, DiagramItem* item
 		throw std::runtime_error("error");
 
 	QPixmap newpixmap = getSuitablePicPixmap(QPixmap(picpath), item);
-	QPoint center = item->getselfdrawcenter();
-	QPoint topleft = QPoint(center.x() - newpixmap.width() / 2, center.y() - newpixmap.height() / 2);
+	QPointF center = item->getselfdrawcenter();
+	QPointF topleft = QPointF(center.x() - newpixmap.width() / 2.0, center.y() - newpixmap.height() / 2.0);
 
 	painter.drawPixmap(topleft, newpixmap);
 }
@@ -619,9 +647,9 @@ ShapeType DiagramItem::gettype()
 
 double DiagramItem::getDiagramItemRectRadio()
 {
-	if (!m_params.m_juxingradio.has_value())
+	if (!m_params.m_rectRadio.has_value())
 		throw std::runtime_error("error");
-	return m_params.m_juxingradio.value();
+	return m_params.m_rectRadio.value();
 }
 
 
@@ -804,9 +832,9 @@ QSizeF DiagramItem::getselfdrawspacesize()
 	return size();
 }
 
-QPoint DiagramItem::getselfdrawcenter()
+QPointF DiagramItem::getselfdrawcenter()
 {
-	return QPoint(this->rect().x() + width() / 2, rect().y() + height() / 2);
+	return QPointF(width() / 2.0, height() / 2.0);
 }
 
 //void DiagramItem::initDiagramDrawer()
@@ -1155,7 +1183,8 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		m_drawByloadpic = cfggetval<bool>(qtcf::tuxing::rectangle::drawbyloadpic);
 		if (m_drawByloadpic)
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::imagepath));
-		m_juxingradio = cfggetval<double>(qtcf::tuxing::rectangle::radio);
+		m_rectRadio = cfggetval<double>(qtcf::tuxing::rectangle::radio);
+		m_rectRotate = cfggetval<int>(qtcf::tuxing::rectangle::rotate);
 	}
 	break;
 	case ShapeType::Circle:
@@ -1165,6 +1194,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		if (m_drawByloadpic)
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::imagepath));
 		m_circleboundingrectradio = cfggetval<double>(qtcf::tuxing::circle::boundingrectradio);
+		m_circlerotate = cfggetval<int>(qtcf::tuxing::circle::rotate);
 	}
 	break;
 	case ShapeType::Triangle:
@@ -1267,7 +1297,7 @@ GfxLibDiagramItemParams::GfxLibDiagramItemParams(ShapeType type)
 	, m_drawByPainter(false)
 	, m_drawByloadpic(false)
 	, m_isdrawByPainter(cfggetval<bool>(qtcf::tuxingku::diagramwidget::isdrawbypainter))
-	, m_juxingradio(std::nullopt)
+	, m_rectRadio(std::nullopt)
 	, m_triangleSideRadios(std::nullopt)
 	, m_triangleEdgeType(std::nullopt)
 	, m_triangleEdgeRotate(std::nullopt)
@@ -1278,9 +1308,14 @@ GfxLibDiagramItemParams::GfxLibDiagramItemParams(ShapeType type)
 	otherInitAfterType();
 }
 
-void GfxLibDiagramItemParams::setJuxingRadio(double radio)
+void GfxLibDiagramItemParams::setRectRadio(double radio)
 {
-	m_juxingradio = radio;
+	m_rectRadio = radio;
+}
+
+void GfxLibDiagramItemParams::setRectRotate(int rotate)
+{
+	m_rectRotate = rotate;
 }
 
 void GfxLibDiagramItemParams::setTriangleSideRadio(double bottom, double left, double right)
@@ -1301,4 +1336,9 @@ void GfxLibDiagramItemParams::setTriangleRotate(double rotate)
 void GfxLibDiagramItemParams::setCircleRadio(double radio)
 {
 	m_circleboundingrectradio = radio;
+}
+
+void GfxLibDiagramItemParams::setCircleRotate(int rotate)
+{
+	m_circlerotate = rotate;
 }

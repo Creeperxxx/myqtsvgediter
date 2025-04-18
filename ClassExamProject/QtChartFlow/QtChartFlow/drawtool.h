@@ -50,12 +50,15 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 public:
 	~DiagramDrawParamsRect() {}
 	double m_boundingrectradio;
+	double m_rectrotate;
 };
 
 class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
 	double m_boundingrectradio;
+	double m_circlerotate;
+
 	~DiagramDrawParamsCircle() {}
 };
 

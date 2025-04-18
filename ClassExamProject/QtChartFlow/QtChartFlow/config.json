@@ -35,13 +35,15 @@
       "radio": 2,
       "drawbypainter": true,
       "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/juxing.png"
+      "imagepath": ":/tuxingku/juxing.png",
+      "rotate": 0
     },
     "circle": {
-      "boundingrectradio": 1,
+      "boundingrectradio": 2,
       "drawbypainter": true,
       "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/yuanxing.png"
+      "imagepath": ":/tuxingku/yuanxing.png",
+      "rotate": 45
     },
     "triangle": {
       "edgeradio": {

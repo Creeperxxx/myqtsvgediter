@@ -25,6 +25,8 @@
 //class factory
 
 
+
+
 class DiagramItem;
 //class IDiagramDrawParams;
 
@@ -130,8 +132,10 @@ public:
 	bool m_isdrawByPainter;
 	
 	
-	std::optional<float> m_juxingradio;
-	void setJuxingRadio(double radio);
+	std::optional<double> m_rectRadio;
+	void setRectRadio(double radio);
+	std::optional<int> m_rectRotate;
+	void setRectRotate(int rotate);
 
 	std::optional<DiagramDrawParamsTriangle::TriangleSizeRadios> m_triangleSideRadios; 
 	void setTriangleSideRadio(double bottom, double left, double right);
@@ -142,6 +146,8 @@ public:
 
 	std::optional<double> m_circleboundingrectradio; 
 	void setCircleRadio(double radio);
+	std::optional<int> m_circlerotate;
+	void setCircleRotate(int rotate);
 
 	std::optional<double> m_linerotate;
 	void setLineRotate(double rotate);
@@ -165,7 +171,7 @@ public:
 	DiagramItem(GfxLibDiagramItemParams params, QWidget* parent = nullptr);
 	QString getpicpath();
 	QSizeF getselfdrawspacesize();
-	QPoint getselfdrawcenter();
+	QPointF getselfdrawcenter();
 	ShapeType gettype();
 	double getDiagramItemRectRadio();
 
@@ -190,6 +196,9 @@ public:
 	bool getdrawbypainter();
 	bool getdrawbyloadpic();
 	bool getisdrawbypainter();
+
+	void onRectRadioChanged(double newradio);
+	void onRectRotateChanged(int newrotate);
 
 private:
 	void mousePressEvent(QMouseEvent* event) override;

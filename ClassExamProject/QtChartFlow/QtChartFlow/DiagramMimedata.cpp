@@ -5,10 +5,18 @@ QDataStream& operator<<(QDataStream& out, const DiagramMimedata& myClass)
 {
 	out << static_cast<int>(myClass.m_type);
 
+
 	// 序列化 m_rectradio
 	out << myClass.m_rectradio.has_value();
 	if (myClass.m_rectradio.has_value()) {
 		out << myClass.m_rectradio.value();
+	}
+
+	//序列化m_rectrotate
+	out << myClass.m_rectRotate.has_value();
+	if (myClass.m_rectRotate.has_value())
+	{
+		out << myClass.m_rectRotate.value();
 	}
 
 	// 序列化 m_circleradio
@@ -16,6 +24,11 @@ QDataStream& operator<<(QDataStream& out, const DiagramMimedata& myClass)
 	if (myClass.m_circleradio.has_value()) {
 		out << myClass.m_circleradio.value();
 	}
+
+	// 序列化 m_circlerotate
+	out << myClass.m_circlerotate.has_value();
+	if (myClass.m_circlerotate.has_value())
+		out << myClass.m_circlerotate.value();
 
 	// 序列化 m_triangleSideRadios
 	out << myClass.m_triangleSideRadios.has_value();
@@ -67,6 +80,20 @@ QDataStream& operator>>(QDataStream& in, DiagramMimedata& myClass)
 		myClass.m_rectradio.reset();
 	}
 
+	// 反序列化 m_rectRotate;
+	in >> hasValue;
+	if (hasValue)
+	{
+		int value;
+		in >> value;
+		myClass.m_rectRotate = value;
+	}
+	else
+	{
+		myClass.m_rectRotate.reset();
+	}
+
+
 	// 反序列化 m_circleradio
 	in >> hasValue;
 	if (hasValue) {
@@ -76,6 +103,19 @@ QDataStream& operator>>(QDataStream& in, DiagramMimedata& myClass)
 	}
 	else {
 		myClass.m_circleradio.reset();
+	}
+
+	// 反序列化 m_circlerotate
+	in >> hasValue;
+	if (hasValue)
+	{
+		int value;
+		in >> value;
+		myClass.m_circlerotate = value;
+	}
+	else
+	{
+		myClass.m_circlerotate.reset();
 	}
 
 	// 反序列化 m_triangleSideRadios
