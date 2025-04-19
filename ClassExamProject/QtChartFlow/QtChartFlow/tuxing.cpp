@@ -1,11 +1,12 @@
 #include "tuxing.h"
-
+#include "shuxingwidget.h"
 
 void DiagramItem::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
 		dragstartposition = event->pos();
+		m_propertyWidgetManger->dealclicked(m_propertyWidgetKey);
 	}
 }
 
@@ -169,6 +170,7 @@ void DiagramItem::initDiagramPainter(QPainter& painter)
 	painter.setPen(m_params.m_pen);
 	painter.setBrush(m_params.m_brush);
 	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::TextAntialiasing, true);
 }
 
 void DiagramItem::initDiagramPixmapPainter(QPainter& painter)
@@ -268,17 +270,119 @@ bool DiagramItem::getisdrawbypainter()
 void DiagramItem::onRectRadioChanged(double newradio)
 {
 	m_params.m_rectRadio = newradio;
+	update();
 }
 
 void DiagramItem::onRectRotateChanged(int newrotate)
 {
 	m_params.m_rectRotate = newrotate;
+	update();
+}
+
+void DiagramItem::onCircleRadioChanged(double newradio)
+{
+	m_params.m_circleboundingrectradio = newradio;
+	update();
+}
+
+void DiagramItem::onCircleRotateChanged(int newrottate)
+{
+	m_params.m_circlerotate = newrottate;
+	update();
+}
+
+void DiagramItem::onTriangleSideRadioChangedBottom(double bottom)
+{
+	m_params.m_triangleSideRadios->m_bottom = bottom;
+	update();
+}
+
+void DiagramItem::onTriangleSideRadioChangedLeft(double left)
+{
+	m_params.m_triangleSideRadios->m_left = left;
+	update();
+}
+
+void DiagramItem::onTriangleSideRadioChangedRight(double right)
+{
+	m_params.m_triangleSideRadios->m_right = right;
+	update();
+}
+
+void DiagramItem::onTriangleEdgeTypeChanged(DiagramDrawParamsTriangle::EdgeType type)
+{
+	m_params.m_triangleEdgeType = type;
+	update();
+}
+
+void DiagramItem::onTriangleEdgeRotateChanged(int rotate)
+{
+	m_params.m_triangleEdgeRotate = rotate;
+	update();
+}
+
+void DiagramItem::onLineRotateChanged(int rotate)
+{
+	m_params.m_linerotate = rotate;
+	update();
+}
+
+
+
+
+void DiagramItem::onPenColorChanged(QColor newcolor)
+{
+	m_params.m_pen.setColor(newcolor);
+	update();
+}
+
+void DiagramItem::onPenWidthChanged(double newwidth)
+{
+	m_params.m_pen.setWidth(newwidth);
+	update();
+}
+
+void DiagramItem::onPenBrushChanged(QBrush newbrush)
+{
+	m_params.m_brush = newbrush;
+	update();
+}
+
+void DiagramItem::setPropertyWidgetManger(PropertyWidgetManager* manager)
+{
+	m_propertyWidgetManger = manager;
+}
+
+void DiagramItem::createPropertyWidget()
+{
+	switch (m_params.m_type)
+	{
+	case ShapeType::Rect:
+		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramRect, this);
+		break;
+	case ShapeType::Circle:
+		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramCircle, this);
+		break;
+	case ShapeType::Triangle:
+		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramTriangle, this);
+		break;
+	case ShapeType::Line:
+		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramLine, this);
+		break;
+	default:
+		throw std::runtime_error("error");
+	}
+}
+
+void DiagramItem::setPropertyWidgetKey(QString key)
+{
+	m_propertyWidgetKey = key;
 }
 
 std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
 {
-	params->m_brush = m_params.m_brush;
-	params->m_pen = m_params.m_pen;
+	//params->m_brush = m_params.m_brush;
+	//params->m_pen = m_params.m_pen;
 	params->m_center = getselfdrawcenter();
 	params->m_spacesize = getselfdrawspacesize();
 	params->m_type = m_params.m_type;
@@ -335,8 +439,8 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsline()
 
 std::shared_ptr<IDidgramDrawParams> DiagramItem::buildPixmapDrawParamsRest(std::shared_ptr<IDidgramDrawParams> params)
 {
-	params->m_brush = m_huabubrush;
-	params->m_pen = m_huabupen;
+	//params->m_brush = m_huabubrush;
+	//params->m_pen = m_huabupen;
 	params->m_center = getPixmapCenter();
 	params->m_spacesize = getPixmapSpaceSize();
 	params->m_type = m_params.m_type;
@@ -883,7 +987,11 @@ QPointF DiagramItem::getselfdrawcenter()
 //}
 
 DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
-	:m_params(params), QWidget(parent)
+	:m_params(params)
+	, QWidget(parent)
+	, dragstartposition(QPoint(0, 0))
+	, m_propertyWidgetManger(nullptr)
+	, m_propertyWidgetKey("")
 {
 	m_huabupen = params.m_pen;
 	m_huabubrush = params.m_brush;
@@ -1206,7 +1314,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		m_triangleSideRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(cfggetval<double>(qtcf::tuxing::triangle::edgeradio::bottom)
 			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::left) 
 			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::right));
-		m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypestringtoenum(cfggetval<std::string>(qtcf::tuxing::triangle::edgetype));
+		m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypeStringToEnum(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetype)));
 		m_triangleEdgeRotate = cfggetval<double>(qtcf::tuxing::triangle::totate);
 	}
 	break;
@@ -1323,9 +1431,9 @@ void GfxLibDiagramItemParams::setTriangleSideRadio(double bottom, double left, d
 	m_triangleSideRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(bottom, left, right);
 }
 
-void GfxLibDiagramItemParams::setTriangleEdgeType(const std::string& edgetype)
+void GfxLibDiagramItemParams::setTriangleEdgeType(const QString& edgetype)
 {
-	m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypestringtoenum(edgetype);
+	m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypeStringToEnum(edgetype);
 }
 
 void GfxLibDiagramItemParams::setTriangleRotate(double rotate)

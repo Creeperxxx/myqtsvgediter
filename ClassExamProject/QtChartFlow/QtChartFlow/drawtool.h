@@ -4,6 +4,7 @@
 #include <qbrush.h>
 #include <qpen.h>
 #include <stdexcept>
+#include <qstring.h>
 //#include "huabu.h"
 //#include "tuxing.h"
 //#include "huabu.h"
@@ -18,6 +19,12 @@ enum class ShapeType
 	Triangle,
 	Line
 };
+
+namespace ShapeTypeTool
+{
+	QString shapetypeEnumToQstring(ShapeType type);
+	ShapeType shapetypeQstringToEnum(const QString& type);
+}
 
 //enum class DiagramItemType
 //{
@@ -40,8 +47,8 @@ public:
 	QPointF m_center;
 	QSizeF m_spacesize;
 	ShapeType m_type;
-	QPen m_pen;
-	QBrush m_brush;
+	//QPen m_pen;
+	//QBrush m_brush;
 	//QPainter* m_painter;
 };
 
@@ -65,14 +72,15 @@ public:
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
 {
 public:
-	
+
 	enum class EdgeType
 	{
 		Left,
 		Right,
-		Bottom	
+		Bottom
 	};
-	static EdgeType edgetypestringtoenum(const std::string& edgetype);
+	static EdgeType edgetypeStringToEnum(const QString& edgetype);
+	static QString edgetypeEnumToString(EdgeType edgetype);
 	~DiagramDrawParamsTriangle() {}
 	class TriangleSizeRadios
 	{

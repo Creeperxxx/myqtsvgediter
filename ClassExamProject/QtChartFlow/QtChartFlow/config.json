@@ -32,14 +32,14 @@
   "mimetype": "application/x-custom-shape",
   "tuxing": {
     "rectangle": {
-      "radio": 2,
+      "radio": 4,
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/juxing.png",
-      "rotate": 0
+      "rotate": 135
     },
     "circle": {
-      "boundingrectradio": 2,
+      "boundingrectradio": 8,
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/yuanxing.png",
@@ -47,12 +47,12 @@
     },
     "triangle": {
       "edgeradio": {
-        "bottom": 1,
-        "left": 1,
-        "right": 1
+        "bottom": 5,
+        "left": 3,
+        "right": 4
       },
-      "edgetype": "bottom",
-      "totate": 180,
+      "edgetype": "left",
+      "totate": 90,
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/sanjiaoxing.png"
@@ -61,7 +61,7 @@
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/xian.png",
-      "rotate": 0
+      "rotate": 90
     }
     
   }

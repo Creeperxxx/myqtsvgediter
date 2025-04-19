@@ -177,13 +177,48 @@ void huabu::dropEvent(QDropEvent* event)
 	m_dropevetcenter = event->position();
 
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
-	auto params = builddrawparams(data);
+	PropertyWidgetManager::propertyobjecttype propertytype;
+
+	std::shared_ptr<IDidgramDrawParams> params = nullptr;
+	switch (data.m_type)
+	{
+	case ShapeType::Rect:
+	{
+		params = buildDrawParamsRect(data);
+		propertytype = PropertyWidgetManager::propertyobjecttype::huabuRect;
+	}
+	break;
+	case ShapeType::Circle:
+	{
+		params = buildDrawParamsCircle(data);
+		propertytype = PropertyWidgetManager::propertyobjecttype::huabuCircle;
+	}
+	break;
+	case ShapeType::Triangle:
+	{
+		params = buildDrawParamsTriangle(data);
+		propertytype = PropertyWidgetManager::propertyobjecttype::huabuTriangle;
+	}
+	break;
+	case ShapeType::Line:
+	{
+		params = buildDrawParamsLine(data);
+		propertytype = PropertyWidgetManager::propertyobjecttype::huabuLine;
+	}
+	break;
+	default:
+		throw std::runtime_error("error");
+	}
+	builddrawparamsrest(params);
+
+	//auto params = builddrawparams(data);
 	//std::shared_ptr<IDidgramDrawParams> params = factoryall::create(DiagramItemType::huabu, data.m_type)->build(this);
 	//m_mimedata.reset();
 	m_dropevetcenter.reset();
-
 	//tuxing->m_ret = factorytuxingjiedian::draw(params);
 	tuxing->m_params = params;
+	
+	tuxing->m_propertyString = m_propertywidgetmanager->createPropertyWidget(propertytype, this);
 
 	m_tuxingvec.push_back(tuxing);
 
@@ -270,6 +305,11 @@ void huabu::paintEvent(QPaintEvent* event)
 	//}
 }
 
+void huabu::setPorpertyWidgetManager(PropertyWidgetManager* manager)
+{
+	m_propertywidgetmanager = manager;
+}
+
 //void huabu::drawBaseBackground(QPainter* painter)
 //void huabu::drawBaseBackground()
 //{
@@ -304,32 +344,32 @@ void huabu::initPainter(QPainter& painter)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 
 }
+//
+//std::shared_ptr<IDidgramDrawParams> huabu::builddrawparams(const DiagramMimedata& data)
+//{
+//	return builddrawparamsrest(buildspecialparamsbytype(data));
+//}
 
-std::shared_ptr<IDidgramDrawParams> huabu::builddrawparams(const DiagramMimedata& data)
-{
-	return builddrawparamsrest(buildspecialparamsbytype(data));
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::buildspecialparamsbytype(const DiagramMimedata& data)
-{
-	switch (data.m_type)
-	{
-	case ShapeType::Rect:
-		return buildDrawParamsRect(data);
-		break;
-	case ShapeType::Circle:
-		return buildDrawParamsCircle(data);
-		break;
-	case ShapeType::Triangle:
-		return buildDrawParamsTriangle(data);
-		break;
-	case ShapeType::Line:
-		return buildDrawParamsLine(data);
-		break;
-	default:
-		throw std::runtime_error("error");
-	}
-}
+//std::shared_ptr<IDidgramDrawParams> huabu::buildspecialparamsbytype(const DiagramMimedata& data)
+//{
+//	switch (data.m_type)
+//	{
+//	case ShapeType::Rect:
+//		return buildDrawParamsRect(data);
+//		break;
+//	case ShapeType::Circle:
+//		return buildDrawParamsCircle(data);
+//		break;
+//	case ShapeType::Triangle:
+//		return buildDrawParamsTriangle(data);
+//		break;
+//	case ShapeType::Line:
+//		return buildDrawParamsLine(data);
+//		break;
+//	default:
+//		throw std::runtime_error("error");
+//	}
+//}
 
 std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsRect(const DiagramMimedata& data)
 {
@@ -365,7 +405,7 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsTriangle(const Diagram
 	if (!data.m_triangleEdgeType.has_value())
 		throw std::runtime_error("error");
 	params->m_edgetype = data.m_triangleEdgeType.value();
-	if(!data.m_triangleRotate.has_value())
+	if (!data.m_triangleRotate.has_value())
 		throw std::runtime_error("error");
 	params->m_rotationAngle = data.m_triangleRotate.value();
 	if (!data.m_triangleSideRadios.has_value())
@@ -385,15 +425,14 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsLine(const DiagramMime
 	return params;
 }
 
-std::shared_ptr<IDidgramDrawParams> huabu::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
+void huabu::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
 {
-	params->m_brush = m_brush;
-	params->m_pen = m_pen;
+	//params->m_brush = m_brush;
+	//params->m_pen = m_pen;
 	if (!m_dropevetcenter.has_value())
 		throw std::runtime_error("error");
 	params->m_center = m_dropevetcenter.value();
 	params->m_spacesize = m_tuxingspacesize;
-	return params;
 }
 
 

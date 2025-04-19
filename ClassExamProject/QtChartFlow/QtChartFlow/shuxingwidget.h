@@ -10,6 +10,8 @@
 #include <qpainter.h>
 #include <qstackedwidget.h>
 #include <quuid.h>
+#include <qpushbutton.h>
+#include <qcolordialog.h>
 
 
 //rect radio
@@ -18,6 +20,20 @@ constexpr const double rectRadioMax = 10;
 constexpr const double rectRadioStep = 0.1;
 constexpr const int rectRadioDecimals = 2;
 constexpr const double rectRadioInitvlaue = 2;
+
+constexpr const int penWidth = 2;
+constexpr const double penWidthStep = 0.5;
+constexpr const int penWidthMax = 10;
+
+constexpr const double circleRadioMin = 0.1;
+constexpr const double circleRadioMax = 10;
+constexpr const double circleRadioStep = 0.1;
+constexpr const int circleRadioDecimals = 2;
+constexpr const double circleRadioInitvlaue = 2;
+
+constexpr const double triangleRadioMin = 0.1;
+constexpr const double triangleRadioMax = 10;
+constexpr const double triangleRadioStep = 0.1;
 
 
 
@@ -39,12 +55,16 @@ public:
 		huabuTriangle,
 		huabuLine
 	};
+	PropertyWidgetManager(QWidget* parent);
+	QStackedWidget* getstackwidget();
 	QString createPropertyWidget(propertyobjecttype type, QWidget* widget);
+	void dealclicked(QString key);
 private:
 	propertyWidget* createinitPropertyWidget(propertyobjecttype type, QWidget* widget);
 	void builddiagramRectPropertyWidget(propertyWidget* propertywidget, QWidget* delegatewidget);
-	void builddiagramCirclePropertyWidget(propertyWidget* widget);
-	void builddiagramTrianglePropertyWidget(propertyWidget* widget);
+	void builddiagramCirclePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void builddiagramTrianglePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void builddiagramLinePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
 
 
 	QMap<QString, propertyWidget*> m_propertyMap;

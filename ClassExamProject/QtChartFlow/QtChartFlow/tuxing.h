@@ -21,6 +21,8 @@
 #include "drawtool.h"
 #include "tuxingjiedian.h"
 #include "DiagramMimedata.h"
+//#include <moc_MyMainWindow.cpp>
+//#include "shuxingwidget.h"
 
 //class factory
 
@@ -140,7 +142,7 @@ public:
 	std::optional<DiagramDrawParamsTriangle::TriangleSizeRadios> m_triangleSideRadios; 
 	void setTriangleSideRadio(double bottom, double left, double right);
 	std::optional<DiagramDrawParamsTriangle::EdgeType> m_triangleEdgeType; 
-	void setTriangleEdgeType(const std::string& edgetype);
+	void setTriangleEdgeType(const QString& edgetype);
 	std::optional<double> m_triangleEdgeRotate;
 	void setTriangleRotate(double rotate);
 
@@ -160,6 +162,7 @@ private:
 };
 
 
+class PropertyWidgetManager;
 
 class DiagramItem : public QWidget
 {
@@ -197,9 +200,30 @@ public:
 	bool getdrawbyloadpic();
 	bool getisdrawbypainter();
 
+	void onPenColorChanged(QColor newcolor);
+	void onPenWidthChanged(double newwidth);
+	void onPenBrushChanged(QBrush newbrush);
+
 	void onRectRadioChanged(double newradio);
 	void onRectRotateChanged(int newrotate);
 
+	void onCircleRadioChanged(double newradio);
+	void onCircleRotateChanged(int newrottate);
+
+	void onTriangleSideRadioChangedBottom(double bottom);
+	void onTriangleSideRadioChangedLeft(double left);
+	void onTriangleSideRadioChangedRight(double right);
+	void onTriangleEdgeTypeChanged(DiagramDrawParamsTriangle::EdgeType type);
+	void onTriangleEdgeRotateChanged(int rotate);
+
+	void onLineRotateChanged(int rotate);
+
+	void setPropertyWidgetManger(PropertyWidgetManager* manager);
+	void createPropertyWidget();
+
+	void setPropertyWidgetKey(QString key);
+
+//信号
 private:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -265,6 +289,9 @@ private:
 	QPen m_huabupen;
 	QBrush m_huabubrush;
 	QSizeF m_huabuspacesize;
+	PropertyWidgetManager* m_propertyWidgetManger;
+	QString m_propertyWidgetKey;
+	
 	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;
 	//QPixmap* m_diagramDragPixmap;
 	//QMimeData* m_diagramDragMimedata; //貌似一个mimedata只能用一次

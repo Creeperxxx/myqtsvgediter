@@ -13,6 +13,7 @@
 #include "configmanager.h"
 #include <vector>
 #include "DiagramMimedata.h"
+#include "shuxingwidget.h"
 
 //class tuxingjiedianfactory
 //{
@@ -29,6 +30,7 @@ class huabutuxing
 public:
 	std::shared_ptr<IDidgramDrawParams> m_params;
 	std::shared_ptr<DrawResult> m_ret;
+	QString m_propertyString;
 };
 
 
@@ -48,6 +50,8 @@ public:
 	void dragMoveEvent(QDragMoveEvent* event) override; //拖动操作在控件中移动时触发，通常用于限制
 	void dropEvent(QDropEvent* event) override; //完成拖动时触发，完成数据交换
 	void paintEvent(QPaintEvent* event) override;
+
+	void setPorpertyWidgetManager(PropertyWidgetManager* manager);
 	//QSize sizeHint() const override;
 
 	//void mousePressEvent(QMouseEvent* event) override;
@@ -69,13 +73,13 @@ private:
 	QPainter* initPainter(); //todo ： 从某个类中读取画笔配置
 	void initPainter(QPainter& painter);
 	
-	std::shared_ptr<IDidgramDrawParams> builddrawparams(const DiagramMimedata& data);
-	std::shared_ptr<IDidgramDrawParams> buildspecialparamsbytype(const DiagramMimedata& data);
+	//std::shared_ptr<IDidgramDrawParams> builddrawparams(const DiagramMimedata& data);
+	//std::shared_ptr<IDidgramDrawParams> buildspecialparamsbytype(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsRect(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsCircle(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsTriangle(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsLine(const DiagramMimedata& data);
-	std::shared_ptr<IDidgramDrawParams> builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params);
+	void builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params);
 	//void initpenandbrush(QBrush color, int penwidth, QBrush brush);
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
@@ -100,4 +104,6 @@ private:
 	bool m_isResizing = false;
 	QPoint m_dragStartPos;
 	QSize m_dragStartSize;
+		
+	PropertyWidgetManager* m_propertywidgetmanager;
 };

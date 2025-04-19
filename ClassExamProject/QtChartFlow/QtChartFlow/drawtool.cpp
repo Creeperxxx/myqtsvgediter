@@ -167,7 +167,7 @@ DiagramDrawParamsTriangle::TriangleSizeRadios::TriangleSizeRadios(double bottom,
 	, m_right(right) {
 }
 
-DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::edgetypestringtoenum(const std::string& str)
+DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::edgetypeStringToEnum(const QString& str)
 {
 	if (str == "bottom")
 		return EdgeType::Bottom;
@@ -177,6 +177,25 @@ DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::edgetypestringtoe
 		return EdgeType::Right;
 	else
 		throw std::runtime_error("error");
+}
+
+QString DiagramDrawParamsTriangle::edgetypeEnumToString(EdgeType edgetype)
+{
+	switch (edgetype)
+	{
+	case DiagramDrawParamsTriangle::EdgeType::Left:
+		return QString("left");
+		break;
+	case DiagramDrawParamsTriangle::EdgeType::Right:
+		return QString("right");
+		break;
+	case DiagramDrawParamsTriangle::EdgeType::Bottom:
+		return QString("bottom");
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
 }
 
 //std::shared_ptr<IDidgramDrawParams> IbuildHuabuParams::build(QWidget* item)
@@ -271,3 +290,47 @@ DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::edgetypestringtoe
 //	return params;
 //}
 
+QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
+{
+	switch (type)
+	{
+	case ShapeType::Rect:
+		return QString("Rect");
+		break;
+	case ShapeType::Circle:
+		return QString("Circle");
+		break;
+	case ShapeType::Triangle:
+		return QString("Triangle");
+		break;
+	case ShapeType::Line:
+		return QString("Line");
+		break;
+	default:
+		throw std::runtime_error("error");
+	}
+}
+
+ShapeType ShapeTypeTool::shapetypeQstringToEnum(const QString& type)
+{
+	if (type == "Rect")
+	{
+		return ShapeType::Rect;
+	}
+	else if (type == "Circle")
+	{
+		return ShapeType::Circle;
+	}
+	else if (type == "Triangle")
+	{
+		return ShapeType::Triangle;
+	}
+	else if (type == "Line")
+	{
+		return ShapeType::Line;
+	}
+	else
+	{
+		throw std::runtime_error("error");
+	}
+}

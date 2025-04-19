@@ -101,6 +101,22 @@ void MyMainWindow::init()
 	maintoolbar->addWidget(line);
 	maintoolbar->addSeparator();
 
+	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
+	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
+
+	juxing->setPropertyWidgetManger(m_propertyWidgetManager);
+	juxing->createPropertyWidget();
+
+	yuanxing->setPropertyWidgetManger(m_propertyWidgetManager);
+	yuanxing->createPropertyWidget();
+
+	sanjiaoxing->setPropertyWidgetManger(m_propertyWidgetManager);
+	sanjiaoxing->createPropertyWidget();
+
+	line->setPropertyWidgetManger(m_propertyWidgetManager);
+	line->createPropertyWidget();
+
+
 	//QStackedWidget* propertywidget = new QStackedWidget(centralwidget);
 	//centralwidgetlayout->addWidget(propertywidget);
 	//propertywidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);

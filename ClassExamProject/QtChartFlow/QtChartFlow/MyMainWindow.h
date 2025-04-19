@@ -38,6 +38,8 @@ private:
 
 	QScrollArea* m_huabuparentscroll;
 	QWidget* m_huabuparentwidget;
+
+	PropertyWidgetManager* m_propertyWidgetManager;
 	//void inittuxingkuwidget();
 	//void initshuxingwidget();
 	//void inithuabuparentwidget();

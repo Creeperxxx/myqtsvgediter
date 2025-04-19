@@ -11,7 +11,7 @@ std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shar
 
 	//QRectF rect = calcurect(p);
 	//painter.drawRect(rect);
-	QPolygonF rect = calcuRect(p);
+	QPolygonF rect = calcuRect(p, painter.pen().widthF());
 	painter.drawPolygon(rect);
 
 	//QPen pen = painter.pen();
@@ -25,16 +25,15 @@ std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shar
 	return ret;
 }
 
-QPolygonF DiagramDrawerCircle::calcuBasicalCircle(DiagramDrawParamsCircle* params)
+QPolygonF DiagramDrawerCircle::calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize, qreal penwidth)
 {
-	QSizeF suitalbesize = calcuboundingrectsize(params);
-	qreal x = params->m_center.x() - suitalbesize.width() / 2.0;
-	qreal y = params->m_center.y() - suitalbesize.height() / 2.0;
+	qreal x = params->m_center.x() - suitablesize.width() / 2.0;
+	qreal y = params->m_center.y() - suitablesize.height() / 2.0;
 
 	QPointF lefttop(x, y);
-	QPointF leftbottom(x, y + suitalbesize.height() - 1);
-	QPointF righttop(x + suitalbesize.width() - 1, y);
-	QPointF rightbottom(x + suitalbesize.width() - 1, y + suitalbesize.height() - 1);
+	QPointF leftbottom(x, y + suitablesize.height() - 1);
+	QPointF righttop(x + suitablesize.width() - 1, y);
+	QPointF rightbottom(x + suitablesize.width() - 1, y + suitablesize.height() - 1);
 
 	QPolygonF circle;
 	circle << lefttop << leftbottom << rightbottom << righttop;
@@ -52,21 +51,20 @@ QTransform DiagramDrawerCircle::calcurotatetransform(DiagramDrawParamsCircle* pa
 	return rotatetransform;
 }
 
-qreal DiagramDrawerCircle::calcuscaleFactor(DiagramDrawParamsCircle* params, QPolygonF diagram)
+qreal DiagramDrawerCircle::calcuscaleFactor(DiagramDrawParamsCircle* params, QPolygonF diagram, qreal penwidth)
 {
 	QRectF bounds = diagram.boundingRect();
 
-	qreal scalex = params->m_spacesize.width() / (bounds.width() + params->m_pen.widthF());
-	qreal scaley = params->m_spacesize.height() / (bounds.height() + params->m_pen.widthF());
+	qreal scalex = params->m_spacesize.width() / (bounds.width() + penwidth);
+	qreal scaley = params->m_spacesize.height() / (bounds.height() + penwidth);
 
 	qreal scale = qMin(scalex, scaley);
 
 	return scale;
 }
 
-QTransform DiagramDrawerCircle::calcuscaleTransform(DiagramDrawParamsCircle* params, QPolygonF diagram)
+QTransform DiagramDrawerCircle::calcuscaleTransform(DiagramDrawParamsCircle* params, qreal scale, qreal penwidth)
 {
-	qreal scale = calcuscaleFactor(params, diagram);
 
 	QTransform scaletransform;
 	scaletransform.translate(params->m_center.x(), params->m_center.y());
@@ -77,10 +75,10 @@ QTransform DiagramDrawerCircle::calcuscaleTransform(DiagramDrawParamsCircle* par
 }
 
 
-QSizeF DiagramDrawerCircle::calcuboundingrectsize(DiagramDrawParamsCircle* params)
+QSizeF DiagramDrawerCircle::calcuboundingrectsize(DiagramDrawParamsCircle* params, qreal penwidth)
 {
-	double availablewidth = params->m_spacesize.width() - params->m_pen.widthF();
-	double availableheight = params->m_spacesize.height() - params->m_pen.widthF();
+	double availablewidth = params->m_spacesize.width() - penwidth;
+	double availableheight = params->m_spacesize.height() - penwidth;
 
 	double rectwidth, rectheight;
 	if (availablewidth / availableheight > params->m_boundingrectradio)
@@ -114,27 +112,32 @@ std::shared_ptr<DrawResult> DiagramDrawerCircle::draw(QPainter& painter, std::sh
 	//QRectF boundingrect = calcuboundingrect(p);
 	//painter.drawEllipse(boundingrect);
 
-	QSizeF suitalbesize = calcuboundingrectsize(p);
-	QPolygonF circle = calcuBasicalCircle(p);
+	QSizeF suitablesize = calcuboundingrectsize(p, painter.pen().widthF());
+	QPolygonF circle = calcuBasicalCircle(p,suitablesize, painter.pen().widthF());
 
 	QTransform rotatetransform = calcurotatetransform(p);
 	circle = circle * rotatetransform;
 
-	qreal scale = calcuscaleFactor(p, circle);
-	QTransform scaletransform = calcuscaleTransform(p, circle);
+	qreal scale = calcuscaleFactor(p, circle, painter.pen().widthF());
+	QTransform scaletransform = calcuscaleTransform(p, scale, painter.pen().widthF());
 	circle = circle * scaletransform;
 
 
 	//painter.drawPolygon(circle);
+	
 
 	painter.translate(p->m_center);
 	painter.rotate(p->m_circlerotate);
 	painter.scale(scale, scale);
 
-	painter.drawEllipse(QPointF(0, 0), suitalbesize.width() / 2.0, suitalbesize.height() / 2.0);
+	QPen oldpen(painter.pen());
+	QPen pen(painter.pen());
+	pen.setWidthF(oldpen.widthF() / scale);
+	painter.setPen(pen);
+	painter.drawEllipse(QPointF(0, 0), suitablesize.width() / 2.0, suitablesize.height() / 2.0);
 
 	painter.resetTransform();
-
+	painter.setPen(oldpen);
 
 
 
@@ -226,10 +229,9 @@ QTransform DiagramDrawerRect::calcuTranslateTransform(QPolygonF diagram, Diagram
 	return translateTransform;
 }
 
-QTransform DiagramDrawerRect::calcuScaleTransform(QPolygonF diagram, DiagramDrawParamsRect* params)
+QTransform DiagramDrawerRect::calcuScaleTransform(QPolygonF diagram, DiagramDrawParamsRect* params, qreal penwidth)
 {
 	QTransform scaletransform;
-	qreal penwidth = params->m_pen.widthF();
 	qreal scalex = params->m_spacesize.width() / (diagram.boundingRect().width() + penwidth);
 	qreal scaley = params->m_spacesize.height() / (diagram.boundingRect().height() + penwidth);
 	qreal scale = qMin(scalex, scaley);
@@ -243,12 +245,12 @@ QTransform DiagramDrawerRect::calcuScaleTransform(QPolygonF diagram, DiagramDraw
 	return scaletransform;
 }
 
-QPolygonF DiagramDrawerRect::calcuRect(DiagramDrawParamsRect* params)
+QPolygonF DiagramDrawerRect::calcuRect(DiagramDrawParamsRect* params, qreal penwidth)
 {
 	QPolygonF rect = calcuBasicalRect(params);
 	rect = rect * calcuRotateTransform(params);
 	rect = rect * calcuTranslateTransform(rect, params);
-	rect = rect * calcuScaleTransform(rect, params);
+	rect = rect * calcuScaleTransform(rect, params, penwidth);
 
 	return rect;
 }
