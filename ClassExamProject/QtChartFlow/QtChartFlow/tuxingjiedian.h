@@ -92,7 +92,7 @@ private:
 	QPolygonF calcuUpsidedowntriangle(double bottom, double left, double right);
 	QTransform calcuRotateTransform(double bottom, double left, double right, DiagramDrawParamsTriangle::EdgeType edgetype, double angle);
 	QTransform calcuTranslateTransfrom(QPointF trianglecenter, QPointF widgetcenter);
-	QTransform calcuScaleTransform(QRectF trianglerect, QRectF widget);
+	QTransform calcuScaleTransform(QRectF trianglerect, DiagramDrawParamsTriangle* params);
 	QRectF calcuwidgetrect(QPointF cente, QSizeF size);
 };
 

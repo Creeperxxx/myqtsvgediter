@@ -58,7 +58,7 @@ qreal DiagramDrawerCircle::calcuscaleFactor(DiagramDrawParamsCircle* params, QPo
 	qreal scalex = params->m_spacesize.width() / (bounds.width() + penwidth);
 	qreal scaley = params->m_spacesize.height() / (bounds.height() + penwidth);
 
-	qreal scale = qMin(scalex, scaley);
+	qreal scale = qMin(scalex, scaley) * params->m_scale;
 
 	return scale;
 }
@@ -234,7 +234,7 @@ QTransform DiagramDrawerRect::calcuScaleTransform(QPolygonF diagram, DiagramDraw
 	QTransform scaletransform;
 	qreal scalex = params->m_spacesize.width() / (diagram.boundingRect().width() + penwidth);
 	qreal scaley = params->m_spacesize.height() / (diagram.boundingRect().height() + penwidth);
-	qreal scale = qMin(scalex, scaley);
+	qreal scale = qMin(scalex, scaley) * params->m_scale;
 	if (scale < 1e-10)
 		throw std::runtime_error("error");
 	qreal centerx = diagram.boundingRect().center().x();
@@ -315,7 +315,7 @@ QPolygonF DiagramDrawerTriangle::calcuTriangle(DiagramDrawParamsTriangle* params
 	QTransform translateTransform = calcuTranslateTransfrom(triangle.boundingRect().center(), params->m_center);
 
 	triangle = triangle * rotateTransform * translateTransform;
-	QTransform scaleTransform = calcuScaleTransform(triangle.boundingRect(), calcuwidgetrect(params->m_center, params->m_spacesize));
+	QTransform scaleTransform = calcuScaleTransform(triangle.boundingRect(), params);
 	triangle = triangle * scaleTransform;
 	return triangle;
 }
@@ -327,12 +327,13 @@ QTransform DiagramDrawerTriangle::calcuTranslateTransfrom(QPointF trianglecenter
 	return translateTransform;
 }
 
-QTransform DiagramDrawerTriangle::calcuScaleTransform(QRectF trianglerect, QRectF widget)
+QTransform DiagramDrawerTriangle::calcuScaleTransform(QRectF trianglerect, DiagramDrawParamsTriangle* params)
 {
 	QTransform scaleTransform;
+	QRectF widget = calcuwidgetrect(params->m_center, params->m_spacesize);
 	qreal scalex = widget.width() / trianglerect.width();
 	qreal scaley = widget.height() / trianglerect.height();
-	qreal scale = qMin(scalex, scaley) * 0.9;
+	qreal scale = qMin(scalex, scaley) * params->m_scale;
 
 	scaleTransform.translate(trianglerect.center().x(), trianglerect.center().y());
 	scaleTransform.scale(scale, scale);
@@ -487,7 +488,7 @@ QLineF DiagramDrawerLine::calcuLine(DiagramDrawParamsLine* params)
 	// Calculate scaling factor t for line length based on space size
 	double tWidth = (dx != 0) ? std::abs(halfwidth / dx) : std::numeric_limits<double>::max();
 	double tHeight = (dy != 0) ? std::abs(halfheight / dy) : std::numeric_limits<double>::max();
-	double t = std::min(tWidth, tHeight);
+	double t = std::min(tWidth, tHeight) * params->m_scale;
 
 	QPointF start = params->m_center - QPointF(t * dx, t * dy);
 	QPointF end = params->m_center + QPointF(t * dx, t * dy);

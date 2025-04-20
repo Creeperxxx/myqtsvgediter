@@ -28,11 +28,12 @@ class huabutuxing
 {
 
 public:
+	QPen m_pen;
+	QBrush m_brush;
 	std::shared_ptr<IDidgramDrawParams> m_params;
 	std::shared_ptr<DrawResult> m_ret;
 	QString m_propertyString;
 };
-
 
 
 
@@ -52,6 +53,7 @@ public:
 	void paintEvent(QPaintEvent* event) override;
 
 	void setPorpertyWidgetManager(PropertyWidgetManager* manager);
+	void createHuabuPropertyWidget();
 	//QSize sizeHint() const override;
 
 	//void mousePressEvent(QMouseEvent* event) override;
@@ -74,12 +76,15 @@ private:
 	void initPainter(QPainter& painter);
 	
 	//std::shared_ptr<IDidgramDrawParams> builddrawparams(const DiagramMimedata& data);
-	//std::shared_ptr<IDidgramDrawParams> buildspecialparamsbytype(const DiagramMimedata& data);
+	std::shared_ptr<IDidgramDrawParams> buildParamsSpecial(const DiagramMimedata& data);
+
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsRect(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsCircle(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsTriangle(const DiagramMimedata& data);
 	std::shared_ptr<IDidgramDrawParams> buildDrawParamsLine(const DiagramMimedata& data);
-	void builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params);
+
+	PropertyWidgetManager::propertyobjecttype shapeTypeToPropertyobjectType(ShapeType type);
+	//void builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params, const DiagramMimedata& data);
 	//void initpenandbrush(QBrush color, int penwidth, QBrush brush);
 	//void InitPainterPen();
 	//void InitPainterBrunsh();
@@ -94,16 +99,14 @@ private:
 	//std::vector<std::unique_ptr<Ituxingjiedian>> m_tuxingvec; //不能用qvector，提示说qvector的元素必须支持复制操作，？？？
 	//QPainter* m_painter; //有点逆天，painter只能在paintevent函数中使用？？？
 	std::vector<std::shared_ptr<huabutuxing>> m_tuxingvec;
+
 	QPen m_pen;
 	QBrush m_brush;
+	QColor m_backgroundcolor;
+	QSize m_size;
 	QSizeF m_tuxingspacesize;//每个图形分配的区域
 	QString m_mimetype; 
-	//std::optional<DiagramMimedata> m_mimedata;
-	std::optional<QPointF> m_dropevetcenter;
-
-	bool m_isResizing = false;
-	QPoint m_dragStartPos;
-	QSize m_dragStartSize;
 		
 	PropertyWidgetManager* m_propertywidgetmanager;
+	QString m_propertywidgetkey;
 };

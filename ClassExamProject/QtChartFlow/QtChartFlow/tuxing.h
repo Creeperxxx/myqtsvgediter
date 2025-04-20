@@ -132,6 +132,7 @@ public:
 	bool m_drawByPainter; 
 	bool m_drawByloadpic; 
 	bool m_isdrawByPainter;
+	qreal m_scale;
 	
 	
 	std::optional<double> m_rectRadio;
@@ -183,6 +184,7 @@ public:
 	//QPainter* getDiagramItemPixmapPainter();
 	QPoint getPixmapCenter();
 	QSizeF getPixmapSpaceSize();
+	qreal getPixmapScale();
 	QPen gethuabupen();
 	QBrush gethuabubrush();
 	QPen getdiagrampen();
@@ -291,6 +293,7 @@ private:
 	QSizeF m_huabuspacesize;
 	PropertyWidgetManager* m_propertyWidgetManger;
 	QString m_propertyWidgetKey;
+	//qreal m_pixmapScale;
 	
 	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;
 	//QPixmap* m_diagramDragPixmap;

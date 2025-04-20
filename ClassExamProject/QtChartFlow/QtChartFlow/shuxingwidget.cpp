@@ -27,15 +27,28 @@ propertyWidget::propertyWidget(QWidget* parent)
 
 }
 
-void propertyWidget::addProperty(const QString& name, QWidget* widget)
+void propertyWidget::addPropertyItem(propertyItemParams* params)
 {
-	//propertyItem* item = new propertyItem(name, widget);
-	m_shuxinglayout->addRow(name, widget);
-	if (m_propertyMap.contains(name))
-		throw std::runtime_error("error");
-	m_propertyMap[name] = widget;
-	//connect(item, &propertyItem::valueChanged, this, &propertyWidget::propertyChanged);
+	std::shared_ptr<propertyItem> item = std::make_shared<propertyItem>(params);
+	m_propertyItemVec.push_back(item);
+
+	QWidget* editwidget = item->getEditWidget();
+	m_shuxinglayout->addRow(item->getName(), editwidget);
+
+	QObject::connect(item.get(), &propertyItem::signalValueChanged
+		, this, &propertyWidget::signalValueChanged);
+
 }
+
+//void propertyWidget::addProperty(const QString& name, QWidget* widget)
+//{
+//	//propertyItem* item = new propertyItem(name, widget);
+//	m_shuxinglayout->addRow(name, widget);
+//	if (m_propertyMap.contains(name))
+//		throw std::runtime_error("error");
+//	m_propertyMap[name] = widget;
+//	//connect(item, &propertyItem::valueChanged, this, &propertyWidget::propertyChanged);
+//}
 void propertyWidget::paintEvent(QPaintEvent* event)
 {
 	QWidget::paintEvent(event);
@@ -569,6 +582,62 @@ void PropertyWidgetManager::builddiagramLinePropertyWidget(propertyWidget* widge
 
 }
 
+void PropertyWidgetManager::buildhuabuPropertyWidget(propertyWidget* widget, QWidget* delegatewidget)
+{
+
+}
+
+propertyWidget* PropertyWidgetManager::createOriginalPropertyWidget()
+{
+	propertyWidget* widget = new propertyWidget();
+	int index = m_propertyStackWidget->addWidget(widget);
+	widget->setstackwidgetindex(index);
+}
+
+void PropertyWidgetManager::createDiagramRectPropertyWidget()
+{
+	propertyWidget* widget = createOriginalPropertyWidget();
+	std::shared_ptr<propertyItemParams> params = std::make_shared<propertyItemParams>();
+
+	using type = propertyItemParams::EditItemDataType;
+	params->m_editDataType = propertyItemParams::EditItemDataType::String;
+	params->m_name = "对象";
+	widget->addPropertyItem(params.get());
+
+	params->m_editDataType = type::Double;
+	params->m_name = "比例";
+	params->m_doubleRangeMin = rectRadioMin;
+	params->m_doubleRangeMax = rectRadioMax;
+	params->m_doubleSingleStep = rectRadioStep;
+	params->m_doubleDecimals = rectRadioDecimals;
+	params->m_doubleDefaultValue = rectRadioInitvlaue;
+	widget->addPropertyItem(params.get());
+
+	params->m_editDataType = type::Int;
+	params->m_name = "旋转角度";
+	params->m_intRangeMin = -180;
+	params->m_intRangeMax = 180;
+	params->m_intSingleStep = 1;
+	params->m_intDefaultValue = 0;
+	widget->addPropertyItem(params.get());
+
+	params->m_editDataType = type::Color;
+	params->m_name = "画笔颜色";
+	widget->addPropertyItem(params.get());
+
+	params->m_editDataType = type::Int;
+	params->m_name = "画笔宽度";
+	params->m_intRangeMin = 1;
+	params->m_intRangeMax = penWidthMax;
+	params->m_intDefaultValue = penWidth;
+	params->m_intSingleStep = 1;
+	widget->addPropertyItem(params.get());
+
+	params->m_editDataType = type::Color;
+	params->m_name = "填充颜色";
+	widget->addPropertyItem(params.get());
+}
+
 
 
 //propertyItem::propertyItem(const QString& name, QWidget* widget, QWidget* parent)
@@ -578,3 +647,180 @@ void PropertyWidgetManager::builddiagramLinePropertyWidget(propertyWidget* widge
 //{
 
 //}
+
+propertyItem::propertyItem(propertyItemParams* params)
+	:m_editWidget(nullptr)
+	, m_name(params->m_name)
+	, m_choosedColor(nullptr)
+	, m_type(params->m_editDataType)
+{
+	createItem(params);
+}
+
+QWidget* propertyItem::getEditWidget()
+{
+	return m_editWidget;
+}
+
+QString propertyItem::getName()
+{
+	return m_name;	
+}
+
+void propertyItem::onValueChanged()
+{
+	emit signalValueChanged(m_name, m_type, getValue());
+}
+
+void propertyItem::createItem(propertyItemParams* params)
+{
+	switch (params->m_editDataType)
+	{
+	case propertyItemParams::EditItemDataType::Double:
+		buildDoubleItem(params);
+		break;
+	case propertyItemParams::EditItemDataType::Int:
+		buildIntItem(params);
+		break;
+	case propertyItemParams::EditItemDataType::Enum:
+		buildEnumItem(params);
+		break;
+	case propertyItemParams::EditItemDataType::Color:
+		buildColorItem(params);
+		break;
+	case propertyItemParams::EditItemDataType::String:
+		buildStringItem(params);
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
+
+
+
+void propertyItem::buildDoubleItem(propertyItemParams* params)
+{
+	QDoubleSpinBox* spinbox = new QDoubleSpinBox();
+	if (!params->isDoubleDataValid())
+		throw std::runtime_error("error");
+	spinbox->setRange(params->m_doubleRangeMin.value(), params->m_doubleRangeMax.value());
+	spinbox->setSingleStep(params->m_doubleSingleStep.value());
+	spinbox->setDecimals(params->m_doubleDecimals.value());
+	spinbox->setValue(params->m_doubleDefaultValue.value());
+
+	QObject::connect(spinbox, QOverload<double>::of(&QDoubleSpinBox::valueChanged)
+		, this, &propertyItem::onValueChanged);
+
+	m_editWidget = spinbox;
+}
+
+void propertyItem::buildIntItem(propertyItemParams* params)
+{
+	QSpinBox* spinbox = new QSpinBox();
+	if (!params->isIntDataValid())
+		throw std::runtime_error("error");
+	spinbox->setRange(params->m_intRangeMin.value(), params->m_intRangeMax.value());
+	spinbox->setSingleStep(params->m_intSingleStep.value());
+	spinbox->setValue(params->m_intDefaultValue.value());
+	
+	QObject::connect(spinbox, QOverload<int>::of(&QSpinBox::valueChanged)
+		, this, &propertyItem::onValueChanged);
+
+	m_editWidget = spinbox;
+}
+
+void propertyItem::buildColorItem(propertyItemParams* params)
+{
+	QPushButton* button = new QPushButton("选择");
+	button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+	QObject::connect(button, &QPushButton::clicked, [=]()
+		{
+			QColor color = QColorDialog::getColor();
+			if (color.isValid())
+				m_choosedColor = color;
+		});
+
+	m_editWidget = nullptr;
+}
+
+void propertyItem::buildEnumItem(propertyItemParams* params)
+{
+	QComboBox* combobox = new QComboBox();
+	if (!params->isEnumDataValid())
+		throw std::runtime_error("error");
+
+	for (const QString& str : params->m_enumStringVec.value())
+	{
+		combobox->addItem(str);
+	}
+
+	QObject::connect(combobox, &QComboBox::currentTextChanged
+		, this, &propertyItem::onValueChanged);
+
+	m_editWidget = combobox;
+}
+
+void propertyItem::buildStringItem(propertyItemParams* params)
+{
+	if (!params->isStringItemValid())
+		throw std::runtime_error("error");
+
+	QLabel* label = new QLabel(params->m_stringStr.value());
+
+	m_editWidget = label;
+}
+
+QVariant propertyItem::getValue()
+{
+	switch (m_type)
+	{
+	case propertyItemParams::EditItemDataType::Double:
+		return QVariant(dynamic_cast<QDoubleSpinBox*>(m_editWidget)->value());
+		break;
+	case propertyItemParams::EditItemDataType::Int:
+		return QVariant(dynamic_cast<QSpinBox*>(m_editWidget)->value());
+		break;
+	case propertyItemParams::EditItemDataType::Enum:
+		return QVariant(dynamic_cast<QComboBox*>(m_editWidget)->currentText());
+		break;
+	case propertyItemParams::EditItemDataType::Color:
+		return QVariant(m_choosedColor.value_or(Qt::white));
+		break;
+	case propertyItemParams::EditItemDataType::String:
+		return QVariant(dynamic_cast<QLabel*>(m_editWidget)->text());//好像不会被触发
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
+
+bool propertyItemParams::isDoubleDataValid()
+{
+	return m_doubleRangeMax.has_value() && m_doubleRangeMin.has_value()
+		&& m_doubleSingleStep.has_value() && m_doubleDecimals.has_value()
+		&& m_doubleDefaultValue.has_value();
+}
+
+bool propertyItemParams::isIntDataValid()
+{
+	return m_intRangeMax.has_value() && m_intDefaultValue.has_value()
+		&& m_intRangeMin.has_value() && m_intSingleStep.has_value();
+}
+
+bool propertyItemParams::isEnumDataValid()
+{
+	return m_enumStringVec.has_value();
+}
+
+bool propertyItemParams::isStringItemValid()
+{
+	return m_stringStr.has_value();
+}
+
+void propertyData::slotValueChanged(propertyItemParams::EditItemDataType type, QVariant)
+{
+	//objectkey
+
+}

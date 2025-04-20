@@ -12,6 +12,8 @@
 #include <quuid.h>
 #include <qpushbutton.h>
 #include <qcolordialog.h>
+#include <functional>
+#include <qvector.h>
 
 
 //rect radio
@@ -35,6 +37,91 @@ constexpr const double triangleRadioMin = 0.1;
 constexpr const double triangleRadioMax = 10;
 constexpr const double triangleRadioStep = 0.1;
 
+
+class propertyItemParams
+{
+public:
+	QString m_name;
+	enum class EditItemDataType
+	{
+		Double,
+		Int,
+		Enum,
+		Color,
+		String
+	};
+	EditItemDataType m_editDataType;
+	//QWidget* m_delegateWidget;
+	//std::function<void(QVariant)> m_slotFunction;
+
+	//double
+	bool isDoubleDataValid();
+	std::optional<double> m_doubleRangeMin;
+	std::optional<double> m_doubleRangeMax;
+	std::optional<double> m_doubleSingleStep;
+	std::optional<int> m_doubleDecimals;
+	std::optional<double> m_doubleDefaultValue;
+
+	bool isIntDataValid();
+	std::optional<int> m_intRangeMin;
+	std::optional<int> m_intRangeMax;
+	std::optional<int> m_intSingleStep;
+	std::optional<int> m_intDefaultValue;
+
+	bool isEnumDataValid();
+	std::optional<QVector<QString>> m_enumStringVec;
+
+	bool isStringItemValid();
+	std::optional<QString> m_stringStr;
+
+};
+
+class propertyItem : public QWidget
+{
+	Q_OBJECT
+public:
+	propertyItem(propertyItemParams* params);
+	QWidget* getEditWidget();
+	QString getName();
+	void onValueChanged();
+signals:
+	void signalValueChanged(QString name, propertyItemParams::EditItemDataType type
+		, QVariant value);
+private:
+	void createItem(propertyItemParams* params);
+	void buildDoubleItem(propertyItemParams* params);
+	void buildIntItem(propertyItemParams* params);
+	void buildColorItem(propertyItemParams* params);
+	void buildEnumItem(propertyItemParams* params);
+	void buildStringItem(propertyItemParams* params);
+
+	QVariant getValue();
+
+	QWidget* m_editWidget;
+	QString m_name;
+	propertyItemParams::EditItemDataType m_type;
+	std::optional<QColor> m_choosedColor;
+
+	//propertyItemParams* m_params;
+};
+
+class propertyData : public QWidget
+{
+	
+	Q_OBJECT
+
+public:
+	void slotValueChanged(propertyItemParams::EditItemDataType type, QVariant value);
+
+signals:
+	void signalValueChanged(QString m_objectkey, QString name, propertyItemParams::EditItemDataType type, QVariant value);
+
+
+
+
+	QWidget* m_delegatewidget;
+	QString m_objectkey;
+};
 
 
 class propertyWidget;
@@ -65,6 +152,15 @@ private:
 	void builddiagramCirclePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
 	void builddiagramTrianglePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
 	void builddiagramLinePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void buildhuabuPropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void buildhuabuRectPropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void buildhuabuCirclePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void buildhuabuTrianglePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	void buildhuabuLinePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+
+	void initStackWidget();
+	propertyWidget* createOriginalPropertyWidget();
+	void createDiagramRectPropertyWidget();
 
 
 	QMap<QString, propertyWidget*> m_propertyMap;
@@ -157,23 +253,26 @@ class propertyWidget : public QWidget
 public:
 	//void huabushuxing();
 	propertyWidget(QWidget* parent = nullptr);
-	//class propertyParams
-	//{
-	//public:
-		//QString m_name;
-		//QVariant m_value;
-		//propertyItem::propertyType m_type;
-	//};
-	void addProperty(const QString& name, QWidget* widget);
+	void addPropertyItem(propertyItemParams* params);
+	//void addProperty(const QString& name, QWidget* widget);
 	void paintEvent(QPaintEvent* event) override;
 	void setstackwidgetindex(int index);
 	int getstackwidgetindex();
-//signals:
+
+	
+signals:
+	void signalValueChanged(QString name, propertyItemParams::EditItemDataType type, QVariant value);
+
+
 	//void propertyChanged(const QString& name, const QVariant& value);
 private:
+
+	QString m_datashowingobjectflag;
+	std::vector<std::shared_ptr<propertyItem>> m_propertyItemVec;
 	QFormLayout* m_shuxinglayout;
-	QMap<QString, QWidget*> m_propertyMap;
+	//QMap<QString, QWidget*> m_propertyMap;
 	//PropertyWidgetManager::propertyobjecttype m_type;
 	int m_stackwidgetindex;
+	propertyData* m_data;
 };
 

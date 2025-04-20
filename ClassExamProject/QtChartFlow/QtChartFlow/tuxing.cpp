@@ -57,6 +57,9 @@ QByteArray DiagramItem::createDiagramMimedataDeliveryparams()
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
 	DiagramMimedata data;
 	data.m_type = m_params.m_type;
+	data.m_scale = m_params.m_scale;
+	data.m_pen = m_params.m_pen;
+	data.m_brush = m_params.m_brush;
 	switch (m_params.m_type)
 	{
 	case ShapeType::Rect:
@@ -128,6 +131,11 @@ QSizeF DiagramItem::getPixmapSpaceSize()
 {
 	return m_huabuspacesize;
 }
+
+//qreal DiagramItem::getPixmapScale()
+//{
+//	return m_pixmapScale;
+//}
 
 
 
@@ -386,6 +394,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared
 	params->m_center = getselfdrawcenter();
 	params->m_spacesize = getselfdrawspacesize();
 	params->m_type = m_params.m_type;
+	params->m_scale = m_params.m_scale;
 	return params;
 }
 
@@ -444,6 +453,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::buildPixmapDrawParamsRest(std::
 	params->m_center = getPixmapCenter();
 	params->m_spacesize = getPixmapSpaceSize();
 	params->m_type = m_params.m_type;
+	params->m_scale = m_params.m_scale;
 	return params;
 }
 
@@ -996,6 +1006,7 @@ DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
 	m_huabupen = params.m_pen;
 	m_huabubrush = params.m_brush;
 	m_huabuspacesize = params.m_huabutuxingspacesize;
+	m_pixmapScale = m_params.m_scale;
 	init();
 }
 
@@ -1293,6 +1304,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::imagepath));
 		m_rectRadio = cfggetval<double>(qtcf::tuxing::rectangle::radio);
 		m_rectRotate = cfggetval<int>(qtcf::tuxing::rectangle::rotate);
+		m_scale = cfggetval<double>(qtcf::tuxing::rectangle::scale);
 	}
 	break;
 	case ShapeType::Circle:
@@ -1303,6 +1315,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::imagepath));
 		m_circleboundingrectradio = cfggetval<double>(qtcf::tuxing::circle::boundingrectradio);
 		m_circlerotate = cfggetval<int>(qtcf::tuxing::circle::rotate);
+		m_scale = cfggetval<double>(qtcf::tuxing::circle::scale);
 	}
 	break;
 	case ShapeType::Triangle:
@@ -1316,6 +1329,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::right));
 		m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypeStringToEnum(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetype)));
 		m_triangleEdgeRotate = cfggetval<double>(qtcf::tuxing::triangle::totate);
+		m_scale = cfggetval<double>(qtcf::tuxing::triangle::scale);
 	}
 	break;
 	case ShapeType::Line:
@@ -1325,6 +1339,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		if (m_drawByloadpic)
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::line::imagepath));
 		m_linerotate = cfggetval<double>(qtcf::tuxing::line::rotate);
+		m_scale = cfggetval<double>(qtcf::tuxing::line::scale);
 	}
 	break;
 	default:

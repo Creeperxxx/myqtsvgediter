@@ -5,8 +5,9 @@ huabu::huabu(QWidget* parent)
 	, m_pen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::painter::pen::color))), cfggetval<int>(qtcf::painter::pen::width))
 	, m_brush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::painter::brush))))
 	, m_tuxingspacesize(QSizeF(cfggetval<double>(qtcf::huabu::tuxingspace::spacewidth), cfggetval<double>(qtcf::huabu::tuxingspace::spaceheight)))
-	//, m_juxingradio(cfggetval<double>(qtcf::tuxing::rectangle::radio))
 	, m_mimetype(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype)))
+	, m_backgroundcolor(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::backgroundcolor))))
+	, m_size(QSize(cfggetval<int>(qtcf::huabu::width),cfggetval<int>(qtcf::huabu::height)))
 {
 	//ui.setupUi(this);
 	init();
@@ -16,7 +17,7 @@ void huabu::init()
 {
 	setAcceptDrops(true);
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-	setFixedSize(800, 600);
+	setFixedSize(m_size);
 	//setMinimumSize(400, 400);
 }
 
@@ -167,66 +168,29 @@ void huabu::dropEvent(QDropEvent* event)
 	QByteArray array = event->mimeData()->data(m_mimetype);
 	if (array.isEmpty())
 		throw std::runtime_error("error");
-	DiagramMimedata data;
 	QDataStream stream(array);
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
 
+	DiagramMimedata data;
 	stream >> data;
-	//m_mimedata = data;
 
-	m_dropevetcenter = event->position();
+
+	std::shared_ptr<IDidgramDrawParams> params = buildParamsSpecial(data);
+
+	params->m_center = event->position();
+	params->m_scale = data.m_scale;
+	params->m_spacesize = m_tuxingspacesize;
+	params->m_type = data.m_type;
 
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
-	PropertyWidgetManager::propertyobjecttype propertytype;
-
-	std::shared_ptr<IDidgramDrawParams> params = nullptr;
-	switch (data.m_type)
-	{
-	case ShapeType::Rect:
-	{
-		params = buildDrawParamsRect(data);
-		propertytype = PropertyWidgetManager::propertyobjecttype::huabuRect;
-	}
-	break;
-	case ShapeType::Circle:
-	{
-		params = buildDrawParamsCircle(data);
-		propertytype = PropertyWidgetManager::propertyobjecttype::huabuCircle;
-	}
-	break;
-	case ShapeType::Triangle:
-	{
-		params = buildDrawParamsTriangle(data);
-		propertytype = PropertyWidgetManager::propertyobjecttype::huabuTriangle;
-	}
-	break;
-	case ShapeType::Line:
-	{
-		params = buildDrawParamsLine(data);
-		propertytype = PropertyWidgetManager::propertyobjecttype::huabuLine;
-	}
-	break;
-	default:
-		throw std::runtime_error("error");
-	}
-	builddrawparamsrest(params);
-
-	//auto params = builddrawparams(data);
-	//std::shared_ptr<IDidgramDrawParams> params = factoryall::create(DiagramItemType::huabu, data.m_type)->build(this);
-	//m_mimedata.reset();
-	m_dropevetcenter.reset();
-	//tuxing->m_ret = factorytuxingjiedian::draw(params);
 	tuxing->m_params = params;
-	
+	PropertyWidgetManager::propertyobjecttype propertytype = shapeTypeToPropertyobjectType(data.m_type);
 	tuxing->m_propertyString = m_propertywidgetmanager->createPropertyWidget(propertytype, this);
+	tuxing->m_pen = data.m_pen;
+	tuxing->m_brush = data.m_brush;
 
 	m_tuxingvec.push_back(tuxing);
 
-	//std::unique_ptr<tuxingjiedianparams> params = maketuxingparams(type, event->position().toPoint());
-	//std::unique_ptr<Ituxingjiedian> tuxingjiedian = tuxingjiedianfactory::createtuxingjiedian(type, std::move(params));
-	//tuxingjiedian->setmousepoint(event->position().toPoint());
-	//tuxingjiedian->setspacesize(QSize(huabutuxingwith, huabutuxingheight));
-	//m_tuxingvec.push_back(std::move(tuxingjiedian));
 	update(); //触发重绘，会调用paintEvent，可以选择重绘部分区域
 	event->acceptProposedAction();
 }
@@ -287,9 +251,12 @@ void huabu::paintEvent(QPaintEvent* event)
 	//drawBaseBackground(m_painter);
 	QPainter painter(this);
 	initPainter(painter);
-	painter.fillRect(this->rect(), Qt::white);
+	painter.fillRect(this->rect(), m_backgroundcolor);
+
 	for (auto& diagram : m_tuxingvec)
 	{
+		painter.setPen(diagram->m_pen);
+		painter.setBrush(diagram->m_brush);
 		diagram->m_ret = DiagramDrawInterface::draw(painter, diagram->m_params);
 	}
 	//for (auto it = m_tuxingvec.begin(); it != m_tuxingvec.end(); ++it)
@@ -308,6 +275,11 @@ void huabu::paintEvent(QPaintEvent* event)
 void huabu::setPorpertyWidgetManager(PropertyWidgetManager* manager)
 {
 	m_propertywidgetmanager = manager;
+}
+
+void huabu::createHuabuPropertyWidget()
+{
+	m_propertywidgetkey = m_propertywidgetmanager->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::huabu, this);
 }
 
 //void huabu::drawBaseBackground(QPainter* painter)
@@ -342,7 +314,6 @@ void huabu::initPainter(QPainter& painter)
 	painter.setPen(m_pen);
 	painter.setBrush(m_brush);
 	painter.setRenderHint(QPainter::Antialiasing, true);
-
 }
 //
 //std::shared_ptr<IDidgramDrawParams> huabu::builddrawparams(const DiagramMimedata& data)
@@ -350,26 +321,26 @@ void huabu::initPainter(QPainter& painter)
 //	return builddrawparamsrest(buildspecialparamsbytype(data));
 //}
 
-//std::shared_ptr<IDidgramDrawParams> huabu::buildspecialparamsbytype(const DiagramMimedata& data)
-//{
-//	switch (data.m_type)
-//	{
-//	case ShapeType::Rect:
-//		return buildDrawParamsRect(data);
-//		break;
-//	case ShapeType::Circle:
-//		return buildDrawParamsCircle(data);
-//		break;
-//	case ShapeType::Triangle:
-//		return buildDrawParamsTriangle(data);
-//		break;
-//	case ShapeType::Line:
-//		return buildDrawParamsLine(data);
-//		break;
-//	default:
-//		throw std::runtime_error("error");
-//	}
-//}
+std::shared_ptr<IDidgramDrawParams> huabu::buildParamsSpecial(const DiagramMimedata& data)
+{
+	switch (data.m_type)
+	{
+	case ShapeType::Rect:
+		return buildDrawParamsRect(data);
+		break;
+	case ShapeType::Circle:
+		return buildDrawParamsCircle(data);
+		break;
+	case ShapeType::Triangle:
+		return buildDrawParamsTriangle(data);
+		break;
+	case ShapeType::Line:
+		return buildDrawParamsLine(data);
+		break;
+	default:
+		throw std::runtime_error("error");
+	}
+}
 
 std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsRect(const DiagramMimedata& data)
 {
@@ -377,10 +348,13 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsRect(const DiagramMime
 	if (!data.m_rectradio.has_value())
 		throw std::runtime_error("error");
 	params->m_boundingrectradio = data.m_rectradio.value();
+
 	if (!data.m_rectRotate.has_value())
 		throw std::runtime_error("error");
 	params->m_rectrotate = data.m_rectRotate.value();
+
 	params->m_type = data.m_type;
+
 	return params;
 }
 
@@ -425,15 +399,38 @@ std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsLine(const DiagramMime
 	return params;
 }
 
-void huabu::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
+PropertyWidgetManager::propertyobjecttype huabu::shapeTypeToPropertyobjectType(ShapeType type)
 {
-	//params->m_brush = m_brush;
-	//params->m_pen = m_pen;
-	if (!m_dropevetcenter.has_value())
+	using proptytype = PropertyWidgetManager::propertyobjecttype;
+	switch (type)
+	{
+	case ShapeType::Rect:
+		return proptytype::huabuRect;
+		break;
+	case ShapeType::Circle:
+		return proptytype::huabuCircle;
+		break;
+	case ShapeType::Triangle:
+		return proptytype::huabuTriangle;
+		break;
+	case ShapeType::Line:
+		return proptytype::huabuLine;
+		break;
+	default:
 		throw std::runtime_error("error");
-	params->m_center = m_dropevetcenter.value();
-	params->m_spacesize = m_tuxingspacesize;
+	}
 }
+
+//void huabu::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params, const DiagramMimedata& data)
+//{
+//	//params->m_brush = m_brush;
+//	//params->m_pen = m_pen;
+//	if (!m_dropevetcenter.has_value())
+//		throw std::runtime_error("error");
+//	params->m_center = m_dropevetcenter.value();
+//	params->m_spacesize = m_tuxingspacesize;
+//	params->m_scale = data.m_scale;
+//}
 
 
 

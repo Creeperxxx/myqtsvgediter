@@ -47,6 +47,7 @@ public:
 	QPointF m_center;
 	QSizeF m_spacesize;
 	ShapeType m_type;
+	qreal m_scale;
 	//QPen m_pen;
 	//QBrush m_brush;
 	//QPainter* m_painter;
@@ -63,7 +64,7 @@ public:
 class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
-	double m_boundingrectradio;
+	qreal m_boundingrectradio;
 	double m_circlerotate;
 
 	~DiagramDrawParamsCircle() {}
@@ -87,9 +88,9 @@ public:
 	public:
 		TriangleSizeRadios();
 		TriangleSizeRadios(double bottom, double left, double right);
-		double m_bottom;
-		double m_left;
-		double m_right;
+		qreal m_bottom;
+		qreal m_left;
+		qreal m_right;
 	};
 	TriangleSizeRadios m_triangleSizeRadios;
 	EdgeType m_edgetype;
@@ -99,7 +100,7 @@ public:
 class DiagramDrawParamsLine : public IDidgramDrawParams
 {
 public:
-	double m_rotationAngle;
+	qreal m_rotationAngle;
 };
 
 //

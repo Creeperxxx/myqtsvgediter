@@ -36,14 +36,16 @@
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/juxing.png",
-      "rotate": 135
+      "rotate": 135,
+      "scale": 1
     },
     "circle": {
       "boundingrectradio": 8,
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/yuanxing.png",
-      "rotate": 45
+      "rotate": 45,
+      "scale": 1
     },
     "triangle": {
       "edgeradio": {
@@ -55,13 +57,15 @@
       "totate": 90,
       "drawbypainter": true,
       "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/sanjiaoxing.png"
+      "imagepath": ":/tuxingku/sanjiaoxing.png",
+      "scale": 1
     },
     "line": {
       "drawbypainter": true,
       "drawbyloadpic": true,
       "imagepath": ":/tuxingku/xian.png",
-      "rotate": 90
+      "rotate": 90,
+      "scale": 1
     }
     
   }
