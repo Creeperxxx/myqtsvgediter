@@ -202,6 +202,10 @@ public:
 	bool getdrawbyloadpic();
 	bool getisdrawbypainter();
 
+
+
+	void onValueChanged(QString name, EditItemDataType type, QVariant value);
+
 	void onPenColorChanged(QColor newcolor);
 	void onPenWidthChanged(double newwidth);
 	void onPenBrushChanged(QBrush newbrush);
@@ -224,6 +228,8 @@ public:
 	void createPropertyWidget();
 
 	void setPropertyWidgetKey(QString key);
+
+
 
 //信号
 private:
@@ -292,7 +298,7 @@ private:
 	QBrush m_huabubrush;
 	QSizeF m_huabuspacesize;
 	PropertyWidgetManager* m_propertyWidgetManger;
-	QString m_propertyWidgetKey;
+	std::vector<std::shared_ptr<propertyData>> m_propertydatavec;
 	//qreal m_pixmapScale;
 	
 	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;

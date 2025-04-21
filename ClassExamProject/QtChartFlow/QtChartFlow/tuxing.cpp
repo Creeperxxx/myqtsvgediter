@@ -6,7 +6,7 @@ void DiagramItem::mousePressEvent(QMouseEvent* event)
 	if (event->button() == Qt::LeftButton)
 	{
 		dragstartposition = event->pos();
-		m_propertyWidgetManger->dealclicked(m_propertyWidgetKey);
+
 	}
 }
 
@@ -193,7 +193,7 @@ void DiagramItem::buildRectMimedata(DiagramMimedata& data)
 	if (!m_params.m_rectRadio.has_value())
 		throw std::runtime_error("error");
 	data.m_rectradio = m_params.m_rectRadio.value();
-	if(!m_params.m_rectRotate.has_value())
+	if (!m_params.m_rectRotate.has_value())
 		throw std::runtime_error("error");
 	data.m_rectRotate = m_params.m_rectRotate.value();
 }
@@ -213,12 +213,12 @@ void DiagramItem::buildTriangleMimedata(DiagramMimedata& data)
 	if (!m_params.m_triangleSideRadios.has_value())
 		throw std::runtime_error("error");
 	data.m_triangleSideRadios = m_params.m_triangleSideRadios.value();
-	
-	if(!m_params.m_triangleEdgeType.has_value())
+
+	if (!m_params.m_triangleEdgeType.has_value())
 		throw std::runtime_error("error");
 	data.m_triangleEdgeType = m_params.m_triangleEdgeType.value();
-	
-	if(!m_params.m_triangleEdgeRotate.has_value())
+
+	if (!m_params.m_triangleEdgeRotate.has_value())
 		throw std::runtime_error("error");
 	data.m_triangleRotate = m_params.m_triangleEdgeRotate.value();
 }
@@ -273,6 +273,32 @@ bool DiagramItem::getdrawbyloadpic()
 bool DiagramItem::getisdrawbypainter()
 {
 	return m_params.m_isdrawByPainter;
+}
+
+void DiagramItem::onValueChanged(QString name, EditItemDataType type, QVariant value)
+{
+	if (name == propertynameradio)
+	{
+		if (type != EditItemDataType::Double)
+			throw std::runtime_error("error");
+		double realvalue = value.toDouble();
+		switch (m_params.m_type)
+		{
+		case ShapeType::Rect:
+			onRectRadioChanged(realvalue);
+			break;
+		case ShapeType::Circle:
+			onCircleRadioChanged(realvalue);
+			break;
+		default:
+			throw std::runtime_error("error");
+			break;
+		}
+	}
+	else
+	{
+
+	}
 }
 
 void DiagramItem::onRectRadioChanged(double newradio)
@@ -413,7 +439,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrect()
 std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamscircle()
 {
 	auto params = std::make_shared<DiagramDrawParamsCircle>();
-	if(!m_params.m_circleboundingrectradio.has_value())
+	if (!m_params.m_circleboundingrectradio.has_value())
 		throw std::runtime_error("error");
 	params->m_boundingrectradio = m_params.m_circleboundingrectradio.value();
 	if (!m_params.m_circlerotate.has_value())
@@ -428,7 +454,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamstriangle()
 	if (!m_params.m_triangleSideRadios.has_value())
 		throw std::runtime_error("error");
 	params->m_triangleSizeRadios = m_params.m_triangleSideRadios.value();
-	if(!m_params.m_triangleEdgeType.has_value())
+	if (!m_params.m_triangleEdgeType.has_value())
 		throw std::runtime_error("error");
 	params->m_edgetype = m_params.m_triangleEdgeType.value();
 	if (!m_params.m_triangleEdgeRotate.has_value())
@@ -684,7 +710,7 @@ void GfxLibDiagramitemDrawer::draw(QPainter& painter, DiagramItem* item)
 	if (!item)
 		throw std::runtime_error("error");//todo
 	//if (m_isdrawByPainter && m_drawByPainter)
-	if(item->getdrawbypainter() && item->getisdrawbypainter())
+	if (item->getdrawbypainter() && item->getisdrawbypainter())
 		drawByDraw(painter, item);
 	else if (item->getdrawbyloadpic())
 		drawByLoadpic(painter, item);
@@ -1134,7 +1160,7 @@ double DiagramItem::getTriangleRotate()
 
 double DiagramItem::getLineRotate()
 {
-	if(!m_params.m_linerotate.has_value())
+	if (!m_params.m_linerotate.has_value())
 		throw std::runtime_error("error");
 	return m_params.m_linerotate.value();
 }
@@ -1325,7 +1351,7 @@ void GfxLibDiagramItemParams::otherInitAfterType()
 		if (m_drawByloadpic)
 			m_picpath = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::imagepath));
 		m_triangleSideRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(cfggetval<double>(qtcf::tuxing::triangle::edgeradio::bottom)
-			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::left) 
+			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::left)
 			, cfggetval<double>(qtcf::tuxing::triangle::edgeradio::right));
 		m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypeStringToEnum(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetype)));
 		m_triangleEdgeRotate = cfggetval<double>(qtcf::tuxing::triangle::totate);

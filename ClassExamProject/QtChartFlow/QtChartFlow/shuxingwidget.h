@@ -1,4 +1,5 @@
 #pragma once
+#include <optional>
 #include <qwidget.h>
 #include <qformlayout.h>
 #include <qspinbox.h>
@@ -13,7 +14,7 @@
 #include <qpushbutton.h>
 #include <qcolordialog.h>
 #include <functional>
-#include <qvector.h>
+#include <map>
 
 
 //rect radio
@@ -37,25 +38,45 @@ constexpr const double triangleRadioMin = 0.1;
 constexpr const double triangleRadioMax = 10;
 constexpr const double triangleRadioStep = 0.1;
 
+constexpr auto colorProperty = "colorinfo";
+constexpr auto colortext = "选择";
+constexpr auto colorchoosetitle = "选择颜色";
+
+constexpr auto propertynamename = "名字";
+constexpr auto propertynameradio = "比例";
+constexpr auto propertynamerotate = "旋转角度";
+constexpr auto propertynamebottomradio = "底边比例";
+constexpr auto propertynameleftradio = "左边比例";
+constexpr auto propertynamerightradio = "右边比例";
+constexpr auto propertynameedgetype = "指定边";
+constexpr auto propertynamepencolor = "画笔颜色";
+constexpr auto propertynamepenwidth = "画笔宽度";
+constexpr auto propertynamebrush = "填充颜色";
+constexpr auto propertynamescale = "缩放";
+
+constexpr auto propertynamehuabuwidth = "画布宽度";
+constexpr auto propertynamehuabuheight = "画布高度";
+
+enum class EditItemDataType
+{
+	Double,
+	Int,
+	Enum,
+	Color,
+	String
+};
+
 
 class propertyItemParams
 {
 public:
-	QString m_name;
-	enum class EditItemDataType
-	{
-		Double,
-		Int,
-		Enum,
-		Color,
-		String
-	};
-	EditItemDataType m_editDataType;
+
 	//QWidget* m_delegateWidget;
 	//std::function<void(QVariant)> m_slotFunction;
 
 	//double
 	bool isDoubleDataValid();
+	
 	std::optional<double> m_doubleRangeMin;
 	std::optional<double> m_doubleRangeMax;
 	std::optional<double> m_doubleSingleStep;
@@ -80,28 +101,33 @@ class propertyItem : public QWidget
 {
 	Q_OBJECT
 public:
-	propertyItem(propertyItemParams* params);
+	propertyItem(EditItemDataType type);
 	QWidget* getEditWidget();
-	QString getName();
+	//QString getName();
+	void setData(std::shared_ptr<propertyData> data);
+//槽函数
 	void onValueChanged();
+	//void onSetValue(std::shared_ptr<propertyData> data);
 signals:
-	void signalValueChanged(QString name, propertyItemParams::EditItemDataType type
-		, QVariant value);
+	void signalValueChanged(EditItemDataType type, QVariant value);
+	
+
 private:
-	void createItem(propertyItemParams* params);
-	void buildDoubleItem(propertyItemParams* params);
-	void buildIntItem(propertyItemParams* params);
-	void buildColorItem(propertyItemParams* params);
-	void buildEnumItem(propertyItemParams* params);
-	void buildStringItem(propertyItemParams* params);
+	//void createItem(propertyItemParams* params);
+	void createWidgetByType(EditItemDataType type);
+
+	void setDataByType(EditItemDataType type, propertyItemParams* params);
+
+	void setDoubleData(propertyItemParams* params);
+	void setIntData(propertyItemParams* params);
+	void setColorData(propertyItemParams* params);
+	void setEnumData(propertyItemParams* params);
+	void setStringData(propertyItemParams* params);
 
 	QVariant getValue();
 
 	QWidget* m_editWidget;
-	QString m_name;
-	propertyItemParams::EditItemDataType m_type;
-	std::optional<QColor> m_choosedColor;
-
+	EditItemDataType m_type;
 	//propertyItemParams* m_params;
 };
 
@@ -111,16 +137,22 @@ class propertyData : public QWidget
 	Q_OBJECT
 
 public:
-	void slotValueChanged(propertyItemParams::EditItemDataType type, QVariant value);
+
+	void slotValueChanged(EditItemDataType type, QVariant value);
 
 signals:
-	void signalValueChanged(QString m_objectkey, QString name, propertyItemParams::EditItemDataType type, QVariant value);
+	void signalValueChangedHuabuTuxing(QString m_objectkey, QString name, EditItemDataType type, QVariant value);
+signals:
+	void signalValueChanged(QString name, EditItemDataType type, QVariant value);
 
 
+public:
+	EditItemDataType m_datatype;
+	QString m_name;
+	QVariant m_data;
+	std::optional<QString> m_objectkey;
 
-
-	QWidget* m_delegatewidget;
-	QString m_objectkey;
+	std::shared_ptr<propertyItemParams> m_params;
 };
 
 
@@ -144,26 +176,31 @@ public:
 	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
-	QString createPropertyWidget(propertyobjecttype type, QWidget* widget);
-	void dealclicked(QString key);
+	void dealclicked(propertyobjecttype type, std::vector<std::shared_ptr<propertyData>> data);
 private:
-	propertyWidget* createinitPropertyWidget(propertyobjecttype type, QWidget* widget);
-	void builddiagramRectPropertyWidget(propertyWidget* propertywidget, QWidget* delegatewidget);
-	void builddiagramCirclePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void builddiagramTrianglePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void builddiagramLinePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void buildhuabuPropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void buildhuabuRectPropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void buildhuabuCirclePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void buildhuabuTrianglePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
-	void buildhuabuLinePropertyWidget(propertyWidget* widget, QWidget* delegatewidget);
+	//propertyWidget* createinitPropertyWidget(propertyobjecttype type, QWidget* widget);
 
-	void initStackWidget();
+	//void initStackWidget();
+
+	void createonceWidget();
 	propertyWidget* createOriginalPropertyWidget();
-	void createDiagramRectPropertyWidget();
+	void buildDiagramRectPropertyWidget(propertyWidget* widget);
+	void buildDiagramCirclePropertyWidget(propertyWidget* widget);
+	void buildDiagramTrianglePropertyWidget(propertyWidget* widget);
+	void buildDiagramLinePropertyWidget(propertyWidget* widget);
+	void buildDiagramHuabuPropertyWidget(propertyWidget* widget);
 
 
-	QMap<QString, propertyWidget*> m_propertyMap;
+
+	void buildPropertywidgetPenandBrush(propertyWidget* widget);
+	void buildPropertywidgetname(propertyWidget* widget);
+	void buildPropertywidgetRotate(propertyWidget* widget);
+	void buildPropertywidgetScale(propertyWidget* widget);
+
+	void addPropertyWidget(propertyobjecttype type, propertyWidget* widget);
+
+
+	QMap<propertyobjecttype, propertyWidget*> m_propertyMap;
 	QStackedWidget* m_propertyStackWidget;
 	
 };
@@ -253,26 +290,21 @@ class propertyWidget : public QWidget
 public:
 	//void huabushuxing();
 	propertyWidget(QWidget* parent = nullptr);
-	void addPropertyItem(propertyItemParams* params);
 	//void addProperty(const QString& name, QWidget* widget);
 	void paintEvent(QPaintEvent* event) override;
 	void setstackwidgetindex(int index);
 	int getstackwidgetindex();
 
-	
-signals:
-	void signalValueChanged(QString name, propertyItemParams::EditItemDataType type, QVariant value);
-
+	void addPropertyItem(QString name, EditItemDataType type);
+	void addShowingData(std::shared_ptr<propertyData> data);
 
 	//void propertyChanged(const QString& name, const QVariant& value);
 private:
 
-	QString m_datashowingobjectflag;
-	std::vector<std::shared_ptr<propertyItem>> m_propertyItemVec;
+	std::map<QString,std::shared_ptr<propertyItem>> m_propertyItemMap;
 	QFormLayout* m_shuxinglayout;
 	//QMap<QString, QWidget*> m_propertyMap;
 	//PropertyWidgetManager::propertyobjecttype m_type;
 	int m_stackwidgetindex;
-	propertyData* m_data;
 };
 
