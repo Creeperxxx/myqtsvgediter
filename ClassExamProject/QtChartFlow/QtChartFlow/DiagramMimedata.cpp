@@ -3,18 +3,18 @@
 
 QDataStream& operator<<(QDataStream& out, const DiagramMimedata& myClass)
 {
-	myClass.serShapetype(out, myClass);
-	myClass.serScale(out, myClass);
-	myClass.serPen(out, myClass);
-	myClass.serBrush(out, myClass);
-	myClass.serRectRadio(out, myClass);
-	myClass.serRectRotate(out, myClass);
-	myClass.serCircleRadio(out, myClass);
-	myClass.serCircleRotate(out, myClass);
-	myClass.serTriangleSideRadios(out, myClass);
-	myClass.serTriangleEdgetype(out, myClass);
-	myClass.serTriangleRotate(out, myClass);
-	myClass.serLineRotate(out, myClass);
+	myClass.serShapetype(out);
+	myClass.serScale(out);
+	myClass.serPen(out);
+	myClass.serBrush(out);
+	myClass.serRectRadio(out);
+	myClass.serRectRotate(out);
+	myClass.serCircleRadio(out);
+	myClass.serCircleRotate(out);
+	myClass.serTriangleSideRadios(out);
+	myClass.serTriangleEdgetype(out);
+	myClass.serTriangleRotate(out);
+	myClass.serLineRotate(out);
 
 	return out;
 
@@ -77,18 +77,18 @@ QDataStream& operator<<(QDataStream& out, const DiagramMimedata& myClass)
 
 QDataStream& operator>>(QDataStream& in, DiagramMimedata& myClass)
 {
-	myClass.deserShapetype(in, myClass);
-	myClass.deserScale(in, myClass);
-	myClass.deserPen(in, myClass);
-	myClass.deserBrush(in, myClass);
-	myClass.deserRectRadio(in, myClass);
-	myClass.deserRectRotate(in, myClass);
-	myClass.deserCircleRadio(in, myClass);
-	myClass.deserCircleRotate(in, myClass);
-	myClass.deserTriangleSideRadios(in, myClass);
-	myClass.deserTriangleEdgetype(in, myClass);
-	myClass.deserTriangleRotate(in, myClass);
-	myClass.deserLineRotate(in, myClass);
+	myClass.deserShapetype(in);
+	myClass.deserScale(in);
+	myClass.deserPen(in);
+	myClass.deserBrush(in);
+	myClass.deserRectRadio(in);
+	myClass.deserRectRotate(in);
+	myClass.deserCircleRadio(in);
+	myClass.deserCircleRotate(in);
+	myClass.deserTriangleSideRadios(in);
+	myClass.deserTriangleEdgetype(in);
+	myClass.deserTriangleRotate(in);
+	myClass.deserLineRotate(in);
 
 	return in;
 
@@ -198,84 +198,84 @@ QDataStream& operator>>(QDataStream& in, DiagramMimedata& myClass)
 	// TODO: 在此处插入 return 语句
 }
 
-void DiagramMimedata::serShapetype(QDataStream& out, const DiagramMimedata& myclass) const
+void DiagramMimedata::serShapetype(QDataStream& out) const
 {
-	out << static_cast<int>(myclass.m_type);
+	out << static_cast<int>(m_type);
 }
 
-void DiagramMimedata::serScale(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serScale(QDataStream& out)const
 {
-	out << myclass.m_scale;
+	out << m_scale;
 }
 
-void DiagramMimedata::serPen(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serPen(QDataStream& out)const
 {
-	out << myclass.m_pen.color() << myclass.m_pen.widthF();
+	out << m_pen.color() << m_pen.widthF();
 }
 
-void DiagramMimedata::serBrush(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serBrush(QDataStream& out)const
 {
-	out << myclass.m_brush.color();
+	out << m_brush.color();
 }
 
-void DiagramMimedata::serRectRadio(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serRectRadio(QDataStream& out)const
 {
-	out << myclass.m_rectradio.has_value();
-	if (myclass.m_rectradio.has_value())
-		out << myclass.m_rectradio.value();
+	out << m_rectradio.has_value();
+	if (m_rectradio.has_value())
+		out << m_rectradio.value();
 }
 
-void DiagramMimedata::serRectRotate(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serRectRotate(QDataStream& out)const
 {
-	out << myclass.m_rectRotate.has_value();
-	if (myclass.m_rectRotate.has_value())
-		out << myclass.m_rectRotate.value();
+	out << m_rectRotate.has_value();
+	if (m_rectRotate.has_value())
+		out << m_rectRotate.value();
 }
 
-void DiagramMimedata::serCircleRadio(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serCircleRadio(QDataStream& out)const
 {
-	out << myclass.m_circleradio.has_value();
-	if (myclass.m_circleradio.has_value())
-		out << myclass.m_circleradio.value();
+	out << m_circleradio.has_value();
+	if (m_circleradio.has_value())
+		out << m_circleradio.value();
 }
 
-void DiagramMimedata::serCircleRotate(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serCircleRotate(QDataStream& out)const
 {
-	out << myclass.m_circlerotate.has_value();
-	if (myclass.m_circlerotate.has_value())
-		out << myclass.m_circlerotate.value();
+	out << m_circlerotate.has_value();
+	if (m_circlerotate.has_value())
+		out << m_circlerotate.value();
 }
 
-void DiagramMimedata::serTriangleSideRadios(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serTriangleSideRadios(QDataStream& out)const
 {
-	out << myclass.m_triangleSideRadios.has_value();
-	if (myclass.m_triangleSideRadios.has_value())
+	out << m_triangleSideRadios.has_value();
+	if (m_triangleSideRadios.has_value())
 	{
-		out << myclass.m_triangleSideRadios.value().m_bottom
-			<< myclass.m_triangleSideRadios.value().m_left
-			<< myclass.m_triangleSideRadios.value().m_right;
+		out << m_triangleSideRadios.value().m_bottom
+			<< m_triangleSideRadios.value().m_left
+			<< m_triangleSideRadios.value().m_right;
 	}
 }
 
-void DiagramMimedata::serTriangleEdgetype(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serTriangleEdgetype(QDataStream& out)const
 {
-	out << myclass.m_triangleEdgeType.has_value();
-	if (myclass.m_triangleEdgeType.has_value())
-		out << static_cast<int>(myclass.m_triangleEdgeType.value());
+	out << m_triangleEdgeType.has_value();
+	if (m_triangleEdgeType.has_value())
+		out << static_cast<int>(m_triangleEdgeType.value());
 }
 
-void DiagramMimedata::serTriangleRotate(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serTriangleRotate(QDataStream& out)const
 {
-	out << myclass.m_triangleRotate.has_value();
-	if (myclass.m_triangleRotate.has_value())
-		out << myclass.m_triangleRotate.value();
+	out << m_triangleRotate.has_value();
+	if (m_triangleRotate.has_value())
+		out << m_triangleRotate.value();
 }
 
-void DiagramMimedata::serLineRotate(QDataStream& out, const DiagramMimedata& myclass)const
+void DiagramMimedata::serLineRotate(QDataStream& out)const
 {
-	out << myclass.m_linerotate.has_value();
-	if (myclass.m_linerotate.has_value())
-		out << myclass.m_linerotate.value();
+	out << m_linerotate.has_value();
+	if (m_linerotate.has_value())
+		out << m_linerotate.value();
 }
 
 
@@ -285,38 +285,38 @@ void DiagramMimedata::serLineRotate(QDataStream& out, const DiagramMimedata& myc
 
 
 
-void DiagramMimedata::deserShapetype(QDataStream& in, DiagramMimedata& myclass)
-{
-	int value;
-	in >> value;
-	myclass.m_type = static_cast<ShapeType>(value);
-}
-
-void DiagramMimedata::deserScale(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserShapetype(QDataStream& in)
 {
 	int value;
 	in >> value;
-	myclass.m_scale = value;
+	m_type = static_cast<ShapeType>(value);
 }
 
-void DiagramMimedata::deserPen(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserScale(QDataStream& in)
+{
+	qreal value;
+	in >> value;
+	m_scale = value;
+}
+
+void DiagramMimedata::deserPen(QDataStream& in)
 {
 	QColor color;
 	qreal width;
 	in >> color >> width;
 
-	myclass.m_pen = QPen(color, width);
+	m_pen = QPen(color, width);
 }
 
-void DiagramMimedata::deserBrush(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserBrush(QDataStream& in)
 {
 	QColor color;
 	in >> color;
 
-	myclass.m_brush = QBrush(color);
+	m_brush = QBrush(color);
 }
 
-void DiagramMimedata::deserRectRadio(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserRectRadio(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -324,11 +324,11 @@ void DiagramMimedata::deserRectRadio(QDataStream& in, DiagramMimedata& myclass)
 	{
 		qreal value;
 		in >> value;
-		myclass.m_rectradio = value;
+		m_rectradio = value;
 	}
 }
 
-void DiagramMimedata::deserRectRotate(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserRectRotate(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -336,12 +336,12 @@ void DiagramMimedata::deserRectRotate(QDataStream& in, DiagramMimedata& myclass)
 	{
 		int value;
 		in >> value;
-		myclass.m_rectRotate = value;
+		m_rectRotate = value;
 	}
 
 }
 
-void DiagramMimedata::deserCircleRadio(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserCircleRadio(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -349,11 +349,11 @@ void DiagramMimedata::deserCircleRadio(QDataStream& in, DiagramMimedata& myclass
 	{
 		qreal value;
 		in >> value;
-		myclass.m_circleradio = value;
+		m_circleradio = value;
 	}
 }
 
-void DiagramMimedata::deserCircleRotate(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserCircleRotate(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -361,11 +361,11 @@ void DiagramMimedata::deserCircleRotate(QDataStream& in, DiagramMimedata& myclas
 	{
 		int value;
 		in >> value;
-		myclass.m_circlerotate = value;
+		m_circlerotate = value;
 	}
 }
 
-void DiagramMimedata::deserTriangleSideRadios(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserTriangleSideRadios(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -375,11 +375,11 @@ void DiagramMimedata::deserTriangleSideRadios(QDataStream& in, DiagramMimedata& 
 		qreal left;
 		qreal right;
 		in >> bottom >> left >> right;
-		myclass.m_triangleSideRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(bottom, left, right);
+		m_triangleSideRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(bottom, left, right);
 	}
 }
 
-void DiagramMimedata::deserTriangleEdgetype(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserTriangleEdgetype(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -387,11 +387,11 @@ void DiagramMimedata::deserTriangleEdgetype(QDataStream& in, DiagramMimedata& my
 	{
 		int value;
 		in >> value;
-		myclass.m_triangleEdgeType = static_cast<DiagramDrawParamsTriangle::EdgeType>(value);
+		m_triangleEdgeType = static_cast<DiagramDrawParamsTriangle::EdgeType>(value);
 	}
 }
 
-void DiagramMimedata::deserTriangleRotate(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserTriangleRotate(QDataStream& in)
 {
 	bool hasvalue;
 	in >> hasvalue;
@@ -399,11 +399,11 @@ void DiagramMimedata::deserTriangleRotate(QDataStream& in, DiagramMimedata& mycl
 	{
 		int value;
 		in >> value;
-		myclass.m_triangleRotate = value;
+		m_triangleRotate = value;
 	}
 }
 
-void DiagramMimedata::deserLineRotate(QDataStream& in, DiagramMimedata& myclass)
+void DiagramMimedata::deserLineRotate(QDataStream& in)
 {
 
 	bool hasvalue;
@@ -412,6 +412,6 @@ void DiagramMimedata::deserLineRotate(QDataStream& in, DiagramMimedata& myclass)
 	{
 		int value;
 		in >> value;
-		myclass.m_linerotate = value;
+		m_linerotate = value;
 	}
 }

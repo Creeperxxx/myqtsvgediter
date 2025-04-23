@@ -108,5 +108,4 @@ private:
 	QString m_mimetype; 
 		
 	PropertyWidgetManager* m_propertywidgetmanager;
-	QString m_propertywidgetkey;
 };

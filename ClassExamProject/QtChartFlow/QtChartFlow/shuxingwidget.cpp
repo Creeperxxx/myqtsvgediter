@@ -27,9 +27,9 @@ propertyWidget::propertyWidget(QWidget* parent)
 
 }
 
-void propertyWidget::addPropertyItem(QString name, EditItemDataType type)
+void propertyWidget::addPropertyItem(QString name, propertyItemParams params)
 {
-	std::shared_ptr<propertyItem> item = std::make_shared<propertyItem>(type);
+	std::shared_ptr<propertyItem> item = std::make_shared<propertyItem>(params);
 	if (m_propertyItemMap.find(name) != m_propertyItemMap.end())
 		throw std::runtime_error("error");
 	m_propertyItemMap[name] = item;
@@ -180,7 +180,8 @@ void PropertyWidgetManager::dealclicked(propertyobjecttype type, std::vector<std
 	if (!m_propertyMap.contains(type))
 		throw std::runtime_error("error");
 	propertyWidget* widget = m_propertyMap[type];
-	
+	m_propertyStackWidget->setCurrentIndex(widget->getstackwidgetindex());
+
 	for (const auto& dataptr : data)
 	{
 		widget->addShowingData(dataptr);
@@ -620,7 +621,7 @@ void PropertyWidgetManager::createonceWidget()
 	propertyWidget* widget = createOriginalPropertyWidget();
 	buildDiagramRectPropertyWidget(widget);
 	addPropertyWidget(propertyobjecttype::diagramRect, widget);
-	
+
 	widget = createOriginalPropertyWidget();
 	buildDiagramCirclePropertyWidget(widget);
 	addPropertyWidget(propertyobjecttype::diagramCircle, widget);
@@ -643,20 +644,26 @@ propertyWidget* PropertyWidgetManager::createOriginalPropertyWidget()
 	propertyWidget* widget = new propertyWidget();
 	int index = m_propertyStackWidget->addWidget(widget);
 	widget->setstackwidgetindex(index);
-
+	return widget;
 }
 
 void PropertyWidgetManager::buildDiagramRectPropertyWidget(propertyWidget* widget)
 {
 	if (widget == nullptr)
 		throw std::runtime_error("error");
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
+	
+	params = propertyItemParams::createDoubleParams(rectRadioMin, rectRadioMax, rectRadioStep, rectRadioDecimals, rectRadioInitvlaue);
+	widget->addPropertyItem(propertynameradio, params);
 
-	buildPropertywidgetname(widget);
-	widget->addPropertyItem(propertynameradio, EditItemDataType::Double);
-	buildPropertywidgetRotate(widget);
+	params = propertyItemParams::createIntParams(-180, 180, 1, 0);
+	widget->addPropertyItem(propertynamerotate, params);
+
+	params = propertyItemParams::createDoubleParams(0.01, 1.00, 0.01, 2, 1.00);
+	widget->addPropertyItem(propertynamescale, params);
+
 	buildPropertywidgetPenandBrush(widget);
-	
-	
 }
 
 void PropertyWidgetManager::buildDiagramCirclePropertyWidget(propertyWidget* widget)
@@ -664,11 +671,19 @@ void PropertyWidgetManager::buildDiagramCirclePropertyWidget(propertyWidget* wid
 	if (widget == nullptr)
 		throw std::runtime_error("error");
 
-	buildPropertywidgetname(widget);
-	widget->addPropertyItem(propertynameradio, EditItemDataType::Double);
-	buildPropertywidgetRotate(widget);
-	buildPropertywidgetPenandBrush(widget);
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
 
+	params = propertyItemParams::createDoubleParams(circleRadioMin, circleRadioMax, circleRadioStep, circleRadioDecimals, circleRadioInitvlaue);
+	widget->addPropertyItem(propertynameradio, params);
+
+	params = propertyItemParams::createIntParams(-180, 180, 1, 0);
+	widget->addPropertyItem(propertynamerotate, params);
+
+	params = propertyItemParams::createDoubleParams(0.01, 1.00, 0.01, 2, 1.00);
+	widget->addPropertyItem(propertynamescale, params);
+
+	buildPropertywidgetPenandBrush(widget);
 }
 
 void PropertyWidgetManager::buildDiagramTrianglePropertyWidget(propertyWidget* widget)
@@ -676,14 +691,32 @@ void PropertyWidgetManager::buildDiagramTrianglePropertyWidget(propertyWidget* w
 	if (widget == nullptr)
 		throw std::runtime_error("error");
 
-	buildPropertywidgetname(widget);
-	widget->addPropertyItem(propertynamebottomradio, EditItemDataType::Double);
-	widget->addPropertyItem(propertynameleftradio, EditItemDataType::Double);
-	widget->addPropertyItem(propertynamerightradio, EditItemDataType::Double);
-	widget->addPropertyItem(propertynameedgetype, EditItemDataType::Enum);
-	buildPropertywidgetRotate(widget);
-	buildPropertywidgetPenandBrush(widget);
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
 
+	params = propertyItemParams::createDoubleParams(triangleRadioMin, triangleRadioMax, triangleRadioStep, triangleRadioDecimals, triangleInitBottomValue);
+	widget->addPropertyItem(propertynamebottomradio, params);
+
+	params = propertyItemParams::createDoubleParams(triangleRadioMin, triangleRadioMax, triangleRadioStep, triangleRadioDecimals, triangleInitLeftValue);
+	widget->addPropertyItem(propertynameleftradio, params);
+
+	params = propertyItemParams::createDoubleParams(triangleRadioMin, triangleRadioMax, triangleRadioStep, triangleRadioDecimals, triangleInitRightValue);
+	widget->addPropertyItem(propertynamerightradio, params);
+
+	QVector<QString> list;
+	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Bottom));
+	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Left));
+	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Right));
+	params = propertyItemParams::createEnumParams(list);
+	widget->addPropertyItem(propertynameedgetype, params);
+
+	params = propertyItemParams::createIntParams(-180, 180, 1, 0);
+	widget->addPropertyItem(propertynamerotate, params);
+
+	params = propertyItemParams::createDoubleParams(0.01, 1.00, 0.01, 2, 1.00);
+	widget->addPropertyItem(propertynamescale, params);
+
+	buildPropertywidgetPenandBrush(widget);
 }
 
 void PropertyWidgetManager::buildDiagramLinePropertyWidget(propertyWidget* widget)
@@ -691,8 +724,15 @@ void PropertyWidgetManager::buildDiagramLinePropertyWidget(propertyWidget* widge
 	if (widget == nullptr)
 		throw std::runtime_error("error");
 
-	buildPropertywidgetname(widget);
-	buildPropertywidgetRotate(widget);
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
+
+	params = propertyItemParams::createIntParams(-180, 180, 1, 0);
+	widget->addPropertyItem(propertynamerotate, params);
+
+	params = propertyItemParams::createDoubleParams(0.01, 1.00, 0.01, 2, 1.00);
+	widget->addPropertyItem(propertynamescale, params);
+
 	buildPropertywidgetPenandBrush(widget);
 }
 
@@ -701,9 +741,31 @@ void PropertyWidgetManager::buildDiagramHuabuPropertyWidget(propertyWidget* widg
 	if (widget == nullptr)
 		throw std::runtime_error("error");
 
-	widget->addPropertyItem(propertynamename, EditItemDataType::String);
-	widget->addPropertyItem(propertynamehuabuwidth, EditItemDataType::Int);
-	widget->addPropertyItem(propertynamehuabuheight, EditItemDataType::Int);
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
+
+	params = propertyItemParams::createIntParams(huabuwidthMin, huabuwidthMax, 1, huabuwidthvalue);
+	widget->addPropertyItem(propertynamehuabuwidth, params);
+
+	params = propertyItemParams::createIntParams(huabuheightMin, huabuheightMax, 1, huabuheightvalue);
+	widget->addPropertyItem(propertynamehuabuheight, params);
+
+}
+
+void PropertyWidgetManager::buildDiagramHuabuRectPropertyWidget(propertyWidget* widget)
+{
+	if(widget == nullptr)
+        throw std::runtime_error("error");
+
+	auto params = propertyItemParams::createStringParams();
+	widget->addPropertyItem(propertynamename, params);
+
+	params = propertyItemParams::createDoubleParams(rectRadioMin, rectRadioMax, rectRadioStep, rectRadioDecimals, rectRadioInitvlaue);
+	widget->addPropertyItem(propertynameradio, params);
+
+	params = propertyItemParams::createIntParams(-180, 180, 1, 0);
+    widget->addPropertyItem(propertynamerotate, params);
+
 }
 
 void PropertyWidgetManager::buildPropertywidgetPenandBrush(propertyWidget* widget)
@@ -711,34 +773,17 @@ void PropertyWidgetManager::buildPropertywidgetPenandBrush(propertyWidget* widge
 	if (widget == nullptr)
 		throw std::runtime_error("error");
 
-	widget->addPropertyItem(propertynamepencolor, EditItemDataType::Color);
-	widget->addPropertyItem(propertynamepenwidth, EditItemDataType::Int);
-	widget->addPropertyItem(propertynamebrush, EditItemDataType::Color);
+	auto params = propertyItemParams::createColorParams(propertyInitColor);
+	widget->addPropertyItem(propertynamepencolor, params);
+
+	params = propertyItemParams::createIntParams(1, penWidthMax, 1,penWidth);
+	widget->addPropertyItem(propertynamepenwidth, params);
+
+	params = propertyItemParams::createColorParams(propertyInitColor);
+	widget->addPropertyItem(propertynamebrush, params);
 }
 
-void PropertyWidgetManager::buildPropertywidgetname(propertyWidget* widget)
-{
-	if (widget == nullptr)
-		throw std::runtime_error("error");
 
-	widget->addPropertyItem(propertynamename, EditItemDataType::String);
-}
-
-void PropertyWidgetManager::buildPropertywidgetRotate(propertyWidget* widget)
-{
-	if (widget == nullptr)
-		throw std::runtime_error("error");
-
-	widget->addPropertyItem(propertynamerotate, EditItemDataType::Int);
-}
-
-void PropertyWidgetManager::buildPropertywidgetScale(propertyWidget* widget)
-{
-	if (widget == nullptr)
-		throw std::runtime_error("error");
-
-	widget->addPropertyItem(propertynamescale, EditItemDataType::Double);
-}
 
 void PropertyWidgetManager::addPropertyWidget(propertyobjecttype type, propertyWidget* widget)
 {
@@ -802,14 +847,12 @@ void PropertyWidgetManager::addPropertyWidget(propertyobjecttype type, propertyW
 
 //}
 
-propertyItem::propertyItem(EditItemDataType type)
+propertyItem::propertyItem(propertyItemParams params)
 	:m_editWidget(nullptr)
-	, m_type(type)
-	//, m_name(data->m_name)
-	//, m_choosedColor(nullptr)
-	//, m_type(data->m_datatype)
+	, m_type(params.m_type)
+	, m_colorQpushbuttonPropertyName("k")
 {
-	createWidgetByType(type);
+	createWidgetByType(params);
 }
 
 QWidget* propertyItem::getEditWidget()
@@ -821,12 +864,12 @@ void propertyItem::setData(std::shared_ptr<propertyData> data)
 {
 	if (data == nullptr)
 		throw std::runtime_error("error");
-	if (data->m_datatype != m_type)
-		throw std::runtime_error("error");
-	if (data->m_params == nullptr)
-		throw std::runtime_error("error");
-	
-	setDataByType(data->m_datatype, data->m_params.get());
+	//if (data->m_datatype != m_type)
+		//throw std::runtime_error("error");
+	//if (data->m_params == nullptr)
+		//throw std::runtime_error("error");
+
+	setDataByType(data->m_data);
 
 	QObject::connect(this, &propertyItem::signalValueChanged
 		, data.get(), &propertyData::slotValueChanged);
@@ -836,7 +879,7 @@ void propertyItem::onValueChanged()
 {
 	//获取值
 
-	emit signalValueChanged(m_type, getValue());
+	emit signalValueChanged(getValue());
 }
 
 //QString propertyItem::getName()
@@ -896,79 +939,195 @@ void propertyItem::onValueChanged()
 
 
 
-void propertyItem::createWidgetByType(EditItemDataType type)
+void propertyItem::createWidgetByType(propertyItemParams params)
 {
-	switch (type)
+	switch (params.m_type)
 	{
 	case EditItemDataType::Double:
 	{
 		auto ptr = new QDoubleSpinBox();
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!params.isDoubleDataValid())
+			throw std::runtime_error("error");
+
+		ptr->setRange(params.m_doubleRangeMin.value(), params.m_doubleRangeMax.value());
+		ptr->setDecimals(params.m_doubleDecimals.value());
+		ptr->setValue(params.m_doubleDefaultValue.value());
+		ptr->setSingleStep(params.m_doubleSingleStep.value());
+
 		QObject::connect(ptr, &QDoubleSpinBox::valueChanged
 			, this, &propertyItem::onValueChanged);
 		m_editWidget = ptr;
 	}
-		break;
+	break;
 	case EditItemDataType::Int:
 	{
 		auto ptr = new QSpinBox();
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!params.isIntDataValid())
+			throw std::runtime_error("error");
+
+		ptr->setRange(params.m_intRangeMin.value(), params.m_intRangeMax.value());
+		ptr->setSingleStep(params.m_intSingleStep.value());
+		ptr->setValue(params.m_intDefaultValue.value());
+
 		QObject::connect(ptr, &QSpinBox::valueChanged
 			, this, &propertyItem::onValueChanged);
 		m_editWidget = ptr;
 	}
-		break;
+	break;
 	case EditItemDataType::Enum:
 	{
 		auto ptr = new QComboBox();
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!params.isEnumDataValid())
+			throw std::runtime_error("error");
+
+		for (const auto& str : params.m_enumStringVec.value())
+			ptr->addItem(str);
+
 		QObject::connect(ptr, &QComboBox::currentTextChanged
 			, this, &propertyItem::onValueChanged);
 		m_editWidget = ptr;
 	}
-		break;
+	break;
 	case EditItemDataType::Color:
 	{
-		auto ptr = new QPushButton(colortext);
-		QObject::connect(ptr, &QPushButton::clicked, [=]()
+		if (!params.isColorsetValid())
+			throw std::runtime_error("error");
+
+		auto basewidget = new QWidget();
+		auto baselayout = new QHBoxLayout(basewidget);
+		basewidget->setLayout(baselayout);
+
+		auto button = new QPushButton(propertyColorText,basewidget);
+		button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		auto label = new QLabel(basewidget);
+		QColor color = params.m_ColorInitValue.value();
+		label->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); border-radius: 4px; padding: 6px; margin: 2px;}")
+			.arg(color.red()).arg(color.green())
+			.arg(color.blue()).arg(color.alpha()));
+		label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		baselayout->addWidget(label);
+		baselayout->addWidget(button);
+
+		QObject::connect(button, &QPushButton::clicked, [=]()
 			{
-				QColor color = QColorDialog::getColor(Qt::white, ptr, colorchoosetitle);
+				QColor color = QColorDialog::getColor(Qt::white, button, propertyColorDialogTitle);
 				if (color.isValid())
 				{
-					ptr->setProperty(colorProperty, QVariant::fromValue(color));
+					button->setProperty(m_colorQpushbuttonPropertyName.toStdString().c_str(), QVariant::fromValue(color));
+
+					label->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); border-radius: 4px; padding: 6px; margin: 2px;}")
+						.arg(color.red()).arg(color.green())
+						.arg(color.blue()).arg(color.alpha()));
 					this->onValueChanged();
 				}
 			});
-		m_editWidget = ptr;
+		m_editWidget = basewidget;
 	}
-		break;
+	break;
 	case EditItemDataType::String:
 	{
 		auto ptr = new QLabel();
+
 		m_editWidget = ptr;
 	}
-		break;
+	break;
 	default:
 		throw std::runtime_error("error");
 		break;
 	}
 }
 
-void propertyItem::setDataByType(EditItemDataType type, propertyItemParams* params)
+void propertyItem::setDataByType(QVariant value)
 {
-	switch (type)
+	if (m_editWidget == nullptr)
+		throw std::runtime_error("error");
+	switch (m_type)
 	{
 	case EditItemDataType::Double:
-		setDoubleData(params);
+	{
+		auto ptr = dynamic_cast<QDoubleSpinBox*>(m_editWidget);
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!value.canConvert<double>())
+			throw std::runtime_error("error");
+		ptr->setValue(value.toDouble());
+	}
 		break;
 	case EditItemDataType::Int:
-		setIntData(params);
+	{
+		auto ptr = dynamic_cast<QSpinBox*>(m_editWidget);
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!value.canConvert<int>())
+			throw std::runtime_error("error");
+			
+		ptr->setValue(value.toInt());
+	}
 		break;
 	case EditItemDataType::Enum:
-		setEnumData(params);
+	{
+		auto ptr = dynamic_cast<QComboBox*>(m_editWidget);
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!value.canConvert<QString>())
+			throw std::runtime_error("error");
+		ptr->setCurrentText(value.toString());
+	}
 		break;
 	case EditItemDataType::Color:
-		setColorData(params);
+	{
+		auto ptr = m_editWidget;
+		auto layout = ptr->layout();
+		if (layout == nullptr)
+			throw std::runtime_error("error");
+
+		auto layoutitemlabel = layout->itemAt(0);
+		if (layoutitemlabel == nullptr)
+			throw std::runtime_error("error");
+		auto widgetlabel = layoutitemlabel->widget();
+		if (widgetlabel == nullptr)
+			throw std::runtime_error("error");
+		auto label = dynamic_cast<QLabel*>(widgetlabel);
+		if (label == nullptr)
+			throw std::runtime_error("error");
+
+		auto layoutitembutton = layout->itemAt(1);
+		if (layoutitembutton == nullptr)
+			throw std::runtime_error("error");
+		auto widgetbutton = layoutitembutton->widget();
+		if (widgetbutton == nullptr)
+			throw std::runtime_error("error");
+		auto button = dynamic_cast<QPushButton*>(widgetbutton);
+		if (button == nullptr)
+			throw std::runtime_error("error");
+
+		if (!value.canConvert<QColor>())
+			throw std::runtime_error("error");
+		QColor color = value.value<QColor>();
+		label->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); border-radius: 4px; padding: 6px; margin: 2px;}")
+			.arg(color.red())
+			.arg(color.green())
+			.arg(color.blue())
+			.arg(color.alpha()));
+
+	}
 		break;
 	case EditItemDataType::String:
-		setStringData(params);
+	{
+		auto ptr = dynamic_cast<QLabel*>(m_editWidget);
+		if (ptr == nullptr)
+			throw std::runtime_error("error");
+		if (!value.canConvert<QString>())
+			throw std::runtime_error("error");
+		ptr->setText(value.toString());
+	}
+		//setStringData(params);
 		break;
 	default:
 		throw std::runtime_error("error");
@@ -976,89 +1135,89 @@ void propertyItem::setDataByType(EditItemDataType type, propertyItemParams* para
 	}
 }
 
-void propertyItem::setDoubleData(propertyItemParams* params)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	if (!params->isDoubleDataValid())
-		throw std::runtime_error("error");
-	if (m_editWidget == nullptr)
-		throw std::runtime_error("error");
+//void propertyItem::setDoubleData(propertyItemParams* params)
+//{
+//	if (params == nullptr)
+//		throw std::runtime_error("error");
+//	if (!params->isDoubleDataValid())
+//		throw std::runtime_error("error");
+//	if (m_editWidget == nullptr)
+//		throw std::runtime_error("error");
+//
+//	QDoubleSpinBox* spinbox = dynamic_cast<QDoubleSpinBox*>(m_editWidget);
+//	if (spinbox == nullptr)
+//		throw std::runtime_error("error");
+//
+//	spinbox->setRange(params->m_doubleRangeMin.value(), params->m_doubleRangeMax.value());
+//	spinbox->setSingleStep(params->m_doubleSingleStep.value());
+//	spinbox->setDecimals(params->m_doubleDecimals.value());
+//	spinbox->setValue(params->m_doubleDefaultValue.value());
+//
+//}
 
-	QDoubleSpinBox* spinbox = dynamic_cast<QDoubleSpinBox*>(m_editWidget);
-	if (spinbox == nullptr)
-		throw std::runtime_error("error");
-
-	spinbox->setRange(params->m_doubleRangeMin.value(), params->m_doubleRangeMax.value());
-	spinbox->setSingleStep(params->m_doubleSingleStep.value());
-	spinbox->setDecimals(params->m_doubleDecimals.value());
-	spinbox->setValue(params->m_doubleDefaultValue.value());
-
-}
-
-void propertyItem::setIntData(propertyItemParams* params)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	if (!params->isIntDataValid())
-		throw std::runtime_error("error");
-	if (m_editWidget == nullptr)
-		throw std::runtime_error("error");
-
-	auto spinbox = dynamic_cast<QSpinBox*>(m_editWidget);
-	if (spinbox == nullptr)
-		throw std::runtime_error("error");
-
-	spinbox->setRange(params->m_intRangeMin.value(), params->m_intRangeMax.value());
-	spinbox->setSingleStep(params->m_intSingleStep.value());
-	spinbox->setValue(params->m_intDefaultValue.value());
-	
-}
-
-void propertyItem::setColorData(propertyItemParams* params)
-{
-
-}
-
-void propertyItem::setEnumData(propertyItemParams* params)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	if (!params->isEnumDataValid())
-		throw std::runtime_error("error");
-	if (m_editWidget == nullptr)
-		throw std::runtime_error("error");
-
-	auto combobox = dynamic_cast<QComboBox*>(m_editWidget);
-	if (combobox == nullptr)
-		throw std::runtime_error("error");
-
-	combobox->clear();
-	for (const QString& str : params->m_enumStringVec.value())
-	{
-		combobox->addItem(str);
-	}
-
-}
-
-void propertyItem::setStringData(propertyItemParams* params)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	if (!params->isStringItemValid())
-		throw std::runtime_error("error");
-	if (m_editWidget == nullptr)
-		throw std::runtime_error("error");
-
-	auto label = dynamic_cast<QLabel*>(m_editWidget);
-	if (label == nullptr)
-		throw std::runtime_error("error");
-
-	if (!params->isStringItemValid())
-		throw std::runtime_error("error");
-	label->setText(params->m_stringStr.value());
-
-}
+//void propertyItem::setIntData(propertyItemParams* params)
+//{
+//	if (params == nullptr)
+//		throw std::runtime_error("error");
+//	if (!params->isIntDataValid())
+//		throw std::runtime_error("error");
+//	if (m_editWidget == nullptr)
+//		throw std::runtime_error("error");
+//
+//	auto spinbox = dynamic_cast<QSpinBox*>(m_editWidget);
+//	if (spinbox == nullptr)
+//		throw std::runtime_error("error");
+//
+//	spinbox->setRange(params->m_intRangeMin.value(), params->m_intRangeMax.value());
+//	spinbox->setSingleStep(params->m_intSingleStep.value());
+//	spinbox->setValue(params->m_intDefaultValue.value());
+//
+//}
+//
+//void propertyItem::setColorData(propertyItemParams* params)
+//{
+//
+//}
+//
+//void propertyItem::setEnumData(propertyItemParams* params)
+//{
+//	if (params == nullptr)
+//		throw std::runtime_error("error");
+//	if (!params->isEnumDataValid())
+//		throw std::runtime_error("error");
+//	if (m_editWidget == nullptr)
+//		throw std::runtime_error("error");
+//
+//	auto combobox = dynamic_cast<QComboBox*>(m_editWidget);
+//	if (combobox == nullptr)
+//		throw std::runtime_error("error");
+//
+//	combobox->clear();
+//	for (const QString& str : params->m_enumStringVec.value())
+//	{
+//		combobox->addItem(str);
+//	}
+//
+//}
+//
+//void propertyItem::setStringData(propertyItemParams* params)
+//{
+//	if (params == nullptr)
+//		throw std::runtime_error("error");
+//	if (!params->isStringItemValid())
+//		throw std::runtime_error("error");
+//	if (m_editWidget == nullptr)
+//		throw std::runtime_error("error");
+//
+//	auto label = dynamic_cast<QLabel*>(m_editWidget);
+//	if (label == nullptr)
+//		throw std::runtime_error("error");
+//
+//	if (!params->isStringItemValid())
+//		throw std::runtime_error("error");
+//	label->setText(params->m_stringStr.value());
+//
+//}
 
 QVariant propertyItem::getValue()
 {
@@ -1071,7 +1230,7 @@ QVariant propertyItem::getValue()
 			throw std::runtime_error("error");
 		return QVariant(ptr->value());
 	}
-		break;
+	break;
 	case EditItemDataType::Int:
 	{
 		auto ptr = dynamic_cast<QSpinBox*>(m_editWidget);
@@ -1079,7 +1238,7 @@ QVariant propertyItem::getValue()
 			throw std::runtime_error("error");
 		return QVariant(ptr->value());
 	}
-		break;
+	break;
 	case EditItemDataType::Enum:
 	{
 		auto ptr = dynamic_cast<QComboBox*>(m_editWidget);
@@ -1087,15 +1246,27 @@ QVariant propertyItem::getValue()
 			throw std::runtime_error("error");
 		return QVariant(ptr->currentText());
 	}
-		break;
+	break;
 	case EditItemDataType::Color:
 	{
-		auto ptr = dynamic_cast<QPushButton*>(m_editWidget);
+		auto ptr = m_editWidget;
 		if (ptr == nullptr)
 			throw std::runtime_error("error");
-		return ptr->property(colorProperty);
+		auto layout = ptr->layout();
+		if (layout == nullptr)
+			throw std::runtime_error("error");
+		auto layoutitembutton = layout->itemAt(1);
+		if (layoutitembutton == nullptr)
+			throw std::runtime_error("error");
+		auto widgetbutton = layoutitembutton->widget();
+		if (widgetbutton == nullptr)
+			throw std::runtime_error("error");
+		auto button = dynamic_cast<QPushButton*>(widgetbutton);
+		if (button == nullptr)
+			throw std::runtime_error("error");
+		return button->property(m_colorQpushbuttonPropertyName.toStdString().c_str());
 	}
-		break;
+	break;
 	case EditItemDataType::String:
 	{
 		auto ptr = dynamic_cast<QLabel*>(m_editWidget);
@@ -1103,7 +1274,7 @@ QVariant propertyItem::getValue()
 			throw std::runtime_error("error");
 		return QVariant(ptr->text());
 	}
-		break;
+	break;
 	default:
 		throw std::runtime_error("error");
 		break;
@@ -1135,11 +1306,34 @@ QVariant propertyItem::getValue()
 //	}
 //}
 
+propertyItemParams propertyItemParams::createDoubleParams(double rangemin, double rangemax, double singlestep, int decimals, double value)
+{
+	propertyItemParams params;
+	params.m_doubleRangeMin = rangemin;
+	params.m_doubleRangeMax = rangemax;
+	params.m_doubleDecimals = decimals;
+	params.m_doubleSingleStep = singlestep;
+	params.m_doubleDefaultValue = value;
+	params.m_type = EditItemDataType::Double;
+	return params;
+}
+
 bool propertyItemParams::isDoubleDataValid()
 {
 	return m_doubleRangeMax.has_value() && m_doubleRangeMin.has_value()
 		&& m_doubleSingleStep.has_value() && m_doubleDecimals.has_value()
 		&& m_doubleDefaultValue.has_value();
+}
+
+propertyItemParams propertyItemParams::createIntParams(int rangemin, int rangemax, int singlestep, int value)
+{
+	propertyItemParams params;
+	params.m_intRangeMin = rangemin;
+	params.m_intRangeMax = rangemax;
+	params.m_intSingleStep = singlestep;
+	params.m_intDefaultValue = value;
+	params.m_type = EditItemDataType::Int;
+	return params;
 }
 
 bool propertyItemParams::isIntDataValid()
@@ -1148,25 +1342,71 @@ bool propertyItemParams::isIntDataValid()
 		&& m_intRangeMin.has_value() && m_intSingleStep.has_value();
 }
 
+
+propertyItemParams propertyItemParams::createColorParams(QColor initcolor)
+{
+	propertyItemParams params;
+	params.m_ColorInitValue = initcolor;
+	params.m_type = EditItemDataType::Color;
+	return params;
+}
+
+bool propertyItemParams::isColorsetValid()
+{
+	return m_ColorInitValue.has_value();
+}
+
+propertyItemParams propertyItemParams::createEnumParams(QVector<QString> vec)
+{
+	propertyItemParams params;
+	params.m_enumStringVec = vec;
+	params.m_type = EditItemDataType::Enum;
+	return params;
+}
+
 bool propertyItemParams::isEnumDataValid()
 {
 	return m_enumStringVec.has_value();
 }
 
-bool propertyItemParams::isStringItemValid()
+propertyItemParams propertyItemParams::createStringParams()
 {
-	return m_stringStr.has_value();
+	propertyItemParams params;
+	params.m_type = EditItemDataType::String;
+	return params;
 }
 
-void propertyData::slotValueChanged(EditItemDataType type, QVariant value)
+bool propertyItemParams::isStringsetValid()
+{
+	return true;
+}
+
+
+propertyItemParams::propertyItemParams()
+	:m_type(EditItemDataType::String)
+	, m_doubleRangeMin(std::nullopt)
+	, m_doubleRangeMax(std::nullopt)
+	, m_doubleSingleStep(std::nullopt)
+	, m_doubleDecimals(std::nullopt)
+	, m_doubleDefaultValue(std::nullopt)
+	, m_intRangeMax(std::nullopt)
+	, m_intRangeMin(std::nullopt)
+	, m_intSingleStep(std::nullopt)
+	, m_intDefaultValue(std::nullopt)
+	, m_enumStringVec(std::nullopt)
+{
+
+}
+
+propertyData::propertyData(QString name, QVariant data)
+	: m_name(name)
+	, m_data(data)
+{
+}
+
+void propertyData::slotValueChanged(QVariant value)
 {
 	//objectkey
-	if (m_objectkey.has_value())
-	{
-		emit signalValueChangedHuabuTuxing(m_objectkey.value(), m_name, type, value);
-	}
-	else
-	{
-		emit signalValueChanged(m_name, type, value);
-	}
+	m_data = value;
+	emit signalValueChanged(value);
 }

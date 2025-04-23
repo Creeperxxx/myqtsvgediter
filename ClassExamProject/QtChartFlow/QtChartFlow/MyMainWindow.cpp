@@ -91,7 +91,7 @@ void MyMainWindow::init()
 
 	GfxLibDiagramItemParams lineparams(ShapeType::Line);
 	DiagramItem* line = new DiagramItem(lineparams);
-	
+
 	maintoolbar->addWidget(juxing);
 	maintoolbar->addSeparator();
 	maintoolbar->addWidget(yuanxing);
@@ -104,23 +104,19 @@ void MyMainWindow::init()
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
 	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
 
-	juxing->setPropertyWidgetManger(m_propertyWidgetManager);
-	juxing->createPropertyWidget();
-
-	yuanxing->setPropertyWidgetManger(m_propertyWidgetManager);
-	yuanxing->createPropertyWidget();
-
-	sanjiaoxing->setPropertyWidgetManger(m_propertyWidgetManager);
-	sanjiaoxing->createPropertyWidget();
-
-	line->setPropertyWidgetManger(m_propertyWidgetManager);
-	line->createPropertyWidget();
-
+	QObject::connect(juxing, &DiagramItem::signalMouseClicked
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(yuanxing, &DiagramItem::signalMouseClicked
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(sanjiaoxing, &DiagramItem::signalMouseClicked
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(line, &DiagramItem::signalMouseClicked
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
 
 	//QStackedWidget* propertywidget = new QStackedWidget(centralwidget);
 	//centralwidgetlayout->addWidget(propertywidget);
 	//propertywidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	
+
 	//属性栏
 	//propertyWidget* shuxing = new propertyWidget();
 	//propertywidget->addWidget(shuxing);

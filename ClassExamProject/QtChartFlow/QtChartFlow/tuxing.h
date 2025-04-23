@@ -21,12 +21,14 @@
 #include "drawtool.h"
 #include "tuxingjiedian.h"
 #include "DiagramMimedata.h"
+#include "shuxingwidget.h"
 //#include <moc_MyMainWindow.cpp>
 //#include "shuxingwidget.h"
 
 //class factory
 
 
+constexpr auto propertynamediagramrect = "diagram rect";
 
 
 class DiagramItem;
@@ -164,6 +166,9 @@ private:
 
 
 class PropertyWidgetManager;
+class propertyData;
+enum class PropertyWidgetManager::propertyobjecttype;
+enum class EditItemDataType;
 
 class DiagramItem : public QWidget
 {
@@ -203,35 +208,47 @@ public:
 	bool getisdrawbypainter();
 
 
+	void onPenColorChanged(QVariant value);
+	void onPenWidthChanged(QVariant newwidth);
+	void onPenBrushChanged(QVariant newbrush);
 
-	void onValueChanged(QString name, EditItemDataType type, QVariant value);
+	void onRectRadioChanged(QVariant value);
+	void onRectRotateChanged(QVariant value);
 
-	void onPenColorChanged(QColor newcolor);
-	void onPenWidthChanged(double newwidth);
-	void onPenBrushChanged(QBrush newbrush);
+	void onCircleRadioChanged(QVariant newradio);
+	void onCircleRotateChanged(QVariant newrottate);
 
-	void onRectRadioChanged(double newradio);
-	void onRectRotateChanged(int newrotate);
+	void onTriangleSideRadioChangedBottom(QVariant bottom);
+	void onTriangleSideRadioChangedLeft(QVariant left);
+	void onTriangleSideRadioChangedRight(QVariant right);
+	void onTriangleEdgeTypeChanged(QVariant value);
+	void onTriangleEdgeRotateChanged(QVariant value);
 
-	void onCircleRadioChanged(double newradio);
-	void onCircleRotateChanged(int newrottate);
+	void onLineRotateChanged(QVariant rotate);
 
-	void onTriangleSideRadioChangedBottom(double bottom);
-	void onTriangleSideRadioChangedLeft(double left);
-	void onTriangleSideRadioChangedRight(double right);
-	void onTriangleEdgeTypeChanged(DiagramDrawParamsTriangle::EdgeType type);
-	void onTriangleEdgeRotateChanged(int rotate);
-
-	void onLineRotateChanged(int rotate);
+	void onScaleChanged(QVariant value);
 
 	void setPropertyWidgetManger(PropertyWidgetManager* manager);
-	void createPropertyWidget();
 
-	void setPropertyWidgetKey(QString key);
+	void createPropertyWidget();
+	void buildRectPropertyData();
+	void buildCirclePropertyData();
+	void buildTrianglePropertyData();
+	void buildLinePropertyData();
+
+	PropertyWidgetManager::propertyobjecttype m_propertywidgettype;
+	std::unordered_map<QString, std::shared_ptr<propertyData>> m_propertyDataMap;
+	std::vector<std::shared_ptr<propertyData>> m_propertyDataVec;
+
+	void buildPropertyDataPenAndBrush();
+
 
 
 
 //信号
+signals:
+	void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::vector<std::shared_ptr<propertyData>> data);
+
 private:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -269,6 +286,7 @@ private:
 
 	std::shared_ptr<IDidgramDrawParams> buildspecialbytype();
 
+
 	//void inittuxingzujian();
 
 	//std::shared_ptr<GfxLibDiagramitemDrawer> createtuxing();
@@ -298,7 +316,6 @@ private:
 	QBrush m_huabubrush;
 	QSizeF m_huabuspacesize;
 	PropertyWidgetManager* m_propertyWidgetManger;
-	std::vector<std::shared_ptr<propertyData>> m_propertydatavec;
 	//qreal m_pixmapScale;
 	
 	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;

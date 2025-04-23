@@ -185,7 +185,7 @@ void huabu::dropEvent(QDropEvent* event)
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
 	tuxing->m_params = params;
 	PropertyWidgetManager::propertyobjecttype propertytype = shapeTypeToPropertyobjectType(data.m_type);
-	tuxing->m_propertyString = m_propertywidgetmanager->createPropertyWidget(propertytype, this);
+	//tuxing->m_propertyString = m_propertywidgetmanager->createPropertyWidget(propertytype, this);
 	tuxing->m_pen = data.m_pen;
 	tuxing->m_brush = data.m_brush;
 
@@ -277,10 +277,6 @@ void huabu::setPorpertyWidgetManager(PropertyWidgetManager* manager)
 	m_propertywidgetmanager = manager;
 }
 
-void huabu::createHuabuPropertyWidget()
-{
-	m_propertywidgetkey = m_propertywidgetmanager->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::huabu, this);
-}
 
 //void huabu::drawBaseBackground(QPainter* painter)
 //void huabu::drawBaseBackground()

@@ -26,31 +26,31 @@ public:
 	std::optional<int> m_triangleRotate;
 
 	std::optional<int> m_linerotate;
-	void serShapetype(QDataStream& out, const DiagramMimedata& myclass) const;
-	void serScale(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serPen(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serBrush(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serRectRadio(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serRectRotate(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serCircleRadio(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serCircleRotate(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serTriangleSideRadios(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serTriangleEdgetype(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serTriangleRotate(QDataStream& out, const DiagramMimedata& myclass)const;
-	void serLineRotate(QDataStream& out, const DiagramMimedata& myclass)const;
+	void serShapetype(QDataStream& out) const;
+	void serScale(QDataStream& out)const;
+	void serPen(QDataStream& out)const;
+	void serBrush(QDataStream& out)const;
+	void serRectRadio(QDataStream& out)const;
+	void serRectRotate(QDataStream& out)const;
+	void serCircleRadio(QDataStream& out)const;
+	void serCircleRotate(QDataStream& out)const;
+	void serTriangleSideRadios(QDataStream& out)const;
+	void serTriangleEdgetype(QDataStream& out)const;
+	void serTriangleRotate(QDataStream& out)const;
+	void serLineRotate(QDataStream& out)const;
 
-	void deserShapetype(QDataStream& in, DiagramMimedata& myclass);
-	void deserScale(QDataStream& in, DiagramMimedata& myclass);
-	void deserPen(QDataStream& in,  DiagramMimedata& myclass);
-	void deserBrush(QDataStream& in,  DiagramMimedata& myclass);
-	void deserRectRadio(QDataStream& in,  DiagramMimedata& myclass);
-	void deserRectRotate(QDataStream& in,  DiagramMimedata& myclass);
-	void deserCircleRadio(QDataStream& in,  DiagramMimedata& myclass);
-	void deserCircleRotate(QDataStream& in,  DiagramMimedata& myclass);
-	void deserTriangleSideRadios(QDataStream& in,  DiagramMimedata& myclass);
-	void deserTriangleEdgetype(QDataStream& in,  DiagramMimedata& myclass);
-	void deserTriangleRotate(QDataStream& in,  DiagramMimedata& myclass);
-	void deserLineRotate(QDataStream& in, DiagramMimedata& myclass);
+	void deserShapetype(QDataStream& in);
+	void deserScale(QDataStream& in);
+	void deserPen(QDataStream& in);
+	void deserBrush(QDataStream& in);
+	void deserRectRadio(QDataStream& in);
+	void deserRectRotate(QDataStream& in);
+	void deserCircleRadio(QDataStream& in);
+	void deserCircleRotate(QDataStream& in);
+	void deserTriangleSideRadios(QDataStream& in);
+	void deserTriangleEdgetype(QDataStream& in);
+	void deserTriangleRotate(QDataStream& in);
+	void deserLineRotate(QDataStream& in);
 
 };
 

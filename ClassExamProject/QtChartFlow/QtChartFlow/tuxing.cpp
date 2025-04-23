@@ -6,7 +6,7 @@ void DiagramItem::mousePressEvent(QMouseEvent* event)
 	if (event->button() == Qt::LeftButton)
 	{
 		dragstartposition = event->pos();
-
+		emit signalMouseClicked(m_propertywidgettype, m_propertyDataVec);
 	}
 }
 
@@ -260,6 +260,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::buildspecialbytype()
 	}
 }
 
+
 bool DiagramItem::getdrawbypainter()
 {
 	return m_params.m_drawByPainter;
@@ -275,110 +276,162 @@ bool DiagramItem::getisdrawbypainter()
 	return m_params.m_isdrawByPainter;
 }
 
-void DiagramItem::onValueChanged(QString name, EditItemDataType type, QVariant value)
-{
-	if (name == propertynameradio)
-	{
-		if (type != EditItemDataType::Double)
-			throw std::runtime_error("error");
-		double realvalue = value.toDouble();
-		switch (m_params.m_type)
-		{
-		case ShapeType::Rect:
-			onRectRadioChanged(realvalue);
-			break;
-		case ShapeType::Circle:
-			onCircleRadioChanged(realvalue);
-			break;
-		default:
-			throw std::runtime_error("error");
-			break;
-		}
-	}
-	else
-	{
+//void DiagramItem::onValueChanged(QString name, EditItemDataType type, QVariant value)
+//{
+//	if (name == propertynameradio)
+//	{
+//		if (type != EditItemDataType::Double)
+//			throw std::runtime_error("error");
+//		double realvalue = value.toDouble();
+//		switch (m_params.m_type)
+//		{
+//		case ShapeType::Rect:
+//			onRectRadioChanged(realvalue);
+//			break;
+//		case ShapeType::Circle:
+//			onCircleRadioChanged(realvalue);
+//			break;
+//		default:
+//			throw std::runtime_error("error");
+//			break;
+//		}
+//	}
+//	else if (name == propertynamerotate)
+//	{
+//		if (type != EditItemDataType::Int)
+//			throw std::runtime_error("error");
+//		int realvalue = value.toInt();
+//		switch (m_params.m_type)
+//		{
+//		case ShapeType::Rect:
+//			onRectRotateChanged(realvalue);
+//			break;
+//		case ShapeType::Circle:
+//			onCircleRotateChanged(realvalue);
+//			break;
+//		case ShapeType::Triangle:
+//			break;
+//		case ShapeType::Line:
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//}
 
-	}
-}
-
-void DiagramItem::onRectRadioChanged(double newradio)
+void DiagramItem::onRectRadioChanged(QVariant value)
 {
-	m_params.m_rectRadio = newradio;
+	if (!value.canConvert<double>())
+		throw std::runtime_error("error");
+
+	m_params.m_rectRadio = value.toDouble();
 	update();
 }
 
-void DiagramItem::onRectRotateChanged(int newrotate)
+void DiagramItem::onRectRotateChanged(QVariant value)
 {
-	m_params.m_rectRotate = newrotate;
+	if (!value.canConvert<int>())
+		throw std::runtime_error("error");
+	m_params.m_rectRotate = value.toInt();
 	update();
 }
 
-void DiagramItem::onCircleRadioChanged(double newradio)
+void DiagramItem::onCircleRadioChanged(QVariant newradio)
 {
-	m_params.m_circleboundingrectradio = newradio;
+	if (!newradio.canConvert<double>())
+		throw std::runtime_error("error");
+	m_params.m_circleboundingrectradio = newradio.value<double>();
 	update();
 }
 
-void DiagramItem::onCircleRotateChanged(int newrottate)
+void DiagramItem::onCircleRotateChanged(QVariant newrottate)
 {
-	m_params.m_circlerotate = newrottate;
+	if (!newrottate.canConvert<int>())
+		throw std::runtime_error("error");
+	m_params.m_circlerotate = newrottate.value<int>();
 	update();
 }
 
-void DiagramItem::onTriangleSideRadioChangedBottom(double bottom)
+void DiagramItem::onTriangleSideRadioChangedBottom(QVariant bottom)
 {
-	m_params.m_triangleSideRadios->m_bottom = bottom;
+	if (!bottom.canConvert<double>())
+		throw std::runtime_error("error");
+	m_params.m_triangleSideRadios->m_bottom = bottom.value<double>();
 	update();
 }
 
-void DiagramItem::onTriangleSideRadioChangedLeft(double left)
+void DiagramItem::onTriangleSideRadioChangedLeft(QVariant left)
 {
-	m_params.m_triangleSideRadios->m_left = left;
+	if (!left.canConvert<double>())
+		throw std::runtime_error("error");
+	m_params.m_triangleSideRadios->m_left = left.value<double>();
 	update();
 }
 
-void DiagramItem::onTriangleSideRadioChangedRight(double right)
+void DiagramItem::onTriangleSideRadioChangedRight(QVariant right)
 {
-	m_params.m_triangleSideRadios->m_right = right;
+	if (!right.canConvert<double>())
+		throw std::runtime_error("error");
+	m_params.m_triangleSideRadios->m_right = right.value<double>();
 	update();
 }
 
-void DiagramItem::onTriangleEdgeTypeChanged(DiagramDrawParamsTriangle::EdgeType type)
+void DiagramItem::onTriangleEdgeTypeChanged(QVariant type)
 {
-	m_params.m_triangleEdgeType = type;
+	if (!type.canConvert<QString>())
+		throw std::runtime_error("error");
+	m_params.m_triangleEdgeType = DiagramDrawParamsTriangle::edgetypeStringToEnum(type.value<QString>());
 	update();
 }
 
-void DiagramItem::onTriangleEdgeRotateChanged(int rotate)
+void DiagramItem::onTriangleEdgeRotateChanged(QVariant rotate)
 {
-	m_params.m_triangleEdgeRotate = rotate;
+	if (!rotate.canConvert<int>())
+		throw std::runtime_error("error");
+	m_params.m_triangleEdgeRotate = rotate.value<int>();
 	update();
 }
 
-void DiagramItem::onLineRotateChanged(int rotate)
+void DiagramItem::onLineRotateChanged(QVariant rotate)
 {
-	m_params.m_linerotate = rotate;
+	if (!rotate.canConvert<int>())
+		throw std::runtime_error("error");
+	m_params.m_linerotate = rotate.value<int>();
+	update();
+}
+
+void DiagramItem::onScaleChanged(QVariant value)
+{
+	if (!value.canConvert<double>())
+		throw std::runtime_error("error");
+	m_params.m_scale = value.value<double>();
 	update();
 }
 
 
 
 
-void DiagramItem::onPenColorChanged(QColor newcolor)
+void DiagramItem::onPenColorChanged(QVariant newcolor)
 {
-	m_params.m_pen.setColor(newcolor);
+	if (!newcolor.canConvert<QColor>())
+		throw std::runtime_error("error");
+	m_params.m_pen.setColor(newcolor.value<QColor>());
 	update();
 }
 
-void DiagramItem::onPenWidthChanged(double newwidth)
+void DiagramItem::onPenWidthChanged(QVariant newwidth)
 {
-	m_params.m_pen.setWidth(newwidth);
+	if (!newwidth.canConvert<int>())
+		throw std::runtime_error("error");
+	m_params.m_pen.setWidth(newwidth.toInt());
 	update();
 }
 
-void DiagramItem::onPenBrushChanged(QBrush newbrush)
+void DiagramItem::onPenBrushChanged(QVariant newbrush)
 {
-	m_params.m_brush = newbrush;
+	if (!newbrush.canConvert<QColor>())
+		throw std::runtime_error("error");
+	m_params.m_brush = newbrush.value<QColor>();
 	update();
 }
 
@@ -392,26 +445,151 @@ void DiagramItem::createPropertyWidget()
 	switch (m_params.m_type)
 	{
 	case ShapeType::Rect:
-		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramRect, this);
+		buildRectPropertyData();
 		break;
 	case ShapeType::Circle:
-		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramCircle, this);
+		buildCirclePropertyData();
 		break;
 	case ShapeType::Triangle:
-		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramTriangle, this);
+		buildTrianglePropertyData();
 		break;
 	case ShapeType::Line:
-		m_propertyWidgetManger->createPropertyWidget(PropertyWidgetManager::propertyobjecttype::diagramLine, this);
+		buildLinePropertyData();
 		break;
 	default:
 		throw std::runtime_error("error");
 	}
 }
 
-void DiagramItem::setPropertyWidgetKey(QString key)
+void DiagramItem::buildRectPropertyData()
 {
-	m_propertyWidgetKey = key;
+	std::shared_ptr<propertyData> data = nullptr;
+	data = std::make_shared<propertyData>(propertynamename, "diagram rect");
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+
+	data = std::make_shared<propertyData>(propertynameradio, QVariant::fromValue(m_params.m_rectRadio.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onRectRadioChanged);
+
+	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_rectRotate.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onRectRotateChanged);
+
+	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(static_cast<double>(m_params.m_scale)));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+
+	buildPropertyDataPenAndBrush();
 }
+
+void DiagramItem::buildCirclePropertyData()
+{
+	std::shared_ptr<propertyData> data = nullptr;
+	data = std::make_shared<propertyData>(propertynamename, "diagram circle");
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+
+	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+
+	data = std::make_shared<propertyData>(propertynameradio, QVariant::fromValue(m_params.m_circleboundingrectradio.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
+
+	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_circlerotate.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
+	
+	buildPropertyDataPenAndBrush();
+}
+
+void DiagramItem::buildTrianglePropertyData()
+{
+	std::shared_ptr<propertyData> data = nullptr;
+	data = std::make_shared<propertyData>(propertynamename, "diagram triangle");
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+
+	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+
+	data = std::make_shared<propertyData>(propertynamebottomradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_bottom));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedBottom);
+
+	data = std::make_shared<propertyData>(propertynameleftradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_left));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedLeft);
+	
+	data = std::make_shared<propertyData>(propertynamerightradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_right));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedRight);
+
+	
+	data = std::make_shared<propertyData>(propertynameedgetype, QVariant::fromValue(DiagramDrawParamsTriangle::edgetypeEnumToString(m_params.m_triangleEdgeType.value())));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleEdgeTypeChanged);
+
+	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_triangleEdgeRotate.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleEdgeRotateChanged);
+
+	buildPropertyDataPenAndBrush();
+}
+
+void DiagramItem::buildLinePropertyData()
+{
+	std::shared_ptr<propertyData> data = nullptr;
+	data = std::make_shared<propertyData>(propertynamename, "diagram line");
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+
+	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+
+	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_linerotate.value()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onLineRotateChanged);
+
+	buildPropertyDataPenAndBrush();
+}
+
+void DiagramItem::buildPropertyDataPenAndBrush()
+{
+	auto data = std::make_shared<propertyData>(propertynamepencolor, QVariant::fromValue(m_params.m_pen.color()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenColorChanged);
+
+	data = std::make_shared<propertyData>(propertynamepenwidth, QVariant::fromValue(m_params.m_pen.width()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenWidthChanged);
+
+	data = std::make_shared<propertyData>(propertynamebrush, QVariant::fromValue(m_params.m_brush.color()));
+	m_propertyDataMap[data->m_name] = data;
+	m_propertyDataVec.push_back(data);
+	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenBrushChanged);
+}
+
 
 std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared_ptr<IDidgramDrawParams> params)
 {
@@ -559,6 +737,7 @@ QPixmap DiagramItem::drawDiagramPixmap()
 void DiagramItem::init()
 {
 	initWidgetSize();
+	createPropertyWidget();
 	//initDiagramDrawer();
 	//createDragMimeData();
 	//initDiagramPixmap();
@@ -1027,12 +1206,30 @@ DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
 	, QWidget(parent)
 	, dragstartposition(QPoint(0, 0))
 	, m_propertyWidgetManger(nullptr)
-	, m_propertyWidgetKey("")
 {
 	m_huabupen = params.m_pen;
 	m_huabubrush = params.m_brush;
 	m_huabuspacesize = params.m_huabutuxingspacesize;
-	m_pixmapScale = m_params.m_scale;
+	using Type = PropertyWidgetManager::propertyobjecttype;
+	switch (params.m_type)
+	{
+
+	case ShapeType::Rect:
+		m_propertywidgettype = Type::diagramRect;
+		break;
+	case ShapeType::Circle:
+		m_propertywidgettype = Type::diagramCircle;
+		break;
+	case ShapeType::Triangle:
+		m_propertywidgettype = Type::diagramTriangle;
+		break;
+	case ShapeType::Line:
+		m_propertywidgettype = Type::diagramLine;
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
 	init();
 }
 
