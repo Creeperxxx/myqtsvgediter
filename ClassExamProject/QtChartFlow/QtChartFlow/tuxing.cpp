@@ -435,10 +435,10 @@ void DiagramItem::onPenBrushChanged(QVariant newbrush)
 	update();
 }
 
-void DiagramItem::setPropertyWidgetManger(PropertyWidgetManager* manager)
-{
-	m_propertyWidgetManger = manager;
-}
+//void DiagramItem::setPropertyWidgetManger(PropertyWidgetManager* manager)
+//{
+	//m_propertyWidgetManger = manager;
+//}
 
 void DiagramItem::createPropertyWidget()
 {
@@ -463,131 +463,131 @@ void DiagramItem::createPropertyWidget()
 
 void DiagramItem::buildRectPropertyData()
 {
-	std::shared_ptr<propertyData> data = nullptr;
-	data = std::make_shared<propertyData>(propertynamename, "diagram rect");
+	std::shared_ptr<propertyItem> data = nullptr;
+	data = std::make_shared<propertyItem>(propertynamename, "diagram rect");
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
 
-	data = std::make_shared<propertyData>(propertynameradio, QVariant::fromValue(m_params.m_rectRadio.value()));
+	data = std::make_shared<propertyItem>(propertynameradio, QVariant::fromValue(m_params.m_rectRadio.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onRectRadioChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onRectRadioChanged);
 
-	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_rectRotate.value()));
+	data = std::make_shared<propertyItem>(propertynamerotate, QVariant::fromValue(m_params.m_rectRotate.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onRectRotateChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onRectRotateChanged);
 
-	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(static_cast<double>(m_params.m_scale)));
+	data = std::make_shared<propertyItem>(propertynamescale, QVariant::fromValue(static_cast<double>(m_params.m_scale)));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onScaleChanged);
 
 	buildPropertyDataPenAndBrush();
 }
 
 void DiagramItem::buildCirclePropertyData()
 {
-	std::shared_ptr<propertyData> data = nullptr;
-	data = std::make_shared<propertyData>(propertynamename, "diagram circle");
+	std::shared_ptr<propertyItem> data = nullptr;
+	data = std::make_shared<propertyItem>(propertynamename, "diagram circle");
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
 
-	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	data = std::make_shared<propertyItem>(propertynamescale, QVariant::fromValue(m_params.m_scale));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onScaleChanged);
 
-	data = std::make_shared<propertyData>(propertynameradio, QVariant::fromValue(m_params.m_circleboundingrectradio.value()));
+	data = std::make_shared<propertyItem>(propertynameradio, QVariant::fromValue(m_params.m_circleboundingrectradio.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
 
-	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_circlerotate.value()));
+	data = std::make_shared<propertyItem>(propertynamerotate, QVariant::fromValue(m_params.m_circlerotate.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onCircleRadioChanged);
 	
 	buildPropertyDataPenAndBrush();
 }
 
 void DiagramItem::buildTrianglePropertyData()
 {
-	std::shared_ptr<propertyData> data = nullptr;
-	data = std::make_shared<propertyData>(propertynamename, "diagram triangle");
+	std::shared_ptr<propertyItem> data = nullptr;
+	data = std::make_shared<propertyItem>(propertynamename, "diagram triangle");
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
 
-	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	data = std::make_shared<propertyItem>(propertynamescale, QVariant::fromValue(m_params.m_scale));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onScaleChanged);
 
-	data = std::make_shared<propertyData>(propertynamebottomradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_bottom));
+	data = std::make_shared<propertyItem>(propertynamebottomradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_bottom));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedBottom);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedBottom);
 
-	data = std::make_shared<propertyData>(propertynameleftradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_left));
+	data = std::make_shared<propertyItem>(propertynameleftradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_left));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedLeft);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedLeft);
 	
-	data = std::make_shared<propertyData>(propertynamerightradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_right));
+	data = std::make_shared<propertyItem>(propertynamerightradio, QVariant::fromValue(m_params.m_triangleSideRadios.value().m_right));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedRight);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onTriangleSideRadioChangedRight);
 
 	
-	data = std::make_shared<propertyData>(propertynameedgetype, QVariant::fromValue(DiagramDrawParamsTriangle::edgetypeEnumToString(m_params.m_triangleEdgeType.value())));
+	data = std::make_shared<propertyItem>(propertynameedgetype, QVariant::fromValue(DiagramDrawParamsTriangle::edgetypeEnumToString(m_params.m_triangleEdgeType.value())));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleEdgeTypeChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onTriangleEdgeTypeChanged);
 
-	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_triangleEdgeRotate.value()));
+	data = std::make_shared<propertyItem>(propertynamerotate, QVariant::fromValue(m_params.m_triangleEdgeRotate.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onTriangleEdgeRotateChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onTriangleEdgeRotateChanged);
 
 	buildPropertyDataPenAndBrush();
 }
 
 void DiagramItem::buildLinePropertyData()
 {
-	std::shared_ptr<propertyData> data = nullptr;
-	data = std::make_shared<propertyData>(propertynamename, "diagram line");
+	std::shared_ptr<propertyItem> data = nullptr;
+	data = std::make_shared<propertyItem>(propertynamename, "diagram line");
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
 
-	data = std::make_shared<propertyData>(propertynamescale, QVariant::fromValue(m_params.m_scale));
+	data = std::make_shared<propertyItem>(propertynamescale, QVariant::fromValue(m_params.m_scale));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onScaleChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onScaleChanged);
 
-	data = std::make_shared<propertyData>(propertynamerotate, QVariant::fromValue(m_params.m_linerotate.value()));
+	data = std::make_shared<propertyItem>(propertynamerotate, QVariant::fromValue(m_params.m_linerotate.value()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onLineRotateChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onLineRotateChanged);
 
 	buildPropertyDataPenAndBrush();
 }
 
 void DiagramItem::buildPropertyDataPenAndBrush()
 {
-	auto data = std::make_shared<propertyData>(propertynamepencolor, QVariant::fromValue(m_params.m_pen.color()));
+	auto data = std::make_shared<propertyItem>(propertynamepencolor, QVariant::fromValue(m_params.m_pen.color()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenColorChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onPenColorChanged);
 
-	data = std::make_shared<propertyData>(propertynamepenwidth, QVariant::fromValue(m_params.m_pen.width()));
+	data = std::make_shared<propertyItem>(propertynamepenwidth, QVariant::fromValue(m_params.m_pen.width()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenWidthChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onPenWidthChanged);
 
-	data = std::make_shared<propertyData>(propertynamebrush, QVariant::fromValue(m_params.m_brush.color()));
+	data = std::make_shared<propertyItem>(propertynamebrush, QVariant::fromValue(m_params.m_brush.color()));
 	m_propertyDataMap[data->m_name] = data;
 	m_propertyDataVec.push_back(data);
-	QObject::connect(data.get(), &propertyData::signalValueChanged, this, &DiagramItem::onPenBrushChanged);
+	QObject::connect(data.get(), &propertyItem::signalValueChanged, this, &DiagramItem::onPenBrushChanged);
 }
 
 
@@ -1205,7 +1205,7 @@ DiagramItem::DiagramItem(GfxLibDiagramItemParams params, QWidget* parent)
 	:m_params(params)
 	, QWidget(parent)
 	, dragstartposition(QPoint(0, 0))
-	, m_propertyWidgetManger(nullptr)
+	//, m_propertyWidgetManger(nullptr)
 {
 	m_huabupen = params.m_pen;
 	m_huabubrush = params.m_brush;

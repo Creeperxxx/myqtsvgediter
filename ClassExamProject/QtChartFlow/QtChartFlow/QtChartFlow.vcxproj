@@ -103,6 +103,7 @@
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="propertyPage.cpp" />
     <ClCompile Include="shuxingwidget.cpp" />
     <ClCompile Include="tuxing.cpp" />
     <ClCompile Include="tuxingjiedian.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="DiagramMimedata.h" />
     <ClInclude Include="drawtool.h" />
     <QtMoc Include="shuxingwidget.h" />
+    <ClInclude Include="propertyPage.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="huabu.h" />
     <QtMoc Include="tuxing.h" />
@@ -129,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
+    <None Include="cpp.hint" />
     <None Include="qtdpsk.md" />
   </ItemGroup>
   <ItemGroup>

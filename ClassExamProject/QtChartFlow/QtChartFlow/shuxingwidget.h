@@ -1,20 +1,16 @@
 #pragma once
-#include <optional>
 #include <qwidget.h>
 #include <qformlayout.h>
 #include <qspinbox.h>
 #include <qvariant.h>
 #include <qboxlayout.h>
-#include <qlineedit.h>
 #include <qcombobox.h>
-#include <qmap.h>
-#include <qpainter.h>
 #include <qstackedwidget.h>
-#include <quuid.h>
 #include <qpushbutton.h>
 #include <qcolordialog.h>
-#include <functional>
 #include <map>
+#include <optional>
+#include <qlabel.h>
 
 
 //rect radio
@@ -69,12 +65,29 @@ constexpr const int huabuheightMax = 8000;
 constexpr const int huabuheightMin = 100;
 constexpr const int huabuheightvalue = 900;
 
+constexpr const int tuxingspacewidthMax = 1000;
+constexpr const int tuxingspacewidthMin = 10;
+
+constexpr const int tuxingspaceheightMax = 1000;
+constexpr const int tuxingspaceheightMin = 10;
+constexpr const int tuxingspacewidthvalue = 500;
+constexpr const int tuxingspaceheightvalue = 500;
+
+
 constexpr auto propertyColorText = "选择";
 constexpr auto propertyColorDialogTitle = "选择一个颜色";
 constexpr auto propertyInitColor = Qt::white;
+
+constexpr auto defaultname = "default name";
+constexpr auto propertynamehmove = "水平偏移";
+constexpr auto propertynamevmove = "垂直偏移";
+constexpr auto centerhmax = 4000;
+constexpr auto centerhmin = -4000;
+constexpr auto centervmax = 4000;
+constexpr auto centervmin = -4000;
 //constexpr auto property
 
-enum class EditItemDataType
+enum class delegateType
 {
 	Double,
 	Int,
@@ -84,57 +97,174 @@ enum class EditItemDataType
 };
 
 
-class propertyItemParams
+
+class IdelegatePramas
 {
 public:
-	EditItemDataType m_type;
+	delegateType m_type;
+	IdelegatePramas(delegateType type);
+	virtual ~IdelegatePramas() = 0;
+};
 
-	static propertyItemParams createDoubleParams(double rangemin
-		, double rangemax
-		, double  singlestep
+class delegateParamsDouble : public IdelegatePramas
+{
+public:
+	~delegateParamsDouble() {}
+	delegateParamsDouble(double max
+		, double min
+		, double step
 		, int decimals
-		, double value);
-	bool isDoubleDataValid();
-	std::optional<double> m_doubleRangeMin;
-	std::optional<double> m_doubleRangeMax;
-	std::optional<double> m_doubleSingleStep;
-	std::optional<int> m_doubleDecimals;
-	std::optional<double> m_doubleDefaultValue;
+		, double initvalue);
+	double m_valuemax;
+	double m_valuemin;
+	double m_valuestep;
+	int m_valuedecimals;
+	double m_initvalue;
 
-	static propertyItemParams createIntParams(int rangemin
-		, int rangemax
-		, int singlestep
-		, int value);
-	bool isIntDataValid();
-	std::optional<int> m_intRangeMin;
-	std::optional<int> m_intRangeMax;
-	std::optional<int> m_intSingleStep;
-	std::optional<int> m_intDefaultValue;
+};
 
-	static propertyItemParams createColorParams(QColor initcolor);
-	//, QString colorvalueproperty
-	//, QString colorchoosetitle);
-	bool isColorsetValid();
-	std::optional<QColor> m_ColorInitValue;
-	//std::optional<QString> m_colorText;
-	//std::optional<QString> m_colorvalueProperty;
-	//std::optional<QString> m_colorChooseTitle;
-	//其实就是对一个按钮进行一些设置，例如字体 背景 样式等
+class delegateParamsInt : public IdelegatePramas
+{
+public:
+	~delegateParamsInt() {}
+	delegateParamsInt(int max
+		, int min
+		, int step
+		, int initvalue);
+	int m_valuemax;
+	int m_valuemin;
+	int m_valuestep;
+	int m_initvalue;
+};
 
-	static propertyItemParams createEnumParams(QVector<QString> vec);
-	bool isEnumDataValid();
-	std::optional<QVector<QString>> m_enumStringVec;
+class delegateParamsColor : public IdelegatePramas
+{
+public:
+    ~delegateParamsColor() {}
+	delegateParamsColor(QColor initcolor);
+	QColor m_initcolor;
+};
 
-	static propertyItemParams createStringParams();
-	bool isStringsetValid();
-	//对一个qlabel进行一些设置
+class delegateParamsEnum : public IdelegatePramas
+{
+public:
+    ~delegateParamsEnum() {}
+	delegateParamsEnum(QVector<QString> vec);
+	QVector<QString> m_vec;
+	QString m_initstring;
+};
 
-	//static propertyItemParams createStringParams(QString str);
-	//bool isStringItemValid();
-	//std::optional<QString> m_stringStr;
+class delegateParamsString : public IdelegatePramas
+{
+public:
+    ~delegateParamsString() {}
+	delegateParamsString(QString str);
+	QString m_initstring;
+};
+
+
+
+class propertydata;
+
+
+
+
+
+
+
+
+
+
+
+class IpropertyDelegate : public QWidget
+{
+	Q_OBJECT
+
+public:
+	void slotValueChanged();
+signals:
+    void signalValueChanged(QVariant value);
+
+	virtual ~IpropertyDelegate() = 0;
+	virtual void setData(std::shared_ptr<propertydata> data) = 0;
+	virtual QWidget* getEditWidget() = 0;
+
+protected:
+	virtual void createWidget(std::shared_ptr<IdelegatePramas> params) = 0;
+	virtual QVariant value() = 0;
+
+};
+
+class doubleDelegate : public IpropertyDelegate
+{
+public:
+	~doubleDelegate() override = default;
+	doubleDelegate(std::shared_ptr<IdelegatePramas> params);
+	void setData(std::shared_ptr<propertydata> data) override;
+	QWidget* getEditWidget() override;
 private:
-	propertyItemParams();
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+	QVariant value();
 
+	QDoubleSpinBox* m_editwidget;
+};
+
+class intDelegate : public IpropertyDelegate
+{
+    ~intDelegate() override = default;
+	intDelegate(std::shared_ptr<IdelegatePramas> params);
+    void setData(std::shared_ptr<propertydata> data) override;
+	QWidget* getEditWidget() override;
+private:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+    QVariant value();
+
+    QSpinBox* m_editwidget;
+};
+
+class colorDelete : public IpropertyDelegate
+{
+public:
+    ~colorDelete() override = default;
+	colorDelete(std::shared_ptr<IdelegatePramas> params);
+    void setData(std::shared_ptr<propertydata> data) override;
+	QWidget* getEditWidget() override;
+private:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+
+    QVariant value();
+	
+	QColor m_currentcolor;
+    QPushButton* m_button;
+	QLabel* m_colorlabel;
+	QWidget* m_colorwidget;
+	QHBoxLayout* m_colorlayout;
+};
+
+class stringDelegate : public IpropertyDelegate
+{
+public:
+	~stringDelegate() override = default;
+	stringDelegate(std::shared_ptr<IdelegatePramas> params);
+	void setData(std::shared_ptr<propertydata> data) override;
+private:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+
+	QVariant value();
+
+	QLabel* m_label;
+};
+
+class enumDelegate : public IpropertyDelegate
+{
+    ~enumDelegate() override = default;
+	enumDelegate(std::shared_ptr<IdelegatePramas> params);
+    void setData(std::shared_ptr<propertydata> data) override;
+private:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+    QVariant value();
+
+    QComboBox* m_combobox;
 };
 
 
@@ -143,72 +273,24 @@ private:
 
 
 
-class propertyData;
-class propertyItem : public QWidget
+
+
+class propertydata : public QWidget
 {
 	Q_OBJECT
 public:
-	propertyItem(propertyItemParams params);
-	QWidget* getEditWidget();
-	//QString getName();
-	void setData(std::shared_ptr<propertyData> data);
-//槽函数
-	void onValueChanged();
-	//void onSetValue(std::shared_ptr<propertyData> data);
-signals:
-	void signalValueChanged(QVariant value);
-	
-
-private:
-	//void createItem(propertyItemParams* params);
-	void createWidgetByType(propertyItemParams params);
-
-	void setDataByType(QVariant value);
-
-	//void setDoubleData(propertyItemParams* params);
-	//void setIntData(propertyItemParams* params);
-	//void setColorData(propertyItemParams* params);
-	//void setEnumData(propertyItemParams* params);
-	//void setStringData(propertyItemParams* params);
-
-	QVariant getValue();
-
-	QWidget* m_editWidget;
-	EditItemDataType m_type;
-	const QString m_colorQpushbuttonPropertyName;
-	//propertyItemParams* m_params;
-};
-
-
-
-
-
-
-
-
-
-class propertyData : public QWidget
-{
-	
-	Q_OBJECT
-
-public:
-	propertyData(QString name, QVariant data);
-
-	void slotValueChanged(QVariant value);
+	propertydata(QString name, QVariant data);
 
 signals:
 	void signalValueChanged(QVariant value);
-
-
 public:
-	//EditItemDataType m_datatype;
 	QString m_name;
 	QVariant m_data;
 
-	//propertyItemParams m_params;
 };
 class propertyWidget;
+
+
 
 
 
@@ -230,6 +312,7 @@ class PropertyWidgetManager : public QWidget
 public:
 	enum class propertyobjecttype
 	{
+		defaulttype,
 		diagramRect,
 		diagramCircle,
 		diagramTriangle,
@@ -243,11 +326,8 @@ public:
 	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
-	void dealclicked(propertyobjecttype type, std::vector<std::shared_ptr<propertyData>> data);
+	void dealclicked(propertyobjecttype type, std::vector<std::shared_ptr<propertydata>> data);
 private:
-	//propertyWidget* createinitPropertyWidget(propertyobjecttype type, QWidget* widget);
-
-	//void initStackWidget();
 
 	void createonceWidget();
 	propertyWidget* createOriginalPropertyWidget();
@@ -260,11 +340,26 @@ private:
     void buildDiagramHuabuCirclePropertyWidget(propertyWidget* widget);
     void buildDiagramHuabuTrianglePropertyWidget(propertyWidget* widget);
     void buildDiagramHuabuLinePropertyWidget(propertyWidget* widget);
+	void buildDefaultPropertyWidget(propertyWidget* widget);
 
-
-	void buildPropertywidgetPenandBrush(propertyWidget* widget);
 
 	void addPropertyWidget(propertyobjecttype type, propertyWidget* widget);
+
+
+	void buildPropertyWidgetName(propertyWidget* widget);
+	void buildPropertyWidgetRectRadio(propertyWidget* widget);
+	void buildPropertyWidgetRotate(propertyWidget* widget);
+	void buildProertyWidgetCircleRadio(propertyWidget* widget);
+	void buildPropertyWidgetScale(propertyWidget* widget);
+	void buildPropertyWidgetTriangleSideRadio(propertyWidget* widget);
+	void buildPropertyWidgetTriangleEdgetype(propertyWidget* widget);
+	void buildPropertyWidgetPenAndBrush(propertyWidget* widget);
+	void buildPropertyWidgetSpacesize(propertyWidget* widget);
+	void buildPropertyWidgetHuabuSize(propertyWidget* widget);
+	void buildPropertyWidgetCentermove(propertyWidget* widget);
+
+
+
 
 
 	QMap<propertyobjecttype, propertyWidget*> m_propertyMap;
@@ -275,78 +370,18 @@ private:
 
 
 
-//class propertyItem : public QWidget
-//{
-//	Q_OBJECT
-//
-//public:
-//	enum class propertyType
-//	{
-//		//String,
-//		//Int,
-//		//Double,
-//		//Boolean,
-//		//Color,
-//		Text,
-//		Color, //QColorDialog::getColor(Qt::white, this, "Choose a color");
-//		File, //QFileDialog::getOpenFileName(this,"Open File","/home","All Files (*);;Text Files (*.txt)");
-//        Boolean,
-//		Enum
-//		//date,
-//		//image
-//		//password
-//		//wenjianjia
-//	};
-//	//propertyItem(QString name, QWidget* widget, propertyType type, QWidget* parent = nullptr);
-//
-//	propertyItem(const QString& name, QWidget* widget, QWidget* parent = nullptr);
-////signals:
-//	//信号
-//	//void valueChanged(const QString& name, const QVariant& value);
-//
-////private slots:
-//	//void onValueChanged();
-//	//{
-//		//emit valueChanged(m_name, value());
-//	//}
-//
-//
-//
-//private:
-//	//QWidget* createTextwidget();
-//
-//
-//
-//
-//	//QVariant value();
-//	//{
-//	//	switch (m_type)
-//	//	{
-//	//	case propertyItem::propertyType::String:
-//	//		return dynamic_cast<QLineEdit*>(m_editWidget)->text();
-//	//		break;
-//	//	case propertyItem::propertyType::Int:
-//	//		return dynamic_cast<QSpinBox*>(m_editWidget)->value();
-//	//		break;
-//	//	case propertyItem::propertyType::Double:
-//	//		return dynamic_cast<QDoubleSpinBox*>(m_editWidget)->value();
-//	//		break;
-//	//	case propertyItem::propertyType::Boolean:
-//	//		return dynamic_cast<QComboBox*>(m_editWidget)->currentData();
-//	//		break;
-//	//	case propertyItem::propertyType::Color:
-//	//		throw std::runtime_error("error");
-//	//		break;
-//	//	default:
-//	//		throw std::runtime_error("error");
-//	//		break;
-//	//	}
-//	//}
-//
-//	QString m_name;
-//	//propertyType m_type;
-//	QWidget* m_editWidget;
-//};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -355,23 +390,25 @@ class propertyWidget : public QWidget
 {
 	Q_OBJECT
 public:
-	//void huabushuxing();
 	propertyWidget(QWidget* parent = nullptr);
-	//void addProperty(const QString& name, QWidget* widget);
-	void paintEvent(QPaintEvent* event) override;
 	void setstackwidgetindex(int index);
 	int getstackwidgetindex();
 
-	void addPropertyItem(QString name, propertyItemParams params);
-	void addShowingData(std::shared_ptr<propertyData> data);
+	void addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params);
+	void addShowingData(std::shared_ptr<propertydata> data);
 
-	//void propertyChanged(const QString& name, const QVariant& value);
 private:
+	std::shared_ptr<IpropertyDelegate> createDelegate(std::shared_ptr<IdelegatePramas> params);
+	std::shared_ptr<IpropertyDelegate> createDelegateDouble(std::shared_ptr<IdelegatePramas> params);
+	std::shared_ptr<IpropertyDelegate> createDelegateInt(std::shared_ptr<IdelegatePramas> params);
+	std::shared_ptr<IpropertyDelegate> createDelegateColor(std::shared_ptr<IdelegatePramas> params);
+	std::shared_ptr<IpropertyDelegate> createDelegateEnum(std::shared_ptr<IdelegatePramas> params);
+	std::shared_ptr<IpropertyDelegate> createDelegateString(std::shared_ptr<IdelegatePramas> params);
 
-	std::map<QString,std::shared_ptr<propertyItem>> m_propertyItemMap;
+
+
+	std::map<QString, std::shared_ptr<IpropertyDelegate>> m_propertyDelegateMap;
 	QFormLayout* m_shuxinglayout;
-	//QMap<QString, QWidget*> m_propertyMap;
-	//PropertyWidgetManager::propertyobjecttype m_type;
 	int m_stackwidgetindex;
 };
 

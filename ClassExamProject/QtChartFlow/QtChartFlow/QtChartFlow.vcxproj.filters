@@ -50,6 +50,9 @@
     <ClCompile Include="shuxingwidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="propertyPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="MyMainWindow.h">
@@ -86,6 +89,9 @@
     <ClInclude Include="DiagramMimedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="propertyPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="qt.md">
@@ -100,6 +106,7 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="config.json" />
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="image.qrc">

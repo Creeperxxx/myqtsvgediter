@@ -166,9 +166,9 @@ private:
 
 
 class PropertyWidgetManager;
-class propertyData;
+class propertyItem;
 enum class PropertyWidgetManager::propertyobjecttype;
-enum class EditItemDataType;
+enum class delegateType;
 
 class DiagramItem : public QWidget
 {
@@ -228,7 +228,7 @@ public:
 
 	void onScaleChanged(QVariant value);
 
-	void setPropertyWidgetManger(PropertyWidgetManager* manager);
+	//void setPropertyWidgetManger(PropertyWidgetManager* manager);
 
 	void createPropertyWidget();
 	void buildRectPropertyData();
@@ -237,8 +237,8 @@ public:
 	void buildLinePropertyData();
 
 	PropertyWidgetManager::propertyobjecttype m_propertywidgettype;
-	std::unordered_map<QString, std::shared_ptr<propertyData>> m_propertyDataMap;
-	std::vector<std::shared_ptr<propertyData>> m_propertyDataVec;
+	std::unordered_map<QString, std::shared_ptr<propertyItem>> m_propertyDataMap;
+	std::vector<std::shared_ptr<propertyItem>> m_propertyDataVec;
 
 	void buildPropertyDataPenAndBrush();
 
@@ -247,7 +247,7 @@ public:
 
 //信号
 signals:
-	void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::vector<std::shared_ptr<propertyData>> data);
+	void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::vector<std::shared_ptr<propertyItem>> data);
 
 private:
 	void mousePressEvent(QMouseEvent* event) override;
@@ -315,7 +315,7 @@ private:
 	QPen m_huabupen;
 	QBrush m_huabubrush;
 	QSizeF m_huabuspacesize;
-	PropertyWidgetManager* m_propertyWidgetManger;
+	//PropertyWidgetManager* m_propertyWidgetManger;
 	//qreal m_pixmapScale;
 	
 	//std::shared_ptr<GfxLibDiagramitemDrawer> m_diagramDrawer;
