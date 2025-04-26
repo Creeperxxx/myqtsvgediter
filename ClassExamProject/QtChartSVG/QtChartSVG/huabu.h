@@ -12,6 +12,8 @@
 #include <vector>
 #include "DiagramMimedata.h"
 #include "shuxingwidget.h"
+#include "qlinkedlist.h"
+
 
 
 
@@ -60,6 +62,8 @@ public:
 	QPointF m_center;
 	int m_centerhoffset;
 	int m_centervoffset;
+
+	qint64 m_dataTime; //z值
 private:
 	void buildPropertyDataPenandBrush();
 	void buildPropertyDataCenteroffset();
@@ -118,6 +122,7 @@ private:
 
 
 	std::vector<std::shared_ptr<huabutuxing>> m_tuxingvec;
+	QLinkedList<std::shared_ptr<huabutuxing>> m_tuxinglist;
 
 	QColor m_backgroundcolor;
 	QSize m_size;

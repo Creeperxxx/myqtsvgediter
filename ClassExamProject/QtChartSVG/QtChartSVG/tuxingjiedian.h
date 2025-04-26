@@ -8,6 +8,8 @@
 #include "configmanager.h"
 #include "drawtool.h"
 #include "qpainterpath.h"
+#include <unordered_map>
+#include <functional>
 
 constexpr const double linetolerance = 5.0;
 
@@ -16,6 +18,7 @@ class DrawResult
 
 public:
 	virtual bool iscontainPoint(QPointF point) = 0;
+	virtual QPainterPath getPainterPath() = 0;
 
 
 	QPen m_painterpen;
@@ -26,6 +29,7 @@ class DrawResultRect : public DrawResult
 {
 public:
 	bool iscontainPoint(QPointF point) override;
+	QPainterPath getPainterPath() override;
 
 	QPolygonF m_rect;
 };
@@ -34,6 +38,7 @@ class DrawResultCircle :public DrawResult
 {
 public:
 	bool iscontainPoint(QPointF point) override;
+	QPainterPath getPainterPath() override;
 	QPolygonF m_circle;
 };
 
@@ -41,6 +46,8 @@ class DrawResultTriangle :public DrawResult
 {
 public:
 	bool iscontainPoint(QPointF point)override;
+	QPainterPath getPainterPath() override;
+
 	QPolygonF m_triangle;
 };
 
@@ -48,6 +55,7 @@ class DrawResultLine : public DrawResult
 {
 public:
 	bool iscontainPoint(QPointF point) override;
+	QPainterPath getPainterPath() override;
 	QLineF m_line;
 private:
 	qreal distanceToLine(const QLineF& line, const QPointF& point);
@@ -61,22 +69,32 @@ class IDiagramDrawer
 {
 public:
 	virtual std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params) = 0;
+	virtual void build() = 0;
+	virtual void draw(QPainter& painter) = 0;
+	virtual std::shared_ptr<DrawResult> getResult() = 0;
+
 };
 
 class DiagramDrawerRect : public IDiagramDrawer
 {
 public:
+	DiagramDrawerRect(std::shared_ptr<IDidgramDrawParams> params);
+	void build() override;
+	void draw(QPainter& painter) override;
+
+
+
 	std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) override;
 private:
-	//QRectF calcurect(DiagramDrawParamsRect* params);
-	//QSizeF calcusuitablerectsize(DiagramDrawParamsRect* params);
-	QPolygonF calcuRect(DiagramDrawParamsRect* params, qreal penwidth);
+	QPolygonF calcuRect(DiagramDrawParamsRect* params);
 	QPolygonF calcuBasicalRect(DiagramDrawParamsRect* params);
-	QTransform calcuRotateTransform(DiagramDrawParamsRect* params);
-	QTransform calcuTranslateTransform(QPolygonF diagram, DiagramDrawParamsRect* params);
-	QTransform calcuScaleTransform(QPolygonF diagram, DiagramDrawParamsRect* params, qreal penwidth);
+	QTransform calcuRotateTransform(DiagramDrawParamsRect* params, QPointF center);
+	QTransform calcuTranslateTransform(DiagramDrawParamsRect* params, QPointF center);
+	QTransform calcuScaleTransform(DiagramDrawParamsRect* params, QRectF rect);
 
-	
+	std::shared_ptr<DiagramDrawParamsRect> m_params;
+	bool m_isbuild;
+	QPolygonF m_rect;
 };
 
 class DiagramDrawerCircle : public IDiagramDrawer
@@ -84,8 +102,6 @@ class DiagramDrawerCircle : public IDiagramDrawer
 public:
 	std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)override;
 private:
-	//int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
-	//QRectF calcuboundingrect(DiagramDrawParamsCircle* params);
 	QPolygonF calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize);
 	QTransform calcurotatetransform(DiagramDrawParamsCircle* params);
 	qreal calcuscaleFactor(DiagramDrawParamsCircle* params, QPolygonF diagram, qreal penwidth);
@@ -117,19 +133,13 @@ private:
 
 
 
-
-
-
 class DiagramDrawInterface
 {
-public:
-	static std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params);
+public:					                       
+	static DiagramDrawInterface& getInstance();
+	void addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer);
+	std::shared_ptr<IDiagramDrawer> getDrawer(ShapeType type, std::shared_ptr<IDidgramDrawParams> params);
 private:
-	static std::shared_ptr<IDiagramDrawer> create(ShapeType type);
+	std::unordered_map<ShapeType, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)>> m_drawerMap;
 };
 
-//class factorytuxingparams
-//{
-//public:
-//	static std::shared_ptr<IDidgramDrawParams> create(ShapeType type);
-//};

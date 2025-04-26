@@ -3,6 +3,31 @@
 #include <qmath.h>
 
 
+DiagramDrawerRect::DiagramDrawerRect(std::shared_ptr<IDidgramDrawParams> params)
+	:m_params(nullptr)
+{
+	if()
+}
+
+void DiagramDrawerRect::build()
+{
+	if (m_params == nullptr)
+		throw std::runtime_error("error");
+	DiagramDrawParamsRect* p = dynamic_cast<DiagramDrawParamsRect*>(m_params.get());
+	if (p == nullptr)
+		throw std::runtime_error("error");
+
+	m_rect = calcuRect(p);
+	m_isbuild = true;
+}
+
+void DiagramDrawerRect::draw(QPainter& painter)
+{
+	if (!m_isbuild)
+		build();
+	
+}
+
 std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
 	if (!params)
@@ -11,9 +36,10 @@ std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shar
 	if (!p)
 		throw std::runtime_error("error");//todo:except
 
-	//QRectF rect = calcurect(p);
-	//painter.drawRect(rect);
-	QPolygonF rect = calcuRect(p, painter.pen().widthF());
+	painter.setPen(params->m_pen);
+	painter.setBrush(params->m_brush);
+
+	QPolygonF rect = calcuRect(p);
 	painter.drawPolygon(rect);
 
 	//QPen pen = painter.pen();
@@ -35,7 +61,7 @@ QPolygonF DiagramDrawerCircle::calcuBasicalCircle(DiagramDrawParamsCircle* param
 	QPointF lefttop(x, y);
 	QPointF leftbottom(x, y + suitablesize.height());
 	QPointF righttop(x + suitablesize.width(), y);
-	QPointF rightbottom(x + suitablesize.width() , y + suitablesize.height() );
+	QPointF rightbottom(x + suitablesize.width(), y + suitablesize.height());
 
 	QPolygonF circle;
 	circle << lefttop << leftbottom << rightbottom << righttop;
@@ -110,6 +136,8 @@ std::shared_ptr<DrawResult> DiagramDrawerCircle::draw(QPainter& painter, std::sh
 	if (!p)
 		throw std::runtime_error("error");//todo:except
 
+	painter.setPen(params->m_pen);
+	painter.setBrush(params->m_brush);
 	//auto r = calcuyuanxingbanjing(p);
 	//QRectF boundingrect = calcuboundingrect(p);
 	//painter.drawEllipse(boundingrect);
@@ -204,56 +232,55 @@ QPolygonF DiagramDrawerRect::calcuBasicalRect(DiagramDrawParamsRect* params)
 
 
 	QPointF lefttop(0.0, 0.0);
-	QPointF leftbottom(0.0, height);
-	QPointF righttop(width, 0.0);
-	QPointF rightbottom(width, height);
+	QPointF leftbottom(0.0, height - 1);
+	QPointF righttop(width - 1, 0.0);
+	QPointF rightbottom(width - 1, height - 1);
 
 	QPolygonF basicalrect;
 	basicalrect << lefttop << leftbottom << rightbottom << righttop;
 	return basicalrect;
 }
 
-QTransform DiagramDrawerRect::calcuRotateTransform(DiagramDrawParamsRect* params)
+QTransform DiagramDrawerRect::calcuRotateTransform(DiagramDrawParamsRect* params, QPointF center)
 {
 	QTransform rotatetransform;
-	rotatetransform.translate(params->m_center.x(), params->m_center.y());
+	rotatetransform.translate(center.x(), center.y());
 	rotatetransform.rotate(params->m_rectrotate);
-	rotatetransform.translate(-params->m_center.x(), -params->m_center.y());
+	rotatetransform.translate(-center.x(), -center.y());
 	return rotatetransform;
 }
 
-QTransform DiagramDrawerRect::calcuTranslateTransform(QPolygonF diagram, DiagramDrawParamsRect* params)
+QTransform DiagramDrawerRect::calcuTranslateTransform(DiagramDrawParamsRect* params, QPointF center)
 {
 	QTransform translateTransform;
-	QPointF diagramcenter = diagram.boundingRect().center();
-	QPointF finalpoint = params->m_center - diagramcenter;
+	QPointF finalpoint = params->m_center - center;
 	translateTransform.translate(finalpoint.x(), finalpoint.y());
 	return translateTransform;
 }
 
-QTransform DiagramDrawerRect::calcuScaleTransform(QPolygonF diagram, DiagramDrawParamsRect* params, qreal penwidth)
+QTransform DiagramDrawerRect::calcuScaleTransform(DiagramDrawParamsRect* params, QRectF rect)
 {
 	QTransform scaletransform;
-	qreal scalex = params->m_spacesize.width() / (diagram.boundingRect().width() + penwidth);
-	qreal scaley = params->m_spacesize.height() / (diagram.boundingRect().height() + penwidth);
+	qreal penwidth = params->m_pen.widthF();
+	qreal scalex = params->m_spacesize.width() / (rect.width() + penwidth);
+	qreal scaley = params->m_spacesize.height() / (rect.height() + penwidth);
 	qreal scale = qMin(scalex, scaley) * params->m_scale;
 	if (scale < 1e-10)
 		throw std::runtime_error("error");
-	qreal centerx = diagram.boundingRect().center().x();
-	qreal centery = diagram.boundingRect().center().y();
-	scaletransform.translate(centerx, centery);
+	qreal x = rect.center().x();
+	qreal y = rect.center().y();
+	scaletransform.translate(x, y);
 	scaletransform.scale(scale, scale);
-	scaletransform.translate(-centerx, -centery);
+	scaletransform.translate(-x, -y);
 	return scaletransform;
 }
 
-QPolygonF DiagramDrawerRect::calcuRect(DiagramDrawParamsRect* params, qreal penwidth)
+QPolygonF DiagramDrawerRect::calcuRect(DiagramDrawParamsRect* params)
 {
 	QPolygonF rect = calcuBasicalRect(params);
-	rect = rect * calcuRotateTransform(params);
-	rect = rect * calcuTranslateTransform(rect, params);
-	rect = rect * calcuScaleTransform(rect, params, penwidth);
-
+	rect = rect * calcuRotateTransform(params, rect.boundingRect().center());
+	rect = rect * calcuTranslateTransform(params, rect.boundingRect().center());
+	rect = rect * calcuScaleTransform(params,rect.boundingRect());
 	return rect;
 }
 
@@ -262,30 +289,32 @@ QPolygonF DiagramDrawerRect::calcuRect(DiagramDrawParamsRect* params, qreal penw
 
 
 
-std::shared_ptr<DrawResult> DiagramDrawInterface::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
+DiagramDrawInterface& DiagramDrawInterface::getInstance()
 {
-	return create(params->m_type)->draw(painter, params);
+	static DiagramDrawInterface instance;
+	return instance;
 }
 
-
-std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::create(ShapeType type)
+void DiagramDrawInterface::addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer)
 {
-	switch (type)
+	m_drawerMap[type] = drawer;
+}
+
+std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(ShapeType type, std::shared_ptr<IDidgramDrawParams> params)
+{
+	if (m_drawerMap.find(type) != m_drawerMap.end())
 	{
-	case ShapeType::Rect:
-		return std::make_unique<DiagramDrawerRect>();
-		break;
-	case ShapeType::Circle:
-		return std::make_unique<DiagramDrawerCircle>();
-	case ShapeType::Triangle:
-		return std::make_unique<DiagramDrawerTriangle>();
-		break;
-	case ShapeType::Line:
-		return std::make_unique<DiagramDrawerLine>();
-	default:
+		return m_drawerMap[type](params);
+	}
+	else
+	{
 		throw std::runtime_error("error");
 	}
+
 }
+
+
+
 
 std::shared_ptr<DrawResult> DiagramDrawerTriangle::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
 {
@@ -294,6 +323,8 @@ std::shared_ptr<DrawResult> DiagramDrawerTriangle::draw(QPainter& painter, std::
 	auto p = dynamic_cast<DiagramDrawParamsTriangle*>(params.get());
 	if (!p)
 		throw std::runtime_error("error");//todo:except
+	painter.setPen(params->m_pen);
+	painter.setBrush(params->m_brush);
 	QPolygonF triangle = calcuTriangle(p);
 	painter.drawPolygon(triangle);
 
@@ -433,6 +464,9 @@ std::shared_ptr<DrawResult> DiagramDrawerLine::draw(QPainter& painter, std::shar
 	if (!p)
 		throw std::invalid_argument("Invalid diagram draw parameters type.");
 
+	painter.setPen(params->m_pen);
+	painter.setBrush(params->m_brush);
+
 
 	QLineF line = calcuLine(p);
 	// Draw the line
@@ -503,6 +537,15 @@ bool DrawResultRect::iscontainPoint(QPointF point)
 	return m_rect.containsPoint(point, Qt::OddEvenFill);
 }
 
+QPainterPath DrawResultRect::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.widthF());
+	QPainterPath path;
+	path.addPolygon(m_rect);
+	return stroker.createStroke(path);
+}
+
 bool DrawResultCircle::iscontainPoint(QPointF point)
 {
 	if (m_circle.size() < 4) return false;
@@ -514,15 +557,45 @@ bool DrawResultCircle::iscontainPoint(QPointF point)
 	return path.contains(point);
 }
 
+QPainterPath DrawResultCircle::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.widthF());
+	QPainterPath path;
+	path.addEllipse(QRectF(m_circle[0], m_circle[2]));
+	return stroker.createStroke(path);
+}
+
 bool DrawResultTriangle::iscontainPoint(QPointF point)
 {
 	return m_triangle.containsPoint(point, Qt::OddEvenFill);
+}
+
+QPainterPath DrawResultTriangle::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.widthF());
+	QPainterPath path;
+	path.addPolygon(m_triangle);
+	return stroker.createStroke(path);
 }
 
 bool DrawResultLine::iscontainPoint(QPointF point)
 {
 	qreal distance = distanceToLine(m_line, point);
 	return distance <= linetolerance;
+}
+
+QPainterPath DrawResultLine::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.widthF());
+
+	QPainterPath path;
+	path.moveTo(m_line.p1());
+	path.lineTo(m_line.p2());
+
+	return stroker.createStroke(path);
 }
 
 qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)

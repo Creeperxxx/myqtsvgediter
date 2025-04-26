@@ -1,4 +1,5 @@
 #include "huabu.h"
+#include <qdatetime.h>
 
 huabu::huabu(QWidget* parent)
 	: QWidget(parent)
@@ -52,16 +53,17 @@ void huabu::dropEvent(QDropEvent* event)
 	params->m_scale = data.m_scale;
 	params->m_spacesize = data.m_spacesize;
 	params->m_type = data.m_type;
+	params->m_pen = data.m_pen;
+	params->m_brush = data.m_brush;
 
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
 	tuxing->m_params = params;
-	tuxing->m_pen = data.m_pen;
-	tuxing->m_brush = data.m_brush;
 	tuxing->m_name = createTuxingName(data.m_type);
 	tuxing->m_type = data.m_type;
 	tuxing->m_center = event->posF();
 	tuxing->m_centerhoffset = 0;
 	tuxing->m_centervoffset = 0;
+	tuxing->m_dataTime = QDateTime::currentMSecsSinceEpoch();
 	tuxing->buildPropertyData();
 	QObject::connect(tuxing.get(), &huabutuxing::signalRepaint, this, qOverload<>(&huabu::update));
 
@@ -85,12 +87,12 @@ void huabu::paintEvent(QPaintEvent* event)
 	//drawBaseBackground(m_painter);
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::TextAntialiasing, true);
+
 	painter.fillRect(this->rect(), m_backgroundcolor);
 
 	for (auto& diagram : m_tuxingvec)
 	{
-		painter.setPen(diagram->m_pen);
-		painter.setBrush(diagram->m_brush);
 		diagram->m_ret = DiagramDrawInterface::draw(painter, diagram->m_params);
 	}
 }
@@ -117,14 +119,19 @@ void huabu::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		//emit signalMouseClicked(PropertyWidgetManager::propertyobjecttype::huabu, m_propertydataHuabuVec);
+		bool iscontain = false;
 		QPointF point = event->localPos();
 		for (const auto& tuxing : m_tuxingvec)
 		{
 			if (tuxing->m_ret->iscontainPoint(point))
 			{
 				emit signalMouseClicked(shapetypeToPropertyType(tuxing->m_type), tuxing->m_propertydataVec);
+				iscontain = true;
 			}
+		}
+		if (!iscontain)
+		{
+			emit signalMouseClicked(PropertyWidgetManager::propertyobjecttype::huabu, m_propertydataHuabuVec);
 		}
 	}
 }
@@ -345,7 +352,7 @@ void huabutuxing::buildPropertyDataCircle()
 
 	data = std::make_shared<propertydata>(propertynamerotate, QVariant::fromValue(p->m_circlerotate));
 	m_propertydataVec.push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedCircleRotate);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedCircleRotate);
 
 	buildPropertyDataScale();
 	buildPropertyDataSpacesize();
@@ -355,10 +362,10 @@ void huabutuxing::buildPropertyDataCircle()
 
 void huabutuxing::buildPropertyDataTriangle()
 {
-	if(m_params == nullptr)
+	if (m_params == nullptr)
 		throw std::runtime_error("error");
 	auto p = dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get());
-	if(p == nullptr)
+	if (p == nullptr)
 		throw std::runtime_error("error");
 
 	std::shared_ptr<propertydata> data = nullptr;
@@ -370,19 +377,19 @@ void huabutuxing::buildPropertyDataTriangle()
 
 	data = std::make_shared<propertydata>(propertynameleftradio, QVariant::fromValue(p->m_triangleSizeRadios.m_left));
 	m_propertydataVec.push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangeRadioLeft);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangeRadioLeft);
 
-    data = std::make_shared<propertydata>(propertynamerightradio, QVariant::fromValue(p->m_triangleSizeRadios.m_right));
-    m_propertydataVec.push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangeRadioRight);
+	data = std::make_shared<propertydata>(propertynamerightradio, QVariant::fromValue(p->m_triangleSizeRadios.m_right));
+	m_propertydataVec.push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangeRadioRight);
 
 	data = std::make_shared<propertydata>(propertynameedgetype, QVariant::fromValue(DiagramDrawParamsTriangle::edgetypeEnumToString(p->m_edgetype)));
-    m_propertydataVec.push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangleEdgetype);
-
-    data = std::make_shared<propertydata>(propertynamerotate, QVariant::fromValue(p->m_rotationAngle));
 	m_propertydataVec.push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangleRotate);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangleEdgetype);
+
+	data = std::make_shared<propertydata>(propertynamerotate, QVariant::fromValue(p->m_rotationAngle));
+	m_propertydataVec.push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedTriangleRotate);
 
 	buildPropertyDataScale();
 	buildPropertyDataSpacesize();
@@ -395,12 +402,12 @@ void huabutuxing::buildPropertyDataLine()
 	if (m_params == nullptr)
 		throw std::runtime_error("error");
 	auto p = dynamic_cast<DiagramDrawParamsLine*>(m_params.get());
-	if(p == nullptr)
+	if (p == nullptr)
 		throw std::runtime_error("error");
 
 	std::shared_ptr<propertydata> data = nullptr;
 	buildPropertyDataName();
-	
+
 	data = std::make_shared<propertydata>(propertynamerotate, QVariant::fromValue(p->m_rotationAngle));
 	m_propertydataVec.push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, this, &huabutuxing::onValueChangedLineRotate);
@@ -462,7 +469,7 @@ void huabutuxing::onValueChangedPenColor(QVariant value)
 {
 	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
-	m_pen.setColor(value.value<QColor>());
+	m_params->m_pen.setColor(value.value<QColor>());
 	emit signalRepaint();
 }
 
@@ -470,7 +477,7 @@ void huabutuxing::onValueChangedPenWidth(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_pen.setWidth(value.toInt());
+	m_params->m_pen.setWidth(value.toInt());
 	emit signalRepaint();
 }
 
@@ -478,7 +485,7 @@ void huabutuxing::onvalueChangedBrushColor(QVariant value)
 {
 	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
-	m_brush.setColor(value.value<QColor>());
+	m_params->m_brush.setColor(value.value<QColor>());
 	emit signalRepaint();
 }
 
@@ -502,7 +509,7 @@ void huabutuxing::onValueChangedVOffset(QVariant value)
 
 void huabutuxing::onValueChangedCircleRadio(QVariant value)
 {
-	if(!value.canConvert<double>())
+	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsCircle*>(m_params.get())->m_boundingrectradio = value.toDouble();
 	emit signalRepaint();
@@ -510,7 +517,7 @@ void huabutuxing::onValueChangedCircleRadio(QVariant value)
 
 void huabutuxing::onValueChangedCircleRotate(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsCircle*>(m_params.get())->m_circlerotate = value.toInt();
 	emit signalRepaint();
@@ -518,7 +525,7 @@ void huabutuxing::onValueChangedCircleRotate(QVariant value)
 
 void huabutuxing::onValueChangedTriangeRadioBottom(QVariant value)
 {
-	if(!value.canConvert<double>())
+	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_triangleSizeRadios.m_bottom = value.toDouble();
 	emit signalRepaint();
@@ -526,9 +533,9 @@ void huabutuxing::onValueChangedTriangeRadioBottom(QVariant value)
 
 void huabutuxing::onValueChangedTriangeRadioLeft(QVariant value)
 {
-	if(!value.canConvert<double>())
+	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
-    dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_triangleSizeRadios.m_left = value.toDouble();
+	dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_triangleSizeRadios.m_left = value.toDouble();
 	emit signalRepaint();
 }
 
@@ -536,14 +543,14 @@ void huabutuxing::onValueChangedTriangeRadioRight(QVariant value)
 {
 	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
-    dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_triangleSizeRadios.m_right = value.toDouble();
+	dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_triangleSizeRadios.m_right = value.toDouble();
 
-    emit signalRepaint();
+	emit signalRepaint();
 }
 
 void huabutuxing::onValueChangedTriangleEdgetype(QVariant value)
 {
-	if(!value.canConvert<QString>())
+	if (!value.canConvert<QString>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_edgetype = DiagramDrawParamsTriangle::edgetypeStringToEnum(value.toString());
 	emit signalRepaint();
@@ -551,7 +558,7 @@ void huabutuxing::onValueChangedTriangleEdgetype(QVariant value)
 
 void huabutuxing::onValueChangedTriangleRotate(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsTriangle*>(m_params.get())->m_rotationAngle = value.toInt();
 	emit signalRepaint();
@@ -559,7 +566,7 @@ void huabutuxing::onValueChangedTriangleRotate(QVariant value)
 
 void huabutuxing::onValueChangedLineRotate(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	dynamic_cast<DiagramDrawParamsLine*>(m_params.get())->m_rotationAngle = value.toInt();
 	emit signalRepaint();

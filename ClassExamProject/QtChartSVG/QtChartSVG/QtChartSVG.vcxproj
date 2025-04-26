@@ -123,10 +123,7 @@
   <ItemGroup>
     <None Include="config.json" />
     <None Include="cpp.hint" />
-    <None Include="qt.md" />
-    <None Include="qtdpsk.md" />
-    <None Include="qttongyi.md" />
-    <None Include="todo.md" />
+    <None Include="DailySum.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp" />

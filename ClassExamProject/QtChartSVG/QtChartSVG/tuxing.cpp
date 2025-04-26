@@ -506,6 +506,8 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::builddrawparamsrest(std::shared
 	params->m_spacesize = getselfdrawspacesize();
 	params->m_type = m_params.m_type;
 	params->m_scale = m_params.m_scale;
+	params->m_pen = m_params.m_pen;
+	params->m_brush = m_params.m_brush;
 	return params;
 }
 
@@ -563,6 +565,8 @@ std::shared_ptr<IDidgramDrawParams> DiagramItem::buildPixmapDrawParamsRest(std::
 	params->m_spacesize = getPixmapSpaceSize();
 	params->m_type = m_params.m_type;
 	params->m_scale = m_params.m_scale;
+	params->m_pen = m_params.m_pen;
+	params->m_brush = m_params.m_brush;
 	return params;
 }
 
@@ -595,17 +599,30 @@ void DiagramItem::paintEvent(QPaintEvent* event)
 	GfxLibDiagramitemDrawer::draw(painter, this);
 }
 
-void GfxLibDiagramitemDrawer::draw(QPainter& painter, DiagramItem* item)
+
+GfxLibDiagramitemDrawer::GfxLibDiagramitemDrawer(bool drawByPainter, bool drawByLoadpic, bool isdrawByPainter, std::shared_ptr<IDidgramDrawParams> params)
+	:m_drawByPainter(drawByPainter)
+	, m_drawByLoadpic(drawByLoadpic)
+	, m_isdrawByPainter(isdrawByPainter)
+	, m_drawParams(params)
 {
-	if (!item)
-		throw std::runtime_error("error");//todo
-	//if (m_isdrawByPainter && m_drawByPainter)
-	if (item->getdrawbypainter() && item->getisdrawbypainter())
-		drawByDraw(painter, item);
-	else if (item->getdrawbyloadpic())
-		drawByLoadpic(painter, item);
-	else
+}
+
+void GfxLibDiagramitemDrawer::draw(QPainter& painter)
+{
+	if (m_drawByPainter && m_isdrawByPainter)
+		drawByDraw(painter);
+	else if(m_drawByLoadpic)
+		drawByLoadpic(painter);
+	else 
 		throw std::runtime_error("error");
+
+	//if (item->getdrawbypainter() && item->getisdrawbypainter())
+		//drawByDraw(painter, item);
+	//else if (item->getdrawbyloadpic())
+		//drawByLoadpic(painter, item);
+	//else
+		//throw std::runtime_error("error");
 }
 
 QString DiagramItem::getpicpath()
@@ -614,6 +631,14 @@ QString DiagramItem::getpicpath()
 		return m_params.m_picpath.value();
 	else
 		return QString();
+}
+
+void GfxLibDiagramitemDrawer::init()
+{
+	if (m_drawParams != nullptr)
+	{
+
+	}
 }
 
 void GfxLibDiagramitemDrawer::drawByLoadpic(QPainter& painter, DiagramItem* item) {
@@ -673,9 +698,9 @@ double DiagramItem::getDiagramItemRectRadio()
 
 
 
-void GfxLibDiagramitemDrawer::drawByDraw(QPainter& painter, DiagramItem* item)
+void GfxLibDiagramitemDrawer::drawByDraw(QPainter& painter)
 {
-	DiagramDrawInterface::draw(painter, item->builddrawparams());
+	DiagramDrawInterface::draw(painter);
 }
 
 void DiagramItem::initWidgetSize()

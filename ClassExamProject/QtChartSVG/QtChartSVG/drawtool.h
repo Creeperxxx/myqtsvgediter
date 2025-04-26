@@ -37,9 +37,8 @@ public:
 	QSizeF m_spacesize;
 	ShapeType m_type;
 	qreal m_scale;
-	//QPen m_pen;
-	//QBrush m_brush;
-	//QPainter* m_painter;
+	QPen m_pen;
+	QBrush m_brush;
 };
 
 class DiagramDrawParamsRect : public IDidgramDrawParams

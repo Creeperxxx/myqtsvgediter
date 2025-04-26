@@ -1,0 +1,8 @@
+- commit : 35;
+- data : 2025/4/26 22:50
+- done : 
+	- 开始重构绘制图形相关 类idiagramdrawer及子类；
+	- 开始重构diagramitem的drawer类
+- todo : 
+    - 继续重构diagramitem的drawer类
+	- 继续重构idiagramdrawer及子类

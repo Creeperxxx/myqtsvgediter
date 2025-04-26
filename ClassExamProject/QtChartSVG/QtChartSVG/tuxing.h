@@ -33,12 +33,22 @@ class DiagramItem;
 class GfxLibDiagramitemDrawer
 {
 public:
-	//GfxLibDiagramitemDrawer(bool drawbypainter = false, bool drawbyloadpic = false, bool isdrawbypainter = true);
-	static void draw(QPainter& painter, DiagramItem* item);
+	GfxLibDiagramitemDrawer(bool drawByPainter
+		, bool drawByLoadpic
+		, bool isdrawByPainter
+		, std::shared_ptr<IDidgramDrawParams> params = nullptr);
+	void draw(QPainter& painter);
 private:
-	static void drawByLoadpic(QPainter& painter, DiagramItem* item);
-	static void drawByDraw(QPainter& painter, DiagramItem* item);
-	static QPixmap getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item);
+	void init();
+	void drawByLoadpic(QPainter& painter, DiagramItem* item);
+	void drawByDraw(QPainter& painter);
+	QPixmap getSuitablePicPixmap(QPixmap pixmap, DiagramItem* item);
+
+	std::shared_ptr<IDidgramDrawParams> m_drawParams;
+	std::shared_ptr<IDiagramDrawer> m_drawer;
+	bool m_drawByPainter;
+	bool m_drawByLoadpic;
+	bool m_isdrawByPainter;
 };
 
 
@@ -205,6 +215,7 @@ private:
 
 	QPoint dragstartposition; //鼠标按压时的位置
 	GfxLibDiagramItemParams m_params;
+	std::unique_ptr<GfxLibDiagramitemDrawer> m_DiagramItemDrawer;
 };
 
 
