@@ -14,6 +14,7 @@ public:
 	qreal m_scale;
 	QPen m_pen;
 	QBrush m_brush;
+	QSizeF m_spacesize;
 
 	std::optional<qreal> m_rectradio;
 	std::optional<int> m_rectRotate;
@@ -38,6 +39,7 @@ public:
 	void serTriangleEdgetype(QDataStream& out)const;
 	void serTriangleRotate(QDataStream& out)const;
 	void serLineRotate(QDataStream& out)const;
+	void serSpacesize(QDataStream& out)const;
 
 	void deserShapetype(QDataStream& in);
 	void deserScale(QDataStream& in);
@@ -51,6 +53,7 @@ public:
 	void deserTriangleEdgetype(QDataStream& in);
 	void deserTriangleRotate(QDataStream& in);
 	void deserLineRotate(QDataStream& in);
+	void deserSpacesize(QDataStream& in);
 
 };
 

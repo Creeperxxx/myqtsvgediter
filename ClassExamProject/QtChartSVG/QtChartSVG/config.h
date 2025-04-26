@@ -35,9 +35,6 @@ namespace qtcf {
         constexpr auto width = "huabu.width";
         constexpr auto height = "huabu.height";
 
-        namespace tuxingspace {
-            constexpr auto spacewidth = "huabu.tuxingspace.spacewidth";
-            constexpr auto spaceheight = "huabu.tuxingspace.spaceheight";
 
             //namespace pen {
                 //constexpr auto width = "huabu.tuxingspace.pen.width";
@@ -45,24 +42,29 @@ namespace qtcf {
             //}
 
             //constexpr auto brush = "huabu.tuxingspace.brush";
-        }
     } // namespace huabu
 
     // 其他顶层常量
     constexpr auto mimetype = "mimetype";
 
-    namespace painter
-    {
-        namespace pen {
-            constexpr auto width = "painter.pen.width";
-            constexpr auto color = "painter.pen.color";
-        }
-		constexpr auto brush = "painter.brush";
-    }
 
-    // tuxing 图形相关常量
     namespace tuxing {
 
+        namespace all {
+            namespace spacesize {
+                constexpr auto width = "tuxing.all.spacesize.width";
+                constexpr auto height = "tuxing.all.spacesize.height";
+            }
+            namespace painter
+            {
+                namespace pen
+                {
+                    constexpr auto color = "tuxing.all.painter.pen.color";
+                    constexpr auto width = "tuxing.all.painter.pen.width";
+                }
+                constexpr auto brush = "tuxing.all.painter.brush";
+            }
+        }
         namespace rectangle {
             constexpr auto radio = "tuxing.rectangle.radio";
             constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";

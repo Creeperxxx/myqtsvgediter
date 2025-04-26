@@ -1,4 +1,6 @@
 #include "tuxingjiedian.h"
+#include <cmath>
+#include <qmath.h>
 
 
 std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
@@ -25,15 +27,15 @@ std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shar
 	return ret;
 }
 
-QPolygonF DiagramDrawerCircle::calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize, qreal penwidth)
+QPolygonF DiagramDrawerCircle::calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize)
 {
 	qreal x = params->m_center.x() - suitablesize.width() / 2.0;
 	qreal y = params->m_center.y() - suitablesize.height() / 2.0;
 
 	QPointF lefttop(x, y);
-	QPointF leftbottom(x, y + suitablesize.height() - 1);
-	QPointF righttop(x + suitablesize.width() - 1, y);
-	QPointF rightbottom(x + suitablesize.width() - 1, y + suitablesize.height() - 1);
+	QPointF leftbottom(x, y + suitablesize.height());
+	QPointF righttop(x + suitablesize.width(), y);
+	QPointF rightbottom(x + suitablesize.width() , y + suitablesize.height() );
 
 	QPolygonF circle;
 	circle << lefttop << leftbottom << rightbottom << righttop;
@@ -46,7 +48,7 @@ QTransform DiagramDrawerCircle::calcurotatetransform(DiagramDrawParamsCircle* pa
 	QTransform rotatetransform;
 	rotatetransform.translate(params->m_center.x(), params->m_center.y());
 	rotatetransform.rotate(params->m_circlerotate);
-	rotatetransform.translate(params->m_center.x(), params->m_center.y());
+	rotatetransform.translate(-params->m_center.x(), -params->m_center.y());
 
 	return rotatetransform;
 }
@@ -63,7 +65,7 @@ qreal DiagramDrawerCircle::calcuscaleFactor(DiagramDrawParamsCircle* params, QPo
 	return scale;
 }
 
-QTransform DiagramDrawerCircle::calcuscaleTransform(DiagramDrawParamsCircle* params, qreal scale, qreal penwidth)
+QTransform DiagramDrawerCircle::calcuscaleTransform(DiagramDrawParamsCircle* params, qreal scale)
 {
 
 	QTransform scaletransform;
@@ -81,7 +83,7 @@ QSizeF DiagramDrawerCircle::calcuboundingrectsize(DiagramDrawParamsCircle* param
 	double availableheight = params->m_spacesize.height() - penwidth;
 
 	double rectwidth, rectheight;
-	if (availablewidth / availableheight > params->m_boundingrectradio)
+	if (availablewidth / availableheight - params->m_boundingrectradio > 1e-6)
 	{
 		rectheight = availableheight;
 		rectwidth = rectheight * params->m_boundingrectradio;
@@ -113,18 +115,18 @@ std::shared_ptr<DrawResult> DiagramDrawerCircle::draw(QPainter& painter, std::sh
 	//painter.drawEllipse(boundingrect);
 
 	QSizeF suitablesize = calcuboundingrectsize(p, painter.pen().widthF());
-	QPolygonF circle = calcuBasicalCircle(p,suitablesize, painter.pen().widthF());
+	QPolygonF circle = calcuBasicalCircle(p, suitablesize);
 
 	QTransform rotatetransform = calcurotatetransform(p);
 	circle = circle * rotatetransform;
 
 	qreal scale = calcuscaleFactor(p, circle, painter.pen().widthF());
-	QTransform scaletransform = calcuscaleTransform(p, scale, painter.pen().widthF());
+	QTransform scaletransform = calcuscaleTransform(p, scale);
 	circle = circle * scaletransform;
 
 
 	//painter.drawPolygon(circle);
-	
+
 
 	painter.translate(p->m_center);
 	painter.rotate(p->m_circlerotate);
@@ -369,12 +371,12 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform(double bottom, double lef
 
 	// 计算顶点C的坐标
 	double cosA = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
-	double sinA = qSqrt(1 - cosA * cosA);
+	double sinA = std::sqrt(1 - cosA * cosA);
 	QPointF C(left * cosA, left * sinA);
 
 	// 计算各边的方向
-	double targetsin = qSin(qDegreesToRadians(angle));
-	double targetcos = qCos(qDegreesToRadians(angle));
+	double targetsin = std::sin(qDegreesToRadians(angle));
+	double targetcos = std::cos(qDegreesToRadians(angle));
 
 	double newsin = 0;
 	double newcos = 1; // 默认为无旋转
@@ -474,7 +476,7 @@ QLineF DiagramDrawerLine::calcuLine(DiagramDrawParamsLine* params)
 	double halfheight = params->m_spacesize.height() / 2.0;
 
 	// Convert rotation angle to radians
-	double radians = qDegreesToRadians(params->m_rotationAngle);
+	double radians = qDegreesToRadians(static_cast<double>(params->m_rotationAngle));
 
 	// Calculate direction vector
 	double dx = std::cos(radians);
@@ -495,4 +497,63 @@ QLineF DiagramDrawerLine::calcuLine(DiagramDrawParamsLine* params)
 
 	return QLineF(start, end);
 }
+
+bool DrawResultRect::iscontainPoint(QPointF point)
+{
+	return m_rect.containsPoint(point, Qt::OddEvenFill);
+}
+
+bool DrawResultCircle::iscontainPoint(QPointF point)
+{
+	if (m_circle.size() < 4) return false;
+
+	// 创建椭圆路径
+	QPainterPath path;
+	path.addEllipse(QRectF(m_circle[0], m_circle[2]));
+
+	return path.contains(point);
+}
+
+bool DrawResultTriangle::iscontainPoint(QPointF point)
+{
+	return m_triangle.containsPoint(point, Qt::OddEvenFill);
+}
+
+bool DrawResultLine::iscontainPoint(QPointF point)
+{
+	qreal distance = distanceToLine(m_line, point);
+	return distance <= linetolerance;
+}
+
+qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
+{
+	// 向量AP (从line.p1()到point)
+	QPointF AP = point - line.p1();
+	// 向量AB (线段方向向量)
+	QPointF AB = line.p2() - line.p1();
+
+	// 计算AB的长度平方
+	qreal ab2 = AB.x() * AB.x() + AB.y() * AB.y();
+	// 计算AP与AB的点积
+	qreal ap_ab = AP.x() * AB.x() + AP.y() * AB.y();
+
+	// 计算归一化参数t (点在AB上的投影位置)
+	qreal t = ap_ab / ab2;
+
+	// 如果t在[0,1]之外，计算到端点的距离
+	if (t < 0.0) {
+		return QLineF(line.p1(), point).length();
+	}
+	else if (t > 1.0) {
+		return QLineF(line.p2(), point).length();
+	}
+
+	// 计算投影点
+	QPointF projection = line.p1() + t * AB;
+	// 返回点到投影点的距离
+	return QLineF(point, projection).length();
+
+}
+
+
 

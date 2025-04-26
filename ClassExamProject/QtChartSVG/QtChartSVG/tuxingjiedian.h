@@ -7,12 +7,17 @@
 #include <stdexcept>
 #include "configmanager.h"
 #include "drawtool.h"
+#include "qpainterpath.h"
 
-
+constexpr const double linetolerance = 5.0;
 
 class DrawResult
 {
+
 public:
+	virtual bool iscontainPoint(QPointF point) = 0;
+
+
 	QPen m_painterpen;
 	QBrush m_painterbrush;
 };
@@ -20,27 +25,32 @@ public:
 class DrawResultRect : public DrawResult
 {
 public:
-	//QRectF m_rect;
+	bool iscontainPoint(QPointF point) override;
+
 	QPolygonF m_rect;
 };
 
 class DrawResultCircle :public DrawResult
 {
 public:
+	bool iscontainPoint(QPointF point) override;
 	QPolygonF m_circle;
-	//center
 };
 
 class DrawResultTriangle :public DrawResult
 {
 public:
+	bool iscontainPoint(QPointF point)override;
 	QPolygonF m_triangle;
 };
 
 class DrawResultLine : public DrawResult
 {
 public:
+	bool iscontainPoint(QPointF point) override;
 	QLineF m_line;
+private:
+	qreal distanceToLine(const QLineF& line, const QPointF& point);
 };
 
 
@@ -76,10 +86,10 @@ public:
 private:
 	//int calcuyuanxingbanjing(DiagramDrawParamsCircle* params);
 	//QRectF calcuboundingrect(DiagramDrawParamsCircle* params);
-	QPolygonF calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize, qreal penwidth);
+	QPolygonF calcuBasicalCircle(DiagramDrawParamsCircle* params, QSizeF suitablesize);
 	QTransform calcurotatetransform(DiagramDrawParamsCircle* params);
 	qreal calcuscaleFactor(DiagramDrawParamsCircle* params, QPolygonF diagram, qreal penwidth);
-	QTransform calcuscaleTransform(DiagramDrawParamsCircle* params, qreal scale, qreal penwidth);
+	QTransform calcuscaleTransform(DiagramDrawParamsCircle* params, qreal scale);
 	QSizeF calcuboundingrectsize(DiagramDrawParamsCircle* params, qreal penwidth);
 };
 

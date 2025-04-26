@@ -16,6 +16,7 @@
 
 propertyWidget::propertyWidget(QWidget* parent)
 	: QWidget(parent)
+	, m_stackwidgetindex(0)
 {
 	m_shuxinglayout = new QFormLayout(this);
 	m_shuxinglayout->setAlignment(Qt::AlignLeft);
@@ -24,7 +25,7 @@ propertyWidget::propertyWidget(QWidget* parent)
 	setLayout(m_shuxinglayout);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-
+	
 }
 
 void propertyWidget::addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params)
@@ -58,6 +59,13 @@ void propertyWidget::setstackwidgetindex(int index)
 	m_stackwidgetindex = index;
 }
 
+void propertyWidget::paintEvent(QPaintEvent* event)
+{
+	QPainter painter(this);
+	//painter.fillRect(rect(), Qt::white);
+}
+
+
 int propertyWidget::getstackwidgetindex()
 {
 	return m_stackwidgetindex;
@@ -69,19 +77,19 @@ std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegate(std::shared_pt
 	switch (params->m_type)
 	{
 	case delegateType::Double:
-		return createDelegateDouble(params);
+		return std::make_shared<doubleDelegate>(params);
 		break;
 	case delegateType::Int:
-		return createDelegateInt(params);
+		return std::make_shared<intDelegate>(params);
 		break;
 	case delegateType::Enum:
-		return createDelegateEnum(params);
+		return std::make_shared<enumDelegate>(params);
 		break;
 	case delegateType::Color:
-		return createDelegateColor(params);
+		return std::make_shared<colorDelete>(params);
 		break;
 	case delegateType::String:
-		return createDelegateString(params);
+		return std::make_shared<stringDelegate>(params);
 		break;
 	default:
 		throw std::runtime_error("error");
@@ -89,55 +97,6 @@ std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegate(std::shared_pt
 	}
 }
 
-std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegateDouble(std::shared_ptr<IdelegatePramas> params)
-{
-	if(params == nullptr)
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsDouble*>(params.get());
-	if(p == nullptr)
-		throw std::runtime_error("error");
-	return std::make_shared<doubleDelegate>(p);
-}
-
-std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegateInt(std::shared_ptr<IdelegatePramas> params)
-{
-	if(params == nullptr)
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsInt*>(params.get());
-	if(p == nullptr)
-		throw std::runtime_error("error");
-	return std::make_shared<intDelegate>(p);
-}
-
-std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegateColor(std::shared_ptr<IdelegatePramas> params)
-{
-	if(params == nullptr)
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsColor*>(params.get());
-	if(p == nullptr)
-		throw std::runtime_error("error");
-    return std::make_shared<colorDelete>(p);
-}
-
-std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegateEnum(std::shared_ptr<IdelegatePramas> params)
-{
-	if(params == nullptr)
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsEnum*>(params.get());
-	if(p == nullptr)
-		throw std::runtime_error("error");
-	return std::make_shared<enumDelegate>(p);
-}
-
-std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegateString(std::shared_ptr<IdelegatePramas> params)
-{
-	if(params == nullptr)
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsString*>(params.get());
-	if ( p == nullptr)
-		throw std::runtime_error("error");
-    return std::make_shared<stringDelegate>(p);
-}
 
 
 
@@ -145,15 +104,15 @@ PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 {
 	m_propertyStackWidget = new QStackedWidget(parent);
 	m_propertyStackWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	m_propertyStackWidget->setContentsMargins(0, 0, 0, 0);
-	m_propertyStackWidget->setStyleSheet("QStackedWidget{background-color: rgb(255, 255, 255);}");
-	m_propertyStackWidget->setFrameShape(QFrame::NoFrame);
-	m_propertyStackWidget->setFrameShadow(QFrame::Plain);
-	m_propertyStackWidget->setLineWidth(0);
-	m_propertyStackWidget->setMidLineWidth(0);
-	m_propertyStackWidget->setAttribute(Qt::WA_TranslucentBackground, true);
-	m_propertyStackWidget->setAttribute(Qt::WA_NoSystemBackground, true);
-	m_propertyStackWidget->setAttribute(Qt::WA_OpaquePaintEvent, true);
+	//m_propertyStackWidget->setContentsMargins(0, 0, 0, 0);
+	//m_propertyStackWidget->setStyleSheet("QStackedWidget{background-color: rgb(255, 255, 255);}");
+	//m_propertyStackWidget->setFrameShape(QFrame::NoFrame);
+	//m_propertyStackWidget->setFrameShadow(QFrame::Plain);
+	//m_propertyStackWidget->setLineWidth(0);
+	//m_propertyStackWidget->setMidLineWidth(0);
+	//m_propertyStackWidget->setAttribute(Qt::WA_TranslucentBackground, true);
+	//m_propertyStackWidget->setAttribute(Qt::WA_NoSystemBackground, true);
+	//m_propertyStackWidget->setAttribute(Qt::WA_OpaquePaintEvent, true);
 
 	createonceWidget();
 	propertyWidget* defaultwidget = m_propertyMap[propertyobjecttype::defaulttype];
@@ -430,7 +389,17 @@ propertydata::propertydata(QString name, QVariant data)
 {
 }
 
+void propertydata::slotValueChanged(QVariant value)
+{
+	m_data = value;
+	emit signalValueChanged(value);
+}
 
+
+
+doubleDelegate::~doubleDelegate()
+{
+}
 
 doubleDelegate::doubleDelegate(std::shared_ptr<IdelegatePramas> params)
 	: m_editwidget(nullptr)
@@ -445,7 +414,7 @@ void doubleDelegate::setData(std::shared_ptr<propertydata> data)
 		throw std::runtime_error("error");
 	m_editwidget->setValue(data->m_data.toDouble());
 
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::signalValueChanged);
+	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
 }
 
 QWidget* doubleDelegate::getEditWidget()
@@ -466,7 +435,7 @@ void doubleDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	m_editwidget->setDecimals(p->m_valuedecimals);
 	m_editwidget->setValue(p->m_initvalue);
 
-	QObject::connect(m_editwidget, &QDoubleSpinBox::valueChanged, this, &IpropertyDelegate::slotValueChanged);
+	QObject::connect(m_editwidget,static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &IpropertyDelegate::slotValueChanged);
 }
 
 QVariant doubleDelegate::value()
@@ -477,6 +446,10 @@ QVariant doubleDelegate::value()
 	return QVariant::fromValue(m_editwidget->value());
 }
 
+IpropertyDelegate::~IpropertyDelegate()
+{
+}
+
 void IpropertyDelegate::slotValueChanged()
 {
 	emit signalValueChanged(value());
@@ -485,6 +458,10 @@ void IpropertyDelegate::slotValueChanged()
 
 
 
+
+intDelegate::~intDelegate()
+{
+}
 
 intDelegate::intDelegate(std::shared_ptr<IdelegatePramas> params)
 	:m_editwidget(nullptr)
@@ -501,7 +478,7 @@ void intDelegate::setData(std::shared_ptr<propertydata> data)
 		throw std::runtime_error("error");
 	m_editwidget->setValue(data->m_data.toInt());
 
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::signalValueChanged);
+	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
 }
 
 QWidget* intDelegate::getEditWidget()
@@ -520,7 +497,7 @@ void intDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	m_editwidget->setSingleStep(p->m_valuestep);
 	m_editwidget->setValue(p->m_initvalue);
 
-    QObject::connect(m_editwidget, &QSpinBox::valueChanged, this, &IpropertyDelegate::slotValueChanged);
+	QObject::connect(m_editwidget, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &IpropertyDelegate::slotValueChanged);
 }
 
 QVariant intDelegate::value()
@@ -528,6 +505,10 @@ QVariant intDelegate::value()
 	if (m_editwidget == nullptr)
 		throw std::runtime_error("error");
 	return QVariant::fromValue(m_editwidget->value());
+}
+
+colorDelete::~colorDelete()
+{
 }
 
 colorDelete::colorDelete(std::shared_ptr<IdelegatePramas> params)
@@ -546,10 +527,10 @@ void colorDelete::setData(std::shared_ptr<propertydata> data)
 		throw std::runtime_error("error");
 		
 	m_currentcolor = data->m_data.value<QColor>();
-    m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); }")
+    m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
 		.arg(m_currentcolor.red()).arg(m_currentcolor.green())
 		.arg(m_currentcolor.blue()).arg(m_currentcolor.alpha()));
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::signalValueChanged);
+	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
 }
 
 QWidget* colorDelete::getEditWidget()
@@ -572,7 +553,7 @@ void colorDelete::createWidget(std::shared_ptr<IdelegatePramas> params)
 	m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	m_colorlabel = new QLabel(m_colorwidget);
 	m_currentcolor = p->m_initcolor;
-	m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); }")
+	m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
 		.arg(m_currentcolor.red()).arg(m_currentcolor.green())
 		.arg(m_currentcolor.blue()).arg(m_currentcolor.alpha()));
 	m_colorlabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -585,7 +566,7 @@ void colorDelete::createWidget(std::shared_ptr<IdelegatePramas> params)
 			if (color.isValid())
 			{
 				m_currentcolor = color;
-				m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4); }")
+				m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
 					.arg(m_currentcolor.red()).arg(m_currentcolor.green())
 					.arg(m_currentcolor.blue()).arg(m_currentcolor.alpha()));
 				this->slotValueChanged();
@@ -599,6 +580,10 @@ QVariant colorDelete::value()
 }
 
 
+delegateParamsDouble::~delegateParamsDouble()
+{
+}
+
 delegateParamsDouble::delegateParamsDouble(double max, double min, double step, int decimals, double initvalue)
 	:m_valuemax(max)
 	, m_valuemin(min)
@@ -606,6 +591,10 @@ delegateParamsDouble::delegateParamsDouble(double max, double min, double step, 
 	, m_valuedecimals(decimals)
 	, m_initvalue(initvalue)
 	, IdelegatePramas(delegateType::Double)
+{
+}
+
+delegateParamsInt::~delegateParamsInt()
 {
 }
 
@@ -618,9 +607,17 @@ delegateParamsInt::delegateParamsInt(int max, int min, int step, int initvalue)
 {
 }
 
+delegateParamsColor::~delegateParamsColor()
+{
+}
+
 delegateParamsColor::delegateParamsColor(QColor initcolor)
 	:m_initcolor(initcolor)
 	,IdelegatePramas(delegateType::Color)
+{
+}
+
+delegateParamsEnum::~delegateParamsEnum()
 {
 }
 
@@ -630,9 +627,17 @@ delegateParamsEnum::delegateParamsEnum(QVector<QString> vec)
 {
 }
 
+delegateParamsString::~delegateParamsString()
+{
+}
+
 delegateParamsString::delegateParamsString(QString str)
 	:m_initstring(str)
 	, IdelegatePramas(delegateType::String)
+{
+}
+
+stringDelegate::~stringDelegate()
 {
 }
 
@@ -649,7 +654,12 @@ void stringDelegate::setData(std::shared_ptr<propertydata> data)
 	if(!data->m_data.canConvert<QString>())
 		throw std::runtime_error("error");
 	m_label->setText(data->m_data.toString());
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::signalValueChanged);
+	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
+}
+
+QWidget* stringDelegate::getEditWidget()
+{
+	return m_label;
 }
 
 
@@ -667,6 +677,10 @@ void stringDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 QVariant stringDelegate::value()
 {
 	return QVariant::fromValue(m_label->text());
+}
+
+enumDelegate::~enumDelegate()
+{
 }
 
 enumDelegate::enumDelegate(std::shared_ptr<IdelegatePramas> params)
@@ -687,7 +701,12 @@ void enumDelegate::setData(std::shared_ptr<propertydata> data)
 		throw std::runtime_error("error");
 
 	m_combobox->setCurrentIndex(index);
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::signalValueChanged);
+	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
+}
+
+QWidget* enumDelegate::getEditWidget()
+{
+	return m_combobox;
 }
 
 void enumDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
@@ -719,5 +738,9 @@ QVariant enumDelegate::value()
 
 IdelegatePramas::IdelegatePramas(delegateType type)
 	:m_type(type)
+{
+}
+
+IdelegatePramas::~IdelegatePramas()
 {
 }

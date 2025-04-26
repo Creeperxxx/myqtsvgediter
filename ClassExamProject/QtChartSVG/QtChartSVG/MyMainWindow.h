@@ -40,26 +40,4 @@ private:
 	QWidget* m_huabuparentwidget;
 
 	PropertyWidgetManager* m_propertyWidgetManager;
-	//void inittuxingkuwidget();
-	//void initshuxingwidget();
-	//void inithuabuparentwidget();
-	//void inithuabu();
-	//void initmenu();
-
-	//enum class MenuButtonId
-	//{
-		//MenuButtonIdPageStart = 0,
-		//MenuButtonIdPageArrange = 1,
-		//MenuButtonIdPagePage = 2,
-	//};
-	//void initPageSwitch();
-	//void pageSwitch(int id);
-	//Ui::MainWindow* ui;
-	//QVBoxLayout* tuxingkulayout;
-	//QVBoxLayout* shuxinglayout;
-	//QGridLayout* huabuwidgetlayout;
-	//huabu* m_huabu;
-	//QScrollArea* m_scroll;
-	//QButtonGroup* menuButtonGroup;
-	//Ui::MyMainWindowClass ui;
 };

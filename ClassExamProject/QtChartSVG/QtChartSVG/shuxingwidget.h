@@ -65,13 +65,13 @@ constexpr const int huabuheightMax = 8000;
 constexpr const int huabuheightMin = 100;
 constexpr const int huabuheightvalue = 900;
 
-constexpr const int tuxingspacewidthMax = 1000;
-constexpr const int tuxingspacewidthMin = 10;
+constexpr auto tuxingspacewidthMax = 1000;
+constexpr auto  tuxingspacewidthMin = 10;
 
-constexpr const int tuxingspaceheightMax = 1000;
-constexpr const int tuxingspaceheightMin = 10;
-constexpr const int tuxingspacewidthvalue = 500;
-constexpr const int tuxingspaceheightvalue = 500;
+constexpr auto tuxingspaceheightMax = 1000;
+constexpr auto tuxingspaceheightMin = 10;
+constexpr auto tuxingspacewidthvalue = 500;
+constexpr auto tuxingspaceheightvalue = 500;
 
 
 constexpr auto propertyColorText = "选择";
@@ -109,7 +109,7 @@ public:
 class delegateParamsDouble : public IdelegatePramas
 {
 public:
-	~delegateParamsDouble() {}
+	~delegateParamsDouble();
 	delegateParamsDouble(double max
 		, double min
 		, double step
@@ -126,7 +126,7 @@ public:
 class delegateParamsInt : public IdelegatePramas
 {
 public:
-	~delegateParamsInt() {}
+	~delegateParamsInt();
 	delegateParamsInt(int max
 		, int min
 		, int step
@@ -140,7 +140,7 @@ public:
 class delegateParamsColor : public IdelegatePramas
 {
 public:
-    ~delegateParamsColor() {}
+	~delegateParamsColor();
 	delegateParamsColor(QColor initcolor);
 	QColor m_initcolor;
 };
@@ -148,7 +148,7 @@ public:
 class delegateParamsEnum : public IdelegatePramas
 {
 public:
-    ~delegateParamsEnum() {}
+	~delegateParamsEnum();
 	delegateParamsEnum(QVector<QString> vec);
 	QVector<QString> m_vec;
 	QString m_initstring;
@@ -157,7 +157,7 @@ public:
 class delegateParamsString : public IdelegatePramas
 {
 public:
-    ~delegateParamsString() {}
+	~delegateParamsString();
 	delegateParamsString(QString str);
 	QString m_initstring;
 };
@@ -181,13 +181,13 @@ class IpropertyDelegate : public QWidget
 	Q_OBJECT
 
 public:
-	void slotValueChanged();
-signals:
-    void signalValueChanged(QVariant value);
-
 	virtual ~IpropertyDelegate() = 0;
 	virtual void setData(std::shared_ptr<propertydata> data) = 0;
 	virtual QWidget* getEditWidget() = 0;
+
+	void slotValueChanged();
+signals:
+	void signalValueChanged(QVariant value);
 
 protected:
 	virtual void createWidget(std::shared_ptr<IdelegatePramas> params) = 0;
@@ -198,7 +198,7 @@ protected:
 class doubleDelegate : public IpropertyDelegate
 {
 public:
-	~doubleDelegate() override = default;
+	~doubleDelegate() override;
 	doubleDelegate(std::shared_ptr<IdelegatePramas> params);
 	void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
@@ -211,7 +211,8 @@ private:
 
 class intDelegate : public IpropertyDelegate
 {
-    ~intDelegate() override = default;
+public:
+	~intDelegate() override;
 	intDelegate(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
@@ -225,7 +226,7 @@ private:
 class colorDelete : public IpropertyDelegate
 {
 public:
-    ~colorDelete() override = default;
+	~colorDelete() override;
 	colorDelete(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
@@ -244,9 +245,10 @@ private:
 class stringDelegate : public IpropertyDelegate
 {
 public:
-	~stringDelegate() override = default;
+	~stringDelegate() override;
 	stringDelegate(std::shared_ptr<IdelegatePramas> params);
 	void setData(std::shared_ptr<propertydata> data) override;
+	QWidget* getEditWidget() override;
 private:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 
@@ -257,9 +259,11 @@ private:
 
 class enumDelegate : public IpropertyDelegate
 {
-    ~enumDelegate() override = default;
+public:
+	~enumDelegate() override;
 	enumDelegate(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
+	QWidget* getEditWidget() override;
 private:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
     QVariant value();
@@ -280,6 +284,8 @@ class propertydata : public QWidget
 	Q_OBJECT
 public:
 	propertydata(QString name, QVariant data);
+
+	void slotValueChanged(QVariant value);
 
 signals:
 	void signalValueChanged(QVariant value);
@@ -392,6 +398,7 @@ class propertyWidget : public QWidget
 public:
 	propertyWidget(QWidget* parent = nullptr);
 	void setstackwidgetindex(int index);
+	void paintEvent(QPaintEvent* event) override;
 	int getstackwidgetindex();
 
 	void addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params);
@@ -399,11 +406,6 @@ public:
 
 private:
 	std::shared_ptr<IpropertyDelegate> createDelegate(std::shared_ptr<IdelegatePramas> params);
-	std::shared_ptr<IpropertyDelegate> createDelegateDouble(std::shared_ptr<IdelegatePramas> params);
-	std::shared_ptr<IpropertyDelegate> createDelegateInt(std::shared_ptr<IdelegatePramas> params);
-	std::shared_ptr<IpropertyDelegate> createDelegateColor(std::shared_ptr<IdelegatePramas> params);
-	std::shared_ptr<IpropertyDelegate> createDelegateEnum(std::shared_ptr<IdelegatePramas> params);
-	std::shared_ptr<IpropertyDelegate> createDelegateString(std::shared_ptr<IdelegatePramas> params);
 
 
 

@@ -23,94 +23,113 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MyMainWindow.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tuxing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="huabu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tuxingjiedian.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="configmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="drawtool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DiagramMimedata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shuxingwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="propertyPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="MyMainWindow.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="huabu.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="tuxing.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="shuxingwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="MyMainWindow.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="tuxingjiedian.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="configmanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drawtool.h">
+    <ClInclude Include="DiagramMimedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DiagramMimedata.h">
+    <ClInclude Include="drawtool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="propertyPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tuxingjiedian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="qt.md">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="todo.md">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="qtdpsk.md">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="config.json" />
     <None Include="cpp.hint" />
+    <None Include="qt.md" />
+    <None Include="qtdpsk.md" />
+    <None Include="qttongyi.md" />
+    <None Include="todo.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="configmanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiagramMimedata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawtool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="huabu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyMainWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertyPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="shuxingwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tuxing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tuxingjiedian.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="huabu.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="MyMainWindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="shuxingwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="tuxing.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="image.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="juxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="liubianxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="qipao.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="sanjiaoxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wubianxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="wujiaoxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="xian.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="yuanxing.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="MyMainWindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
   </ItemGroup>
 </Project>
