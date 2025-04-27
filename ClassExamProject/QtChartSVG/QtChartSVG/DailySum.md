@@ -6,3 +6,10 @@
 - todo : 
     - 继续重构diagramitem的drawer类
 	- 继续重构idiagramdrawer及子类
+
+- commit : 36;
+- data : 2025/4/27 23:31
+- done :
+    - 实现了4个drawer的build draw getresult等方法，对图形构建方法进行了优化
+- todo :
+    - 继续重构diagramitem的drawer类
