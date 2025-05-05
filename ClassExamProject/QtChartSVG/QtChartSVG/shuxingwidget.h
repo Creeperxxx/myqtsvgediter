@@ -332,7 +332,7 @@ public:
 	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
-	void dealclicked(propertyobjecttype type, std::vector<std::shared_ptr<propertydata>> data);
+	void dealclicked(propertyobjecttype type, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
 private:
 
 	void createonceWidget();

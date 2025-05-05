@@ -10,7 +10,12 @@
       "maxheight": 20,
       "minwidth": 20,
       "minheight": 10,
-      "isdrawbypainter": true
+      "name": {
+        "rect": "rectangle",
+        "circle": "circle",
+        "triangle": "triangle",
+        "line": "line"
+      }
     } 
   },
   "huabu": {
@@ -35,17 +40,11 @@
     },
     "rectangle": {
       "radio": 2,
-      "drawbypainter": true,
-      "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/juxing.png",
       "rotate": 0,
       "scale": 1
     },
     "circle": {
       "boundingrectradio": 1,
-      "drawbypainter": true,
-      "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/yuanxing.png",
       "rotate": 0,
       "scale": 1
     },
@@ -57,15 +56,9 @@
       },
       "edgetype": "bottom",
       "totate": 180,
-      "drawbypainter": true,
-      "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/sanjiaoxing.png",
       "scale": 1
     },
     "line": {
-      "drawbypainter": true,
-      "drawbyloadpic": true,
-      "imagepath": ":/tuxingku/xian.png",
       "rotate": 0,
       "scale": 1
     }

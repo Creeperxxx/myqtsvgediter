@@ -112,7 +112,7 @@
     <ClInclude Include="config.h" />
     <ClInclude Include="configmanager.h" />
     <ClInclude Include="DiagramMimedata.h" />
-    <ClInclude Include="drawtool.h" />
+    <QtMoc Include="drawtool.h" />
     <ClInclude Include="propertyPage.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="tuxing.h" />

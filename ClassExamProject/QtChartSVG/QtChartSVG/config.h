@@ -18,13 +18,20 @@ namespace qtcf {
             constexpr auto minwidth = "tuxingku.diagramwidget.minwidth";
             constexpr auto minheight = "tuxingku.diagramwidget.minheight";
 
+            namespace name {
+                constexpr auto rect = "tuxingku.diagramwidget.name.rectangle";
+                constexpr auto circle = "tuxingku.diagramwidget.name.circle";
+                constexpr auto triangle = "tuxingku.diagramwidget.name.triangle";
+                constexpr auto line = "tuxingku.diagramwidget.name.line";
+            }
+
             //namespace pen {
                 //constexpr auto width = "tuxingku.diagramwidget.pen.width";
                 //constexpr auto color = "tuxingku.diagramwidget.pen.color";
             //}
 
             //constexpr auto brush = "tuxingku.diagramwidget.brush";
-            constexpr auto isdrawbypainter = "tuxingku.diagramwidget.isdrawbypainter";
+            //constexpr auto isdrawbypainter = "tuxingku.diagramwidget.isdrawbypainter";
         } // namespace diagramwidget
 
     } // namespace tuxingku
@@ -67,17 +74,17 @@ namespace qtcf {
         }
         namespace rectangle {
             constexpr auto radio = "tuxing.rectangle.radio";
-            constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";
-            constexpr auto drawbyloadpic = "tuxing.rectangle.drawbyloadpic";
-            constexpr auto imagepath = "tuxing.rectangle.imagepath";
+            //constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";
+            //constexpr auto drawbyloadpic = "tuxing.rectangle.drawbyloadpic";
+            //constexpr auto imagepath = "tuxing.rectangle.imagepath";
             constexpr auto rotate = "tuxing.rectangle.rotate";
             constexpr auto scale = "tuxing.rectangle.scale";
         } // namespace rectangle
 
         namespace circle {
-            constexpr auto drawbypainter = "tuxing.circle.drawbypainter";
-            constexpr auto drawbyloadpic = "tuxing.circle.drawbyloadpic";
-            constexpr auto imagepath = "tuxing.circle.imagepath";
+            //constexprjauto drawbypainter = "tuxing.circle.drawbypainter";
+            //constexpr auto drawbyloadpic = "tuxing.circle.drawbyloadpic";
+            //constexpr auto imagepath = "tuxing.circle.imagepath";
             constexpr auto boundingrectradio = "tuxing.circle.boundingrectradio";
             constexpr auto rotate = "tuxing.circle.rotate";
             constexpr auto scale = "tuxing.circle.scale";
@@ -93,15 +100,15 @@ namespace qtcf {
 
             constexpr auto edgetype = "tuxing.triangle.edgetype";
             constexpr auto totate = "tuxing.triangle.totate";
-            constexpr auto drawbypainter = "tuxing.triangle.drawbypainter";
-            constexpr auto drawbyloadpic = "tuxing.triangle.drawbyloadpic";
-            constexpr auto imagepath = "tuxing.triangle.imagepath";
+            //constexpr auto drawbypainter = "tuxing.triangle.drawbypainter";
+            //constexpr auto drawbyloadpic = "tuxing.triangle.drawbyloadpic";
+            //constexpr auto imagepath = "tuxing.triangle.imagepath";
             constexpr auto scale = "tuxing.triangle.scale";
         } // namespace triangle
         namespace line {
-            constexpr auto drawbypainter = "tuxing.line.drawbypainter";
-            constexpr auto drawbyloadpic = "tuxing.line.drawbyloadpic";
-            constexpr auto imagepath = "tuxing.line.imagepath";
+            //constexpr auto drawbypainter = "tuxing.line.drawbypainter";
+            //constexpr auto drawbyloadpic = "tuxing.line.drawbyloadpic";
+            //constexpr auto imagepath = "tuxing.line.imagepath";
             constexpr auto rotate = "tuxing.line.rotate";
             constexpr auto scale = "tuxing.line.scale";
         }

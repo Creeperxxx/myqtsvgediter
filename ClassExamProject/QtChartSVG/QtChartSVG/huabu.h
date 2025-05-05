@@ -56,9 +56,8 @@ public:
 	QPen m_pen;
 	QBrush m_brush;
 	std::shared_ptr<IDidgramDrawParams> m_params;
-	std::shared_ptr<DrawResult> m_ret;
+	std::shared_ptr<IDiagramDrawer> m_drawer;
 	QString m_name;
-	ShapeType m_type;
 	QPointF m_center;
 	int m_centerhoffset;
 	int m_centervoffset;
@@ -102,12 +101,6 @@ private:
 	void init();
 	void initPainter(QPainter& painter);
 	
-	std::shared_ptr<IDidgramDrawParams> buildParamsSpecial(const DiagramMimedata& data);
-
-	std::shared_ptr<IDidgramDrawParams> buildDrawParamsRect(const DiagramMimedata& data);
-	std::shared_ptr<IDidgramDrawParams> buildDrawParamsCircle(const DiagramMimedata& data);
-	std::shared_ptr<IDidgramDrawParams> buildDrawParamsTriangle(const DiagramMimedata& data);
-	std::shared_ptr<IDidgramDrawParams> buildDrawParamsLine(const DiagramMimedata& data);
 
 	PropertyWidgetManager::propertyobjecttype shapeTypeToPropertyobjectType(ShapeType type);
 

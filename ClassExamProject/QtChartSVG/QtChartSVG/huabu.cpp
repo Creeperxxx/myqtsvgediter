@@ -43,23 +43,43 @@ void huabu::dropEvent(QDropEvent* event)
 	QDataStream stream(array);
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
 
-	DiagramMimedata data;
-	stream >> data;
+	int inttype = 0;
+	stream >> inttype;
+	ShapeType type = static_cast<ShapeType>(inttype);
+	std::shared_ptr<IDidgramDrawParams> params = nullptr;
+	switch (type)
+	{
+	case ShapeType::Rect:
+		params = std::make_shared<DiagramDrawParamsRect>();
+		break;
+	case ShapeType::Circle:
+		params = std::make_shared<DiagramDrawParamsCircle>();
+		break;
+	case ShapeType::Triangle:
+		params = std::make_shared<DiagramDrawParamsTriangle>();
+		break;
+	case ShapeType::Line:
+		params = std::make_shared<DiagramDrawParamsLine>();
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+	
+	stream >> *params;
 
 
-	std::shared_ptr<IDidgramDrawParams> params = buildParamsSpecial(data);
+	//std::shared_ptr<IDidgramDrawParams> params = buildParamsSpecial(data);
 
 	params->m_center = event->posF();
-	params->m_scale = data.m_scale;
-	params->m_spacesize = data.m_spacesize;
-	params->m_type = data.m_type;
-	params->m_pen = data.m_pen;
-	params->m_brush = data.m_brush;
+	params->m_paramChanged = true;
+
+	auto drawer = DiagramDrawInterface::getInstance().getDrawer(params);
 
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
 	tuxing->m_params = params;
-	tuxing->m_name = createTuxingName(data.m_type);
-	tuxing->m_type = data.m_type;
+	tuxing->m_drawer = drawer;
+	tuxing->m_name = createTuxingName(params->m_type);
 	tuxing->m_center = event->posF();
 	tuxing->m_centerhoffset = 0;
 	tuxing->m_centervoffset = 0;
@@ -93,7 +113,7 @@ void huabu::paintEvent(QPaintEvent* event)
 
 	for (auto& diagram : m_tuxingvec)
 	{
-		diagram->m_ret = DiagramDrawInterface::draw(painter, diagram->m_params);
+		diagram->m_drawer->draw(painter);
 	}
 }
 
@@ -143,83 +163,6 @@ void huabu::initPainter(QPainter& painter)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 }
 
-std::shared_ptr<IDidgramDrawParams> huabu::buildParamsSpecial(const DiagramMimedata& data)
-{
-	switch (data.m_type)
-	{
-	case ShapeType::Rect:
-		return buildDrawParamsRect(data);
-		break;
-	case ShapeType::Circle:
-		return buildDrawParamsCircle(data);
-		break;
-	case ShapeType::Triangle:
-		return buildDrawParamsTriangle(data);
-		break;
-	case ShapeType::Line:
-		return buildDrawParamsLine(data);
-		break;
-	default:
-		throw std::runtime_error("error");
-	}
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsRect(const DiagramMimedata& data)
-{
-	auto params = std::make_shared<DiagramDrawParamsRect>();
-	if (!data.m_rectradio.has_value())
-		throw std::runtime_error("error");
-	params->m_boundingrectradio = data.m_rectradio.value();
-
-	if (!data.m_rectRotate.has_value())
-		throw std::runtime_error("error");
-	params->m_rectrotate = data.m_rectRotate.value();
-
-	params->m_type = data.m_type;
-
-	return params;
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsCircle(const DiagramMimedata& data)
-{
-	auto params = std::make_shared<DiagramDrawParamsCircle>();
-	if (!data.m_circleradio.has_value())
-		throw std::runtime_error("error");
-	params->m_boundingrectradio = data.m_circleradio.value();
-
-	if (!data.m_circlerotate.has_value())
-		throw std::runtime_error("error");
-	params->m_circlerotate = data.m_circlerotate.value();
-
-	params->m_type = data.m_type;
-	return params;
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsTriangle(const DiagramMimedata& data)
-{
-	auto params = std::make_shared<DiagramDrawParamsTriangle>();
-	if (!data.m_triangleEdgeType.has_value())
-		throw std::runtime_error("error");
-	params->m_edgetype = data.m_triangleEdgeType.value();
-	if (!data.m_triangleRotate.has_value())
-		throw std::runtime_error("error");
-	params->m_rotationAngle = data.m_triangleRotate.value();
-	if (!data.m_triangleSideRadios.has_value())
-		throw std::runtime_error("error");
-	params->m_triangleSizeRadios = data.m_triangleSideRadios.value();
-	params->m_type = data.m_type;
-	return params;
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::buildDrawParamsLine(const DiagramMimedata& data)
-{
-	auto params = std::make_shared<DiagramDrawParamsLine>();
-	if (!data.m_linerotate.has_value())
-		throw std::runtime_error("error");
-	params->m_rotationAngle = data.m_linerotate.value();
-	params->m_type = data.m_type;
-	return params;
-}
 
 PropertyWidgetManager::propertyobjecttype huabu::shapeTypeToPropertyobjectType(ShapeType type)
 {
@@ -289,7 +232,7 @@ PropertyWidgetManager::propertyobjecttype huabu::shapetypeToPropertyType(ShapeTy
 
 void huabutuxing::buildPropertyData()
 {
-	switch (m_type)
+	switch (m_params->m_type)
 	{
 	case ShapeType::Rect:
 		buildPropertyDataRect();

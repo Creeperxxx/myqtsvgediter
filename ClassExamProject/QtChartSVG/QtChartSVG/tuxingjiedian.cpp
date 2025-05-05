@@ -5,31 +5,35 @@
 
 DiagramDrawerRect::DiagramDrawerRect(std::shared_ptr<IDidgramDrawParams> params)
 	:m_params(nullptr)
-	, m_result(nullptr)
-	, m_isbuild(false)
+	, m_result(std::make_shared<DrawResultRect>())
+	, m_rect(QPolygonF())
 {
-	if(params == nullptr)
+	if (params == nullptr)
 		throw std::runtime_error("error");
-	auto p = std::dynamic_pointer_cast<DiagramDrawParamsRect>(params);
-	if(p == nullptr)
+
+	m_params = std::dynamic_pointer_cast<DiagramDrawParamsRect>(params);
+	if(m_params == nullptr)
 		throw std::runtime_error("error");
-	m_result = std::make_shared<DrawResultRect>();
+	build();
+
 }
+
 
 void DiagramDrawerRect::build()
 {
-	m_rect = calcuRect();
-	m_isbuild = true;
-	
-	m_result->m_painterpen = m_params->m_pen;
-    m_result->m_painterbrush = m_params->m_brush;
-    m_result->m_rect = m_rect;
+	if (m_params == nullptr)
+		throw std::runtime_error("error");
+	if (m_params->m_paramChanged)
+	{
+		m_rect = calcuRect();
+
+		m_params->m_paramChanged = false;
+	}
 }
 
 void DiagramDrawerRect::draw(QPainter& painter)
 {
-	if (!m_isbuild)
-		build();
+	build();
 
 	painter.setPen(m_params->m_pen);
 	painter.setBrush(m_params->m_brush);
@@ -39,43 +43,26 @@ void DiagramDrawerRect::draw(QPainter& painter)
 
 std::shared_ptr<DrawResult> DiagramDrawerRect::getResult()
 {
-	if (!m_isbuild)
-		build();
+	build();
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_painterbrush = m_params->m_brush;
+	m_result->m_rect = m_rect;
 	return m_result;
 }
 
-//std::shared_ptr<DrawResult> DiagramDrawerRect::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
-//{
-//	if (!params)
-//		throw std::runtime_error("error");//todo:except
-//	DiagramDrawParamsRect* p = dynamic_cast<DiagramDrawParamsRect*>(params.get());
-//	if (!p)
-//		throw std::runtime_error("error");//todo:except
-//
-//	painter.setPen(params->m_pen);
-//	painter.setBrush(params->m_brush);
-//
-//	QPolygonF rect = calcuRect(p);
-//	painter.drawPolygon(rect);
-//
-//	//QPen pen = painter.pen();
-//	//QBrush brush = painter.brush();
-//
-//	auto ret = std::make_unique<DrawResultRect>();
-//	ret->m_painterpen = painter.pen();
-//	ret->m_painterbrush = painter.brush();
-//	ret->m_rect = rect;
-//
-//	return ret;
-//}
+std::shared_ptr<IDidgramDrawParams> DiagramDrawerRect::getParams()
+{
+	return m_params;
+}
+
 
 QPolygonF DiagramDrawerCircle::calcuBasicalCircle()
 {
 	qreal height = 10;
 	qreal width = height * m_params->m_boundingrectradio;
 
-	QPointF lefttop(0,0);
-	QPointF leftbottom(0, height -1);
+	QPointF lefttop(0, 0);
+	QPointF leftbottom(0, height - 1);
 	QPointF righttop(width - 1, 0);
 	QPointF rightbottom(width - 1, height - 1);
 
@@ -90,9 +77,9 @@ QTransform DiagramDrawerCircle::calcurotatetransform(QPointF center)
 	QTransform rotatetransform;
 	qreal x = center.x();
 	qreal y = center.y();
-	rotatetransform.translate(x,y);
-	rotatetransform.rotate(m_params->m_circlerotate);
-	rotatetransform.translate(-x,-y);
+	rotatetransform.translate(x, y);
+	rotatetransform.rotate(m_params->m_rotate);
+	rotatetransform.translate(-x, -y);
 
 	return rotatetransform;
 }
@@ -108,13 +95,13 @@ qreal DiagramDrawerCircle::calcuscaleFactor(QRectF bound)
 	return scale;
 }
 
-QTransform DiagramDrawerCircle::calcuscaleTransform(qreal scale)
+QTransform DiagramDrawerCircle::calcuscaleTransform()
 {
 	qreal x = m_params->m_center.x();
 	qreal y = m_params->m_center.y();
 	QTransform scaletransform;
 	scaletransform.translate(x, y);
-	scaletransform.scale(scale, scale);
+	scaletransform.scale(m_scale, m_scale);
 	scaletransform.translate(-x, -y);
 
 	return scaletransform;
@@ -124,94 +111,65 @@ QTransform DiagramDrawerCircle::calcuTranslateTransform(QPointF mycenter)
 {
 	QTransform translatetransform;
 	QPointF move = m_params->m_center - mycenter;
-    translatetransform.translate(move.x(), move.y());
-    return translatetransform;
+	translatetransform.translate(move.x(), move.y());
+	return translatetransform;
 }
 
 
 
-//QSizeF DiagramDrawerCircle::calcuboundingrectsize()
-//{
-//	qreal penwidth = m_params->m_pen.widthF();
-//	qreal availablewidth = m_params->m_spacesize.width() - penwidth;
-//	qreal availableheight = m_params->m_spacesize.height() - penwidth;
-//
-//	qreal rectwidth;
-//	qreal rectheight;
-//	if (m_params->m_boundingrectradio < 1e-6)
-//		throw std::runtime_error("error");
-//	if (availablewidth / availableheight - m_params->m_boundingrectradio > 1e-6)
-//	{
-//		rectheight = availableheight;
-//		rectwidth = rectheight * m_params->m_boundingrectradio;
-//	}
-//	else
-//	{
-//		rectwidth = availablewidth;
-//		rectheight = rectwidth / m_params->m_boundingrectradio;
-//	}
-//	return QSizeF(rectwidth, rectheight);
-//}
-
-
-//int DiagramDrawerCircle::calcuyuanxingbanjing(DiagramDrawParamsCircle* params)
-//{
-//	return (qMin(params->m_spacesize.width(), params->m_spacesize.height()) - params->m_pen.widthF()) / 2;
-//}
 
 DiagramDrawerCircle::DiagramDrawerCircle(std::shared_ptr<IDidgramDrawParams> params)
-	:m_initheight(10)
-	, m_params(nullptr)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultCircle>())
 	, m_scale(0)
-	, m_isbuild(false)
-	, m_result(nullptr)
+	, m_initheight(10)
+	, m_circle(QPolygonF())
 {
 	if (params == nullptr)
 		throw std::runtime_error("error");
-	m_params = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(params); 
-	if (m_params == nullptr)
+	m_params = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(params);
+	if(m_params == nullptr)
 		throw std::runtime_error("error");
-	m_result = std::make_shared<DrawResultCircle>();
+	build();
 }
 
 
 void DiagramDrawerCircle::build()
 {
-	QPolygonF circle = calcuBasicalCircle();
+	if (m_params == nullptr)
+		throw std::runtime_error("error");
+	if (m_params->m_paramChanged)
+	{
+		m_circle = calcuBasicalCircle();
 
-	QPointF center = circle.boundingRect().center();
-	QTransform rotatetransform = calcurotatetransform(center);
-	circle = circle * rotatetransform;
+		QPointF center = m_circle.boundingRect().center();
+		QTransform rotatetransform = calcurotatetransform(center);
+		m_circle = m_circle * rotatetransform;
 
-	center = circle.boundingRect().center();
-	QTransform translatetransform = calcuTranslateTransform(center);
-	circle = circle * translatetransform;
+		center = m_circle.boundingRect().center();
+		QTransform translatetransform = calcuTranslateTransform(center);
+		m_circle = m_circle * translatetransform;
 
-	qreal scale = calcuscaleFactor(circle.boundingRect());
-	QTransform scaletransform = calcuscaleTransform(scale);
-	circle = circle * scaletransform;
-
-	m_result->m_circle = circle;
-	m_result->m_painterpen = m_params->m_pen;
-	m_result->m_painterbrush = m_params->m_brush;
-
-	m_isbuild = true;
+		m_scale = calcuscaleFactor(m_circle.boundingRect());
+		QTransform scaletransform = calcuscaleTransform();
+		m_circle = m_circle * scaletransform;
+	}
 }
 
 void DiagramDrawerCircle::draw(QPainter& painter)
 {
-	if (!m_isbuild)
-		build();
+	build();
+
 	QPen pen = m_params->m_pen;
 	qreal realpenwidth = m_params->m_pen.widthF() / m_scale;
 	pen.setWidthF(realpenwidth);
 
 	painter.setPen(pen);
 	painter.setBrush(m_params->m_brush);
-	if(m_scale < 1e-6)
+	if (m_scale < 1e-6)
 		throw std::runtime_error("error");
 	painter.translate(m_params->m_center);
-	painter.rotate(m_params->m_circlerotate);
+	painter.rotate(m_params->m_rotate);
 	painter.scale(m_scale, m_scale);
 
 	QSizeF size = QSizeF(m_initheight * m_params->m_boundingrectradio, m_initheight);
@@ -219,105 +177,20 @@ void DiagramDrawerCircle::draw(QPainter& painter)
 	painter.resetTransform();
 }
 
-//std::shared_ptr<DrawResult> DiagramDrawerCircle::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
-//{
-//	if (!params)
-//		throw std::runtime_error("error");//todo:except
-//	auto p = dynamic_cast<DiagramDrawParamsCircle*>(params.get());
-//	if (!p)
-//		throw std::runtime_error("error");//todo:except
-//
-//	painter.setPen(params->m_pen);
-//	painter.setBrush(params->m_brush);
-//	//auto r = calcuyuanxingbanjing(p);
-//	//QRectF boundingrect = calcuboundingrect(p);
-//	//painter.drawEllipse(boundingrect);
-//
-//	QSizeF suitablesize = calcuboundingrectsize(p, painter.pen().widthF());
-//	QPolygonF circle = calcuBasicalCircle(p, suitablesize);
-//
-//	QTransform rotatetransform = calcurotatetransform(p);
-//	circle = circle * rotatetransform;
-//
-//	qreal scale = calcuscaleFactor(p, circle, painter.pen().widthF());
-//	QTransform scaletransform = calcuscaleTransform(p, scale);
-//	circle = circle * scaletransform;
-//
-//
-//	//painter.drawPolygon(circle);
-//
-//
-//	painter.translate(p->m_center);
-//	painter.rotate(p->m_circlerotate);
-//	painter.scale(scale, scale);
-//
-//	QPen oldpen(painter.pen());
-//	QPen pen(painter.pen());
-//	pen.setWidthF(oldpen.widthF() / scale);
-//	painter.setPen(pen);
-//	painter.drawEllipse(QPointF(0, 0), suitablesize.width() / 2.0, suitablesize.height() / 2.0);
-//
-//	painter.resetTransform();
-//	painter.setPen(oldpen);
-//
-//
-//
-//
-//
-//	auto ret = std::make_unique<DrawResultCircle>();
-//	ret->m_painterbrush = painter.brush();
-//	ret->m_painterpen = painter.pen();
-//	ret->m_circle = circle;
-//
-//	return ret;
-//}
-
 std::shared_ptr<DrawResult> DiagramDrawerCircle::getResult()
 {
-	if (!m_isbuild)
-		build();
+	build();
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_painterbrush = m_params->m_brush;
+	m_result->m_circle = m_circle;
 	return m_result;
 }
 
 
-//QRectF DiagramDrawerRect::calcurect(DiagramDrawParamsRect* params)
-//{
-//
-//	QSizeF size = calcusuitablerectsize(params);
-//	float x = params->m_center.x() - size.width() / 2;
-//	float y = params->m_center.y() - size.height() / 2;
-//
-//	return QRectF(x, y, size.width(), size.height());
-//
-//}
-
-//QRectF DiagramDrawerCircle::calcuboundingrect(DiagramDrawParamsCircle* params)
-//{
-//	QSizeF size = calcuboundingrectsize(params);
-//	float x = params->m_center.x() - size.width() / 2;
-//	float y = params->m_center.y() - size.height() / 2;
-//
-//	return QRectF(x, y, size.width(), size.height());
-//}
-
-//QSizeF DiagramDrawerRect::calcusuitablerectsize(DiagramDrawParamsRect* params)
-//{
-//	float availablewidth = params->m_spacesize.width() - 2 * params->m_pen.widthF();
-//	float availableheight = params->m_spacesize.height() - 2 * params->m_pen.widthF();
-//
-//	float rectwidth, rectheight;
-//	if (availablewidth / availableheight > params->m_boundingrectradio)
-//	{
-//		rectheight = availableheight;
-//		rectwidth = rectheight * params->m_boundingrectradio;
-//	}
-//	else
-//	{
-//		rectwidth = availablewidth;
-//		rectheight = rectwidth / params->m_boundingrectradio;
-//	}
-//	return QSizeF(rectwidth, rectheight);
-//}
+std::shared_ptr<IDidgramDrawParams> DiagramDrawerCircle::getParams()
+{
+	return m_params;
+}
 
 QPolygonF DiagramDrawerRect::calcuBasicalRect()
 {
@@ -343,7 +216,7 @@ QTransform DiagramDrawerRect::calcuRotateTransform(QPointF center)
 {
 	QTransform rotatetransform;
 	rotatetransform.translate(center.x(), center.y());
-	rotatetransform.rotate(m_params->m_rectrotate);
+	rotatetransform.rotate(m_params->m_rotate);
 	rotatetransform.translate(-center.x(), -center.y());
 	return rotatetransform;
 }
@@ -393,16 +266,17 @@ DiagramDrawInterface& DiagramDrawInterface::getInstance()
 	return instance;
 }
 
-void DiagramDrawInterface::addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer)
+DiagramDrawInterface& DiagramDrawInterface::addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer)
 {
 	m_drawerMap[type] = drawer;
+	return *this;
 }
 
-std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(ShapeType type, std::shared_ptr<IDidgramDrawParams> params)
+std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(std::shared_ptr<IDidgramDrawParams> params)
 {
-	if (m_drawerMap.find(type) != m_drawerMap.end())
+	if (m_drawerMap.find(params->m_type) != m_drawerMap.end())
 	{
-		return m_drawerMap[type](params);
+		return m_drawerMap[params->m_type](params);
 	}
 	else
 	{
@@ -414,70 +288,55 @@ std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(ShapeType type, 
 
 
 
+
+
 DiagramDrawerTriangle::DiagramDrawerTriangle(std::shared_ptr<IDidgramDrawParams> params)
-	:m_isbuild(false)
-	, m_params(nullptr)
-	, m_result(nullptr)
+	:m_params(nullptr)
+	, m_result(std::make_unique<DrawResultTriangle>())
+	, m_triangle(QPolygonF())
 {
-	if (m_params == nullptr)
+	if (params == nullptr)
 		throw std::runtime_error("error");
 	m_params = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(params);
-	if (m_params == nullptr)
+	if(m_params == nullptr)
 		throw std::runtime_error("error");
-
-	m_result = std::make_shared<DrawResultTriangle>();
+	build();
 }
 
 void DiagramDrawerTriangle::build()
 {
-	m_triangle = calcuTriangle();
-	m_isbuild = true;
-
-	m_result->m_triangle = m_triangle;
-	m_result->m_painterpen = m_params->m_pen;
-    m_result->m_painterbrush = m_params->m_brush;
+	if (m_params == nullptr)
+		throw std::runtime_error("error");
+	if (m_params->m_paramChanged)
+	{
+		m_triangle = calcuTriangle();
+		m_params->m_paramChanged = false;
+	}
 }
 
 void DiagramDrawerTriangle::draw(QPainter& painter)
 {
-	if (!m_isbuild)
-		build();
+	build();
 	painter.setPen(m_params->m_pen);
-    painter.setBrush(m_params->m_brush);
+	painter.setBrush(m_params->m_brush);
 	painter.drawPolygon(m_triangle);
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerTriangle::getResult()
 {
-	if (!m_isbuild)
-		build();
+	build();
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_painterbrush = m_params->m_brush;
+	m_result->m_triangle = m_triangle;
 	return m_result;
 }
-//
-//std::shared_ptr<DrawResult> DiagramDrawerTriangle::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
-//{
-//	if (!params)
-//		throw std::runtime_error("error");//todo:except
-//	auto p = dynamic_cast<DiagramDrawParamsTriangle*>(params.get());
-//	if (!p)
-//		throw std::runtime_error("error");//todo:except
-//	painter.setPen(params->m_pen);
-//	painter.setBrush(params->m_brush);
-//	QPolygonF triangle = calcuTriangle(p);
-//	painter.drawPolygon(triangle);
-//
-//	std::shared_ptr<DrawResultTriangle> ret = std::make_shared<DrawResultTriangle>();
-//	ret->m_painterbrush = painter.brush();
-//	ret->m_painterpen = painter.pen();
-//	ret->m_triangle = triangle;
-//	return ret;
-//}
 
-//QRectF DiagramDrawerTriangle::calcuwidgetrect(QPointF cente, QSizeF size)
-//{
-	//QRectF widgetrect = QRectF(cente.x() - size.width() / 2, cente.y() - size.height() / 2, size.width(), size.height());
-	//return widgetrect;
-//}
+
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawerTriangle::getParams()
+{
+	return m_params;
+}
 
 QPolygonF DiagramDrawerTriangle::calcuTriangle()
 {
@@ -524,7 +383,7 @@ QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 {
 	qreal bottom = m_params->m_triangleSizeRadios.m_bottom;
 	qreal left = m_params->m_triangleSizeRadios.m_left;
-    qreal right = m_params->m_triangleSizeRadios.m_right;
+	qreal right = m_params->m_triangleSizeRadios.m_right;
 	QPointF bottomleft = QPointF(0, 0);
 	QPointF bottomright = QPointF(bottom, 0);
 	qreal constheta = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
@@ -542,15 +401,15 @@ QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 QTransform DiagramDrawerTriangle::calcuRotateTransform()
 {
 	qreal bottom = m_params->m_triangleSizeRadios.m_bottom;
-    qreal left = m_params->m_triangleSizeRadios.m_left;
-    qreal right = m_params->m_triangleSizeRadios.m_right;
+	qreal left = m_params->m_triangleSizeRadios.m_left;
+	qreal right = m_params->m_triangleSizeRadios.m_right;
 
 	// 计算顶点C的坐标
 	double cosA = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
 	double sinA = std::sqrt(1 - cosA * cosA);
 	QPointF C(left * cosA, -left * sinA);
 
-	qreal angle = m_params->m_rotationAngle;
+	qreal angle = m_params->m_rotate;
 	DiagramDrawParamsTriangle::EdgeType edgetype = m_params->m_edgetype;
 	// 计算各边的方向
 	double targetsin = std::sin(qDegreesToRadians(angle));
@@ -593,105 +452,61 @@ QTransform DiagramDrawerTriangle::calcuRotateTransform()
 		break; // 无效输入，保持无旋转
 	}
 
-	//QTransform rotateTransform;
-	//rotateTransform.scale(1, -1);
-	//rotateTransform.scale(-1, 1);
 	QTransform transform;
 	transform.setMatrix(newcos, -newsin, 0,
 		newsin, newcos, 0,
 		0, 0, 1);
-	//return rotateTransform * transform;
 	return transform;
 }
 
 
+
 DiagramDrawerLine::DiagramDrawerLine(std::shared_ptr<IDidgramDrawParams> params)
-	:m_isbuild(false)
-	, m_params(nullptr)
-	, m_result(nullptr)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultLine>())
+    , m_line(QLineF())
 {
 	if (params == nullptr)
 		throw std::runtime_error("error");
 	m_params = std::dynamic_pointer_cast<DiagramDrawParamsLine>(params);
-	if (m_params == nullptr)
+	if(m_params == nullptr)
 		throw std::runtime_error("error");
-	m_result = std::make_shared<DrawResultLine>();
+	build();
 }
 
 void DiagramDrawerLine::build()
 {
-	m_line = calcuLine();
-	m_isbuild = true;
+	if (m_params == nullptr)
+		throw std::runtime_error("error");
+	if (m_params->m_paramChanged)
+	{
+		m_line = calcuLine();
+		m_params->m_paramChanged = false;
+	}
 
-	m_result->m_painterpen = m_params->m_pen;
-    m_result->m_painterbrush = m_params->m_brush;
-	m_result->m_line = m_line;
 }
 
 void DiagramDrawerLine::draw(QPainter& painter)
 {
-	if (!m_isbuild)
-		build();
+	build();
 	painter.setPen(m_params->m_pen);
-    painter.setBrush(m_params->m_brush);
-    painter.drawLine(m_line);
+	painter.setBrush(m_params->m_brush);
+	painter.drawLine(m_line);
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerLine::getResult()
 {
-	if (!m_isbuild)
-		build();
-	return m_result;
+	build();
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_painterbrush = m_params->m_brush;
+	m_result->m_line = m_line;
 }
 
-//std::shared_ptr<DrawResult> DiagramDrawerLine::draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params)
-//{
-//	if (!params)
-//		throw std::invalid_argument("Diagram draw parameters cannot be null.");
-//
-//	auto p = dynamic_cast<DiagramDrawParamsLine*>(params.get());
-//	if (!p)
-//		throw std::invalid_argument("Invalid diagram draw parameters type.");
-//
-//	painter.setPen(params->m_pen);
-//	painter.setBrush(params->m_brush);
-//
-//
-//	QLineF line = calcuLine(p);
-//	// Draw the line
-//	painter.drawLine(line);
-//
-//	// Prepare the result
-//	std::shared_ptr<DrawResultLine> ret = std::make_shared<DrawResultLine>();
-//	ret->m_line = line;
-//
-//	ret->m_painterbrush = painter.brush();
-//	ret->m_painterpen = painter.pen();
-//
-//	return ret;
-//	//if (!params)
-//	//	throw std::runtime_error("error");//todo:except
-//	//auto p = dynamic_cast<DiagramDrawParamsLine*>(params.get());
-//	//if (!p)
-//	//	throw std::runtime_error("error");//todo:except
-//	//
-//	//double halfwidth = p->m_spacesize.width() / 2;
-//	//double halfheight = p->m_spacesize.height() / 2;
-//
-//	//double radians = qDegreesToRadians(p->m_rotationAngle);
-//
-//	//double dx = std::cos(radians);
-//	//double dy = std::sin(radians);
-//
-//	//double t = std::max(std::abs(halfwidth / dx), std::abs(halfheight / dy));
-//	//QPointF start = p->m_center - t * QPointF(dx, dy);
-//	//QPointF end = p->m_center + t * QPointF(dx, dy);
-//
-//	//painter.drawLine(start, end);
-//
-//	//std::shared_ptr<DrawResultLine> ret = std::make_shared<DrawResultLine>();
-//	//return ret;
-//}
+std::shared_ptr<IDidgramDrawParams> DiagramDrawerLine::getParams()
+{
+	return m_params;
+}
+
 
 QLineF DiagramDrawerLine::calcuLine()
 {
@@ -700,7 +515,7 @@ QLineF DiagramDrawerLine::calcuLine()
 	double halfheight = (m_params->m_spacesize.height() - penwidth) / 2.0;
 
 	// Convert rotation angle to radians
-	qreal angle = m_params->m_rotationAngle;
+	qreal angle = m_params->m_rotate;
 	double radians = qDegreesToRadians(angle);
 
 	// Calculate direction vector

@@ -124,14 +124,17 @@ QStackedWidget* PropertyWidgetManager::getstackwidget()
 	return m_propertyStackWidget;
 }
 
-void PropertyWidgetManager::dealclicked(propertyobjecttype type, std::vector<std::shared_ptr<propertydata>> data)
+void PropertyWidgetManager::dealclicked(propertyobjecttype type, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data)
 {
 	if (!m_propertyMap.contains(type))
 		throw std::runtime_error("error");
+	if(data == nullptr)
+		throw std::runtime_error("error");
+
 	propertyWidget* widget = m_propertyMap[type];
 	m_propertyStackWidget->setCurrentIndex(widget->getstackwidgetindex());
 
-	for (const auto& dataptr : data)
+	for (const auto& dataptr : *data)
 	{
 		widget->addShowingData(dataptr);
 	}

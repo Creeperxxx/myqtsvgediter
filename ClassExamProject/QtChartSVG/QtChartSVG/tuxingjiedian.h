@@ -68,10 +68,10 @@ private:
 class IDiagramDrawer
 {
 public:
-	//virtual std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params) = 0;
 	virtual void build() = 0;
 	virtual void draw(QPainter& painter) = 0;
 	virtual std::shared_ptr<DrawResult> getResult() = 0;
+	virtual std::shared_ptr<IDidgramDrawParams> getParams() = 0;
 
 };
 
@@ -82,10 +82,10 @@ public:
 	void build() override;
 	void draw(QPainter& painter) override;
 	std::shared_ptr<DrawResult> getResult() override;
+	std::shared_ptr<IDidgramDrawParams> getParams() override;
 
 
 
-	//std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params) override;
 private:
 	QPolygonF calcuRect();
 	QPolygonF calcuBasicalRect();
@@ -95,7 +95,7 @@ private:
 
 	std::shared_ptr<DiagramDrawParamsRect> m_params;
 	std::shared_ptr<DrawResultRect> m_result;
-	bool m_isbuild;
+	//bool m_isbuild;
 	QPolygonF m_rect;
 };
 
@@ -105,21 +105,19 @@ public:
 	DiagramDrawerCircle(std::shared_ptr<IDidgramDrawParams> params);
 	void build() override;
 	void draw(QPainter& painter) override;
-	//std::shared_ptr<DrawResult> draw(QPainter &painter, std::shared_ptr<IDidgramDrawParams> params)override;
 	std::shared_ptr<DrawResult> getResult() override;
+	std::shared_ptr<IDidgramDrawParams> getParams() override;
 private:
 	QPolygonF calcuBasicalCircle();
 	QTransform calcurotatetransform(QPointF center);
 	qreal calcuscaleFactor(QRectF bound);
-	QTransform calcuscaleTransform(qreal scale);
+	QTransform calcuscaleTransform();
 	QTransform calcuTranslateTransform(QPointF mycenter);
-	//QSizeF calcuboundingrectsize();
 
 	std::shared_ptr<DiagramDrawParamsCircle> m_params;
 	QPolygonF m_circle;
 	qreal m_scale;
 	const qreal m_initheight;
-	bool m_isbuild;
 	std::shared_ptr<DrawResultCircle> m_result;
 };
 
@@ -130,19 +128,17 @@ public:
 	void build() override;
 	void draw(QPainter& painter) override;
     std::shared_ptr<DrawResult> getResult() override;
-	//std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
+	std::shared_ptr<IDidgramDrawParams> getParams() override;
 private:
 	QPolygonF calcuTriangle();
 	QPolygonF calcuBasicalTriangle();
 	QTransform calcuRotateTransform();
 	QTransform calcuTranslateTransfrom(QPointF trianglecenter);
 	QTransform calcuScaleTransform(QRectF trianglerect);
-	//QRectF calcuwidgetrect(QPointF cente, QSizeF size);
 
 	std::shared_ptr<DiagramDrawParamsTriangle> m_params;
 	std::shared_ptr<DrawResultTriangle> m_result;
 	QPolygonF m_triangle;
-	bool m_isbuild;
 	
 };
 
@@ -153,13 +149,12 @@ public:
 	void build()override;
 	void draw(QPainter& painter)override;
     std::shared_ptr<DrawResult> getResult()override;
-	//std::shared_ptr<DrawResult> draw(QPainter& painter, std::shared_ptr<IDidgramDrawParams> params);
+	std::shared_ptr<IDidgramDrawParams> getParams()override;
 private:
 	QLineF calcuLine();
 	
 	std::shared_ptr<DiagramDrawParamsLine> m_params;
 	std::shared_ptr<DrawResultLine> m_result;
-    bool m_isbuild;
 	QLineF m_line;
 };
 
@@ -170,8 +165,8 @@ class DiagramDrawInterface
 {
 public:					                       
 	static DiagramDrawInterface& getInstance();
-	void addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer);
-	std::shared_ptr<IDiagramDrawer> getDrawer(ShapeType type, std::shared_ptr<IDidgramDrawParams> params);
+	DiagramDrawInterface& addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer);
+	std::shared_ptr<IDiagramDrawer> getDrawer(std::shared_ptr<IDidgramDrawParams> params);
 private:
 	std::unordered_map<ShapeType, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)>> m_drawerMap;
 };

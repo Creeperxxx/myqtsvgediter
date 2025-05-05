@@ -74,18 +74,64 @@ void MyMainWindow::init()
 	m_huabuparentscroll->setWidgetResizable(true);
 	m_huabuparentscroll->setWidget(m_huabuparentwidget);
 	centralwidgetlayout->addWidget(m_huabuparentscroll);
+	
+	DiagramDrawInterface::getInstance()
+		.addDrawerCreator(ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerRect>(params);
+			})
+		.addDrawerCreator(ShapeType::Circle, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerCircle>(params);
+			})
+		.addDrawerCreator(ShapeType::Triangle, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerTriangle>(params);
+			})
+		.addDrawerCreator(ShapeType::Line, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerLine>(params);
+			});
+	
+	PropertyDataInterface::getInstance()
+		.addCreator(ShapeType::Rect, []() {
+		return std::make_shared<CreatePropertyDataRect>();
+			})
+		.addCreator(ShapeType::Circle, []() {
+		return std::make_shared<CreatePropertyDataCircle>();
+			})
+		.addCreator(ShapeType::Triangle, []() {
+		return std::make_shared<CreatePropertyDataTriangle>();
+			})
+		.addCreator(ShapeType::Line, []() {
+		return std::make_shared<CreatePropertyDataLine>();
+			});
 
-	GfxLibDiagramItemParams juxingparams(ShapeType::Rect);
-	DiagramItem* juxing = new DiagramItem(juxingparams);
+	createParamsInterface::getInstance()
+		.add(ShapeType::Rect, []() {
+		return std::make_shared<createParamsRect>();
+			})
+		.add(ShapeType::Circle, []() {
+		return std::make_shared<createParamsCircle>();
+			})
+		.add(ShapeType::Triangle, []() {
+		return std::make_shared<createParamsTriangle>();
+			})
+		.add(ShapeType::Line, []() {
+		return std::make_shared<createParamsLine>();
+			});
 
-	GfxLibDiagramItemParams yuanxingparams(ShapeType::Circle);
-	DiagramItem* yuanxing = new DiagramItem(yuanxingparams);
+	auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
+	auto p = creator->create();
+	auto juxing = new Idiagram(p);
 
-	GfxLibDiagramItemParams sanjiaoxingparams(ShapeType::Triangle);
-	DiagramItem* sanjiaoxing = new DiagramItem(sanjiaoxingparams);
+	creator = createParamsInterface::getInstance().getParams(ShapeType::Circle);
+    p = creator->create();
+    auto yuanxing = new Idiagram(p);
 
-	GfxLibDiagramItemParams lineparams(ShapeType::Line);
-	DiagramItem* line = new DiagramItem(lineparams);
+    creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
+    p = creator->create();
+    auto sanjiaoxing = new Idiagram(p);
+
+	creator = createParamsInterface::getInstance().getParams(ShapeType::Line);
+	p = creator->create();
+    auto xian = new Idiagram(p);
 
 	maintoolbar->addWidget(juxing);
 	maintoolbar->addSeparator();
@@ -93,19 +139,19 @@ void MyMainWindow::init()
 	maintoolbar->addSeparator();
 	maintoolbar->addWidget(sanjiaoxing);
 	maintoolbar->addSeparator();
-	maintoolbar->addWidget(line);
+	maintoolbar->addWidget(xian);
 	maintoolbar->addSeparator();
 
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
 	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
 
-	QObject::connect(juxing, &DiagramItem::signalMouseClicked
+	QObject::connect(juxing, &Idiagram::signalMouseClicked
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(yuanxing, &DiagramItem::signalMouseClicked
+	QObject::connect(yuanxing, &Idiagram::signalMouseClicked
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(sanjiaoxing, &DiagramItem::signalMouseClicked
+	QObject::connect(sanjiaoxing, &Idiagram::signalMouseClicked
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(line, &DiagramItem::signalMouseClicked
+	QObject::connect(xian, &Idiagram::signalMouseClicked
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
 
 	QObject::connect(huabuwidget, &huabu::signalMouseClicked, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
