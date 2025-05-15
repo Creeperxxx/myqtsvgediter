@@ -2,21 +2,15 @@
 
 #include <QWidget>
 #include <qmainwindow.h>
-//#include "ui_MyMainWindow.h"
-#include <ui_MyMainWindow.h>
-//#include <qbuttongroup.h>
 #include <qdebug.h>
-#include "tuxing.h"
 #include <qsizepolicy.h>
-#include <configmanager.h>
 #include <qcolor.h>
 #include <string>
 #include <qstring.h>
-#include "huabu.h"
 #include <qscrollarea.h>
 #include <qtoolbar.h>
 #include <qscrollbar.h>
-#include <qsizegrip.h>
+#include <qmenubar.h>
 #include <qstackedwidget.h>
 #include "shuxingwidget.h"
 

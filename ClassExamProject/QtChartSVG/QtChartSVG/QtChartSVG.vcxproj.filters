@@ -42,7 +42,6 @@
   <ItemGroup>
     <None Include="config.json" />
     <None Include="cpp.hint" />
-    <None Include="DailySum.md" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp">
@@ -75,6 +74,9 @@
     <ClCompile Include="tuxingjiedian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="drawparamitem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="huabu.h">
@@ -90,6 +92,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="drawtool.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="drawparamitem.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

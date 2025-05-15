@@ -6,21 +6,16 @@
 #include <qevent.h>
 #include <qbytearray.h>
 #include <qdrag.h>
-#include <qapplication.h>
-#include <qimage.h>
-#include <qlabel.h>
-#include <qboxlayout.h>
 #include <qsizepolicy.h>
 #include <memory>
 #include <qcolor.h>
 #include <stdexcept>
+#include <optional>
+#include <qapplication.h>
 #include "drawtool.h"
 #include "tuxingjiedian.h"
-#include "DiagramMimedata.h"
 #include "shuxingwidget.h"
-#include <optional>
 #include "configmanager.h"
-#include "config.h"
 
 
 
@@ -40,14 +35,15 @@ public:
 
 	void onParamsValueChanged();
 
-	std::shared_ptr<IDidgramDrawParams> param();
 	
 
 	std::shared_ptr<IDiagramDrawer> m_drawer;
-	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> m_propertyDataVec;
+	std::shared_ptr<IDidgramDrawParams> m_params;
+	std::shared_ptr<propertySetManager> m_propertySetManager;
 
 signals:
-	void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+	//void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::shared_ptr<std::unordered_map<QString, std::shared_ptr<IpropertySet>>> data);
+	void signalMouseClicked(std::shared_ptr<propertySetManager> setmanager);
 public:
 
 	QPointF m_dragStartPos;

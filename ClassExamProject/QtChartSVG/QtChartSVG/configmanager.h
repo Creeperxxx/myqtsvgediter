@@ -7,6 +7,10 @@
 #include <sstream>
 #include <vector>
 #include <optional>
+#include "config.h"
+
+
+//也许可以预先将配置项加载到静态变量中这样就能直接使用
 
 constexpr const char keyfengefu = '.';
 

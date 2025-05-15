@@ -11,6 +11,8 @@
 #include <map>
 #include <optional>
 #include <qlabel.h>
+#include <unordered_map>
+#include "drawtool.h"
 
 
 //rect radio
@@ -93,7 +95,8 @@ enum class delegateType
 	Int,
 	Enum,
 	Color,
-	String
+	String,
+	TriangleSides
 };
 
 
@@ -162,6 +165,16 @@ public:
 	QString m_initstring;
 };
 
+class delegateParamsTriangleSides : public IdelegatePramas
+{
+public:
+	delegateParamsTriangleSides();
+	~delegateParamsTriangleSides();
+	QString m_bottomstr;
+	QString m_leftstr;
+	QString m_rightstr;
+};
+
 
 
 class propertydata;
@@ -175,7 +188,7 @@ class propertydata;
 
 
 
-
+class IpropertyItem;
 class IpropertyDelegate : public QWidget
 {
 	Q_OBJECT
@@ -202,9 +215,10 @@ public:
 	doubleDelegate(std::shared_ptr<IdelegatePramas> params);
 	void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
-private:
+protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	QVariant value();
+private:
 
 	QDoubleSpinBox* m_editwidget;
 };
@@ -216,9 +230,10 @@ public:
 	intDelegate(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
-private:
+protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
     QVariant value();
+private:
 
     QSpinBox* m_editwidget;
 };
@@ -230,10 +245,12 @@ public:
 	colorDelete(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
-private:
-	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 
+protected:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
     QVariant value();
+
+private:
 	
 	QColor m_currentcolor;
     QPushButton* m_button;
@@ -249,10 +266,11 @@ public:
 	stringDelegate(std::shared_ptr<IdelegatePramas> params);
 	void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
-private:
+protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
-
 	QVariant value();
+
+private:
 
 	QLabel* m_label;
 };
@@ -264,11 +282,33 @@ public:
 	enumDelegate(std::shared_ptr<IdelegatePramas> params);
     void setData(std::shared_ptr<propertydata> data) override;
 	QWidget* getEditWidget() override;
-private:
+protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
     QVariant value();
+private:
 
     QComboBox* m_combobox;
+};
+
+class triangleSideRadioDelegate : public IpropertyDelegate
+{
+public:
+	~triangleSideRadioDelegate()override;
+	triangleSideRadioDelegate(std::shared_ptr<IdelegatePramas> params);
+	void setData(std::shared_ptr<propertydata> data) override;
+    QWidget* getEditWidget() override;
+protected:
+	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
+	QVariant value();
+private:
+	QWidget* m_widget;
+	QDoubleSpinBox* m_bottombox;
+	QDoubleSpinBox* m_leftbox;
+	QDoubleSpinBox* m_rightbox;
+	QLabel* m_bottomlabel;
+	QLabel* m_leftlabel;
+	QLabel* m_rightlabel;
+	QFormLayout* m_layout;
 };
 
 
@@ -295,6 +335,7 @@ public:
 
 };
 class propertyWidget;
+class propertyDataModel;
 
 
 
@@ -312,6 +353,7 @@ class propertyWidget;
 
 
 
+class propertySetManager;
 class PropertyWidgetManager : public QWidget
 {
 	Q_OBJECT
@@ -332,7 +374,9 @@ public:
 	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
-	void dealclicked(propertyobjecttype type, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+	//void dealclicked(propertyobjecttype type, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+	//void dealclicked(propertyobjecttype type, std::shared_ptr<std::unordered_map<QString, std::shared_ptr<IpropertySet>>> set);
+	void dealclicked(std::shared_ptr<propertySetManager> setmanager);
 private:
 
 	void createonceWidget();
@@ -392,6 +436,8 @@ private:
 
 
 
+
+
 class propertyWidget : public QWidget
 {
 	Q_OBJECT
@@ -413,4 +459,282 @@ private:
 	QFormLayout* m_shuxinglayout;
 	int m_stackwidgetindex;
 };
+
+
+
+
+
+
+
+class IpropertySet;
+class drawParamsPropertySet;
+class otherPropertySet;
+class IpropertyDataBuilder
+{
+public:
+	virtual void build(std::shared_ptr<IpropertySet> set, std::shared_ptr < std::vector < std::shared_ptr<propertydata>>> datavec) = 0;
+
+};
+
+class IDrawParamsPropertyDataBuilder :public IpropertyDataBuilder
+{
+public:
+	void build(std::shared_ptr<IpropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+protected:
+	virtual void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) = 0;
+};
+
+class PenColorDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class PenWidthDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class BrushDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class RotateDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class SpacewidthDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class SpaceheightDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class ScaleDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class CenterHoffsetDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{ protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+class CenterVoffsetDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
+
+
+
+class RectRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class CircleRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class TriangleBottomRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class TriangleLeftRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class TriangleRightRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class TriangleEdgetypeDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+
+
+
+
+
+class IOtherPropertyDataBuilder : public IpropertyDataBuilder
+{
+public:
+	void build(std::shared_ptr<IpropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+protected:
+	virtual void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) = 0;
+};
+
+class NamePropertyDataBuilder : public IOtherPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
+};
+
+
+
+
+
+
+
+
+class IpropertySet;
+class drawParamsPropertySet;
+class propertyDataVecOfPropertySetCreator
+{
+public:
+	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> create(std::shared_ptr<IpropertySet> set);
+	void addBuilder(std::shared_ptr<IpropertyDataBuilder> builder);
+
+	std::vector<std::shared_ptr<IpropertyDataBuilder>> m_builders;
+};
+
+class propertyDataVecOfPropertySetCreatorFactor
+{
+public:
+	static propertyDataVecOfPropertySetCreatorFactor& getInstance();
+	std::shared_ptr<propertyDataVecOfPropertySetCreator> create(std::shared_ptr<std::vector<QString>> propertynamevec); 
+	propertyDataVecOfPropertySetCreatorFactor& addCreator(QString name, std::function<std::shared_ptr<IpropertyDataBuilder>()> func); 
+
+
+private:
+	propertyDataVecOfPropertySetCreatorFactor();
+	propertyDataVecOfPropertySetCreatorFactor(const propertyDataVecOfPropertySetCreatorFactor&) = delete;
+
+	std::map<QString, std::function<std::shared_ptr<IpropertyDataBuilder>()>> m_builderCreatefunc;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class IpropertySet : public QObject
+{
+public:
+	virtual ~IpropertySet() = 0;
+	void addShowData(propertyWidget* widget);
+public:
+	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> m_propertyDataVec;
+
+};
+
+class drawParamsPropertySet : public IpropertySet
+{
+	Q_OBJECT
+public:
+signals:
+	void SignalValueChangedByData();
+public:
+	~drawParamsPropertySet()override;
+
+
+	//如果绘画参数发生了改变，应该发出哪些信号？
+	void onPenColorChanged(QVariant value);
+	void onPenWidthChanged(QVariant value);
+	void onBrushColorChanged(QVariant value);
+	void onRotateChanged(QVariant value);
+	void onSpacewidthChanged(QVariant value);
+	void onSpaceHeightChanged(QVariant value);
+	void onScaleChanged(QVariant value);
+	void onCenterHOffset(QVariant value);
+	void onCenterVOffset(QVariant value);
+
+	void onRectRadioChanged(QVariant value);
+	void onCricleRadioChanged(QVariant value);
+	void onTriangleBottomRadioChanged(QVariant value);
+	void onTriangleLeftRadioChanged(QVariant value);
+	void onTriangleRightRadioChanged(QVariant value);
+	void onTriangleEdgetypeRadioChanged(QVariant value);
+	
+	//也许还需要 属性改变通知propertydata的信号和槽机制
+
+
+
+	std::shared_ptr<IDidgramDrawParams> m_params;
+};
+
+class otherPropertySet :public IpropertySet
+{
+public:
+	~otherPropertySet()override;
+	
+
+
+	QString m_name;
+	qint64 m_zvalue;
+};
+
+
+class propertySetManager
+{
+public:
+	void addPropertySet(QString name, std::shared_ptr<IpropertySet> set);
+	std::shared_ptr<IpropertySet> getPropertySet(QString name);
+
+	void dealShowData(propertyWidget* widget);
+
+
+	std::unordered_map<QString, std::shared_ptr<IpropertySet>> m_propertySetMap;
+	PropertyWidgetManager::propertyobjecttype m_propertyObjectType;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

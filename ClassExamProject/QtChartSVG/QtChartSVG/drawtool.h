@@ -5,7 +5,6 @@
 #include <qpen.h>
 #include <stdexcept>
 #include <qstring.h>
-#include <shuxingwidget.h>
 #include "configmanager.h"
 #include "config.h"
 
@@ -51,13 +50,15 @@ public:
 	virtual void deserialize(QDataStream& in);
 
 
-	QPointF m_center;
-	QSizeF m_spacesize;
+	QPoint m_center;
+	QSize m_spacesize;
 	ShapeType m_type;
-	qreal m_scale;
+	double m_scale;
 	QPen m_pen;
 	QBrush m_brush;
-	qreal m_rotate;
+	int m_rotate;
+	int m_centerHoffset;
+	int m_centerVoffset;
 	bool m_paramChanged = true;
 	
 };
@@ -70,13 +71,13 @@ public:
     void deserialize(QDataStream& in) override;
 
 
-	qreal m_boundingrectradio;
+	double m_boundingrectradio;
 };
 
 class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
-	qreal m_boundingrectradio;
+	double m_boundingrectradio;
 	void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
 
@@ -118,6 +119,11 @@ public:
 	void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
 };
+
+
+
+
+
 
 class ICreateParams
 {
@@ -186,89 +192,6 @@ private:
 
 
 
-
-class ICreatePropertyData
-{
-public:
-	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> createPropertyData(std::shared_ptr<IDidgramDrawParams> params);
-protected:
-	virtual void buildPropertydDataSpecial(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) = 0;;
-private:
-	void onRotateChanged(QVariant rotate, std::shared_ptr<IDidgramDrawParams> params);
-	void onScaleChanged(QVariant scale, std::shared_ptr<IDidgramDrawParams> params);
-	void onPencolorChanged(QVariant color, std::shared_ptr<IDidgramDrawParams> params);
-	void onPenwidthChanged(QVariant width, std::shared_ptr<IDidgramDrawParams> params);
-	void onBrushChanged(QVariant brush, std::shared_ptr<IDidgramDrawParams> params);
-	void onSpacesizeWidthChanged(QVariant width, std::shared_ptr<IDidgramDrawParams> params);
-	void onSpacesizeHeightChanged(QVariant height, std::shared_ptr<IDidgramDrawParams> params);
-
-	void createPropertyDataAll(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-
-	void buildPenAndBrush(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
-	void buildRotate(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildSpacesize(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildScale(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-
-	
-};
-
-class CreatePropertyDataRect : public ICreatePropertyData
-{
-protected:
-	void buildPropertydDataSpecial(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-private:
-	void onRadioChanged(QVariant newradio, std::shared_ptr<DiagramDrawParamsRect> params);
-	void buildRadio(std::shared_ptr<DiagramDrawParamsRect> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildName(std::shared_ptr<DiagramDrawParamsRect> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-};
-
-class CreatePropertyDataCircle : public ICreatePropertyData
-{
-protected:
-	void buildPropertydDataSpecial(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-private:
-	void onRadioChanged(QVariant newradio, std::shared_ptr<DiagramDrawParamsCircle> params);
-	void buildRadio(std::shared_ptr<DiagramDrawParamsCircle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildName(std::shared_ptr<DiagramDrawParamsCircle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-};
-
-class CreatePropertyDataTriangle : public ICreatePropertyData
-{
-protected:
-	void buildPropertydDataSpecial(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-private:
-	void onEdgetypeChanged(QVariant edgetype, std::shared_ptr<DiagramDrawParamsTriangle> params);
-	void onBottomRadioChanged(QVariant newradio, std::shared_ptr<DiagramDrawParamsTriangle> params);
-	void onLeftRadioChanged(QVariant newradio, std::shared_ptr<DiagramDrawParamsTriangle> params);
-	void onRightRadioChanged(QVariant newradio, std::shared_ptr<DiagramDrawParamsTriangle> params);
-	void buildEdgetype(std::shared_ptr<DiagramDrawParamsTriangle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildBottomRadio(std::shared_ptr<DiagramDrawParamsTriangle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildLeftRadio(std::shared_ptr<DiagramDrawParamsTriangle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-    void buildRightRadio(std::shared_ptr<DiagramDrawParamsTriangle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-	void buildName(std::shared_ptr<DiagramDrawParamsTriangle> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-};
-
-class CreatePropertyDataLine : public ICreatePropertyData
-{
-protected:
-	void buildPropertydDataSpecial(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-private:
-	void buildName(std::shared_ptr<DiagramDrawParamsLine> params, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
-};
-
-class PropertyDataInterface
-{
-public:
-	static PropertyDataInterface& getInstance();
-	PropertyDataInterface& addCreator(ShapeType type, std::function<std::shared_ptr<ICreatePropertyData>()> creator);
-	std::shared_ptr<ICreatePropertyData> getCreator(ShapeType type);
-private:
-	PropertyDataInterface();
-	PropertyDataInterface(const PropertyDataInterface& other);
-
-
-	std::map<ShapeType, std::function<std::shared_ptr<ICreatePropertyData>()>> m_creatorMap;
-};
 
 
 

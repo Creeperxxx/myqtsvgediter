@@ -2,14 +2,14 @@
 #include <qpoint.h>
 #include <qsize.h>
 #include <qpainter.h>
-#include "config.h"
 #include <qdebug.h>
 #include <stdexcept>
-#include "configmanager.h"
-#include "drawtool.h"
-#include "qpainterpath.h"
+#include <qpainterpath.h>
 #include <unordered_map>
 #include <functional>
+#include "drawtool.h"
+#include "configmanager.h"
+#include "drawparamitem.h"
 
 constexpr const double linetolerance = 5.0;
 
@@ -68,21 +68,22 @@ private:
 class IDiagramDrawer
 {
 public:
+
 	virtual void build() = 0;
 	virtual void draw(QPainter& painter) = 0;
 	virtual std::shared_ptr<DrawResult> getResult() = 0;
-	virtual std::shared_ptr<IDidgramDrawParams> getParams() = 0;
 
+protected:
+	QPoint calcuRealCenter(QPoint center, int hmove, int vmove);
 };
 
 class DiagramDrawerRect : public IDiagramDrawer
 {
 public:
-	DiagramDrawerRect(std::shared_ptr<IDidgramDrawParams> params);
+	DiagramDrawerRect(std::shared_ptr<IDidgramDrawParams> param);
 	void build() override;
 	void draw(QPainter& painter) override;
 	std::shared_ptr<DrawResult> getResult() override;
-	std::shared_ptr<IDidgramDrawParams> getParams() override;
 
 
 
@@ -106,18 +107,17 @@ public:
 	void build() override;
 	void draw(QPainter& painter) override;
 	std::shared_ptr<DrawResult> getResult() override;
-	std::shared_ptr<IDidgramDrawParams> getParams() override;
 private:
 	QPolygonF calcuBasicalCircle();
 	QTransform calcurotatetransform(QPointF center);
 	qreal calcuscaleFactor(QRectF bound);
-	QTransform calcuscaleTransform();
-	QTransform calcuTranslateTransform(QPointF mycenter);
+	QTransform calcuscaleTransform(QPointF center);
+	QTransform calcuTranslateTransform(QPointF mycenter, QPointF targetpoint);
 
 	std::shared_ptr<DiagramDrawParamsCircle> m_params;
 	QPolygonF m_circle;
 	qreal m_scale;
-	const qreal m_initheight;
+	const int m_initheight;
 	std::shared_ptr<DrawResultCircle> m_result;
 };
 
@@ -128,7 +128,6 @@ public:
 	void build() override;
 	void draw(QPainter& painter) override;
     std::shared_ptr<DrawResult> getResult() override;
-	std::shared_ptr<IDidgramDrawParams> getParams() override;
 private:
 	QPolygonF calcuTriangle();
 	QPolygonF calcuBasicalTriangle();
@@ -149,7 +148,6 @@ public:
 	void build()override;
 	void draw(QPainter& painter)override;
     std::shared_ptr<DrawResult> getResult()override;
-	std::shared_ptr<IDidgramDrawParams> getParams()override;
 private:
 	QLineF calcuLine();
 	

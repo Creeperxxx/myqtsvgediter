@@ -58,7 +58,12 @@ namespace qtcf {
     namespace tuxing {
 
         namespace all {
+            constexpr auto namename = "tuxing.all.namename";
+            constexpr auto centerhoffsetname = "tuxing.all.centerhoffsetname";
+            constexpr auto centervoffsetname = "tuxing.all.centervoffsetname";
             namespace spacesize {
+                constexpr auto widthname = "tuxing.all.spacesize.widthname";
+                constexpr auto heightname = "tuxing.all.spacesize.heightname"; 
                 constexpr auto width = "tuxing.all.spacesize.width";
                 constexpr auto height = "tuxing.all.spacesize.height";
             }
@@ -66,13 +71,21 @@ namespace qtcf {
             {
                 namespace pen
                 {
+                    constexpr auto colorname = "tuxing.all.painter.pen.colorname";
+                    constexpr auto widthname = "tuxing.all.painter.pen.widthname";
                     constexpr auto color = "tuxing.all.painter.pen.color";
                     constexpr auto width = "tuxing.all.painter.pen.width";
                 }
+                constexpr auto brushcolorname = "tuxing.all.painter.brushcolorname";
                 constexpr auto brush = "tuxing.all.painter.brush";
             }
         }
+        constexpr auto rotatename = "tuxing.rotatename";
+        constexpr auto scalename = "tuxing.scalename";
+        constexpr auto centername = "tuxing.centername";
+        constexpr auto diagramtypename = "tuxing.typename";
         namespace rectangle {
+            constexpr auto radioname = "tuxing.rectangle.radioname";
             constexpr auto radio = "tuxing.rectangle.radio";
             //constexpr auto drawbypainter = "tuxing.rectangle.drawbypainter";
             //constexpr auto drawbyloadpic = "tuxing.rectangle.drawbyloadpic";
@@ -85,6 +98,7 @@ namespace qtcf {
             //constexprjauto drawbypainter = "tuxing.circle.drawbypainter";
             //constexpr auto drawbyloadpic = "tuxing.circle.drawbyloadpic";
             //constexpr auto imagepath = "tuxing.circle.imagepath";
+            constexpr auto radioname = "tuxing.circle.radioname";
             constexpr auto boundingrectradio = "tuxing.circle.boundingrectradio";
             constexpr auto rotate = "tuxing.circle.rotate";
             constexpr auto scale = "tuxing.circle.scale";
@@ -93,11 +107,15 @@ namespace qtcf {
         namespace triangle {
 
             namespace edgeradio {
+                constexpr auto bottomname = "tuxing.triangle.edgeradio.bottomname";
+                constexpr auto leftname = "tuxing.triangle.edgeradio.leftname";
+                constexpr auto rightname = "tuxing.triangle.edgeradio.rightname";
                 constexpr auto bottom = "tuxing.triangle.edgeradio.bottom";
                 constexpr auto left = "tuxing.triangle.edgeradio.left";
                 constexpr auto right = "tuxing.triangle.edgeradio.right";
             }
 
+            constexpr auto edgetypename = "tuxing.triangle.edgetypename";
             constexpr auto edgetype = "tuxing.triangle.edgetype";
             constexpr auto totate = "tuxing.triangle.totate";
             //constexpr auto drawbypainter = "tuxing.triangle.drawbypainter";

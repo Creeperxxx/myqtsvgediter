@@ -1,4 +1,6 @@
 #include "MyMainWindow.h"
+#include "tuxing.h"
+#include "huabu.h"
 
 //MyMainWindow::MyMainWindow(QWidget* parent)
 	//: QMainWindow(parent)
@@ -89,19 +91,6 @@ void MyMainWindow::init()
 		return std::make_shared<DiagramDrawerLine>(params);
 			});
 	
-	PropertyDataInterface::getInstance()
-		.addCreator(ShapeType::Rect, []() {
-		return std::make_shared<CreatePropertyDataRect>();
-			})
-		.addCreator(ShapeType::Circle, []() {
-		return std::make_shared<CreatePropertyDataCircle>();
-			})
-		.addCreator(ShapeType::Triangle, []() {
-		return std::make_shared<CreatePropertyDataTriangle>();
-			})
-		.addCreator(ShapeType::Line, []() {
-		return std::make_shared<CreatePropertyDataLine>();
-			});
 
 	createParamsInterface::getInstance()
 		.add(ShapeType::Rect, []() {
@@ -116,6 +105,57 @@ void MyMainWindow::init()
 		.add(ShapeType::Line, []() {
 		return std::make_shared<createParamsLine>();
 			});
+
+	propertyDataVecOfPropertySetCreatorFactor::getInstance()
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), []() {
+		return std::make_shared<PenColorDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)), []() {
+		return std::make_shared<PenWidthDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname)), []() {
+		return std::make_shared<BrushDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename)), []() {
+		return std::make_shared<RotateDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname)), []() {
+		return std::make_shared<SpacewidthDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname)), []() {
+		return std::make_shared<SpaceheightDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename)), []() {
+		return std::make_shared<ScaleDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname)), []() {
+		return std::make_shared<CenterHoffsetDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), []() {
+		return std::make_shared<CenterVoffsetDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename)), []() {
+		return std::make_shared<NamePropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), []() {
+		return std::make_shared<RectRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)), []() {
+		return std::make_shared<CircleRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::bottomname)), []() {
+		return std::make_shared<TriangleBottomRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::leftname)), []() {
+		return std::make_shared<TriangleLeftRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::rightname)), []() {
+		return std::make_shared<TriangleRightRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), []() {
+		return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
+			});
+		
 
 	auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
 	auto p = creator->create();

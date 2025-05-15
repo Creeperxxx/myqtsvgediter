@@ -10,6 +10,7 @@ Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	, m_widgetRadio(std::nullopt)
 	, m_drawer(nullptr)
 	, m_mimetype(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype)))
+	, m_params(nullptr)
 {
 	if (m_issizefixed)
 	{
@@ -26,15 +27,104 @@ Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 		setMinimumHeight(cfggetval<int>(qtcf::tuxingku::diagramwidget::minheight));
 		m_widgetRadio = cfggetval<double>(qtcf::tuxingku::diagramwidget::widgetradio);
 	}
+	if (params == nullptr || params.get() == nullptr)
+		throw std::runtime_error("error");
+	m_params = params;
 
-	QObject::connect(params.get(), &IDidgramDrawParams::SignalParamsChanged, this, &Idiagram::onParamsValueChanged);
+	m_propertySetManager = std::make_shared<propertySetManager>();
+	switch (params->m_type)
+	{
+	case ShapeType::Rect:
+		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramRect;
+		break;
+	case ShapeType::Circle:
+		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramCircle;
+		break;
+	case ShapeType::Triangle:
+		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramTriangle;
+		break;
+	case ShapeType::Line:
+		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramLine;
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
 
 	m_drawer = DiagramDrawInterface::getInstance().getDrawer(params);
-	if (m_drawer == nullptr)
-		throw std::runtime_error("error");
 
-	auto creator = PropertyDataInterface::getInstance().getCreator(params->m_type);
-	m_propertyDataVec = creator->createPropertyData(params);
+	std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
+	drawParamsSet->m_params = params;
+	std::shared_ptr<std::vector<QString>> propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+			QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+		});
+	switch (params->m_type)
+	{
+	case ShapeType::Rect:
+	{
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)));
+	}
+	break;
+	case ShapeType::Circle:
+	{
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)));
+	}
+	break;
+	case ShapeType::Triangle:
+	{
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::bottomname)));
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::leftname)));
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::rightname)));
+		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)));
+	}
+	break;
+	case ShapeType::Line:
+		break;
+	default:
+		throw std::runtime_error("error");
+	}
+	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
+	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &Idiagram::onParamsValueChanged);
+	m_propertySetManager->addPropertySet(QString("drawParams"), drawParamsSet);
+
+
+
+	std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
+	switch (params->m_type)
+	{
+	case ShapeType::Rect:
+		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::rect));
+		break;
+	case ShapeType::Circle:
+		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::circle));
+		break;
+	case ShapeType::Triangle:
+		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::triangle));
+		break;
+	case ShapeType::Line:
+		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::line));
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
+	});
+	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	otherset->m_propertyDataVec = creator->create(otherset);
+	m_propertySetManager->addPropertySet(QString("other"), otherset);
+
+
+
+
 
 	using mytype = PropertyWidgetManager::propertyobjecttype;
 	switch (params->m_type)
@@ -56,6 +146,7 @@ Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 		break;
 	}
 
+
 }
 
 void Idiagram::mousePressEvent(QMouseEvent* event)
@@ -63,13 +154,13 @@ void Idiagram::mousePressEvent(QMouseEvent* event)
 	if (event->button() == Qt::LeftButton)
 	{
 		m_dragStartPos = event->localPos();
-		emit signalMouseClicked(m_propertyobjecttype, m_propertyDataVec);
+		emit signalMouseClicked(m_propertySetManager);
 	}
 }
 
 void Idiagram::mouseMoveEvent(QMouseEvent* event)
 {
-	if (!(event->button() & Qt::LeftButton))
+	if (!(event->buttons() & Qt::LeftButton))
 		return;
 	if ((event->localPos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
 		return;
@@ -110,8 +201,6 @@ void Idiagram::resizeEvent(QResizeEvent* event)
 
 void Idiagram::createQDrag()
 {
-	auto params = param();
-
 	QDrag* drag = new QDrag(this);
 
 	QMimeData* qmimedata = new QMimeData();
@@ -119,22 +208,21 @@ void Idiagram::createQDrag()
 	QByteArray array;
 	QDataStream stream(&array, QIODevice::WriteOnly);
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
-	int inttype = static_cast<int>(params->m_type);
+	int inttype = static_cast<int>(m_params->m_type);
 	stream << inttype;
-	stream << *params;
+	stream << *m_params;
 
 	qmimedata->setData(m_mimetype, array);
 	drag->setMimeData(qmimedata);
 
-	QPixmap pixmap(params->m_spacesize.toSize());
+	QPixmap pixmap(m_params->m_spacesize);
 	pixmap.fill(Qt::transparent);
 	QPainter painter(&pixmap);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-	params->m_center = pixmap.rect().center();
-	params->m_spacesize = pixmap.size();
-	params->m_paramChanged = true;
+	m_params->m_center = pixmap.rect().center();
+	m_params->m_paramChanged = true;
 	m_drawer->draw(painter);
 
 	drag->setPixmap(pixmap);
@@ -148,26 +236,21 @@ void Idiagram::paintEvent(QPaintEvent* event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-	auto params = param();
-	QSizeF size = params->m_spacesize;
-	params->m_center = this->rect().center();
-	params->m_spacesize = this->size();
-	params->m_paramChanged = true;
+	QSize size = m_params->m_spacesize;
+	m_params->m_center = this->rect().center();
+	m_params->m_spacesize = this->size();
+	m_params->m_paramChanged = true;
 
 	m_drawer->draw(painter);
-	params->m_spacesize = size;
+	m_params->m_spacesize = size;
+	m_params->m_paramChanged = true;
 }
 
 void Idiagram::onParamsValueChanged()
 {
-	param()->m_paramChanged = true;
 	update();
 }
 
-std::shared_ptr<IDidgramDrawParams> Idiagram::param()
-{
-	return m_drawer == nullptr ? nullptr : m_drawer->getParams();
-}
 
 
 

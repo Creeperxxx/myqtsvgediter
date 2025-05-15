@@ -3,74 +3,51 @@
 #include <qevent.h>
 #include <qmimedata.h>
 #include <qdebug.h>
-#include <qvector.h>
-#include "tuxingjiedian.h"
-#include <qpalette.h>
-#include "config.h"
-#include "tuxing.h"
-#include "configmanager.h"
 #include <vector>
-#include "DiagramMimedata.h"
+#include <list>
 #include "shuxingwidget.h"
-#include "qlinkedlist.h"
+#include "tuxingjiedian.h"
+#include "configmanager.h"
 
 
 
 
-class huabutuxing : public QWidget
+class huabutuxing : public QObject
 {
 	Q_OBJECT
 public:
+	huabutuxing();
+
+
 signals:
 	void signalRepaint();
 
 public:
-	void buildPropertyData();
-	void buildPropertyDataRect();
-	void buildPropertyDataCircle();
-	void buildPropertyDataTriangle();
-	void buildPropertyDataLine();
 
 
-	void onValueChangedName(QVariant value);
-	void onValueChangeRectRadio(QVariant value);
-	void onValueChangedRectRotate(QVariant value);
-	void onValueChangedScale(QVariant value);
-	void onValueChangedSpaceWidth(QVariant value);
-	void onValueChangedSpaceHeight(QVariant value);
-	void onValueChangedPenColor(QVariant value);
-	void onValueChangedPenWidth(QVariant value);
-	void onvalueChangedBrushColor(QVariant value);
-	void onValueChangedHOffset(QVariant value);
-	void onValueChangedVOffset(QVariant value);
-	void onValueChangedCircleRadio(QVariant value);
-	void onValueChangedCircleRotate(QVariant value);
-	void onValueChangedTriangeRadioBottom(QVariant value);
-	void onValueChangedTriangeRadioLeft(QVariant value);
-	void onValueChangedTriangeRadioRight(QVariant value);
-	void onValueChangedTriangleEdgetype(QVariant value);
-	void onValueChangedTriangleRotate(QVariant value);
-	void onValueChangedLineRotate(QVariant value);
-
-	std::vector<std::shared_ptr<propertydata>> m_propertydataVec;
-	QPen m_pen;
-	QBrush m_brush;
-	std::shared_ptr<IDidgramDrawParams> m_params;
+	std::shared_ptr<propertySetManager> m_propertySetManager;
 	std::shared_ptr<IDiagramDrawer> m_drawer;
-	QString m_name;
-	QPointF m_center;
-	int m_centerhoffset;
-	int m_centervoffset;
-
-	qint64 m_dataTime; //z值
-private:
-	void buildPropertyDataPenandBrush();
-	void buildPropertyDataCenteroffset();
-	void buildPropertyDataSpacesize();
-	void buildPropertyDataScale();
-	void buildPropertyDataName();
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//data datamanager   一个个data代表一个个属性，然后通过add方式交由datamanager管理。
+//datamanager tuxing datamanager交给tuxing管理
+//tuxing listerner listermanager tuxing持有listermanager 后者管理一系列listerner
+//然后data发出信号给manager manager发出信号给tuxing tuxing发出信号给manager manage
+//manager发出信号给listerner listerner看该属性是否由自己管理，如果是，则update
 
 
 
@@ -95,27 +72,24 @@ public:
 	void mousePressEvent(QMouseEvent* event) override;
 
 signals:
-	void signalMouseClicked(PropertyWidgetManager::propertyobjecttype type, std::vector<std::shared_ptr<propertydata>> data);
+	void signalMouseClicked(std::shared_ptr<propertySetManager> setmanager);
 
 private:
 	void init();
 	void initPainter(QPainter& painter);
 	
 
-	PropertyWidgetManager::propertyobjecttype shapeTypeToPropertyobjectType(ShapeType type);
 
-	void buildPropertyDataHuaub();
-	std::vector<std::shared_ptr<propertydata>> m_propertydataHuabuVec;
 
 	QString createTuxingName(ShapeType type);
 	int m_tuxingnum;
 
-	PropertyWidgetManager::propertyobjecttype shapetypeToPropertyType(ShapeType type);
 
+	std::shared_ptr<propertySetManager> m_setManager;
 
 
 	std::vector<std::shared_ptr<huabutuxing>> m_tuxingvec;
-	QLinkedList<std::shared_ptr<huabutuxing>> m_tuxinglist;
+	std::list<std::shared_ptr<huabutuxing>> m_tuxinglist;
 
 	QColor m_backgroundcolor;
 	QSize m_size;
