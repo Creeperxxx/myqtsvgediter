@@ -3,9 +3,9 @@
 #include "config.h"
 
 
-Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
+diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	:QWidget(parent)
-	, m_dragStartPos(0,0)
+	, m_dragStartPos(0, 0)
 	, m_issizefixed(cfggetval<bool>(qtcf::tuxingku::diagramwidget::issizefix))
 	, m_widgetRadio(std::nullopt)
 	, m_drawer(nullptr)
@@ -32,89 +32,22 @@ Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	m_params = params;
 
 	m_propertySetManager = std::make_shared<propertySetManager>();
-	switch (params->m_type)
-	{
-	case ShapeType::Rect:
-		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramRect;
-		break;
-	case ShapeType::Circle:
-		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramCircle;
-		break;
-	case ShapeType::Triangle:
-		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramTriangle;
-		break;
-	case ShapeType::Line:
-		m_propertySetManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::diagramLine;
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
+	m_propertySetManager->m_propertyObjectType = shapetypeToPropertytype(params->m_type);
 
 	m_drawer = DiagramDrawInterface::getInstance().getDrawer(params);
 
 	std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
 	drawParamsSet->m_params = params;
-	std::shared_ptr<std::vector<QString>> propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-			QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-		});
-	switch (params->m_type)
-	{
-	case ShapeType::Rect:
-	{
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)));
-	}
-	break;
-	case ShapeType::Circle:
-	{
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)));
-	}
-	break;
-	case ShapeType::Triangle:
-	{
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::bottomname)));
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::leftname)));
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::rightname)));
-		propertynamevec->push_back(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)));
-	}
-	break;
-	case ShapeType::Line:
-		break;
-	default:
-		throw std::runtime_error("error");
-	}
+	auto propertynamevec = createNameVec(params->m_type);
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
-	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &Idiagram::onParamsValueChanged);
+	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &diagram::onParamsValueChanged);
 	m_propertySetManager->addPropertySet(QString("drawParams"), drawParamsSet);
 
 
 
 	std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-	switch (params->m_type)
-	{
-	case ShapeType::Rect:
-		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::rect));
-		break;
-	case ShapeType::Circle:
-		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::circle));
-		break;
-	case ShapeType::Triangle:
-		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::triangle));
-		break;
-	case ShapeType::Line:
-		otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::line));
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
+	otherset->m_name = getName(params->m_type);
 	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
 		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
 	});
@@ -126,49 +59,32 @@ Idiagram::Idiagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 
 
 
-	using mytype = PropertyWidgetManager::propertyobjecttype;
-	switch (params->m_type)
-	{
-	case ShapeType::Rect:
-		m_propertyobjecttype = mytype::diagramRect;
-		break;
-	case ShapeType::Circle:
-		m_propertyobjecttype = mytype::diagramCircle;
-		break;
-	case ShapeType::Triangle:
-		m_propertyobjecttype = mytype::diagramTriangle;
-		break;
-	case ShapeType::Line:
-		m_propertyobjecttype = mytype::diagramLine;
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-
-
 }
 
-void Idiagram::mousePressEvent(QMouseEvent* event)
+void diagram::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
 		m_dragStartPos = event->localPos();
-		emit signalMouseClicked(m_propertySetManager);
+		emit signalPropertyShow(m_propertySetManager);
+		emit signalMouseDrawing(m_params);
 	}
 }
 
-void Idiagram::mouseMoveEvent(QMouseEvent* event)
+void diagram::mouseMoveEvent(QMouseEvent* event)
 {
 	if (!(event->buttons() & Qt::LeftButton))
 		return;
 	if ((event->localPos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
 		return;
+	if (m_params->m_type == ShapeType::Mouse 
+		|| m_params->m_type == ShapeType::choose)
+		return;
 	createQDrag();
 }
 
 
-void Idiagram::resizeEvent(QResizeEvent* event)
+void diagram::resizeEvent(QResizeEvent* event)
 {
 	QWidget::resizeEvent(event);
 	if (!m_issizefixed)
@@ -199,7 +115,7 @@ void Idiagram::resizeEvent(QResizeEvent* event)
 	}
 }
 
-void Idiagram::createQDrag()
+void diagram::createQDrag()
 {
 	QDrag* drag = new QDrag(this);
 
@@ -230,7 +146,7 @@ void Idiagram::createQDrag()
 	drag->exec(Qt::CopyAction);
 }
 
-void Idiagram::paintEvent(QPaintEvent* event)
+void diagram::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing, true);
@@ -246,11 +162,179 @@ void Idiagram::paintEvent(QPaintEvent* event)
 	m_params->m_paramChanged = true;
 }
 
-void Idiagram::onParamsValueChanged()
+void diagram::onParamsValueChanged()
 {
 	update();
 }
 
+std::shared_ptr<std::vector<QString>> diagram::createNameVec(ShapeType type)
+{
+	switch (type)
+	{
+	case ShapeType::Rect:
+		return createNameVecRect();
+		break;
+	case ShapeType::Circle:
+		return createNameVecCircle();
+		break;
+	case ShapeType::Triangle:
+		return createNameVecTriangle();
+		break;
+	case ShapeType::Line:
+		return createNameVecLine();
+		break;
+	case ShapeType::Mouse:
+		return createNamgeVecMouse();
+		break;
+	case ShapeType::choose:
+		return createNameVecChoose();
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecRect()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname))
+	});
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecCircle()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname))
+	});
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecTriangle()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename))
+	});
+
+
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecLine()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+	});
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNamgeVecMouse()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+	});
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecChoose()
+{
+	return std::make_shared<std::vector<QString>>();
+}
+
+std::shared_ptr<std::vector<QString>> diagram::createNameVecText()
+{
+	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
+		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::size))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family))
+	});
+}
+
+QString diagram::getName(ShapeType type)
+{
+	switch (type)
+	{
+	case ShapeType::Rect:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::rect));
+		break;
+	case ShapeType::Circle:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::circle));
+		break;
+	case ShapeType::Triangle:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::triangle));
+		break;
+	case ShapeType::Line:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::line));
+		break;
+	case ShapeType::Mouse:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::mouse));
+		break;
+	case ShapeType::choose:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::choose));
+		break;
+	case ShapeType::Text:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::text));
+		break;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
+
+PropertyWidgetManager::propertyobjecttype diagram::shapetypeToPropertytype(ShapeType type)
+{
+	switch (type)
+	{
+	case ShapeType::Rect:
+		return PropertyWidgetManager::propertyobjecttype::diagramRect;
+		break;
+	case ShapeType::Circle:
+		return PropertyWidgetManager::propertyobjecttype::diagramCircle;
+		break;
+	case ShapeType::Triangle:
+		return PropertyWidgetManager::propertyobjecttype::diagramTriangle;
+		break;
+	case ShapeType::Line:
+		return PropertyWidgetManager::propertyobjecttype::diagramLine;
+		break;
+	case ShapeType::Mouse:
+		return PropertyWidgetManager::propertyobjecttype::diagramMouse;
+		break;
+	case ShapeType::choose:
+		return PropertyWidgetManager::propertyobjecttype::defaulttype;
+		break;
+	case ShapeType::Text:
+		return PropertyWidgetManager::propertyobjecttype::diagramText;
+	default:
+		throw std::runtime_error("error");
+		break;
+	}
+}
 
 
 

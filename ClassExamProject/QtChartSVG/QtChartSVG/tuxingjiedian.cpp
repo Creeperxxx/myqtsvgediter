@@ -161,7 +161,7 @@ void DiagramDrawerCircle::draw(QPainter& painter)
 	painter.setPen(pen);
 	painter.setBrush(m_params->m_brush);
 
-	painter.translate(calcuRealCenter(m_params->m_center, m_params->m_centerHoffset,m_params->m_centerVoffset));
+	painter.translate(calcuRealCenter(m_params->m_center, m_params->m_centerHoffset, m_params->m_centerVoffset));
 	painter.rotate(m_params->m_rotate);
 	if (m_scale < 1e-6)
 		throw std::runtime_error("error");
@@ -635,4 +635,144 @@ qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
 QPoint IDiagramDrawer::calcuRealCenter(QPoint center, int hmove, int vmove)
 {
 	return center + QPoint(hmove, vmove);
+}
+
+DiagramDrawerMouse::DiagramDrawerMouse(std::shared_ptr<IDidgramDrawParams> params)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultMouse>())
+{
+	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::Mouse)
+		throw std::runtime_error("error");
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params);
+	if (castparams == nullptr)
+		throw std::runtime_error("error");
+	m_params = castparams;
+}
+
+void DiagramDrawerMouse::build()
+{
+
+}
+
+void DiagramDrawerMouse::draw(QPainter& painter)
+{
+	if (m_params->m_isdrawInHuabu)
+	{
+		painter.setPen(m_params->m_pen);
+		painter.drawPath(*m_path);
+	}
+	else
+	{
+		QString text = "笔";
+		QFont font;
+		int basesize = qMin(m_params->m_spacesize.width(), m_params->m_spacesize.height()) / 2;
+		font.setPointSize(basesize);
+		painter.setFont(font);
+		int x = m_params->m_center.x() - m_params->m_spacesize.width() / 2;
+		int y = m_params->m_center.y() - m_params->m_spacesize.height() / 2;
+		QRect rect(x, y, m_params->m_spacesize.width(), m_params->m_spacesize.height());
+
+		painter.drawText(rect, Qt::AlignCenter, text);
+	}
+
+
+}
+
+std::shared_ptr<DrawResult> DiagramDrawerMouse::getResult()
+{
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_path = *m_path;
+	return m_result;
+}
+
+bool DrawResultMouse::iscontainPoint(QPointF point)
+{
+	QPainterPath circle;
+	circle.addEllipse(point, linetolerance, linetolerance);
+
+	return m_path.intersects(circle);
+}
+
+QPainterPath DrawResultMouse::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.width());
+	
+	return stroker.createStroke(m_path);
+}
+
+DiagramDrawerChoose::DiagramDrawerChoose(std::shared_ptr<IDidgramDrawParams> params)
+{
+	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::choose)
+		throw std::runtime_error("error");
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsChoose>(params);
+	if(castparams == nullptr)
+		throw std::runtime_error("error");
+	m_params = castparams;
+}
+
+void DiagramDrawerChoose::build()
+{
+}
+
+void DiagramDrawerChoose::draw(QPainter& painter)
+{
+	QString text = "选择";
+	QFont font;
+	int basesize = qMin(m_params->m_spacesize.width(), m_params->m_spacesize.height()) / 2;
+	font.setPointSize(basesize);
+	painter.setFont(font);
+	int x = m_params->m_center.x() - m_params->m_spacesize.width() / 2;
+	int y = m_params->m_center.y() - m_params->m_spacesize.height() / 2;
+	QRect rect(x, y, m_params->m_spacesize.width(), m_params->m_spacesize.height());
+
+	painter.drawText(rect, Qt::AlignCenter, text);
+}
+
+std::shared_ptr<DrawResult> DiagramDrawerChoose::getResult()
+{
+	return nullptr;
+}
+
+DiagramDrawerText::DiagramDrawerText(std::shared_ptr<IDidgramDrawParams> params)
+	:m_lineedit(nullptr)
+	, m_result(std::make_shared<DrawResultText>())
+{
+	if (params == nullptr || params.get() == nullptr)
+		throw std::runtime_error("error");
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(params);
+	if (castparams == nullptr)
+		throw std::runtime_error("error");
+	m_params = castparams;
+}
+
+void DiagramDrawerText::build()
+{
+}
+
+void DiagramDrawerText::draw(QPainter& painter)
+{
+	if (!m_params->m_isdrawInHuabu)
+	{
+		painter.setPen(m_params->m_pen);
+		QString text = "文本";
+		QFont font;
+		int basesize = qMin(m_params->m_spacesize.width(), m_params->m_spacesize.height()) / 2;
+		font.setPointSize(basesize);
+		painter.setFont(font);
+		int x = m_params->m_center.x() - m_params->m_spacesize.width() / 2;
+		int y = m_params->m_center.y() - m_params->m_spacesize.height() / 2;
+		QRect rect(x, y, m_params->m_spacesize.width(), m_params->m_spacesize.height());
+
+		painter.drawText(rect, Qt::AlignCenter, text);
+	}
+}
+
+std::shared_ptr<DrawResult> DiagramDrawerText::getResult()
+{
+	m_result->m_painterpen = m_params->m_pen;
+	m_result->m_font = m_params->m_font;
+	m_result->m_rect = m_lineedit->geometry();
+	m_result->m_text = m_lineedit->text();
+	return m_result;
 }

@@ -5,6 +5,7 @@
 #include <qpen.h>
 #include <stdexcept>
 #include <qstring.h>
+#include <qfont.h>
 #include "configmanager.h"
 #include "config.h"
 
@@ -20,7 +21,10 @@ enum class ShapeType
 	Rect,
 	Circle,
 	Triangle,
-	Line
+	Line,
+	Mouse,
+	choose,
+	Text
 };
 
 namespace ShapeTypeTool
@@ -41,7 +45,8 @@ signals:
 
 
 public:
-
+	IDidgramDrawParams(const IDidgramDrawParams& other);
+	IDidgramDrawParams() {}
 	virtual ~IDidgramDrawParams() {}
 
 	friend QDataStream& operator<<(QDataStream& out, const IDidgramDrawParams& params);
@@ -60,6 +65,7 @@ public:
 	int m_centerHoffset;
 	int m_centerVoffset;
 	bool m_paramChanged = true;
+	bool m_isdrawInHuabu;
 	
 };
 
@@ -67,6 +73,8 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 {
 public:
 	~DiagramDrawParamsRect() {}
+	DiagramDrawParamsRect(const DiagramDrawParamsRect& other);
+	DiagramDrawParamsRect() {}
 	void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
 
@@ -82,6 +90,8 @@ public:
     void deserialize(QDataStream& in) override;
 
 	~DiagramDrawParamsCircle() {}
+	DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other);
+	DiagramDrawParamsCircle() {}
 };
 
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
@@ -99,6 +109,8 @@ public:
 	static EdgeType edgetypeStringToEnum(const QString& edgetype);
 	static QString edgetypeEnumToString(EdgeType edgetype);
 	~DiagramDrawParamsTriangle() {}
+	DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other);
+	DiagramDrawParamsTriangle() {}
 	class TriangleSizeRadios
 	{
 	public:
@@ -110,14 +122,55 @@ public:
 	};
 	TriangleSizeRadios m_triangleSizeRadios;
 	EdgeType m_edgetype;
+
 };
+
+Q_DECLARE_METATYPE(DiagramDrawParamsTriangle::TriangleSizeRadios)
 
 class DiagramDrawParamsLine : public IDidgramDrawParams
 {
 public:
 	~DiagramDrawParamsLine() {}
+	DiagramDrawParamsLine(const DiagramDrawParamsLine& other);
+	DiagramDrawParamsLine() {}
 	void serialize(QDataStream& out) const override;
     void deserialize(QDataStream& in) override;
+};
+
+class DiagramDrawParamsMouse : public IDidgramDrawParams 
+{
+public:
+	~DiagramDrawParamsMouse() {}
+	DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other);
+	DiagramDrawParamsMouse() {}
+	void serialize(QDataStream& out) const override;
+    void deserialize(QDataStream& in) override;
+
+
+};
+
+class DiagramDrawParamsChoose : public IDidgramDrawParams
+{
+public:
+	~DiagramDrawParamsChoose() {}
+	DiagramDrawParamsChoose(const DiagramDrawParamsChoose& other);
+	DiagramDrawParamsChoose() {}
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+    
+};
+
+class DiagramDrawParamsText : public IDidgramDrawParams
+{
+public:
+	~DiagramDrawParamsText() {}
+	DiagramDrawParamsText(const DiagramDrawParamsText& other);
+	DiagramDrawParamsText() {}
+
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+
+	QFont m_font;
 };
 
 
@@ -157,6 +210,24 @@ class createParamsLine : public ICreateParams
 {
 protected:
 	std::shared_ptr<IDidgramDrawParams> createSpecial() override;
+};
+
+class createParamsMouse : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
+};
+
+class createParamsChoose : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
+};
+
+class createParamsText : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
 };
 
 class createParamsInterface

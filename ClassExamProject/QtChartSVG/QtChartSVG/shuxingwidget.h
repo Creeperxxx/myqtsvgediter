@@ -8,11 +8,13 @@
 #include <qstackedwidget.h>
 #include <qpushbutton.h>
 #include <qcolordialog.h>
+#include <qmessagebox.h>
 #include <map>
 #include <optional>
 #include <qlabel.h>
 #include <unordered_map>
 #include "drawtool.h"
+
 
 
 //rect radio
@@ -87,6 +89,13 @@ constexpr auto centerhmax = 4000;
 constexpr auto centerhmin = -4000;
 constexpr auto centervmax = 4000;
 constexpr auto centervmin = -4000;
+
+constexpr auto trianglebottom = "底";
+constexpr auto triangleleft = "左";
+constexpr auto triangleright = "右";
+constexpr auto triangleRadiomax = 20;
+constexpr auto invalidTriangleRadios = "三边不构成三角形";
+constexpr auto warning = "警告";
 //constexpr auto property
 
 enum class delegateType
@@ -168,11 +177,16 @@ public:
 class delegateParamsTriangleSides : public IdelegatePramas
 {
 public:
-	delegateParamsTriangleSides();
+	delegateParamsTriangleSides(QString bottomstr
+		, QString leftstr
+		, QString rightstr
+		, int radiomax);
 	~delegateParamsTriangleSides();
 	QString m_bottomstr;
 	QString m_leftstr;
 	QString m_rightstr;
+	int m_Radiomax;
+	DiagramDrawParamsTriangle::TriangleSizeRadios m_radios;
 };
 
 
@@ -297,18 +311,24 @@ public:
 	triangleSideRadioDelegate(std::shared_ptr<IdelegatePramas> params);
 	void setData(std::shared_ptr<propertydata> data) override;
     QWidget* getEditWidget() override;
+	void onisValid();
+	
+
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	QVariant value();
 private:
+
+
+	QWidget* m_radiowidget;
 	QWidget* m_widget;
-	QDoubleSpinBox* m_bottombox;
-	QDoubleSpinBox* m_leftbox;
-	QDoubleSpinBox* m_rightbox;
-	QLabel* m_bottomlabel;
-	QLabel* m_leftlabel;
-	QLabel* m_rightlabel;
-	QFormLayout* m_layout;
+	QSpinBox* m_bottombox;
+	QSpinBox* m_leftbox;
+	QSpinBox* m_rightbox;
+	QFormLayout* m_formlayout;
+	QPushButton* m_button;
+	QVBoxLayout* m_vlayout;
+	
 };
 
 
@@ -365,6 +385,8 @@ public:
 		diagramCircle,
 		diagramTriangle,
 		diagramLine,
+		diagramMouse,
+		diagramText,
 
 		huabu,
 		huabuRect,
@@ -385,6 +407,7 @@ private:
 	void buildDiagramCirclePropertyWidget(propertyWidget* widget);
 	void buildDiagramTrianglePropertyWidget(propertyWidget* widget);
 	void buildDiagramLinePropertyWidget(propertyWidget* widget);
+	void buildDiagramMousePropertyWidget(propertyWidget* widget);
 	void buildDiagramHuabuPropertyWidget(propertyWidget* widget);
 	void buildDiagramHuabuRectPropertyWidget(propertyWidget* widget);
     void buildDiagramHuabuCirclePropertyWidget(propertyWidget* widget);
@@ -407,6 +430,7 @@ private:
 	void buildPropertyWidgetSpacesize(propertyWidget* widget);
 	void buildPropertyWidgetHuabuSize(propertyWidget* widget);
 	void buildPropertyWidgetCentermove(propertyWidget* widget);
+	void buildPropertyWidgetPen(propertyWidget* widget);
 
 
 
@@ -552,28 +576,31 @@ protected:
 	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
 };
 
-class TriangleBottomRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+class TriangleRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
 {
 protected:
 	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
 };
 
-class TriangleLeftRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
-{
-protected:
-	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
-};
 
-class TriangleRightRadioDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
-{
-protected:
-	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
-};
 
 class TriangleEdgetypeDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
 {
 protected:
 	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+};
+
+class TextFontFamilyDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec) override;
+
+};
+
+class TextFontSizeDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
 };
 
 
@@ -684,10 +711,11 @@ public:
 
 	void onRectRadioChanged(QVariant value);
 	void onCricleRadioChanged(QVariant value);
-	void onTriangleBottomRadioChanged(QVariant value);
-	void onTriangleLeftRadioChanged(QVariant value);
-	void onTriangleRightRadioChanged(QVariant value);
+	void onTriangleRadioChanged(QVariant value);
 	void onTriangleEdgetypeRadioChanged(QVariant value);
+
+	void onTextFamilyChanged(QVariant value);
+	void onTextSizeChanged(QVariant value);
 	
 	//也许还需要 属性改变通知propertydata的信号和槽机制
 

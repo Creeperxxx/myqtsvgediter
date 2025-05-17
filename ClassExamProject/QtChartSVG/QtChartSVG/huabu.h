@@ -5,9 +5,17 @@
 #include <qdebug.h>
 #include <vector>
 #include <list>
+#include <cmath>
 #include "shuxingwidget.h"
 #include "tuxingjiedian.h"
 #include "configmanager.h"
+
+
+
+
+
+
+
 
 
 
@@ -69,14 +77,35 @@ public:
 	void onValueChangedHuabuSizeWidth(QVariant value);
 	void onValueChangedHuabuSizeHeight(QVariant value);
 
+	void enterEvent(QEvent* event) override;
+
 	void mousePressEvent(QMouseEvent* event) override;
+	void mouseMoveEvent(QMouseEvent* event) override;
+	void mouseReleaseEvent(QMouseEvent* event) override;
+
+	void onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params);
 
 signals:
-	void signalMouseClicked(std::shared_ptr<propertySetManager> setmanager);
+	void signalPropertyShow(std::shared_ptr<propertySetManager> setmanager);
 
 private:
 	void init();
 	void initPainter(QPainter& painter);
+
+
+	void createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer);
+
+
+	
+	std::shared_ptr<IDidgramDrawParams> createDrawParams();
+
+
+	std::shared_ptr<std::vector<QString>> createNameVec(ShapeType type);
+	std::shared_ptr<std::vector<QString>> rectCreateNameVec();
+	std::shared_ptr<std::vector<QString>> circleCreateNameVec();
+	std::shared_ptr<std::vector<QString>> triangleCreateNameVec();
+	std::shared_ptr<std::vector<QString>> lineCreateNameVec();
+	std::shared_ptr<std::vector<QString>> mouseCreateNameVec();
 	
 
 
@@ -94,4 +123,15 @@ private:
 	QColor m_backgroundcolor;
 	QSize m_size;
 	QString m_mimetype; 
+
+	bool m_ismouseDrawing;
+	bool m_isdrawing;
+	bool m_hasmove;
+
+	std::shared_ptr<IDidgramDrawParams> m_drawParams;
+	std::shared_ptr<IDiagramDrawer> m_drawer;
+	std::shared_ptr<IDidgramDrawParams> m_copyParams;
+	QPoint m_startpoint;
+	QPoint m_endpoint;
+	std::shared_ptr<QPainterPath> m_mousepath;
 };

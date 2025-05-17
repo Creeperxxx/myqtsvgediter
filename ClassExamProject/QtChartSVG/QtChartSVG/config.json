@@ -14,7 +14,10 @@
         "rectangle": "rectangle",
         "circle": "circle",
         "triangle": "triangle",
-        "line": "line"
+        "line": "line",
+        "mouse": "mouse",
+        "choose": "choose",
+        "text": "text"
       }
     } 
   },
@@ -64,9 +67,7 @@
     },
     "triangle": {
       "edgeradio": {
-        "bottomname": "底边比例",
-        "leftname": "左边比例",
-        "rightname":"右边比例",
+        "radioname": "tri比例",
         "bottom": 5,
         "left": 3,
         "right": 4
@@ -79,6 +80,10 @@
     "line": {
       "rotate": 0,
       "scale": 1
+    },
+    "text": {
+      "family": "Arial",
+      "size": 12
     }
 
   }

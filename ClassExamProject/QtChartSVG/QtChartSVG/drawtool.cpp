@@ -66,22 +66,34 @@ QString DiagramDrawParamsTriangle::edgetypeEnumToString(EdgeType edgetype)
 	}
 }
 
+DiagramDrawParamsTriangle::DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other)
+	:IDidgramDrawParams(other)
+{
+	m_triangleSizeRadios.m_bottom = other.m_triangleSizeRadios.m_bottom;
+    m_triangleSizeRadios.m_left = other.m_triangleSizeRadios.m_left;
+    m_triangleSizeRadios.m_right = other.m_triangleSizeRadios.m_right;
+	m_edgetype = other.m_edgetype;
+}
+
 
 QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
 {
 	switch (type)
 	{
 	case ShapeType::Rect:
-		return QString("Rect");
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::rect));
 		break;
 	case ShapeType::Circle:
-		return QString("Circle");
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::circle));
 		break;
 	case ShapeType::Triangle:
-		return QString("Triangle");
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::triangle));
 		break;
 	case ShapeType::Line:
-		return QString("Line");
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::line));
+		break;
+	case ShapeType::Mouse:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::mouse));
 		break;
 	default:
 		throw std::runtime_error("error");
@@ -122,6 +134,20 @@ QDataStream& operator>>(QDataStream& in, IDidgramDrawParams& params)
 {
 	params.deserialize(in);
 	return in;
+}
+
+IDidgramDrawParams::IDidgramDrawParams(const IDidgramDrawParams& other)
+{
+	m_center = other.m_center;
+    m_spacesize = other.m_spacesize;
+	m_type = other.m_type;
+	m_scale = other.m_scale;
+	m_pen = other.m_pen;
+	m_brush = other.m_brush;
+	m_rotate = other.m_rotate;
+	m_centerHoffset = other.m_centerHoffset;
+	m_centerVoffset = other.m_centerVoffset;
+	m_paramChanged = true;
 }
 
 void IDidgramDrawParams::serialize(QDataStream& out) const
@@ -168,6 +194,12 @@ void IDidgramDrawParams::deserialize(QDataStream& in)
 
 }
 
+DiagramDrawParamsRect::DiagramDrawParamsRect(const DiagramDrawParamsRect& other)
+	:IDidgramDrawParams(other)
+{
+	m_boundingrectradio = other.m_boundingrectradio;
+}
+
 void DiagramDrawParamsRect::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
@@ -190,6 +222,17 @@ void DiagramDrawParamsCircle::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
 	in >> m_boundingrectradio;
+}
+
+DiagramDrawParamsCircle::DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other)
+	:IDidgramDrawParams(other)
+{
+	m_boundingrectradio = other.m_boundingrectradio;
+}
+
+DiagramDrawParamsLine::DiagramDrawParamsLine(const DiagramDrawParamsLine& other)
+	:IDidgramDrawParams(other)
+{
 }
 
 void DiagramDrawParamsLine::serialize(QDataStream& out) const
@@ -216,6 +259,8 @@ void ICreateParams::createRest(std::shared_ptr<IDidgramDrawParams> params)
 {
 	params->m_brush = QBrush(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brush))));
 	params->m_center = QPoint(0, 0);
+	params->m_centerHoffset = 0;
+	params->m_centerVoffset = 0;
 	params->m_paramChanged = true;
 	params->m_pen = QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::color))), cfggetval<double>(qtcf::tuxing::all::painter::pen::width));
 	params->m_spacesize = QSize(cfggetval<double>(qtcf::tuxing::all::spacesize::width), cfggetval<double>(qtcf::tuxing::all::spacesize::height));
@@ -292,3 +337,98 @@ createParamsInterface::createParamsInterface()
 {
 }
 
+DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
+	:IDidgramDrawParams(other)
+{
+	m_isdrawpath = other.m_isdrawpath;
+}
+
+void DiagramDrawParamsMouse::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+}
+
+void DiagramDrawParamsMouse::deserialize(QDataStream& in)
+{
+	IDidgramDrawParams::deserialize(in);
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsMouse::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsMouse>();
+	p->m_isdrawpath = false;
+	p->m_type = ShapeType::Mouse;
+	return p;
+}
+
+DiagramDrawParamsChoose::DiagramDrawParamsChoose(const DiagramDrawParamsChoose& other)
+	:IDidgramDrawParams(other)
+{
+
+}
+
+void DiagramDrawParamsChoose::serialize(QDataStream& out) const
+{
+}
+
+void DiagramDrawParamsChoose::deserialize(QDataStream& in)
+{
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsChoose::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsChoose>();
+	p->m_type = ShapeType::choose;
+	return p;
+}
+
+DiagramDrawParamsText::DiagramDrawParamsText(const DiagramDrawParamsText& other)
+	:IDidgramDrawParams(other)
+{
+	m_font = other.m_font;
+}
+
+void DiagramDrawParamsText::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+	out << m_font.family()
+		<< m_font.pointSize()
+		<< m_font.bold()
+		<< m_font.italic()
+		<< m_font.underline()
+		<< m_font.strikeOut();
+}
+
+void DiagramDrawParamsText::deserialize(QDataStream& in)
+{
+	QString family;
+	int pointSize;
+	bool bold;
+	bool italic;
+	bool underline;
+	bool strikeOut;
+
+	in >> family
+		>> pointSize
+		>> bold
+		>> italic
+		>> underline
+		>> strikeOut;
+
+	m_font = QFont(family, pointSize);
+	m_font.setBold(bold);
+	m_font.setItalic(italic);
+	m_font.setUnderline(underline); 
+	m_font.setStrikeOut(strikeOut);
+
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsText::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsText>();
+	QString family = QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family));
+	p->m_font.setFamily(family);
+	int size = cfggetval<int>(qtcf::tuxing::text::size);
+	p->m_font.setPointSize(size);
+	return p;
+}

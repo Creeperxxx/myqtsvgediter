@@ -32,7 +32,6 @@ void propertyWidget::addPropertyItem(QString name, std::shared_ptr<IdelegatePram
 		throw std::runtime_error("error");
 	m_shuxinglayout->addRow(name, delegatewidget);
 	m_propertyDelegateMap[name] = delegate;
-
 }
 
 void propertyWidget::addShowingData(std::shared_ptr<propertydata> data)
@@ -81,6 +80,8 @@ std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegate(std::shared_pt
 	case delegateType::String:
 		return std::make_shared<stringDelegate>(params);
 		break;
+	case delegateType::TriangleSides:
+		return std::make_shared<triangleSideRadioDelegate>(params);
 	default:
 		throw std::runtime_error("error");
 		break;
@@ -164,6 +165,10 @@ void PropertyWidgetManager::createonceWidget()
 	addPropertyWidget(propertyobjecttype::diagramLine, widget);
 
 	widget = createOriginalPropertyWidget();
+	buildDiagramMousePropertyWidget(widget);
+	addPropertyWidget(propertyobjecttype::diagramMouse, widget);
+
+	widget = createOriginalPropertyWidget();
 	buildDiagramHuabuPropertyWidget(widget);
 	addPropertyWidget(propertyobjecttype::huabu, widget);
 
@@ -244,6 +249,17 @@ void PropertyWidgetManager::buildDiagramLinePropertyWidget(propertyWidget* widge
 	buildPropertyWidgetPenAndBrush(widget);
 }
 
+void PropertyWidgetManager::buildDiagramMousePropertyWidget(propertyWidget* widget)
+{
+	if (widget == nullptr)
+		throw std::runtime_error("error");
+
+	buildPropertyWidgetName(widget);
+	buildPropertyWidgetPen(widget);
+
+}
+
+
 void PropertyWidgetManager::buildDiagramHuabuPropertyWidget(propertyWidget* widget)
 {
 	if (widget == nullptr)
@@ -298,43 +314,37 @@ void PropertyWidgetManager::addPropertyWidget(propertyobjecttype type, propertyW
 void PropertyWidgetManager::buildPropertyWidgetName(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsString>(defaultname);
-	widget->addPropertyItem(propertynamename, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetRectRadio(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(rectRadioMax, rectRadioMin, rectRadioStep, rectRadioDecimals, rectRadioInitvlaue);
-	widget->addPropertyItem(propertynameradio, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetRotate(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(180, -180, 1, 0);
-	widget->addPropertyItem(propertynamerotate, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename)), params);
 }
 
 void PropertyWidgetManager::buildProertyWidgetCircleRadio(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(circleRadioMax, circleRadioMin, circleRadioStep, circleRadioDecimals, circleRadioInitvlaue);
-	widget->addPropertyItem(propertynameradio, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetScale(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(1.00, 0.01, 0.01, 2, 1.00);
-	widget->addPropertyItem(propertynamescale, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetTriangleSideRadio(propertyWidget* widget)
 {
-	auto params = std::make_shared<delegateParamsDouble>(triangleRadioMax, triangleRadioMin, triangleRadioStep, triangleRadioDecimals, triangleInitBottomValue);
-	widget->addPropertyItem(propertynamebottomradio, params);
-
-	params = std::make_shared<delegateParamsDouble>(triangleRadioMax, triangleRadioMin, triangleRadioStep, triangleRadioDecimals, triangleInitLeftValue);
-	widget->addPropertyItem(propertynameleftradio, params);
-
-	params = std::make_shared<delegateParamsDouble>(triangleRadioMax, triangleRadioMin, triangleRadioStep, triangleRadioDecimals, triangleInitRightValue);
-	widget->addPropertyItem(propertynamerightradio, params);
+	auto params = std::make_shared<delegateParamsTriangleSides>(trianglebottom, triangleleft, triangleright, triangleRadiomax);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetTriangleEdgetype(propertyWidget* widget)
@@ -344,28 +354,28 @@ void PropertyWidgetManager::buildPropertyWidgetTriangleEdgetype(propertyWidget* 
 	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Left));
 	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Right));
 	auto params = std::make_shared<delegateParamsEnum>(list);
-	widget->addPropertyItem(propertynameedgetype, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetPenAndBrush(propertyWidget* widget)
 {
 	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(propertyInitColor);
-	widget->addPropertyItem(propertynamepencolor, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), params);
 
 	params = std::make_shared<delegateParamsInt>(penWidthMax, 1, 1, penWidth);
-	widget->addPropertyItem(propertynamepenwidth, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)), params);
 
 	params = std::make_shared<delegateParamsColor>(propertyInitColor);
-	widget->addPropertyItem(propertynamebrush, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetSpacesize(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(tuxingspacewidthMax, tuxingspacewidthMin, 1, tuxingspacewidthvalue);
-	widget->addPropertyItem(propertynametuxingspacewidth, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname)), params);
 
 	params = std::make_shared<delegateParamsInt>(tuxingspaceheightMax, tuxingspaceheightMin, 1, tuxingspaceheightvalue);
-	widget->addPropertyItem(propertynametuxingspaceheight, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetHuabuSize(propertyWidget* widget)
@@ -380,10 +390,19 @@ void PropertyWidgetManager::buildPropertyWidgetHuabuSize(propertyWidget* widget)
 void PropertyWidgetManager::buildPropertyWidgetCentermove(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(centervmax, centervmin, 1, 0);
-	widget->addPropertyItem(propertynamevmove, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), params);
 	
 	params = std::make_shared<delegateParamsInt>(centerhmax, centerhmin, 1, 0);
-	widget->addPropertyItem(propertynamehmove, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname)), params);
+}
+
+void PropertyWidgetManager::buildPropertyWidgetPen(propertyWidget* widget)
+{
+	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(propertyInitColor);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), params);
+
+	params = std::make_shared<delegateParamsInt>(penWidthMax, 1, 1, penWidth);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)),params);
 }
 
 
@@ -881,47 +900,20 @@ void drawParamsPropertySet::onCricleRadioChanged(QVariant value)
 
 }
 
-void drawParamsPropertySet::onTriangleBottomRadioChanged(QVariant value)
+void drawParamsPropertySet::onTriangleRadioChanged(QVariant value)
 {
 	if (m_params->m_type != ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	if (!value.canConvert<double>())
+	if (!value.canConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>())
 		throw std::runtime_error("error");
-	castparams->m_triangleSizeRadios.m_bottom = value.value<double>();
+	castparams->m_triangleSizeRadios = value.value<DiagramDrawParamsTriangle::TriangleSizeRadios>();
 	castparams->m_paramChanged = true;
 	emit SignalValueChangedByData();
 }
 
-void drawParamsPropertySet::onTriangleLeftRadioChanged(QVariant value)
-{
-	if (m_params->m_type != ShapeType::Triangle)
-		throw std::runtime_error("error");
-	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
-	if (castparams == nullptr)
-		throw std::runtime_error("error");
-	if (!value.canConvert<double>())
-		throw std::runtime_error("error");
-	castparams->m_triangleSizeRadios.m_left = value.value<double>();
-	castparams->m_paramChanged = true;
-	emit SignalValueChangedByData();
-}
-
-void drawParamsPropertySet::onTriangleRightRadioChanged(QVariant value)
-{
-	if (m_params->m_type != ShapeType::Triangle)
-		throw std::runtime_error("error");
-	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
-	if (castparams == nullptr)
-		throw std::runtime_error("error");
-	if (!value.canConvert<double>())
-		throw std::runtime_error("error");
-	castparams->m_triangleSizeRadios.m_right = value.value<double>();
-	castparams->m_paramChanged = true;
-	emit SignalValueChangedByData();
-}
 
 void drawParamsPropertySet::onTriangleEdgetypeRadioChanged(QVariant value)
 {
@@ -935,6 +927,27 @@ void drawParamsPropertySet::onTriangleEdgetypeRadioChanged(QVariant value)
 	castparams->m_edgetype = DiagramDrawParamsTriangle::edgetypeStringToEnum(value.value<QString>());
 	castparams->m_paramChanged = true;
 	emit SignalValueChangedByData();
+}
+
+void drawParamsPropertySet::onTextFamilyChanged(QVariant value)
+{
+	if (!value.canConvert<QString>())
+		throw std::runtime_error("error");
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(m_params);
+	if(castparams == nullptr)
+		throw std::runtime_error("error");
+	castparams->m_font.setFamily(value.value<QString>());
+}
+
+void drawParamsPropertySet::onTextSizeChanged(QVariant value)
+{
+	if(!value.canConvert<int>())
+		throw std::runtime_error("error");
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(m_params);
+	if(castparams == nullptr)
+		throw std::runtime_error("error");
+	castparams->m_font.setPointSize(value.value<int>());
+
 }
 
 
@@ -952,35 +965,35 @@ void IDrawParamsPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, st
 
 void PenColorDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamepencolor,QVariant(set->m_params->m_pen.color()));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), QVariant(set->m_params->m_pen.color()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenColorChanged);
 }
 
 void PenWidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamepenwidth, QVariant::fromValue(set->m_params->m_pen.width()));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)), QVariant::fromValue(set->m_params->m_pen.width()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenWidthChanged);
 }
 
 void BrushDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamebrush, QVariant::fromValue(set->m_params->m_brush));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname)), QVariant::fromValue(set->m_params->m_brush));
     datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onBrushColorChanged);
 }
 
 void RotateDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamerotate, QVariant::fromValue(set->m_params->m_rotate));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename)), QVariant::fromValue(set->m_params->m_rotate));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onRotateChanged);
 }
 
 void SpacewidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynametuxingspacewidth, set->m_params->m_spacesize.width());
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname)), set->m_params->m_spacesize.width());
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onSpacewidthChanged);
 }
@@ -1048,28 +1061,28 @@ propertyDataVecOfPropertySetCreatorFactor::propertyDataVecOfPropertySetCreatorFa
 
 void SpaceheightDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynametuxingspaceheight, QVariant::fromValue(set->m_params->m_spacesize.height()));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname)), QVariant::fromValue(set->m_params->m_spacesize.height()));
     datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onSpaceHeightChanged);
 }
 
 void ScaleDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamescale, QVariant::fromValue(set->m_params->m_scale));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename)), QVariant::fromValue(set->m_params->m_scale));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onScaleChanged);
 }
 
 void CenterHoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamehmove, QVariant(set->m_params->m_centerHoffset));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname)), QVariant(set->m_params->m_centerHoffset));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterHOffset);
 }
 
 void CenterVoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamevmove, QVariant::fromValue(set->m_params->m_centerVoffset));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), QVariant::fromValue(set->m_params->m_centerVoffset));
     datavec->push_back(data);
     QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterVOffset);
 }
@@ -1126,7 +1139,7 @@ void IOtherPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, std::sh
 
 void NamePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamename, QVariant::fromValue(set->m_name));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename)), QVariant::fromValue(set->m_name));
 	datavec->push_back(data);
 
 }
@@ -1136,7 +1149,7 @@ void RectRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParams
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsRect>(set->m_params);
 	if(castparams == nullptr)
 		throw std::runtime_error("error");
-    std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynameradio, QVariant::fromValue(castparams->m_boundingrectradio));
+    std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), QVariant::fromValue(castparams->m_boundingrectradio));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onRectRadioChanged);
 }
@@ -1148,40 +1161,21 @@ void CircleRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPara
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(set->m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynameradio, QVariant::fromValue(castparams->m_boundingrectradio));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)), QVariant::fromValue(castparams->m_boundingrectradio));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCricleRadioChanged);
 }
 
-void TriangleBottomRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+void TriangleRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(set->m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamebottomradio, QVariant::fromValue(castparams->m_triangleSizeRadios.m_bottom));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname)), QVariant::fromValue(castparams->m_triangleSizeRadios));
 	datavec->push_back(data);
-	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleBottomRadioChanged);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleRadioChanged);
 }
 
-void TriangleLeftRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
-{
-	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(set->m_params);
-	if (castparams == nullptr)
-		throw std::runtime_error("error");
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynameleftradio, QVariant::fromValue(castparams->m_triangleSizeRadios.m_left));
-	datavec->push_back(data);
-	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleLeftRadioChanged);
-}
-
-void TriangleRightRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
-{
-	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(set->m_params);
-	if (castparams == nullptr)
-		throw std::runtime_error("error");
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynamerightradio, QVariant::fromValue(castparams->m_triangleSizeRadios.m_right));
-	datavec->push_back(data);
-	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleRightRadioChanged);
-}
 
 void TriangleEdgetypeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
@@ -1189,7 +1183,7 @@ void TriangleEdgetypeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<dra
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	QString edgetype = DiagramDrawParamsTriangle::edgetypeEnumToString(castparams->m_edgetype);
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(propertynameedgetype, QVariant::fromValue(edgetype));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), QVariant::fromValue(edgetype));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleEdgetypeRadioChanged);
 }
@@ -1198,33 +1192,134 @@ triangleSideRadioDelegate::~triangleSideRadioDelegate()
 {
 }
 
+triangleSideRadioDelegate::triangleSideRadioDelegate(std::shared_ptr<IdelegatePramas> params)
+{
+	createWidget(params);
+}
+
+void triangleSideRadioDelegate::setData(std::shared_ptr<propertydata> data)
+{
+	if (data == nullptr || data.get() == nullptr)
+		throw std::runtime_error("error");
+	QVariant value = data->m_data;
+	if (!value.canConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>())
+		throw std::runtime_error("error");
+	auto radios = value.value<DiagramDrawParamsTriangle::TriangleSizeRadios>();
+	m_bottombox->setValue(radios.m_bottom);
+	m_leftbox->setValue(radios.m_left);
+	m_rightbox->setValue(radios.m_right);
+	QObject::connect(this, &triangleSideRadioDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
+}
+
+QWidget* triangleSideRadioDelegate::getEditWidget()
+{
+	return m_widget;
+}
+
+void triangleSideRadioDelegate::onisValid()
+{
+	int bottom = m_bottombox->value();
+	int left = m_leftbox->value();
+	int right = m_rightbox->value();
+	if ((bottom + left <= right) || (bottom + right <= left) || (left + right <= bottom))
+	{
+		QMessageBox::warning(m_button, "warning", invalidTriangleRadios);
+		return;
+	}
+	else
+	{
+		slotValueChanged();
+	}
+}
+
+
 void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
 	auto castparams = std::dynamic_pointer_cast<delegateParamsTriangleSides>(params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 
+	m_radiowidget = new QWidget();
+	m_formlayout = new QFormLayout(m_radiowidget);
+	m_radiowidget->setLayout(m_formlayout);
+
+	//m_bottomlabel = new QLabel(castparams->m_bottomstr);
+	//m_bottomlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
+	//m_leftlabel = new QLabel(castparams->m_leftstr);
+	//m_leftlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
+	//m_rightlabel = new QLabel(castparams->m_rightstr);
+	//m_rightlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
+
+	m_bottombox = new QSpinBox();
+	m_bottombox->setRange(0, castparams->m_Radiomax);
+	m_bottombox->setValue(castparams->m_radios.m_bottom);
+
+	m_leftbox = new QSpinBox();
+	m_leftbox->setRange(0, castparams->m_Radiomax);
+	m_leftbox->setValue(castparams->m_radios.m_left);
+	
+	m_rightbox = new QSpinBox();
+	m_rightbox->setRange(0, castparams->m_Radiomax);
+	m_rightbox->setValue(castparams->m_radios.m_right);
+	
+	m_formlayout->addRow(castparams->m_bottomstr, m_bottombox);
+	m_formlayout->addRow(castparams->m_leftstr, m_leftbox);
+    m_formlayout->addRow(castparams->m_rightstr, m_rightbox);
+
+	m_button = new QPushButton("确认");
+	QObject::connect(m_button, &QPushButton::clicked, this, &triangleSideRadioDelegate::onisValid);
+
+
+
 	m_widget = new QWidget();
-	m_layout = new QFormLayout(m_widget);
-	m_widget->setLayout(m_layout);
-
-	m_bottomlabel = new QLabel(castparams->m_bottomstr);
-	m_bottomlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
-	m_leftlabel = new QLabel(castparams->m_leftstr);
-	m_leftlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
-	m_rightlabel = new QLabel(castparams->m_rightstr);
-	m_rightlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
-
-	m_bottombox = new qdoublespinbox
-
-
+	m_vlayout = new QVBoxLayout();
+	m_widget->setLayout(m_vlayout);
+	
+	m_vlayout->addWidget(m_radiowidget);
+	m_vlayout->addWidget(m_button);
 }
 
-delegateParamsTriangleSides::delegateParamsTriangleSides()
-	:IdelegatePramas(delegateType::TriangleSides)
+QVariant triangleSideRadioDelegate::value()
 {
+	DiagramDrawParamsTriangle::TriangleSizeRadios radios;
+	radios.m_bottom = m_bottombox->value();
+	radios.m_left = m_leftbox->value();
+	radios.m_right = m_rightbox->value();
+	QVariant value = QVariant::fromValue(radios);
+	return value;
+}
+
+
+delegateParamsTriangleSides::delegateParamsTriangleSides(QString bottomstr, QString leftstr, QString rightstr, int radiomax)
+	:IdelegatePramas(delegateType::TriangleSides)
+	, m_bottomstr(bottomstr)
+	, m_leftstr(leftstr)
+	, m_rightstr(rightstr)
+	, m_Radiomax(radiomax)
+{
+
 }
 
 delegateParamsTriangleSides::~delegateParamsTriangleSides()
 {
+}
+
+void TextFontFamilyDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(set->m_params);
+	if (castparams == nullptr)
+		throw std::runtime_error("error");
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family)), QVariant::fromValue(castparams->m_font.family()));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextFamilyChanged);
+}
+
+void TextFontSizeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(set->m_params);
+	if (castparams == nullptr)
+		throw std::runtime_error("error");
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::size)), QVariant::fromValue(castparams->m_font.pointSize()));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextSizeChanged);
 }

@@ -115,7 +115,7 @@
     <QtMoc Include="drawtool.h" />
     <QtMoc Include="drawparamitem.h" />
     <ClInclude Include="propertyPage.h" />
-    <ClInclude Include="tuxingjiedian.h" />
+    <QtMoc Include="tuxingjiedian.h" />
     <QtMoc Include="tuxing.h" />
     <QtMoc Include="shuxingwidget.h" />
     <QtMoc Include="MyMainWindow.h" />

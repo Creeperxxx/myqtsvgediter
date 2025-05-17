@@ -89,6 +89,15 @@ void MyMainWindow::init()
 			})
 		.addDrawerCreator(ShapeType::Line, [](std::shared_ptr<IDidgramDrawParams> params) {
 		return std::make_shared<DiagramDrawerLine>(params);
+			})
+		.addDrawerCreator(ShapeType::Mouse, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerMouse>(params);
+			})
+		.addDrawerCreator(ShapeType::choose, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerChoose>(params);
+			})
+		.addDrawerCreator(ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerText>(params);
 			});
 	
 
@@ -104,7 +113,17 @@ void MyMainWindow::init()
 			})
 		.add(ShapeType::Line, []() {
 		return std::make_shared<createParamsLine>();
+			})
+		.add(ShapeType::Mouse, []() {
+		return std::make_shared<createParamsMouse>();
+			})
+		.add(ShapeType::choose, []() {
+		return std::make_shared<createParamsChoose>();
+			})
+		.add(ShapeType::Text, []() {
+		return std::make_shared<createParamsText>();
 			});
+
 
 	propertyDataVecOfPropertySetCreatorFactor::getInstance()
 		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), []() {
@@ -143,35 +162,41 @@ void MyMainWindow::init()
 		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)), []() {
 		return std::make_shared<CircleRadioDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::bottomname)), []() {
-		return std::make_shared<TriangleBottomRadioDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::leftname)), []() {
-		return std::make_shared<TriangleLeftRadioDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::rightname)), []() {
-		return std::make_shared<TriangleRightRadioDrawParamsPropertyDataBuilder>();
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname)), []() {
+		return std::make_shared<TriangleRadioDrawParamsPropertyDataBuilder>();
 			})
 		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), []() {
 		return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
-			});
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family)), []() {
+		return std::make_shared<TextFontFamilyDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>()))
 		
 
 	auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
 	auto p = creator->create();
-	auto juxing = new Idiagram(p);
+	auto juxing = new diagram(p);
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::Circle);
     p = creator->create();
-    auto yuanxing = new Idiagram(p);
+    auto yuanxing = new diagram(p);
 
     creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
     p = creator->create();
-    auto sanjiaoxing = new Idiagram(p);
+    auto sanjiaoxing = new diagram(p);
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::Line);
 	p = creator->create();
-    auto xian = new Idiagram(p);
+    auto xian = new diagram(p);
+
+	creator = createParamsInterface::getInstance().getParams(ShapeType::Mouse);
+	p = creator->create();
+	auto mouse = new diagram(p);
+
+	creator = createParamsInterface::getInstance().getParams(ShapeType::choose);
+	p = creator->create();
+	auto choose = new diagram(p);
 
 	maintoolbar->addWidget(juxing);
 	maintoolbar->addSeparator();
@@ -181,20 +206,41 @@ void MyMainWindow::init()
 	maintoolbar->addSeparator();
 	maintoolbar->addWidget(xian);
 	maintoolbar->addSeparator();
+	maintoolbar->addWidget(mouse);
+	maintoolbar->addSeparator();
+	maintoolbar->addWidget(choose);
+	maintoolbar->addSeparator();
 
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
 	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
 
-	QObject::connect(juxing, &Idiagram::signalMouseClicked
+	QObject::connect(juxing, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(yuanxing, &Idiagram::signalMouseClicked
+	QObject::connect(yuanxing, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(sanjiaoxing, &Idiagram::signalMouseClicked
+	QObject::connect(sanjiaoxing, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	QObject::connect(xian, &Idiagram::signalMouseClicked
+	QObject::connect(xian, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(mouse, &diagram::signalPropertyShow
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(choose, &diagram::signalPropertyShow
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	
+	QObject::connect(juxing, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(yuanxing, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(sanjiaoxing, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(xian, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(mouse, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(choose, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
 
-	QObject::connect(huabuwidget, &huabu::signalMouseClicked, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	QObject::connect(huabuwidget, &huabu::signalPropertyShow, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
 
 }
 

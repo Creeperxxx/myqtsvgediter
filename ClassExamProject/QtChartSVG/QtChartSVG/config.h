@@ -23,6 +23,9 @@ namespace qtcf {
                 constexpr auto circle = "tuxingku.diagramwidget.name.circle";
                 constexpr auto triangle = "tuxingku.diagramwidget.name.triangle";
                 constexpr auto line = "tuxingku.diagramwidget.name.line";
+                constexpr auto mouse = "tuxingku.diagramwidget.name.mouse";
+                constexpr auto choose = "tuxingku.diagramwidget.name.choose";
+                constexpr auto text = "tuxingku.diagramwidget.name.text";
             }
 
             //namespace pen {
@@ -107,9 +110,10 @@ namespace qtcf {
         namespace triangle {
 
             namespace edgeradio {
-                constexpr auto bottomname = "tuxing.triangle.edgeradio.bottomname";
-                constexpr auto leftname = "tuxing.triangle.edgeradio.leftname";
-                constexpr auto rightname = "tuxing.triangle.edgeradio.rightname";
+                //constexpr auto bottomname = "tuxing.triangle.edgeradio.bottomname";
+                //constexpr auto leftname = "tuxing.triangle.edgeradio.leftname";
+                //constexpr auto rightname = "tuxing.triangle.edgeradio.rightname";
+                constexpr auto radioname = "tuxing.triangle.edgeradio.radioname";
                 constexpr auto bottom = "tuxing.triangle.edgeradio.bottom";
                 constexpr auto left = "tuxing.triangle.edgeradio.left";
                 constexpr auto right = "tuxing.triangle.edgeradio.right";
@@ -129,6 +133,11 @@ namespace qtcf {
             //constexpr auto imagepath = "tuxing.line.imagepath";
             constexpr auto rotate = "tuxing.line.rotate";
             constexpr auto scale = "tuxing.line.scale";
+        }
+        namespace text
+        {
+            constexpr auto family = "tuxing.text.family";
+            constexpr auto size = "tuxing.text.size";
         }
 
     } // namespace tuxing
