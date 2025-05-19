@@ -24,7 +24,10 @@
   "huabu": {
     "backgroundcolor": "#FFFFFF",
     "width": 900,
-    "height": 900
+    "height": 900,
+    "widthname": "画布宽度",
+    "heightname": "画布高度",
+    "name": "画布"
   },
   "mimetype": "application/x-custom-shape",
   "tuxing": {
@@ -83,7 +86,9 @@
     },
     "text": {
       "family": "Arial",
-      "size": 12
+      "size": 12,
+      "familyname": "字体",
+      "sizename": "大小"
     }
 
   }

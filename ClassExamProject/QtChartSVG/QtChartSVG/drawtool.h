@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <qstring.h>
 #include <qfont.h>
+#include <qlineedit.h>
 #include "configmanager.h"
 #include "config.h"
 
@@ -67,6 +68,7 @@ public:
 	bool m_paramChanged = true;
 	bool m_isdrawInHuabu;
 	
+	bool m_ischoosed = false;
 };
 
 class DiagramDrawParamsRect : public IDidgramDrawParams
@@ -160,6 +162,25 @@ public:
     
 };
 
+
+class TextLineEdit : public QLineEdit
+{
+	Q_OBJECT
+public:
+	TextLineEdit(QWidget* parent = nullptr);
+	void setTextColor(QColor textcolor);
+	void setBackGroundColor(QColor color);
+
+	void showEvent(QShowEvent* event)override;
+	void setFont(const QFont& font);
+
+	void focusOutEvent(QFocusEvent* event)override;
+
+	void adjustsize();
+signals:
+	void signalHasFocusOut();
+};
+
 class DiagramDrawParamsText : public IDidgramDrawParams
 {
 public:
@@ -171,6 +192,7 @@ public:
 	void deserialize(QDataStream& in) override;
 
 	QFont m_font;
+	TextLineEdit* m_textedit;
 };
 
 

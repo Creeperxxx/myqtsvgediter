@@ -1,0 +1,36 @@
+{
+  "name": {
+    "diagram": {
+      "rectangle": "rectangle",
+      "circle": "circle",
+      "triangle": "triangle",
+      "line": "line",
+      "mouse": "mouse",
+      "choose": "choose",
+      "text": "text"
+    },
+    "canvas": {
+      "widthname": "画布宽度",
+      "heightname": "画布高度",
+      "canvasname": "画布"
+    },
+    "other": {
+      "namename": "名称",
+      "centerhoffsetname": "水平偏移",
+      "centervoffsetname": "垂直偏移",
+      "spacewidthname": "空间高度",
+      "spaceheightname": "空间宽度",
+      "pencolorname": "画笔颜色",
+      "penwidthname": "画笔宽度",
+      "brushcolorname": "画刷颜色",
+      "rotateanglename": "旋转",
+      "scalename": "缩放",
+      "rectradioname": "rect比例",
+      "circleradioname": "circle比例",
+      "triangleradioname": "tri比例",
+      "edgetypename": "指定边",
+      "familyname": "字体",
+      "fontsizename": "字体大小"
+    }
+  }
+}

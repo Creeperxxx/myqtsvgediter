@@ -6,6 +6,9 @@
 #include <vector>
 #include <list>
 #include <cmath>
+#include <qsvggenerator.h>
+#include <qsettings.h>
+#include <qsvgrenderer.h>
 #include "shuxingwidget.h"
 #include "tuxingjiedian.h"
 #include "configmanager.h"
@@ -74,8 +77,6 @@ public:
 	void dropEvent(QDropEvent* event) override; //完成拖动时触发，完成数据交换
 	void paintEvent(QPaintEvent* event) override;
 
-	void onValueChangedHuabuSizeWidth(QVariant value);
-	void onValueChangedHuabuSizeHeight(QVariant value);
 
 	void enterEvent(QEvent* event) override;
 
@@ -84,6 +85,19 @@ public:
 	void mouseReleaseEvent(QMouseEvent* event) override;
 
 	void onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params);
+
+	void onSaveToSvg(QString filepath);
+	void saveToSvg(QString filepath);
+	void onLoadSvg(QString filepath);
+	void loadSvg(QString filepath);
+	void onSaveToPng(QString filepath);
+	void SaveToPng(QString filepath);
+	void onnewHuabu();
+
+	void onCopyTuinxg();
+	void oncrtyvTuxing();
+
+	void closeEvent(QCloseEvent* event) override;
 
 signals:
 	void signalPropertyShow(std::shared_ptr<propertySetManager> setmanager);
@@ -94,10 +108,12 @@ private:
 
 
 	void createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer);
+	PropertyWidgetManager::propertyobjecttype shapetypeToObjectType(ShapeType type);
 
+	void createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std::shared_ptr<IDiagramDrawer> drawer);
 
 	
-	std::shared_ptr<IDidgramDrawParams> createDrawParams();
+	std::shared_ptr<IDidgramDrawParams> createDrawParams(std::shared_ptr<IDidgramDrawParams> params);
 
 
 	std::shared_ptr<std::vector<QString>> createNameVec(ShapeType type);
@@ -106,6 +122,7 @@ private:
 	std::shared_ptr<std::vector<QString>> triangleCreateNameVec();
 	std::shared_ptr<std::vector<QString>> lineCreateNameVec();
 	std::shared_ptr<std::vector<QString>> mouseCreateNameVec();
+	std::shared_ptr<std::vector<QString>> textCreateNameVec();
 	
 
 
@@ -121,7 +138,6 @@ private:
 	std::list<std::shared_ptr<huabutuxing>> m_tuxinglist;
 
 	QColor m_backgroundcolor;
-	QSize m_size;
 	QString m_mimetype; 
 
 	bool m_ismouseDrawing;
@@ -132,6 +148,22 @@ private:
 	std::shared_ptr<IDiagramDrawer> m_drawer;
 	std::shared_ptr<IDidgramDrawParams> m_copyParams;
 	QPoint m_startpoint;
-	QPoint m_endpoint;
+	QPointF m_endpoint;
 	std::shared_ptr<QPainterPath> m_mousepath;
+	
+	QSvgRenderer* m_svgRenderer;
+
+	QSettings m_setting;
+
+	std::shared_ptr<DiagramDrawParamsRect> m_chooseParams;
+	std::shared_ptr<IDiagramDrawer> m_chooseDrawer;
+	bool m_ischoosingFirst;
+	bool m_ischoosingSecond;
+
+
+	std::shared_ptr<IDidgramDrawParams> m_choosedParams;
+	QPoint m_pasteOffset; // 成员变量，初始值为 QPoint(20, 20)
+	QPoint m_lastPasteDelta; // 新增成员变量用于记录偏移增量
+
+	bool m_needcopy;
 };

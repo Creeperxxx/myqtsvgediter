@@ -56,9 +56,6 @@ diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	m_propertySetManager->addPropertySet(QString("other"), otherset);
 
 
-
-
-
 }
 
 void diagram::mousePressEvent(QMouseEvent* event)
@@ -69,6 +66,7 @@ void diagram::mousePressEvent(QMouseEvent* event)
 		emit signalPropertyShow(m_propertySetManager);
 		emit signalMouseDrawing(m_params);
 	}
+	QWidget::mousePressEvent(event);
 }
 
 void diagram::mouseMoveEvent(QMouseEvent* event)
@@ -81,6 +79,7 @@ void diagram::mouseMoveEvent(QMouseEvent* event)
 		|| m_params->m_type == ShapeType::choose)
 		return;
 	createQDrag();
+	QWidget::mouseMoveEvent(event);
 }
 
 
@@ -189,6 +188,8 @@ std::shared_ptr<std::vector<QString>> diagram::createNameVec(ShapeType type)
 	case ShapeType::choose:
 		return createNameVecChoose();
 		break;
+	case ShapeType::Text:
+		return createNameVecText();
 	default:
 		throw std::runtime_error("error");
 		break;
@@ -270,8 +271,8 @@ std::shared_ptr<std::vector<QString>> diagram::createNameVecText()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
 		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::size))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename))
+			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname))
 	});
 }
 
@@ -330,6 +331,7 @@ PropertyWidgetManager::propertyobjecttype diagram::shapetypeToPropertytype(Shape
 		break;
 	case ShapeType::Text:
 		return PropertyWidgetManager::propertyobjecttype::diagramText;
+		break;
 	default:
 		throw std::runtime_error("error");
 		break;

@@ -31,6 +31,11 @@ void DiagramDrawerRect::draw(QPainter& painter)
 	painter.setPen(pen);
 	painter.setBrush(brush);
 	painter.drawPolygon(m_rect);
+	if (m_params->m_ischoosed)
+	{
+		painter.setPen(QPen(Qt::blue, 3));
+		painter.drawPath(getResult()->getPainterPath());
+	}
 
 }
 
@@ -171,6 +176,12 @@ void DiagramDrawerCircle::draw(QPainter& painter)
 	QSizeF size = QSizeF(m_initheight * radio, m_initheight);
 	painter.drawEllipse(QPointF(0, 0), size.width() / 2, size.height() / 2);
 	painter.resetTransform();
+
+	if (m_params->m_ischoosed)
+	{
+		painter.setPen(QPen(Qt::blue, 3));
+		painter.drawPath(getResult()->getPainterPath());
+	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerCircle::getResult()
@@ -319,6 +330,11 @@ void DiagramDrawerTriangle::draw(QPainter& painter)
 	painter.setPen(m_params->m_pen);
 	painter.setBrush(m_params->m_brush);
 	painter.drawPolygon(m_triangle);
+	if (m_params->m_ischoosed)
+	{
+		painter.setPen(QPen(Qt::blue, 3));
+		painter.drawPath(getResult()->getPainterPath());
+	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerTriangle::getResult()
@@ -491,6 +507,11 @@ void DiagramDrawerLine::draw(QPainter& painter)
 	painter.setPen(m_params->m_pen);
 	painter.setBrush(m_params->m_brush);
 	painter.drawLine(m_line);
+	if (m_params->m_ischoosed)
+	{
+		painter.setPen(QPen(Qt::blue, 3));
+		painter.drawPath(getResult()->getPainterPath());
+	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerLine::getResult()
@@ -544,9 +565,11 @@ bool DrawResultRect::iscontainPoint(QPointF point)
 QPainterPath DrawResultRect::getPainterPath()
 {
 	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.widthF());
+	stroker.setWidth(1);
+
 	QPainterPath path;
 	path.addPolygon(m_rect);
+	path.closeSubpath();
 	return stroker.createStroke(path);
 }
 
@@ -564,9 +587,11 @@ bool DrawResultCircle::iscontainPoint(QPointF point)
 QPainterPath DrawResultCircle::getPainterPath()
 {
 	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.widthF());
+	stroker.setWidth(1);
+
 	QPainterPath path;
-	path.addEllipse(QRectF(m_circle[0], m_circle[2]));
+	path.addPolygon(m_circle);
+	path.closeSubpath();
 	return stroker.createStroke(path);
 }
 
@@ -578,9 +603,10 @@ bool DrawResultTriangle::iscontainPoint(QPointF point)
 QPainterPath DrawResultTriangle::getPainterPath()
 {
 	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.widthF());
+	stroker.setWidth(1);
 	QPainterPath path;
 	path.addPolygon(m_triangle);
+	path.closeSubpath();
 	return stroker.createStroke(path);
 }
 
@@ -593,11 +619,12 @@ bool DrawResultLine::iscontainPoint(QPointF point)
 QPainterPath DrawResultLine::getPainterPath()
 {
 	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.widthF());
+	stroker.setWidth(1);
 
 	QPainterPath path;
 	path.moveTo(m_line.p1());
 	path.lineTo(m_line.p2());
+	path.closeSubpath();
 
 	return stroker.createStroke(path);
 }
@@ -660,6 +687,11 @@ void DiagramDrawerMouse::draw(QPainter& painter)
 	{
 		painter.setPen(m_params->m_pen);
 		painter.drawPath(*m_path);
+		if (m_params->m_ischoosed)
+		{
+			painter.setPen(QPen(Qt::blue, 3));
+			painter.drawPath(getResult()->getPainterPath());
+		}
 	}
 	else
 	{
@@ -696,9 +728,12 @@ bool DrawResultMouse::iscontainPoint(QPointF point)
 QPainterPath DrawResultMouse::getPainterPath()
 {
 	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.width());
-	
-	return stroker.createStroke(m_path);
+	stroker.setWidth(1);
+
+	QPainterPath path(m_path);
+	path.closeSubpath();
+
+	return stroker.createStroke(path);
 }
 
 DiagramDrawerChoose::DiagramDrawerChoose(std::shared_ptr<IDidgramDrawParams> params)
@@ -706,7 +741,7 @@ DiagramDrawerChoose::DiagramDrawerChoose(std::shared_ptr<IDidgramDrawParams> par
 	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::choose)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsChoose>(params);
-	if(castparams == nullptr)
+	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	m_params = castparams;
 }
@@ -735,8 +770,7 @@ std::shared_ptr<DrawResult> DiagramDrawerChoose::getResult()
 }
 
 DiagramDrawerText::DiagramDrawerText(std::shared_ptr<IDidgramDrawParams> params)
-	:m_lineedit(nullptr)
-	, m_result(std::make_shared<DrawResultText>())
+	: m_result(std::make_shared<DrawResultText>())
 {
 	if (params == nullptr || params.get() == nullptr)
 		throw std::runtime_error("error");
@@ -752,18 +786,34 @@ void DiagramDrawerText::build()
 
 void DiagramDrawerText::draw(QPainter& painter)
 {
+	painter.setPen(m_params->m_pen);
+	painter.setFont(m_params->m_font);
 	if (!m_params->m_isdrawInHuabu)
 	{
-		painter.setPen(m_params->m_pen);
 		QString text = "文本";
-		QFont font;
-		int basesize = qMin(m_params->m_spacesize.width(), m_params->m_spacesize.height()) / 2;
-		font.setPointSize(basesize);
-		painter.setFont(font);
-		int x = m_params->m_center.x() - m_params->m_spacesize.width() / 2;
-		int y = m_params->m_center.y() - m_params->m_spacesize.height() / 2;
-		QRect rect(x, y, m_params->m_spacesize.width(), m_params->m_spacesize.height());
+		QFontMetrics metrics(m_params->m_font);
+		int width = metrics.horizontalAdvance(text) + 10;
+		int height = metrics.height() + 5;
+		int x = m_params->m_center.x() - width / 2;
+		int y = m_params->m_center.y() - height / 2;
+		QRect rect(x, y, width, height);
 
+		painter.drawText(rect, Qt::AlignCenter, text);
+	}
+	else
+	{
+		if (m_params->m_textedit == nullptr)
+			throw std::runtime_error("error");
+		auto pos = m_params->m_center + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
+		auto newpos = pos - QPoint(m_params->m_textedit->size().width() / 2, m_params->m_textedit->size().height() / 2);
+		m_params->m_textedit->move(newpos);
+		m_params->m_textedit->setFont(m_params->m_font);
+		m_params->m_textedit->setTextColor(m_params->m_pen.color());
+
+
+		auto rect = m_params->m_textedit->geometry();
+		auto text = m_params->m_textedit->text();
+			
 		painter.drawText(rect, Qt::AlignCenter, text);
 	}
 }
@@ -772,7 +822,24 @@ std::shared_ptr<DrawResult> DiagramDrawerText::getResult()
 {
 	m_result->m_painterpen = m_params->m_pen;
 	m_result->m_font = m_params->m_font;
-	m_result->m_rect = m_lineedit->geometry();
-	m_result->m_text = m_lineedit->text();
+	m_result->m_rect = m_params->m_textedit->geometry();
+	m_result->m_text = m_params->m_textedit->text();
 	return m_result;
+}
+
+QPainterPath DrawResultText::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.width());
+
+	QPainterPath path;
+	path.addRect(m_rect);
+	path.closeSubpath();
+
+	return stroker.createStroke(path);
+}
+
+bool DrawResultText::iscontainPoint(QPointF point)
+{
+	return m_rect.contains(point);
 }

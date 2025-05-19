@@ -35,10 +35,23 @@
     <ClInclude Include="propertyPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="tuxingjiedian.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="myconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="propertydelegateparams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
     <None Include="cpp.hint" />
+    <None Include="devconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp">
@@ -74,6 +87,18 @@
     <ClCompile Include="drawparamitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="myconfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertydelegage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertydelegateparams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertydata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="huabu.h">
@@ -94,14 +119,12 @@
     <QtMoc Include="drawparamitem.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="tuxingjiedian.h">
+    <QtMoc Include="propertydelegage.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <QtRcc Include="image.qrc">
-      <Filter>Resource Files</Filter>
-    </QtRcc>
+    <QtMoc Include="propertydata.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <Image Include="juxing.png">
@@ -133,5 +156,15 @@
     <QtUic Include="MyMainWindow.ui">
       <Filter>Form Files</Filter>
     </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="QtChartSVG.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="devconfig.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
   </ItemGroup>
 </Project>

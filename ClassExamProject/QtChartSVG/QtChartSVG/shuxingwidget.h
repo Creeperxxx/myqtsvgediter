@@ -96,7 +96,7 @@ constexpr auto triangleright = "右";
 constexpr auto triangleRadiomax = 20;
 constexpr auto invalidTriangleRadios = "三边不构成三角形";
 constexpr auto warning = "警告";
-//constexpr auto property
+
 
 enum class delegateType
 {
@@ -202,7 +202,6 @@ class propertydata;
 
 
 
-class IpropertyItem;
 class IpropertyDelegate : public QWidget
 {
 	Q_OBJECT
@@ -219,6 +218,8 @@ signals:
 protected:
 	virtual void createWidget(std::shared_ptr<IdelegatePramas> params) = 0;
 	virtual QVariant value() = 0;
+
+	std::shared_ptr<propertydata> m_olddata;
 
 };
 
@@ -378,6 +379,7 @@ class PropertyWidgetManager : public QWidget
 {
 	Q_OBJECT
 public:
+
 	enum class propertyobjecttype
 	{
 		defaulttype,
@@ -392,7 +394,9 @@ public:
 		huabuRect,
 		huabuCircle,
 		huabuTriangle,
-		huabuLine
+		huabuLine,
+		huabuMouse,
+		huabuText
 	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
@@ -408,11 +412,8 @@ private:
 	void buildDiagramTrianglePropertyWidget(propertyWidget* widget);
 	void buildDiagramLinePropertyWidget(propertyWidget* widget);
 	void buildDiagramMousePropertyWidget(propertyWidget* widget);
+	void buildDiagramTextPropertyWidget(propertyWidget* widget);
 	void buildDiagramHuabuPropertyWidget(propertyWidget* widget);
-	void buildDiagramHuabuRectPropertyWidget(propertyWidget* widget);
-    void buildDiagramHuabuCirclePropertyWidget(propertyWidget* widget);
-    void buildDiagramHuabuTrianglePropertyWidget(propertyWidget* widget);
-    void buildDiagramHuabuLinePropertyWidget(propertyWidget* widget);
 	void buildDefaultPropertyWidget(propertyWidget* widget);
 
 
@@ -622,6 +623,17 @@ protected:
 	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec);
 };
 
+class HuabuHeightPropertyDataBuilder : public IOtherPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+};
+
+class HuabuWidthPropertyDataBuilder : public IOtherPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+};
 
 
 
@@ -726,14 +738,27 @@ public:
 
 class otherPropertySet :public IpropertySet
 {
+	Q_OBJECT
+public:
+signals:
+	void signalHuabuWidthChanged(int width);
+	void signalHuabuHeightChanged(int height);
 public:
 	~otherPropertySet()override;
 	
-
+	void onHuabuHeightChanged(QVariant value);
+	void onHuabuWidthChanged(QVariant value);
+		 
 
 	QString m_name;
 	qint64 m_zvalue;
+	int m_huabuwidth;
+	int m_huabuheight;
 };
+
+
+
+
 
 
 class propertySetManager

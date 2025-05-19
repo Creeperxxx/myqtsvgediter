@@ -12,6 +12,7 @@
 #include <qscrollbar.h>
 #include <qmenubar.h>
 #include <qstackedwidget.h>
+#include <qsettings.h>
 #include "shuxingwidget.h"
 
 class MyMainWindow : public QMainWindow
@@ -22,16 +23,24 @@ public:
 	MyMainWindow(QWidget *parent = nullptr);
 	~MyMainWindow();
 
-private:
-	void init();
+	void fetchAndSetTooltips();
 	//void initalltuxing();
-	void initconfig(const std::string& filepath = "config.json");
+protected:
 	void resizeEvent(QResizeEvent* event) override;
 	void showEvent(QShowEvent* event) override;
 
+	void closeEvent(QCloseEvent* event) override;
+
+private:
+	void init();
+	void initconfig(const std::string& filepath = "config.json");
 
 	QScrollArea* m_huabuparentscroll;
 	QWidget* m_huabuparentwidget;
 
 	PropertyWidgetManager* m_propertyWidgetManager;
+
+	QSettings m_settings;
+
+	QMap<QString, QWidget*> m_tooltipsWidgets;
 };

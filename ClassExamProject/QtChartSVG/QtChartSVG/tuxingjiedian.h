@@ -75,8 +75,8 @@ class DrawResultText : public DrawResult
 {
 public:
 
-    virtual QPainterPath getPainterPath()override;
-    virtual bool iscontainPoint(QPointF point)override;
+    QPainterPath getPainterPath()override;
+    bool iscontainPoint(QPointF point)override;
     QString m_text;
     QFont m_font;
 	QRectF m_rect;
@@ -208,81 +208,6 @@ public:
 	std::shared_ptr<DrawResultMouse> m_result;
 };
 
-class TransparentEditableLabel : public QLineEdit {
-	Q_OBJECT
-public:
-	explicit TransparentEditableLabel(QWidget* parent = nullptr)
-		: QLineEdit(parent), m_isEditing(false) {
-
-		// 初始设置为透明样式
-		setStyleSheet("QLineEdit {"
-			"background: transparent;"
-			"border: 1px solid transparent;"
-			"}");
-
-		// 设置文本对齐方式
-		setAlignment(Qt::AlignCenter);
-
-		// 连接信号
-		connect(this, &QLineEdit::textEdited, this, &TransparentEditableLabel::onTextEdited);
-	}
-
-protected:
-	void focusInEvent(QFocusEvent* event) override {
-		m_isEditing = true;
-		// 进入编辑模式时设置不透明背景
-		setStyleSheet("QLineEdit {"
-			"background: white;"
-			"border: 1px solid gray;"
-			"}");
-		QLineEdit::focusInEvent(event);
-	}
-
-	void focusOutEvent(QFocusEvent* event) override {
-		m_isEditing = false;
-		// 退出编辑模式时恢复透明背景
-		setStyleSheet("QLineEdit {"
-			"background: transparent;"
-			"border: 1px solid transparent;"
-			"}");
-		QLineEdit::focusOutEvent(event);
-
-		emit editingFinished();
-	}
-
-	void mouseDoubleClickEvent(QMouseEvent* event) override {
-		// 双击进入编辑模式
-		setFocus();
-		selectAll();
-		QLineEdit::mouseDoubleClickEvent(event);
-	}
-
-	void paintEvent(QPaintEvent* event) override {
-		QLineEdit::paintEvent(event);
-
-		// 非编辑状态下绘制额外效果（可选）
-		if (!m_isEditing && !hasFocus()) {
-			QPainter painter(this);
-			QPen pen(Qt::lightGray, 1, Qt::DashLine);
-			painter.setPen(pen);
-			painter.drawRect(rect().adjusted(0, 0, -1, -1));
-		}
-	}
-
-private slots:
-	void onTextEdited(const QString& text) {
-		// 文本编辑时的处理
-		emit textChanged(text);
-	}
-
-private:
-	bool m_isEditing;
-
-signals:
-	void textChanged(const QString& newText);
-signals:
-	void editingFinished();
-};
 
 class DiagramDrawerText : public IDiagramDrawer
 {
@@ -293,7 +218,6 @@ public:
 	std::shared_ptr<DrawResult> getResult() override;
 
 	std::shared_ptr<DiagramDrawParamsText> m_params;
-	TransparentEditableLabel* m_lineedit;
 	std::shared_ptr<DrawResultText> m_result;
 };
 

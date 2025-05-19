@@ -37,12 +37,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>qt5</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;network;gui;svg;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>qt5</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;network;gui;svg;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -114,8 +114,13 @@
     <ClInclude Include="DiagramMimedata.h" />
     <QtMoc Include="drawtool.h" />
     <QtMoc Include="drawparamitem.h" />
+    <ClInclude Include="myconfig.h" />
+    <QtMoc Include="propertydelegage.h" />
+    <QtMoc Include="propertydata.h" />
+    <ClInclude Include="propertydelegateparams.h" />
     <ClInclude Include="propertyPage.h" />
-    <QtMoc Include="tuxingjiedian.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="tuxing.h" />
     <QtMoc Include="shuxingwidget.h" />
     <QtMoc Include="MyMainWindow.h" />
@@ -124,6 +129,7 @@
   <ItemGroup>
     <None Include="config.json" />
     <None Include="cpp.hint" />
+    <None Include="devconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp" />
@@ -132,14 +138,15 @@
     <ClCompile Include="drawtool.cpp" />
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="myconfig.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="propertydata.cpp" />
+    <ClCompile Include="propertydelegage.cpp" />
+    <ClCompile Include="propertydelegateparams.cpp" />
     <ClCompile Include="propertyPage.cpp" />
     <ClCompile Include="shuxingwidget.cpp" />
     <ClCompile Include="tuxing.cpp" />
     <ClCompile Include="tuxingjiedian.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtRcc Include="image.qrc" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="juxing.png" />
@@ -153,6 +160,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MyMainWindow.ui" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="QtChartSVG.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="devconfig.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/tuxingku">
-        <file>juxing.png</file>
-        <file>yuanxing.png</file>
-        <file>sanjiaoxing.png</file>
-        <file>xian.png</file>
-    </qresource>
-</RCC>

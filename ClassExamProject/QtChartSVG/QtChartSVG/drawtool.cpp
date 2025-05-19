@@ -70,8 +70,8 @@ DiagramDrawParamsTriangle::DiagramDrawParamsTriangle(const DiagramDrawParamsTria
 	:IDidgramDrawParams(other)
 {
 	m_triangleSizeRadios.m_bottom = other.m_triangleSizeRadios.m_bottom;
-    m_triangleSizeRadios.m_left = other.m_triangleSizeRadios.m_left;
-    m_triangleSizeRadios.m_right = other.m_triangleSizeRadios.m_right;
+	m_triangleSizeRadios.m_left = other.m_triangleSizeRadios.m_left;
+	m_triangleSizeRadios.m_right = other.m_triangleSizeRadios.m_right;
 	m_edgetype = other.m_edgetype;
 }
 
@@ -94,6 +94,9 @@ QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
 		break;
 	case ShapeType::Mouse:
 		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::mouse));
+		break;
+	case ShapeType::Text:
+		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::text));
 		break;
 	default:
 		throw std::runtime_error("error");
@@ -139,7 +142,7 @@ QDataStream& operator>>(QDataStream& in, IDidgramDrawParams& params)
 IDidgramDrawParams::IDidgramDrawParams(const IDidgramDrawParams& other)
 {
 	m_center = other.m_center;
-    m_spacesize = other.m_spacesize;
+	m_spacesize = other.m_spacesize;
 	m_type = other.m_type;
 	m_scale = other.m_scale;
 	m_pen = other.m_pen;
@@ -264,6 +267,7 @@ void ICreateParams::createRest(std::shared_ptr<IDidgramDrawParams> params)
 	params->m_paramChanged = true;
 	params->m_pen = QPen(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::color))), cfggetval<double>(qtcf::tuxing::all::painter::pen::width));
 	params->m_spacesize = QSize(cfggetval<double>(qtcf::tuxing::all::spacesize::width), cfggetval<double>(qtcf::tuxing::all::spacesize::height));
+	params->m_isdrawInHuabu = false;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsRect::createSpecial()
@@ -294,8 +298,8 @@ std::shared_ptr<IDidgramDrawParams> createParamsTriangle::createSpecial()
 	p->m_scale = cfggetval<double>(qtcf::tuxing::triangle::scale);
 	p->m_type = ShapeType::Triangle;
 	p->m_triangleSizeRadios.m_bottom = cfggetval<double>(qtcf::tuxing::triangle::edgeradio::bottom);
-    p->m_triangleSizeRadios.m_left = cfggetval<double>(qtcf::tuxing::triangle::edgeradio::left);
-    p->m_triangleSizeRadios.m_right = cfggetval<double>(qtcf::tuxing::triangle::edgeradio::right);
+	p->m_triangleSizeRadios.m_left = cfggetval<double>(qtcf::tuxing::triangle::edgeradio::left);
+	p->m_triangleSizeRadios.m_right = cfggetval<double>(qtcf::tuxing::triangle::edgeradio::right);
 	return p;
 
 }
@@ -304,7 +308,7 @@ std::shared_ptr<IDidgramDrawParams> createParamsLine::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsLine>();
 	p->m_rotate = cfggetval<double>(qtcf::tuxing::line::rotate);
-	p->m_scale = cfggetval<double>(qtcf::tuxing::line::scale); 
+	p->m_scale = cfggetval<double>(qtcf::tuxing::line::scale);
 	p->m_type = ShapeType::Line;
 	return p;
 }
@@ -340,7 +344,7 @@ createParamsInterface::createParamsInterface()
 DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
 	:IDidgramDrawParams(other)
 {
-	m_isdrawpath = other.m_isdrawpath;
+
 }
 
 void DiagramDrawParamsMouse::serialize(QDataStream& out) const
@@ -356,7 +360,7 @@ void DiagramDrawParamsMouse::deserialize(QDataStream& in)
 std::shared_ptr<IDidgramDrawParams> createParamsMouse::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsMouse>();
-	p->m_isdrawpath = false;
+	p->m_isdrawInHuabu = false;
 	p->m_type = ShapeType::Mouse;
 	return p;
 }
@@ -401,6 +405,7 @@ void DiagramDrawParamsText::serialize(QDataStream& out) const
 
 void DiagramDrawParamsText::deserialize(QDataStream& in)
 {
+	IDidgramDrawParams::deserialize(in);
 	QString family;
 	int pointSize;
 	bool bold;
@@ -418,7 +423,7 @@ void DiagramDrawParamsText::deserialize(QDataStream& in)
 	m_font = QFont(family, pointSize);
 	m_font.setBold(bold);
 	m_font.setItalic(italic);
-	m_font.setUnderline(underline); 
+	m_font.setUnderline(underline);
 	m_font.setStrikeOut(strikeOut);
 
 }
@@ -430,5 +435,63 @@ std::shared_ptr<IDidgramDrawParams> createParamsText::createSpecial()
 	p->m_font.setFamily(family);
 	int size = cfggetval<int>(qtcf::tuxing::text::size);
 	p->m_font.setPointSize(size);
+	p->m_type = ShapeType::Text;
 	return p;
 }
+
+TextLineEdit::TextLineEdit(QWidget* parent)
+{
+	setFrame(false);
+	setAlignment(Qt::AlignCenter);
+
+	QObject::connect(this, &TextLineEdit::textChanged, this, &TextLineEdit::adjustsize);
+	QObject::connect(this, &TextLineEdit::editingFinished, this, &TextLineEdit::signalHasFocusOut);
+}
+
+void TextLineEdit::setTextColor(QColor textcolor)
+{
+	setStyleSheet(QString("color: rgba(%1,%2,%3,%4);")
+		.arg(textcolor.red()).arg(textcolor.green())
+		.arg(textcolor.blue()).arg(textcolor.alpha()));
+}
+
+void TextLineEdit::setBackGroundColor(QColor color)
+{
+	setStyleSheet(QString("background-color: rgba(%1,%2,%3,%4);")
+		.arg(color.red()).arg(color.green())
+		.arg(color.blue()).arg(color.alpha()));
+}
+
+void TextLineEdit::showEvent(QShowEvent* event)
+{
+	QFontMetrics fm(font());
+	int width = fm.horizontalAdvance(text()) + 10;
+	int height = fm.height() + 5;
+
+	setFixedSize(width, height);
+	//QLineEdit::showEvent(event);
+}
+
+void TextLineEdit::setFont(const QFont& font)
+{
+	QLineEdit::setFont(font);
+	adjustSize();
+}
+
+
+void TextLineEdit::focusOutEvent(QFocusEvent* event)
+{
+	hide();
+	QLineEdit::focusOutEvent(event);
+}
+
+
+void TextLineEdit::adjustsize()
+{
+	QFontMetrics fm(font());
+	int width = fm.horizontalAdvance(text()) + 10;
+	int height = fm.height() + 5;
+
+	setFixedSize(width, height);
+}
+

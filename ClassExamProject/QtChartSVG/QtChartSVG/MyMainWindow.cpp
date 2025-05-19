@@ -1,3 +1,11 @@
+#include <qfile.h>
+#include <qfiledialog.h>
+#include <qurl.h>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "MyMainWindow.h"
 #include "tuxing.h"
 #include "huabu.h"
@@ -18,6 +26,38 @@ MyMainWindow::~MyMainWindow()
 	//delete ui;
 }
 
+void MyMainWindow::fetchAndSetTooltips()
+{
+	QNetworkAccessManager* m_networkAccessManager = new QNetworkAccessManager(this);
+	QObject::connect(m_networkAccessManager, &QNetworkAccessManager::finished
+		, [=](QNetworkReply* reply)
+		{
+			if (reply->error() == QNetworkReply::NoError)
+			{
+				QByteArray data = reply->readAll();
+				QJsonDocument doc = QJsonDocument::fromJson(data);
+				QJsonObject jsonObj = doc.object();
+
+				for (auto it = jsonObj.begin(); it != jsonObj.end(); ++it) {
+					if (it.value().isObject()) {
+						QString key = it.key();
+						QWidget* widget = this->m_tooltipsWidgets.value(key, nullptr);
+						if (widget) {
+							QJsonObject obj = it.value().toObject();
+							QString title = obj["title"].toString();
+							QString text = obj["text"].toString();
+							widget->setToolTip("<b>" + title + "</b><br/>" + text);
+						}
+					}
+				}
+			}
+			reply->deleteLater();
+		});
+	QUrl url("https://m1.apifoxmock.com/m1/6237106-5930859-default/app/buttontips");
+	QNetworkRequest request(url);
+	m_networkAccessManager->get(request);
+}
+
 //void MyMainWindow::initPageSwitch()
 //{
 //	ui->StartButton->setCheckable(true);
@@ -36,13 +76,36 @@ MyMainWindow::~MyMainWindow()
 void MyMainWindow::init()
 {
 	initconfig("config.json");
-	resize(1200, 1200);
+
+	
+
+
+	//resize(1200, 1200);
 	//ui = new Ui::MainWindow();
 	//ui->setupUi(this);
 	//menuButtonGroup = new QButtonGroup(this);
 	//initPageSwitch();
 	//菜单
 	QMenu* filemenu = menuBar()->addMenu("文件");
+
+	// 创建“保存为SVG”动作
+	QAction* saveAsSvgAction = new QAction(tr("保存为SVG"), this);
+	QAction* loadAsSvgAction = new QAction(tr("加载SVG"), this);
+	QAction* saveAsPngAction = new QAction(tr("保存为png"), this);
+	QAction* newhuabuAction = new QAction(tr("新建画布"), this);
+	QAction* copyTuxingAction = new QAction(tr("复制图形"), this);
+	copyTuxingAction->setShortcut(QKeySequence::Copy);
+	QAction* pasteTuxingAction = new QAction(tr("粘贴图形"), this);
+	pasteTuxingAction->setShortcut(QKeySequence::Paste);
+
+
+	// 将动作添加到文件菜单
+	filemenu->addAction(saveAsSvgAction);
+	filemenu->addAction(loadAsSvgAction);
+	filemenu->addAction(saveAsPngAction);
+	filemenu->addAction(newhuabuAction);
+	filemenu->addAction(copyTuxingAction);
+	filemenu->addAction(pasteTuxingAction);
 
 	//主toolbar
 	QToolBar* maintoolbar = addToolBar("main toolbar");
@@ -67,16 +130,14 @@ void MyMainWindow::init()
 	m_huabuparentwidget->setMinimumSize(8000, 8000);
 	QGridLayout* huabuparentlayout = new QGridLayout(m_huabuparentwidget);
 
-	//画布
-	huabu* huabuwidget = new huabu(m_huabuparentwidget);
-	huabuparentlayout->addWidget(huabuwidget);
+
 
 	//滚轮
 	m_huabuparentscroll = new QScrollArea(centralwidget);
 	m_huabuparentscroll->setWidgetResizable(true);
 	m_huabuparentscroll->setWidget(m_huabuparentwidget);
 	centralwidgetlayout->addWidget(m_huabuparentscroll);
-	
+
 	DiagramDrawInterface::getInstance()
 		.addDrawerCreator(ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
 		return std::make_shared<DiagramDrawerRect>(params);
@@ -99,7 +160,7 @@ void MyMainWindow::init()
 		.addDrawerCreator(ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
 		return std::make_shared<DiagramDrawerText>(params);
 			});
-	
+
 
 	createParamsInterface::getInstance()
 		.add(ShapeType::Rect, []() {
@@ -168,35 +229,59 @@ void MyMainWindow::init()
 		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), []() {
 		return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family)), []() {
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname)), []() {
 		return std::make_shared<TextFontFamilyDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>()))
-		
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename)), []() {
+		return std::make_shared<TextFontSizeDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::heightname)), []() {
+		return std::make_shared<HuabuHeightPropertyDataBuilder>();
+			})
+		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::widthname)), []() {
+		return std::make_shared<HuabuWidthPropertyDataBuilder>();
+			});
+
+
+
+
 
 	auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
 	auto p = creator->create();
 	auto juxing = new diagram(p);
+	m_tooltipsWidgets.insert("rectdrawbutton", juxing);
+
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::Circle);
-    p = creator->create();
-    auto yuanxing = new diagram(p);
+	p = creator->create();
+	auto yuanxing = new diagram(p);
+	m_tooltipsWidgets.insert("quadrilateraldrawbutton", yuanxing);
 
-    creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
-    p = creator->create();
-    auto sanjiaoxing = new diagram(p);
+	creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
+	p = creator->create();
+	auto sanjiaoxing = new diagram(p);
+	m_tooltipsWidgets.insert("pentagondrawbutton", sanjiaoxing);
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::Line);
 	p = creator->create();
-    auto xian = new diagram(p);
+	auto xian = new diagram(p);
+	m_tooltipsWidgets.insert("linedrawbutton", xian);
+
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::Mouse);
 	p = creator->create();
 	auto mouse = new diagram(p);
+	m_tooltipsWidgets.insert("freehandlinedrawbutton", mouse);
 
 	creator = createParamsInterface::getInstance().getParams(ShapeType::choose);
 	p = creator->create();
 	auto choose = new diagram(p);
+	m_tooltipsWidgets.insert("selectionbutton", choose);
+
+	creator = createParamsInterface::getInstance().getParams(ShapeType::Text);
+	p = creator->create();
+	auto text = new diagram(p);
+	m_tooltipsWidgets.insert("stardrawbutton", text);
 
 	maintoolbar->addWidget(juxing);
 	maintoolbar->addSeparator();
@@ -210,6 +295,14 @@ void MyMainWindow::init()
 	maintoolbar->addSeparator();
 	maintoolbar->addWidget(choose);
 	maintoolbar->addSeparator();
+	maintoolbar->addWidget(text);
+	maintoolbar->addSeparator();
+
+	fetchAndSetTooltips();
+
+	//画布
+	huabu* huabuwidget = new huabu(m_huabuparentwidget);
+	huabuparentlayout->addWidget(huabuwidget);
 
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
 	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
@@ -226,7 +319,9 @@ void MyMainWindow::init()
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
 	QObject::connect(choose, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
-	
+	QObject::connect(text, &diagram::signalPropertyShow
+		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+
 	QObject::connect(juxing, &diagram::signalMouseDrawing
 		, huabuwidget, &huabu::onDiagramClicked);
 	QObject::connect(yuanxing, &diagram::signalMouseDrawing
@@ -239,9 +334,52 @@ void MyMainWindow::init()
 		, huabuwidget, &huabu::onDiagramClicked);
 	QObject::connect(choose, &diagram::signalMouseDrawing
 		, huabuwidget, &huabu::onDiagramClicked);
+	QObject::connect(text, &diagram::signalMouseDrawing
+		, huabuwidget, &huabu::onDiagramClicked);
 
 	QObject::connect(huabuwidget, &huabu::signalPropertyShow, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
 
+	QObject::connect(saveAsSvgAction, &QAction::triggered, [=]() {
+		QString filepath = QFileDialog::getSaveFileName(this, tr("save svg"), "", tr("SVG files (*.svg);;All files (*)"));
+		if (!filepath.isEmpty())
+		{
+			if (!filepath.endsWith(".svg", Qt::CaseInsensitive))
+			{
+				filepath.append(".svg");
+			}
+			huabuwidget->onSaveToSvg(filepath);
+		}
+		});
+
+	QObject::connect(loadAsSvgAction, &QAction::triggered, [=]() {
+		QString filepath = QFileDialog::getOpenFileName(this, tr("openfile"), "", tr("SVG files (*.svg);;All files (*)"));
+		if (!filepath.isEmpty())
+		{
+			huabuwidget->onLoadSvg(filepath);
+		}
+		});
+
+	QObject::connect(saveAsPngAction, &QAction::triggered, [=]() {
+		QString filepath = QFileDialog::getSaveFileName(this, "save png", "", "PNG files (*.png);;All files (*)");
+		if (!filepath.isEmpty())
+		{
+			huabuwidget->onSaveToPng(filepath);
+		}
+		});
+	QObject::connect(newhuabuAction, &QAction::triggered, huabuwidget, &huabu::onnewHuabu);
+
+	if (m_settings.contains("window/geometry"))
+	{
+		restoreGeometry(m_settings.value("window/geometry").toByteArray());
+	}
+	if (m_settings.contains("window/state"))
+	{
+		restoreState(m_settings.value("window/state").toByteArray());
+	}
+
+	QObject::connect(copyTuxingAction, &QAction::triggered, huabuwidget, &huabu::onCopyTuinxg);
+
+	QObject::connect(pasteTuxingAction, &QAction::triggered, huabuwidget, &huabu::oncrtyvTuxing);
 }
 
 void MyMainWindow::initconfig(const std::string& filepath)
@@ -251,23 +389,34 @@ void MyMainWindow::initconfig(const std::string& filepath)
 
 void MyMainWindow::resizeEvent(QResizeEvent* event)
 {
-	QMainWindow::resizeEvent(event);
 	if (m_huabuparentwidget && m_huabuparentscroll) { // 假设这两个指针已经被正确定义和初始化
 		int centerx = m_huabuparentwidget->width() / 2 - m_huabuparentscroll->viewport()->size().width() / 2;
 		int centery = m_huabuparentwidget->height() / 2 - m_huabuparentscroll->viewport()->size().height() / 2;
 		m_huabuparentscroll->horizontalScrollBar()->setValue(centerx);
 		m_huabuparentscroll->verticalScrollBar()->setValue(centery);
 	}
+	QMainWindow::resizeEvent(event);
 }
 
 void MyMainWindow::showEvent(QShowEvent* event)
 {
-	QMainWindow::showEvent(event);
 	if (m_huabuparentwidget && m_huabuparentscroll) { // 假设这两个指针已经被正确定义和初始化
 		int centerx = m_huabuparentwidget->width() / 2 - m_huabuparentscroll->viewport()->size().width() / 2;
 		int centery = m_huabuparentwidget->height() / 2 - m_huabuparentscroll->viewport()->size().height() / 2;
 		m_huabuparentscroll->horizontalScrollBar()->setValue(centerx);
 		m_huabuparentscroll->verticalScrollBar()->setValue(centery);
 	}
+	QMainWindow::showEvent(event);
+}
+
+void MyMainWindow::closeEvent(QCloseEvent* event)
+{
+	m_settings.setValue("window/geometry", saveGeometry());
+	m_settings.setValue("window/state", saveState());
+	m_settings.sync();
+
+	//qDebug() << "Saving geometry data:" << saveGeometry().toHex();
+
+	QMainWindow::closeEvent(event);
 }
 

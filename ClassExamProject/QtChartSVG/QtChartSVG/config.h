@@ -44,6 +44,9 @@ namespace qtcf {
         constexpr auto backgroundcolor = "huabu.backgroundcolor";
         constexpr auto width = "huabu.width";
         constexpr auto height = "huabu.height";
+        constexpr auto widthname = "huabu.widthname";
+        constexpr auto heightname = "huabu.heightname";
+        constexpr auto name = "huabu.name";
 
 
             //namespace pen {
@@ -138,6 +141,8 @@ namespace qtcf {
         {
             constexpr auto family = "tuxing.text.family";
             constexpr auto size = "tuxing.text.size";
+            constexpr auto familyname = "tuxing.text.familyname";
+            constexpr auto sizename = "tuxing.text.sizename";
         }
 
     } // namespace tuxing

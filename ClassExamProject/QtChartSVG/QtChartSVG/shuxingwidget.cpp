@@ -1,6 +1,7 @@
 #include "shuxingwidget.h"
 #include "tuxing.h"
 #include "drawtool.h"
+#include "propertydelegage.h"
 
 
 
@@ -15,7 +16,7 @@ propertyWidget::propertyWidget(QWidget* parent)
 	setLayout(m_shuxinglayout);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	
+
 }
 
 void propertyWidget::addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params)
@@ -169,25 +170,42 @@ void PropertyWidgetManager::createonceWidget()
 	addPropertyWidget(propertyobjecttype::diagramMouse, widget);
 
 	widget = createOriginalPropertyWidget();
+	buildDiagramTextPropertyWidget(widget);
+	addPropertyWidget(propertyobjecttype::diagramText, widget);
+
+	widget = createOriginalPropertyWidget();
 	buildDiagramHuabuPropertyWidget(widget);
 	addPropertyWidget(propertyobjecttype::huabu, widget);
 
 	widget = createOriginalPropertyWidget();
-	buildDiagramHuabuRectPropertyWidget(widget);
+	buildDiagramRectPropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
 	addPropertyWidget(propertyobjecttype::huabuRect, widget);
 
 	widget = createOriginalPropertyWidget();
-	buildDiagramHuabuCirclePropertyWidget(widget);
+	buildDiagramCirclePropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
 	addPropertyWidget(propertyobjecttype::huabuCircle, widget);
 
 	widget = createOriginalPropertyWidget();
-	buildDiagramHuabuTrianglePropertyWidget(widget);
+	buildDiagramTrianglePropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
 	addPropertyWidget(propertyobjecttype::huabuTriangle, widget);
 
 	widget = createOriginalPropertyWidget();
-	buildDiagramHuabuLinePropertyWidget(widget);
+	buildDiagramLinePropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
 	addPropertyWidget(propertyobjecttype::huabuLine, widget);
 
+	widget = createOriginalPropertyWidget();
+	buildDiagramMousePropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
+	addPropertyWidget(propertyobjecttype::huabuMouse, widget);
+
+	widget = createOriginalPropertyWidget();
+	buildDiagramTextPropertyWidget(widget);
+	buildPropertyWidgetCentermove(widget);
+	addPropertyWidget(propertyobjecttype::huabuText, widget);
 }
 
 propertyWidget* PropertyWidgetManager::createOriginalPropertyWidget()
@@ -200,7 +218,7 @@ propertyWidget* PropertyWidgetManager::createOriginalPropertyWidget()
 
 void PropertyWidgetManager::buildDiagramRectPropertyWidget(propertyWidget* widget)
 {
-	if(widget == nullptr)
+	if (widget == nullptr)
 		throw std::runtime_error("error");
 
 	buildPropertyWidgetName(widget);
@@ -256,7 +274,24 @@ void PropertyWidgetManager::buildDiagramMousePropertyWidget(propertyWidget* widg
 
 	buildPropertyWidgetName(widget);
 	buildPropertyWidgetPen(widget);
+}
 
+
+void PropertyWidgetManager::buildDiagramTextPropertyWidget(propertyWidget* widget)
+{
+	buildPropertyWidgetName(widget);
+	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(Qt::black);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), params);
+
+	QVector<QString> vec;
+	vec.push_back("Arial");
+	vec.push_back("Times New Roman");
+	vec.push_back("Courier New");
+	params = std::make_shared<delegateParamsEnum>(vec);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname)), params);
+
+	params = std::make_shared<delegateParamsInt>(15, 1, 1, 12);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename)), params);
 }
 
 
@@ -270,29 +305,6 @@ void PropertyWidgetManager::buildDiagramHuabuPropertyWidget(propertyWidget* widg
 
 }
 
-void PropertyWidgetManager::buildDiagramHuabuRectPropertyWidget(propertyWidget* widget)
-{
-	buildDiagramRectPropertyWidget(widget);
-	buildPropertyWidgetCentermove(widget);
-}
-
-void PropertyWidgetManager::buildDiagramHuabuCirclePropertyWidget(propertyWidget* widget)
-{
-	buildDiagramCirclePropertyWidget(widget);
-	buildPropertyWidgetCentermove(widget);
-}
-
-void PropertyWidgetManager::buildDiagramHuabuTrianglePropertyWidget(propertyWidget* widget)
-{
-	buildDiagramTrianglePropertyWidget(widget);
-	buildPropertyWidgetCentermove(widget);
-}
-
-void PropertyWidgetManager::buildDiagramHuabuLinePropertyWidget(propertyWidget* widget)
-{
-	buildDiagramTrianglePropertyWidget(widget);
-	buildPropertyWidgetCentermove(widget);
-}
 
 void PropertyWidgetManager::buildDefaultPropertyWidget(propertyWidget* widget)
 {
@@ -381,17 +393,17 @@ void PropertyWidgetManager::buildPropertyWidgetSpacesize(propertyWidget* widget)
 void PropertyWidgetManager::buildPropertyWidgetHuabuSize(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(huabuwidthMax, huabuwidthMin, 1, huabuwidthvalue);
-	widget->addPropertyItem(propertynamehuabuwidth, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::widthname)), params);
 
 	params = std::make_shared<delegateParamsInt>(huabuheightMax, huabuheightMin, 1, huabuheightvalue);
-	widget->addPropertyItem(propertynamehuabuheight, params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::heightname)), params);
 }
 
 void PropertyWidgetManager::buildPropertyWidgetCentermove(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(centervmax, centervmin, 1, 0);
 	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), params);
-	
+
 	params = std::make_shared<delegateParamsInt>(centerhmax, centerhmin, 1, 0);
 	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname)), params);
 }
@@ -402,7 +414,7 @@ void PropertyWidgetManager::buildPropertyWidgetPen(propertyWidget* widget)
 	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), params);
 
 	params = std::make_shared<delegateParamsInt>(penWidthMax, 1, 1, penWidth);
-	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)),params);
+	widget->addPropertyItem(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)), params);
 }
 
 
@@ -437,9 +449,15 @@ void doubleDelegate::setData(std::shared_ptr<propertydata> data)
 {
 	if (!data->m_data.canConvert<double>())
 		throw std::runtime_error("error");
+	if (m_olddata != nullptr && m_olddata.get() != nullptr)
+	{
+		QObject::disconnect(this, &IpropertyDelegate::signalValueChanged, m_olddata.get(), &propertydata::slotValueChanged);
+	}
 	m_editwidget->setValue(data->m_data.toDouble());
 
 	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
+	m_olddata = data;
+
 }
 
 
@@ -456,12 +474,12 @@ void doubleDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	if (m_editwidget == nullptr)
 		throw std::runtime_error("error");
 
-	m_editwidget->setRange(p->m_valuemin,p->m_valuemax);
+	m_editwidget->setRange(p->m_valuemin, p->m_valuemax);
 	m_editwidget->setSingleStep(p->m_valuestep);
 	m_editwidget->setDecimals(p->m_valuedecimals);
 	m_editwidget->setValue(p->m_initvalue);
 
-	QObject::connect(m_editwidget,static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &IpropertyDelegate::slotValueChanged);
+	QObject::connect(m_editwidget, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged), this, &IpropertyDelegate::slotValueChanged);
 }
 
 QVariant doubleDelegate::value()
@@ -476,9 +494,14 @@ IpropertyDelegate::~IpropertyDelegate()
 {
 }
 
+
 void IpropertyDelegate::slotValueChanged()
 {
 	emit signalValueChanged(value());
+}
+
+void IpropertyDelegate::isDataValid()
+{
 }
 
 
@@ -496,17 +519,6 @@ intDelegate::intDelegate(std::shared_ptr<IdelegatePramas> params)
 }
 
 
-void intDelegate::setData(std::shared_ptr<propertydata> data)
-{
-	if (data == nullptr)
-		throw std::runtime_error("error");
-
-	if (!data->m_data.canConvert<int>())
-		throw std::runtime_error("error");
-	m_editwidget->setValue(data->m_data.toInt());
-
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
-}
 
 
 QWidget* intDelegate::getEditWidget()
@@ -517,11 +529,11 @@ QWidget* intDelegate::getEditWidget()
 void intDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
 	auto p = dynamic_cast<delegateParamsInt*>(params.get());
-	if(p == nullptr )
+	if (p == nullptr)
 		throw std::runtime_error("error");
 
 	m_editwidget = new QSpinBox();
-	m_editwidget->setRange(p->m_valuemin,p->m_valuemax);
+	m_editwidget->setRange(p->m_valuemin, p->m_valuemax);
 	m_editwidget->setSingleStep(p->m_valuestep);
 	m_editwidget->setValue(p->m_initvalue);
 
@@ -550,17 +562,6 @@ colorDelete::colorDelete(std::shared_ptr<IdelegatePramas> params)
 }
 
 
-void colorDelete::setData(std::shared_ptr<propertydata> data)
-{
-	if(!data->m_data.canConvert<QColor>())
-		throw std::runtime_error("error");
-		
-	m_currentcolor = data->m_data.value<QColor>();
-    m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
-		.arg(m_currentcolor.red()).arg(m_currentcolor.green())
-		.arg(m_currentcolor.blue()).arg(m_currentcolor.alpha()));
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
-}
 
 
 QWidget* colorDelete::getEditWidget()
@@ -570,9 +571,7 @@ QWidget* colorDelete::getEditWidget()
 
 void colorDelete::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
-	auto p = dynamic_cast<delegateParamsColor*>(params.get());
-	if(p == nullptr) 
-		throw std::runtime_error("error");
+	auto p = isParamsCastValid<delegateParamsColor>(params);
 
 	m_colorwidget = new QWidget();
 	m_colorlayout = new QHBoxLayout();
@@ -602,6 +601,14 @@ void colorDelete::createWidget(std::shared_ptr<IdelegatePramas> params)
 				this->slotValueChanged();
 			}
 		});
+}
+
+void colorDelete::setValue(QVariant value)
+{
+	m_currentcolor = isDataCanConvert<QColor>(value);
+	m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
+		.arg(m_currentcolor.red()).arg(m_currentcolor.green())
+		.arg(m_currentcolor.blue()).arg(m_currentcolor.alpha()));
 }
 
 QVariant colorDelete::value()
@@ -643,7 +650,7 @@ delegateParamsColor::~delegateParamsColor()
 
 delegateParamsColor::delegateParamsColor(QColor initcolor)
 	:m_initcolor(initcolor)
-	,IdelegatePramas(delegateType::Color)
+	, IdelegatePramas(delegateType::Color)
 {
 }
 
@@ -651,9 +658,10 @@ delegateParamsEnum::~delegateParamsEnum()
 {
 }
 
-delegateParamsEnum::delegateParamsEnum(QVector<QString> vec)
-	:m_vec(vec)
-	, IdelegatePramas(delegateType::Enum)
+delegateParamsEnum::delegateParamsEnum(std::vector<QString> vec, QString initstr)
+	: IdelegatePramas(delegateType::Enum)
+	, m_vec(vec)
+	, m_initstring(initstr)
 {
 }
 
@@ -678,15 +686,6 @@ stringDelegate::stringDelegate(std::shared_ptr<IdelegatePramas> params)
 }
 
 
-void stringDelegate::setData(std::shared_ptr<propertydata> data)
-{
-	if(data == nullptr)
-		throw std::runtime_error("error");
-	if(!data->m_data.canConvert<QString>())
-		throw std::runtime_error("error");
-	m_label->setText(data->m_data.toString());
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
-}
 
 
 QWidget* stringDelegate::getEditWidget()
@@ -697,13 +696,13 @@ QWidget* stringDelegate::getEditWidget()
 
 void stringDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
-	if(params == nullptr) 
-		throw std::runtime_error("error");
-	auto p = dynamic_cast<delegateParamsString*>(params.get());
-	if (p == nullptr)
-		throw std::runtime_error("error");
-    m_label = new QLabel(p->m_initstring);
-	//信号绑定？
+	auto p = isParamsCastValid<delegateParamsString>(params);
+	m_label = new QLabel(p->m_initstring);
+}
+
+void stringDelegate::setValue(QVariant value)
+{
+	m_label->setText(isDataCanConvert<QString>(value));
 }
 
 QVariant stringDelegate::value()
@@ -711,9 +710,6 @@ QVariant stringDelegate::value()
 	return QVariant::fromValue(m_label->text());
 }
 
-enumDelegate::~enumDelegate()
-{
-}
 
 enumDelegate::enumDelegate(std::shared_ptr<IdelegatePramas> params)
 	:m_combobox(nullptr)
@@ -722,20 +718,6 @@ enumDelegate::enumDelegate(std::shared_ptr<IdelegatePramas> params)
 }
 
 
-void enumDelegate::setData(std::shared_ptr<propertydata> data)
-{
-	if(data == nullptr)
-		throw std::runtime_error("error");
-
-	if (!data->m_data.canConvert<QString>())
-		throw std::runtime_error("error");
-	int index = m_combobox->findText(data->m_data.toString());
-	if(index == -1)
-		throw std::runtime_error("error");
-
-	m_combobox->setCurrentIndex(index);
-	QObject::connect(this, &IpropertyDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
-}
 
 
 QWidget* enumDelegate::getEditWidget()
@@ -748,21 +730,29 @@ void enumDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	if (params == nullptr)
 		throw std::runtime_error("error");
 	auto p = dynamic_cast<delegateParamsEnum*>(params.get());
-	if(p == nullptr)
+	if (p == nullptr)
 		throw std::runtime_error("error");
 
-    m_combobox = new QComboBox();
-	for(const auto& str : p->m_vec)
+	m_combobox = new QComboBox();
+	for (const auto& str : p->m_vec)
 	{
 		m_combobox->addItem(str);
-	}	
+	}
 	int index = m_combobox->findText(p->m_initstring);
-	if(index == -1)
+	if (index == -1)
 		m_combobox->setCurrentIndex(0);
 	else
-        m_combobox->setCurrentIndex(index);
-	
-    QObject::connect(m_combobox, &QComboBox::currentTextChanged, this, &IpropertyDelegate::slotValueChanged);
+		m_combobox->setCurrentIndex(index);
+
+	QObject::connect(m_combobox, &QComboBox::currentTextChanged, this, &IpropertyDelegate::slotValueChanged);
+}
+
+void enumDelegate::setValue(QVariant value)
+{
+	int index = m_combobox->findText(isDataCanConvert<QString>(value));
+	if (index == -1)
+		throw std::runtime_error("error");
+	m_combobox->setCurrentIndex(index);
 }
 
 QVariant enumDelegate::value()
@@ -792,7 +782,7 @@ drawParamsPropertySet::~drawParamsPropertySet()
 
 void drawParamsPropertySet::onPenColorChanged(QVariant value)
 {
-	if(!value.canConvert<QColor>())
+	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
 	m_params->m_pen.setColor(value.value<QColor>());
 	m_params->m_paramChanged = true;
@@ -810,7 +800,7 @@ void drawParamsPropertySet::onPenWidthChanged(QVariant value)
 
 void drawParamsPropertySet::onBrushColorChanged(QVariant value)
 {
-	if(!value.canConvert<QColor>())
+	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
 	m_params->m_brush.setColor(value.value<QColor>());
 	m_params->m_paramChanged = true;
@@ -837,7 +827,7 @@ void drawParamsPropertySet::onSpacewidthChanged(QVariant value)
 
 void drawParamsPropertySet::onSpaceHeightChanged(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	m_params->m_spacesize.setHeight(value.value<int>());
 	m_params->m_paramChanged = true;
@@ -846,7 +836,7 @@ void drawParamsPropertySet::onSpaceHeightChanged(QVariant value)
 
 void drawParamsPropertySet::onScaleChanged(QVariant value)
 {
-	if(!value.canConvert<double>())
+	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
 	m_params->m_scale = value.value<double>();
 	m_params->m_paramChanged = true;
@@ -864,7 +854,7 @@ void drawParamsPropertySet::onCenterHOffset(QVariant value)
 
 void drawParamsPropertySet::onCenterVOffset(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	m_params->m_centerVoffset = value.value<int>();
 	m_params->m_paramChanged = true;
@@ -934,30 +924,32 @@ void drawParamsPropertySet::onTextFamilyChanged(QVariant value)
 	if (!value.canConvert<QString>())
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(m_params);
-	if(castparams == nullptr)
+	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	castparams->m_font.setFamily(value.value<QString>());
+	emit SignalValueChangedByData();
 }
 
 void drawParamsPropertySet::onTextSizeChanged(QVariant value)
 {
-	if(!value.canConvert<int>())
+	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(m_params);
-	if(castparams == nullptr)
+	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	castparams->m_font.setPointSize(value.value<int>());
+	emit SignalValueChangedByData();
 
 }
 
 
 void IDrawParamsPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	if (set == nullptr || set.get() == nullptr 
+	if (set == nullptr || set.get() == nullptr
 		|| datavec == nullptr || datavec.get() == nullptr)
 		throw std::runtime_error("error");
 	auto castset = std::dynamic_pointer_cast<drawParamsPropertySet>(set);
-	if(castset == nullptr)
+	if (castset == nullptr)
 		throw std::runtime_error("error");
 
 	probuild(castset, datavec);
@@ -980,7 +972,7 @@ void PenWidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsP
 void BrushDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname)), QVariant::fromValue(set->m_params->m_brush));
-    datavec->push_back(data);
+	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onBrushColorChanged);
 }
 
@@ -1001,7 +993,7 @@ void SpacewidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParam
 std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> propertyDataVecOfPropertySetCreator::create(std::shared_ptr<IpropertySet> set)
 {
 	auto datavec = std::make_shared<std::vector<std::shared_ptr<propertydata>>>();
-	
+
 	for (auto& builder : m_builders)
 	{
 		builder->build(set, datavec);
@@ -1062,7 +1054,7 @@ propertyDataVecOfPropertySetCreatorFactor::propertyDataVecOfPropertySetCreatorFa
 void SpaceheightDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname)), QVariant::fromValue(set->m_params->m_spacesize.height()));
-    datavec->push_back(data);
+	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onSpaceHeightChanged);
 }
 
@@ -1083,8 +1075,8 @@ void CenterHoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPa
 void CenterVoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), QVariant::fromValue(set->m_params->m_centerVoffset));
-    datavec->push_back(data);
-    QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterVOffset);
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterVOffset);
 }
 
 
@@ -1123,8 +1115,25 @@ void propertySetManager::dealShowData(propertyWidget* widget)
 	}
 }
 
+
 otherPropertySet::~otherPropertySet()
 {
+}
+
+void otherPropertySet::onHuabuHeightChanged(QVariant value)
+{
+	if (!value.canConvert<int>())
+		throw std::runtime_error("error");
+	m_huabuwidth = value.value<int>();
+	emit signalHuabuWidthChanged(m_huabuwidth);
+}
+
+void otherPropertySet::onHuabuWidthChanged(QVariant value)
+{
+	if (!value.canConvert<int>())
+		throw std::runtime_error("error");
+	m_huabuheight = value.value<int>();
+	emit signalHuabuHeightChanged(m_huabuheight);
 }
 
 void IOtherPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
@@ -1147,9 +1156,9 @@ void NamePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, st
 void RectRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsRect>(set->m_params);
-	if(castparams == nullptr)
+	if (castparams == nullptr)
 		throw std::runtime_error("error");
-    std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), QVariant::fromValue(castparams->m_boundingrectradio));
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), QVariant::fromValue(castparams->m_boundingrectradio));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onRectRadioChanged);
 }
@@ -1188,27 +1197,18 @@ void TriangleEdgetypeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<dra
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleEdgetypeRadioChanged);
 }
 
-triangleSideRadioDelegate::~triangleSideRadioDelegate()
-{
-}
 
 triangleSideRadioDelegate::triangleSideRadioDelegate(std::shared_ptr<IdelegatePramas> params)
+	:m_radiowidget(nullptr)
+	, m_widget(nullptr)
+	, m_bottombox(nullptr)
+	, m_leftbox(nullptr)
+	, m_rightbox(nullptr)
+	, m_formlayout(nullptr)
+	, m_button(nullptr)
+	, m_vlayout(nullptr)
 {
 	createWidget(params);
-}
-
-void triangleSideRadioDelegate::setData(std::shared_ptr<propertydata> data)
-{
-	if (data == nullptr || data.get() == nullptr)
-		throw std::runtime_error("error");
-	QVariant value = data->m_data;
-	if (!value.canConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>())
-		throw std::runtime_error("error");
-	auto radios = value.value<DiagramDrawParamsTriangle::TriangleSizeRadios>();
-	m_bottombox->setValue(radios.m_bottom);
-	m_leftbox->setValue(radios.m_left);
-	m_rightbox->setValue(radios.m_right);
-	QObject::connect(this, &triangleSideRadioDelegate::signalValueChanged, data.get(), &propertydata::slotValueChanged);
 }
 
 QWidget* triangleSideRadioDelegate::getEditWidget()
@@ -1235,20 +1235,11 @@ void triangleSideRadioDelegate::onisValid()
 
 void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
-	auto castparams = std::dynamic_pointer_cast<delegateParamsTriangleSides>(params);
-	if (castparams == nullptr)
-		throw std::runtime_error("error");
+	auto castparams = isParamsCastValid<delegateParamsTriangleSides>(params);
 
 	m_radiowidget = new QWidget();
 	m_formlayout = new QFormLayout(m_radiowidget);
 	m_radiowidget->setLayout(m_formlayout);
-
-	//m_bottomlabel = new QLabel(castparams->m_bottomstr);
-	//m_bottomlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
-	//m_leftlabel = new QLabel(castparams->m_leftstr);
-	//m_leftlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
-	//m_rightlabel = new QLabel(castparams->m_rightstr);
-	//m_rightlabel->setStyleSheet("QLabel {background-color: transparent;border: none}");
 
 	m_bottombox = new QSpinBox();
 	m_bottombox->setRange(0, castparams->m_Radiomax);
@@ -1257,14 +1248,14 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 	m_leftbox = new QSpinBox();
 	m_leftbox->setRange(0, castparams->m_Radiomax);
 	m_leftbox->setValue(castparams->m_radios.m_left);
-	
+
 	m_rightbox = new QSpinBox();
 	m_rightbox->setRange(0, castparams->m_Radiomax);
 	m_rightbox->setValue(castparams->m_radios.m_right);
-	
+
 	m_formlayout->addRow(castparams->m_bottomstr, m_bottombox);
 	m_formlayout->addRow(castparams->m_leftstr, m_leftbox);
-    m_formlayout->addRow(castparams->m_rightstr, m_rightbox);
+	m_formlayout->addRow(castparams->m_rightstr, m_rightbox);
 
 	m_button = new QPushButton("确认");
 	QObject::connect(m_button, &QPushButton::clicked, this, &triangleSideRadioDelegate::onisValid);
@@ -1274,9 +1265,17 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 	m_widget = new QWidget();
 	m_vlayout = new QVBoxLayout();
 	m_widget->setLayout(m_vlayout);
-	
+
 	m_vlayout->addWidget(m_radiowidget);
 	m_vlayout->addWidget(m_button);
+}
+
+void triangleSideRadioDelegate::setValue(QVariant value)
+{
+	auto radios = isDataCanConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>(value);
+	m_bottombox->setValue(radios.m_bottom);
+	m_leftbox->setValue(radios.m_left);
+	m_rightbox->setValue(radios.m_right);
 }
 
 QVariant triangleSideRadioDelegate::value()
@@ -1309,7 +1308,7 @@ void TextFontFamilyDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawP
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(set->m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::family)), QVariant::fromValue(castparams->m_font.family()));
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname)), QVariant::fromValue(castparams->m_font.family()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextFamilyChanged);
 }
@@ -1319,7 +1318,21 @@ void TextFontSizeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPar
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(set->m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::size)), QVariant::fromValue(castparams->m_font.pointSize()));
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename)), QVariant::fromValue(castparams->m_font.pointSize()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextSizeChanged);
+}
+
+void HuabuHeightPropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::heightname)), QVariant::fromValue(set->m_huabuheight));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onHuabuHeightChanged);
+}
+
+void HuabuWidthPropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto data = std::make_shared<propertydata>(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::widthname)), QVariant::fromValue(set->m_huabuwidth));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onHuabuWidthChanged);
 }
