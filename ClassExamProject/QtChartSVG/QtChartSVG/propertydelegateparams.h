@@ -2,6 +2,7 @@
 #include <qcolor.h>
 #include <vector>
 #include <memory>
+#include "diagramdrawparams.h"
 
 
 enum class delegateType

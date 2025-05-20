@@ -111,14 +111,19 @@
   <ItemGroup>
     <ClInclude Include="config.h" />
     <ClInclude Include="configmanager.h" />
+    <QtMoc Include="diagramdrawparams.h" />
     <ClInclude Include="DiagramMimedata.h" />
     <QtMoc Include="drawtool.h" />
     <QtMoc Include="drawparamitem.h" />
+    <ClInclude Include="drawparamscreator.h" />
     <ClInclude Include="myconfig.h" />
     <QtMoc Include="propertydelegage.h" />
     <QtMoc Include="propertydata.h" />
+    <ClInclude Include="propertydatabuilder.h" />
     <ClInclude Include="propertydelegateparams.h" />
     <ClInclude Include="propertyPage.h" />
+    <QtMoc Include="propertyset.h" />
+    <QtMoc Include="propertywidget.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="tuxingjiedian.h" />
     <QtMoc Include="tuxing.h" />
@@ -130,20 +135,26 @@
     <None Include="config.json" />
     <None Include="cpp.hint" />
     <None Include="devconfig.json" />
+    <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp" />
+    <ClCompile Include="diagramdrawparams.cpp" />
     <ClCompile Include="DiagramMimedata.cpp" />
     <ClCompile Include="drawparamitem.cpp" />
+    <ClCompile Include="drawparamscreator.cpp" />
     <ClCompile Include="drawtool.cpp" />
     <ClCompile Include="huabu.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myconfig.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
     <ClCompile Include="propertydata.cpp" />
+    <ClCompile Include="propertydatabuilder.cpp" />
     <ClCompile Include="propertydelegage.cpp" />
     <ClCompile Include="propertydelegateparams.cpp" />
     <ClCompile Include="propertyPage.cpp" />
+    <ClCompile Include="propertyset.cpp" />
+    <ClCompile Include="propertywidget.cpp" />
     <ClCompile Include="shuxingwidget.cpp" />
     <ClCompile Include="tuxing.cpp" />
     <ClCompile Include="tuxingjiedian.cpp" />

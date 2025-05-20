@@ -49,12 +49,6 @@ void propertyWidget::setstackwidgetindex(int index)
 	m_stackwidgetindex = index;
 }
 
-void propertyWidget::paintEvent(QPaintEvent* event)
-{
-	QPainter painter(this);
-	//painter.fillRect(rect(), Qt::white);
-}
-
 
 int propertyWidget::getstackwidgetindex()
 {
@@ -96,15 +90,6 @@ PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 {
 	m_propertyStackWidget = new QStackedWidget(parent);
 	m_propertyStackWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	//m_propertyStackWidget->setContentsMargins(0, 0, 0, 0);
-	//m_propertyStackWidget->setStyleSheet("QStackedWidget{background-color: rgb(255, 255, 255);}");
-	//m_propertyStackWidget->setFrameShape(QFrame::NoFrame);
-	//m_propertyStackWidget->setFrameShadow(QFrame::Plain);
-	//m_propertyStackWidget->setLineWidth(0);
-	//m_propertyStackWidget->setMidLineWidth(0);
-	//m_propertyStackWidget->setAttribute(Qt::WA_TranslucentBackground, true);
-	//m_propertyStackWidget->setAttribute(Qt::WA_NoSystemBackground, true);
-	//m_propertyStackWidget->setAttribute(Qt::WA_OpaquePaintEvent, true);
 
 	createonceWidget();
 	propertyWidget* defaultwidget = m_propertyMap[propertyobjecttype::defaulttype];

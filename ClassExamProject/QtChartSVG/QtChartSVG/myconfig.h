@@ -34,9 +34,47 @@ public:
 	QString getRectRadioName();
 	QString getCircleRadioName();
 	QString getTriangleRadioName();
+	QString getTriangleRadioBottomName();
+	QString getTriangleRadioLeftName();
+	QString getTriangleRadioRightName();
 	QString getEdgeTypeName();
 	QString getFontFamilyName();
 	QString getFontSizeName();
+	double getRectRadio();
+	int getRectRotate();
+	double getRectScale();
+	double getCircleRadio();
+	int getCircleRotate();
+	double getCircleScale();
+	int getTriangleBottomRadio();
+	int getTriangleLeftRadio();
+    int getTriangleRightRadio();
+	QString getTriangleEdgetype();
+	int getTriangleRotate();
+	int getTriangleScale();
+	int getLineRotate();
+	double getLineScale();
+	QString getTextFamily();
+	int getTextSize();
+	QString getDefaultName();
+	double getRectRadioMax();
+	double getRectRadioMin();
+	double getRectRadioStep();
+	double getCircleRadioMax();
+	double getCircleRadioMin();
+	double getCircleRadioStep();
+	int getTriangleRadioMax();
+	QColor getPenColor();
+	int getPenWidth();
+	int getPenWidthMax();
+	QColor getBrushColor();
+	int getSpaceWidth();
+	int getSpaceHeight();
+	int getSpaceLengthMax();
+	int getCanvasWidth();
+	int getCanvasHeight();
+	int getCanvasLengthMax();
+
 		
 private:
 	myconfig();

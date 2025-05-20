@@ -1,11 +1,12 @@
 #include "drawtool.h"
+#include "drawparamscreator.h"
 
 
 
 DiagramDrawParamsTriangle::TriangleSizeRadios::TriangleSizeRadios()
-	:m_bottom(0.0)
-	, m_left(0.0)
-	, m_right(0.0)
+	:m_bottom(0)
+	, m_left(0)
+	, m_right(0)
 {
 }
 
@@ -317,6 +318,10 @@ createParamsInterface& createParamsInterface::getInstance()
 {
 	static createParamsInterface p;
 	return p;
+}
+
+void createParamsInterface::defaultInit()
+{
 }
 
 createParamsInterface& createParamsInterface::add(ShapeType type, std::function<std::shared_ptr<ICreateParams>()> creator)

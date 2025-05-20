@@ -73,8 +73,6 @@ inline std::shared_ptr<T> IpropertyDelegate::isParamsCastValid(std::shared_ptr<I
 
 
 
-
-
 class doubleDelegate : public IpropertyDelegate
 {
 public:

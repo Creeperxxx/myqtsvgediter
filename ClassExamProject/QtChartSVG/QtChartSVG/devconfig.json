@@ -28,9 +28,15 @@
       "rectradioname": "rect比例",
       "circleradioname": "circle比例",
       "triangleradioname": "tri比例",
+      "triangleradiobottomname": "底",
+      "triangleradioleftname": "左",
+      "triangleradiorightname": "右",
       "edgetypename": "指定边",
       "familyname": "字体",
       "fontsizename": "字体大小"
     }
+  },
+  "other": {
+    "defaultname": "defaultname"
   }
 }

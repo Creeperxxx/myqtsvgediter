@@ -1,6 +1,7 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QJsonValue>
+#include <qcolor.h>
 #include "myconfig.h"
 
 
@@ -161,6 +162,24 @@ QString myconfig::getTriangleRadioName()
 	return triangleRadioName;
 }
 
+QString myconfig::getTriangleRadioBottomName()
+{
+	static QString triangleRadioBottomName = m_devjson["name"].toObject()["other"].toObject()["triangleradiobottomname"].toString();
+	return triangleRadioBottomName;
+}
+
+QString myconfig::getTriangleRadioLeftName()
+{
+	static QString triangleRadioLeftName = m_devjson["name"].toObject()["other"].toObject()["triangleradioleftname"].toString();
+	return triangleRadioLeftName;
+}
+
+QString myconfig::getTriangleRadioRightName()
+{
+	static QString triangleRadioRightName = m_devjson["name"].toObject()["other"].toObject()["triangleradiorightname"].toString();
+	return triangleRadioRightName;
+}
+
 QString myconfig::getEdgeTypeName()
 {
 	static QString edgeTypeName = m_devjson["name"].toObject()["other"].toObject()["edgetypename"].toString();
@@ -178,6 +197,222 @@ QString myconfig::getFontSizeName()
 	static QString fontSizeName = m_devjson["name"].toObject()["other"].toObject()["fontsizename"].toString();
 	return fontSizeName;
 }
+
+double myconfig::getRectRadio()
+{
+	static double rectRadio = m_userjson["diagram"].toObject()["rectangle"].toObject()["radio"].toDouble();
+	return rectRadio;
+}
+
+int myconfig::getRectRotate()
+{
+	static int rectRotate = m_userjson["diagram"].toObject()["rectangle"].toObject()["rotate"].toInt();
+	return rectRotate;
+}
+
+double myconfig::getRectScale()
+{
+	static double rectScale = m_userjson["diagram"].toObject()["rectangle"].toObject()["scale"].toDouble();
+	return rectScale;
+}
+
+double myconfig::getCircleRadio()
+{
+	static double circleRadio = m_userjson["diagram"].toObject()["circle"].toObject()["radio"].toDouble();
+	return circleRadio;
+}
+
+int myconfig::getCircleRotate()
+{
+	static int circleRotate = m_userjson["diagram"].toObject()["circle"].toObject()["rotate"].toInt();
+	return circleRotate;
+}
+
+double myconfig::getCircleScale()
+{
+	static double circleScale = m_userjson["diagram"].toObject()["circle"].toObject()["scale"].toDouble();
+	return circleScale;
+}
+
+int myconfig::getTriangleBottomRadio()
+{
+	static int triangleBottomRadio = m_userjson["diagram"].toObject()["triangle"].toObject()["edgeradio"].toObject()["bottom"].toInt();
+	return triangleBottomRadio;
+}
+
+int myconfig::getTriangleLeftRadio()
+{
+	static int triangleLeftRadio = m_userjson["diagram"].toObject()["triangle"].toObject()["edgeradio"].toObject()["left"].toInt();
+	return triangleLeftRadio;
+}
+
+int myconfig::getTriangleRightRadio()
+{
+	static int triangleRightRadio = m_userjson["diagram"].toObject()["triangle"].toObject()["edgeradio"].toObject()["right"].toInt();
+	return triangleRightRadio;
+}
+
+QString myconfig::getTriangleEdgetype()
+{
+	static QString triangleEdgetype = m_userjson["diagram"].toObject()["triangle"].toObject()["edgetype"].toString();
+	return triangleEdgetype;
+}
+
+int myconfig::getTriangleRotate()
+{
+	static int triangleRotate = m_userjson["diagram"].toObject()["triangle"].toObject()["rotate"].toInt();
+	return triangleRotate;
+}
+
+int myconfig::getTriangleScale()
+{
+	static int triangleScale = m_userjson["diagram"].toObject()["triangle"].toObject()["scale"].toInt();
+	return triangleScale;
+}
+
+int myconfig::getLineRotate()
+{
+	static int lineRotate = m_userjson["diagram"].toObject()["line"].toObject()["rotate"].toInt();
+	return  lineRotate;
+}
+
+double myconfig::getLineScale()
+{
+	static int lineScale = m_userjson["diagram"].toObject()["line"].toObject()["scale"].toDouble();
+	return lineScale;
+}
+
+QString myconfig::getTextFamily()
+{
+	static QString textFamily = m_userjson["diagram"].toObject()["text"].toObject()["family"].toString();
+	return textFamily;
+}
+
+int myconfig::getTextSize()
+{
+	static int textSize = m_userjson["diagram"].toObject()["text"].toObject()["size"].toInt();
+	return textSize;
+}
+
+QString myconfig::getDefaultName()
+{
+	static QString defaultString = m_devjson["other"].toObject()["defaultstring"].toString();
+	return defaultString;
+}
+
+double myconfig::getRectRadioMax()
+{
+	static double rectRadioMax = m_userjson["diagram"].toObject()["rectangle"].toObject()["radiomax"].toDouble();
+	return rectRadioMax;
+}
+
+double myconfig::getRectRadioMin()
+{
+	static double rectRadioMin = m_userjson["diagram"].toObject()["rectangle"].toObject()["radiomin"].toDouble();
+	return rectRadioMin;
+}
+
+double myconfig::getRectRadioStep()
+{
+	static double rectRadioStep = m_userjson["diagram"].toObject()["rectangle"].toObject()["radiostep"].toDouble();
+	return rectRadioStep;
+}
+
+double myconfig::getCircleRadioMax()
+{
+	static double circleRadioMax = m_userjson["diagram"].toObject()["circle"].toObject()["radiomax"].toDouble();
+	return circleRadioMax;
+}
+
+double myconfig::getCircleRadioMin()
+{
+	static double circleRadioMin = m_userjson["diagram"].toObject()["circle"].toObject()["radiomin"].toDouble();
+	return circleRadioMin;
+}
+
+double myconfig::getCircleRadioStep()
+{
+	static double circleRadioStep = m_userjson["diagram"].toObject()["circle"].toObject()["radiostep"].toDouble();
+	return circleRadioStep;
+}
+
+int myconfig::getTriangleRadioMax()
+{
+	static int triangleRadioMax = m_userjson["diagram"].toObject()["triangle"].toObject()["radiomax"].toInt();
+	return triangleRadioMax;
+}
+
+QColor myconfig::getPenColor()
+{
+	static QColor penColor = QColor(m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["color"].toString());
+	return penColor;
+}
+
+int myconfig::getPenWidth()
+{
+	static int penWidth = m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["width"].toInt();
+	return penWidth;
+}
+
+int myconfig::getPenWidthMax()
+{
+	static int penWidthMax = m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["widthMax"].toInt();
+	return penWidthMax;
+}
+
+QColor myconfig::getBrushColor()
+{
+	static QColor brushColor = QColor(m_userjson["diagram"].toObject()["painter"].toObject()["brush"].toObject()["color"].toString());
+	return brushColor;
+}
+
+int myconfig::getSpaceWidth()
+{
+	static int spaceWidth = m_userjson["diagram"].toObject()["spacesize"].toObject()["width"].toInt();
+	return spaceWidth;
+}
+
+int myconfig::getSpaceHeight()
+{
+	static int spaceHeight = m_userjson["diagram"].toObject()["spacesize"].toObject()["height"].toInt();
+	return spaceHeight;
+}
+
+int myconfig::getSpaceLengthMax()
+{
+	static int spaceLengthMax = m_userjson["diagram"].toObject()["spacesize"].toObject()["lengthmax"].toInt();
+	return spaceLengthMax;
+}
+
+int myconfig::getCanvasWidth()
+{
+	static int canvasWidth = m_userjson["diagram"].toObject()["canvas"].toObject()["width"].toInt();
+	return canvasWidth;
+}
+
+int myconfig::getCanvasHeight()
+{
+	static int canvasHeight = m_userjson["diagram"].toObject()["canvas"].toObject()["height"].toInt();
+	return canvasHeight;
+}
+
+int myconfig::getCanvasLengthMax()
+{
+	static int canvasLengthMax = m_userjson["diagram"].toObject()["canvas"].toObject()["lengthmax"].toInt();
+	return canvasLengthMax;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

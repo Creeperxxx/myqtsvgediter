@@ -47,11 +47,18 @@
     <ClInclude Include="propertydelegateparams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="drawparamscreator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="propertydatabuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
     <None Include="cpp.hint" />
     <None Include="devconfig.json" />
+    <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="configmanager.cpp">
@@ -99,6 +106,21 @@
     <ClCompile Include="propertydata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="diagramdrawparams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawparamscreator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertywidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertyset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertydatabuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="huabu.h">
@@ -123,6 +145,15 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="propertydata.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="diagramdrawparams.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="propertywidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="propertyset.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

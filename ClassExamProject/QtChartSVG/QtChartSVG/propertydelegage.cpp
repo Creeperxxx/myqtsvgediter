@@ -1,6 +1,7 @@
 #include <qmessagebox.h>
 #include <qcolordialog.h>
 #include "propertydelegage.h"
+#include "diagramdrawparams.h"
 
 doubleDelegate::doubleDelegate(std::shared_ptr<IdelegatePramas> params)
 	: m_editwidget(nullptr)
