@@ -35,6 +35,7 @@ void doubleDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	std::shared_ptr<delegateParamsDouble> p = isParamsCastValid<delegateParamsDouble>(params);
 
 	m_editwidget = new QDoubleSpinBox();
+	m_editwidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	checkQobjectValid(m_editwidget);
 
 	m_editwidget->setRange(p->m_valuemin, p->m_valuemax);
@@ -58,6 +59,12 @@ intDelegate::intDelegate(std::shared_ptr<IdelegatePramas> params)
 	createWidget(params);
 }
 
+void IpropertyDelegate::slotValueChanged()
+{
+	QVariant v = value();
+	emit signalValueChanged(v);
+}
+
 
 QWidget* intDelegate::getEditWidget()
 {
@@ -69,6 +76,7 @@ void intDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	std::shared_ptr<delegateParamsInt> p = isParamsCastValid<delegateParamsInt>(params);
 
 	m_editwidget = new QSpinBox();
+	m_editwidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	checkQobjectValid(m_editwidget);
 
 	m_editwidget->setRange(p->m_valuemin, p->m_valuemax);
@@ -141,12 +149,13 @@ void colorDelete::createWidget(std::shared_ptr<IdelegatePramas> params)
 	auto p = isParamsCastValid<delegateParamsColor>(params);
 
 	m_colorwidget = new QWidget();
+	m_colorwidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	m_colorlayout = new QHBoxLayout();
 	m_colorwidget->setLayout(m_colorlayout);
 
 	m_button = new QPushButton("选择", m_colorwidget);
-
 	m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 	m_colorlabel = new QLabel(m_colorwidget);
 	m_currentcolor = p->m_initcolor;
 	m_colorlabel->setStyleSheet(QString("QLabel { background-color: rgba(%1,%2,%3,%4);border: 1px solid black; }")
@@ -198,6 +207,7 @@ void stringDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 {
 	auto p = isParamsCastValid<delegateParamsString>(params);
 	m_label = new QLabel(p->m_initstring);
+	m_label->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 }
 
 void stringDelegate::setValue(QVariant value)
@@ -226,6 +236,7 @@ void enumDelegate::createWidget(std::shared_ptr<IdelegatePramas> params)
 	auto p = isParamsCastValid<delegateParamsEnum>(params);
 
 	m_combobox = new QComboBox();
+	m_combobox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	for (const auto& str : p->m_vec)
 	{
 		m_combobox->addItem(str);
@@ -294,18 +305,22 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 	auto castparams = isParamsCastValid<delegateParamsTriangleSides>(params);
 
 	m_radiowidget = new QWidget();
+	m_radiowidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_formlayout = new QFormLayout(m_radiowidget);
 	m_radiowidget->setLayout(m_formlayout);
 
 	m_bottombox = new QSpinBox();
+	m_bottombox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_bottombox->setRange(0, castparams->m_Radiomax);
 	m_bottombox->setValue(castparams->m_radios.m_bottom);
 
 	m_leftbox = new QSpinBox();
+	m_leftbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_leftbox->setRange(0, castparams->m_Radiomax);
 	m_leftbox->setValue(castparams->m_radios.m_left);
 
 	m_rightbox = new QSpinBox();
+	m_rightbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_rightbox->setRange(0, castparams->m_Radiomax);
 	m_rightbox->setValue(castparams->m_radios.m_right);
 
@@ -314,11 +329,13 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 	m_formlayout->addRow(castparams->m_rightstr, m_rightbox);
 
 	m_button = new QPushButton("确认");
+	m_button->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	QObject::connect(m_button, &QPushButton::clicked, this, &triangleSideRadioDelegate::onisValid);
 
 
 
 	m_widget = new QWidget();
+	m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_vlayout = new QVBoxLayout();
 	m_widget->setLayout(m_vlayout);
 

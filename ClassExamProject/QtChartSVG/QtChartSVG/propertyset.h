@@ -8,7 +8,7 @@ class IDidgramDrawParams;
 class IpropertySet : public QObject
 {
 public:
-	virtual ~IpropertySet() = 0;
+	virtual ~IpropertySet();
 	void addShowData(propertyWidget* widget);
 public:
 	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> m_propertyDataVec;

@@ -59,7 +59,7 @@ delegateParamsColor::delegateParamsColor(QColor initcolor)
 {
 }
 
-delegateParamsEnum::delegateParamsEnum(std::vector<QString> vec, QString initstr)
+delegateParamsEnum::delegateParamsEnum(QVector<QString> vec, QString initstr)
 	: IdelegatePramas(delegateType::Enum)
 	, m_vec(vec)
 	, m_initstring(initstr)

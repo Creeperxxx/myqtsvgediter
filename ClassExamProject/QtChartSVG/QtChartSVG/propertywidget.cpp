@@ -85,6 +85,9 @@ PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 {
 	m_propertyStackWidget = new QStackedWidget(parent);
 	m_propertyStackWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	m_propertyStackWidget->setContentsMargins(0, 0, 0, 0);
+	m_propertyStackWidget->setFrameShape(QFrame::NoFrame);
+	m_propertyStackWidget->setFrameShadow(QFrame::Plain);
 
 	createonceWidget();
 	propertyWidget* defaultwidget = m_propertyMap[propertyobjecttype::defaulttype];
@@ -249,10 +252,7 @@ void PropertyWidgetManager::buildDiagramTextPropertyWidget(propertyWidget* widge
 
 	QFontDatabase fontDatabase;
 	QStringList fontFamilies = fontDatabase.families();
-	QString initstr = myconfig::getInstance().getTextFamily();
-	if (!fontFamilies.contains(initstr))
-		initstr = fontFamilies[0];
-	params = std::make_shared<delegateParamsEnum>(fontFamilies, initstr);
+	params = std::make_shared<delegateParamsEnum>(QVector<QString>::fromList(fontFamilies), fontFamilies[0]);
 	widget->addPropertyItem(myconfig::getInstance().getFontFamilyName()
 		, params);
 
@@ -346,7 +346,7 @@ void PropertyWidgetManager::buildPropertyWidgetTriangleEdgetype(propertyWidget* 
 	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Bottom));
 	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Left));
 	list.append(DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Right));
-	auto params = std::make_shared<delegateParamsEnum>(list);
+	auto params = std::make_shared<delegateParamsEnum>(list, list[0]);
 	widget->addPropertyItem(myconfig::getInstance().getEdgeTypeName()
 		, params);
 }

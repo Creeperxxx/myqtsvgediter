@@ -1,31 +1,29 @@
 #include "tuxing.h"
-#include "shuxingwidget.h"
-#include "config.h"
-
+#include "propertywidget.h"
+#include "propertyset.h"
+#include "propertydatabuilder.h"
+#include "myconfig.h"
 
 diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	:QWidget(parent)
 	, m_dragStartPos(0, 0)
-	, m_issizefixed(cfggetval<bool>(qtcf::tuxingku::diagramwidget::issizefix))
-	, m_widgetRadio(std::nullopt)
+	, m_issizefixed(myconfig::getInstance().getDiagramButtonIsSizeFixed())
+	, m_widgetRadio(1)
 	, m_drawer(nullptr)
-	, m_mimetype(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype)))
+	, m_mimetype(myconfig::getInstance().getMimetype())
 	, m_params(nullptr)
 {
 	if (m_issizefixed)
 	{
 		setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-		setFixedWidth(cfggetval<int>(qtcf::tuxingku::diagramwidget::fixwidth));
-		setFixedHeight(cfggetval<int>(qtcf::tuxingku::diagramwidget::fixheight));
+		setFixedSize(myconfig::getInstance().getDiagramButtonFixedSize());
 	}
 	else
 	{
 		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		setMaximumHeight(cfggetval<int>(qtcf::tuxingku::diagramwidget::maxheight));
-		setMaximumWidth(cfggetval<int>(qtcf::tuxingku::diagramwidget::maxwidth));
-		setMinimumWidth(cfggetval<int>(qtcf::tuxingku::diagramwidget::minwidth));
-		setMinimumHeight(cfggetval<int>(qtcf::tuxingku::diagramwidget::minheight));
-		m_widgetRadio = cfggetval<double>(qtcf::tuxingku::diagramwidget::widgetradio);
+		setMaximumSize(myconfig::getInstance().getDiagramButtonMaxSize());
+		setMinimumSize(myconfig::getInstance().getDiagramButtonMinSize());
+		m_widgetRadio = myconfig::getInstance().getDiagramButtonWidgetRadio();
 	}
 	if (params == nullptr || params.get() == nullptr)
 		throw std::runtime_error("error");
@@ -49,7 +47,7 @@ diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
 	otherset->m_name = getName(params->m_type);
 	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
+		myconfig::getInstance().getNameName()
 	});
 	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
@@ -89,9 +87,7 @@ void diagram::resizeEvent(QResizeEvent* event)
 	if (!m_issizefixed)
 	{
 		QSize allocated = event->size();
-		if (!m_widgetRadio.has_value())
-			throw std::runtime_error("error");//todo:except
-		const float ratio = m_widgetRadio.value(); // 宽高比
+		const float ratio = m_widgetRadio; // 宽高比
 
 		// 候选方案1：以宽度为主导
 		int w1 = qBound(minimumSize().width(), allocated.width(), maximumSize().width());
@@ -137,7 +133,6 @@ void diagram::createQDrag()
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
 	m_params->m_center = pixmap.rect().center();
-	m_params->m_paramChanged = true;
 	m_drawer->draw(painter);
 
 	drag->setPixmap(pixmap);
@@ -154,11 +149,9 @@ void diagram::paintEvent(QPaintEvent* event)
 	QSize size = m_params->m_spacesize;
 	m_params->m_center = this->rect().center();
 	m_params->m_spacesize = this->size();
-	m_params->m_paramChanged = true;
 
 	m_drawer->draw(painter);
 	m_params->m_spacesize = size;
-	m_params->m_paramChanged = true;
 }
 
 void diagram::onParamsValueChanged()
@@ -199,43 +192,43 @@ std::shared_ptr<std::vector<QString>> diagram::createNameVec(ShapeType type)
 std::shared_ptr<std::vector<QString>> diagram::createNameVecRect()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getRectRadioName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> diagram::createNameVecCircle()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getCircleRadioName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> diagram::createNameVecTriangle()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getTriangleRadioName()
+			, myconfig::getInstance().getEdgeTypeName()
 	});
 
 
@@ -244,21 +237,21 @@ std::shared_ptr<std::vector<QString>> diagram::createNameVecTriangle()
 std::shared_ptr<std::vector<QString>> diagram::createNameVecLine()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> diagram::createNamgeVecMouse()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
 	});
 }
 
@@ -270,9 +263,9 @@ std::shared_ptr<std::vector<QString>> diagram::createNameVecChoose()
 std::shared_ptr<std::vector<QString>> diagram::createNameVecText()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getFontFamilyName()
+			, myconfig::getInstance().getFontSizeName()
 	});
 }
 
@@ -281,25 +274,25 @@ QString diagram::getName(ShapeType type)
 	switch (type)
 	{
 	case ShapeType::Rect:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::rect));
+		return myconfig::getInstance().getRectName();
 		break;
 	case ShapeType::Circle:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::circle));
+		return myconfig::getInstance().getCircleName();
 		break;
 	case ShapeType::Triangle:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::triangle));
+		return myconfig::getInstance().getTriangleName();
 		break;
 	case ShapeType::Line:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::line));
+		return myconfig::getInstance().getLineName();
 		break;
 	case ShapeType::Mouse:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::mouse));
+		return myconfig::getInstance().getMouseName();
 		break;
 	case ShapeType::choose:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::choose));
+		return myconfig::getInstance().getChooseName();
 		break;
 	case ShapeType::Text:
-		return QString::fromStdString(cfggetval<std::string>(qtcf::tuxingku::diagramwidget::name::text));
+		return myconfig::getInstance().getTextName();
 		break;
 	default:
 		throw std::runtime_error("error");

@@ -54,6 +54,19 @@
   "canvas": {
     "width": 900,
     "height": 900,
-    "lenghtmax": 4000
-  }
+    "lenghtmax": 4000,
+    "backgroundcolor": "#FFFFFF"
+  },
+  "diagrambutton": {
+    "backgroundcolor": "#FFFFFF",
+    "isfixsize": true,
+    "widgetradio": 2,
+    "fixwidth": 50,
+    "fixheight": 25,
+    "maxwidth": 40,
+    "maxheight": 20,
+    "minwidht": 20,
+    "minheight": 10
+  },
+  "mimetype": "application/x-custom-shape"
 }

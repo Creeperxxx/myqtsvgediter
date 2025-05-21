@@ -387,3 +387,39 @@ DiagramDrawParamsText::DiagramDrawParamsText()
 {
 
 }
+
+void DiagramDrawParamsText::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+	out << m_font.family()
+		<< m_font.pointSize()
+		<< m_font.bold()
+		<< m_font.italic()
+		<< m_font.underline()
+		<< m_font.strikeOut();
+}
+
+void DiagramDrawParamsText::deserialize(QDataStream& in)
+{
+	IDidgramDrawParams::deserialize(in);
+	QString family;
+	int pointSize;
+	bool bold;
+	bool italic;
+	bool underline;
+	bool strikeOut;
+
+	in >> family
+		>> pointSize
+		>> bold
+		>> italic
+		>> underline
+		>> strikeOut;
+
+	m_font = QFont(family, pointSize);
+	m_font.setBold(bold);
+	m_font.setItalic(italic);
+	m_font.setUnderline(underline);
+	m_font.setStrikeOut(strikeOut);
+
+}

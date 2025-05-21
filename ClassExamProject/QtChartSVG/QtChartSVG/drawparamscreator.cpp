@@ -9,6 +9,20 @@ std::shared_ptr<IDidgramDrawParams> ICreateParams::create()
 	return p;
 }
 
+void ICreateParams::createRest(std::shared_ptr<IDidgramDrawParams> params)
+{
+	params->m_brush = QBrush(myconfig::getInstance().getBrushColor());
+	params->m_center = QPoint(0, 0);
+	params->m_centerHoffset = 0;
+	params->m_centerVoffset = 0;
+	params->m_ischoosed = false;
+	params->m_isdrawInHuabu = false;
+	params->m_pen = QPen(myconfig::getInstance().getPenColor()
+		, myconfig::getInstance().getPenWidth());
+	params->m_spacesize = QSize(myconfig::getInstance().getSpaceWidth()
+		, myconfig::getInstance().getSpaceHeight());
+}
+
 std::shared_ptr<IDidgramDrawParams> createParamsRect::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsRect>();

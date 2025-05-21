@@ -12,11 +12,9 @@
 #include <stdexcept>
 #include <optional>
 #include <qapplication.h>
-#include "drawtool.h"
-#include "tuxingjiedian.h"
-#include "shuxingwidget.h"
-#include "configmanager.h"
-
+#include "propertywidget.h"
+#include "diagramdrawparams.h"
+#include "drawer.h"
 
 
 
@@ -68,7 +66,7 @@ public:
 
 	QPointF m_dragStartPos;
 	bool m_issizefixed;
-	std::optional<qreal> m_widgetRadio;
+	double m_widgetRadio;
 	QString m_mimetype;
 
 };

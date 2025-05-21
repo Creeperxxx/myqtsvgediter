@@ -21,7 +21,7 @@ void myconfig::loadUserJson(QString filepath)
 	configfile.close();
 	if(!jsonDoc.isObject())
 		throw std::runtime_error("error");
-	m_devjson = jsonDoc.object();
+	m_userjson = jsonDoc.object();
 }
 
 QString myconfig::getRectName()
@@ -344,62 +344,120 @@ int myconfig::getTriangleRadioMax()
 
 QColor myconfig::getPenColor()
 {
-	static QColor penColor = QColor(m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["color"].toString());
+	static QColor penColor = QColor(m_userjson["painter"].toObject()["pen"].toObject()["color"].toString());
 	return penColor;
 }
 
 int myconfig::getPenWidth()
 {
-	static int penWidth = m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["width"].toInt();
+	static int penWidth = m_userjson["painter"].toObject()["pen"].toObject()["width"].toInt();
 	return penWidth;
 }
 
 int myconfig::getPenWidthMax()
 {
-	static int penWidthMax = m_userjson["diagram"].toObject()["painter"].toObject()["pen"].toObject()["widthMax"].toInt();
+	static int penWidthMax = m_userjson["painter"].toObject()["pen"].toObject()["widthmax"].toInt();
 	return penWidthMax;
 }
 
 QColor myconfig::getBrushColor()
 {
-	static QColor brushColor = QColor(m_userjson["diagram"].toObject()["painter"].toObject()["brush"].toObject()["color"].toString());
+
+	static QColor brushColor = QColor(m_userjson["painter"].toObject()["brush"].toObject()["color"].toString());
 	return brushColor;
 }
 
 int myconfig::getSpaceWidth()
 {
-	static int spaceWidth = m_userjson["diagram"].toObject()["spacesize"].toObject()["width"].toInt();
+	static int spaceWidth = m_userjson["spacesize"].toObject()["width"].toInt();
 	return spaceWidth;
 }
 
 int myconfig::getSpaceHeight()
 {
-	static int spaceHeight = m_userjson["diagram"].toObject()["spacesize"].toObject()["height"].toInt();
+	static int spaceHeight = m_userjson["spacesize"].toObject()["height"].toInt();
 	return spaceHeight;
 }
 
 int myconfig::getSpaceLengthMax()
 {
-	static int spaceLengthMax = m_userjson["diagram"].toObject()["spacesize"].toObject()["lengthmax"].toInt();
+	static int spaceLengthMax = m_userjson["spacesize"].toObject()["lengthmax"].toInt();
 	return spaceLengthMax;
 }
 
 int myconfig::getCanvasWidth()
 {
-	static int canvasWidth = m_userjson["diagram"].toObject()["canvas"].toObject()["width"].toInt();
+	static int canvasWidth = m_userjson["canvas"].toObject()["width"].toInt();
 	return canvasWidth;
 }
 
 int myconfig::getCanvasHeight()
 {
-	static int canvasHeight = m_userjson["diagram"].toObject()["canvas"].toObject()["height"].toInt();
+	static int canvasHeight = m_userjson["canvas"].toObject()["height"].toInt();
 	return canvasHeight;
 }
 
 int myconfig::getCanvasLengthMax()
 {
-	static int canvasLengthMax = m_userjson["diagram"].toObject()["canvas"].toObject()["lengthmax"].toInt();
+	static int canvasLengthMax = m_userjson["canvas"].toObject()["lengthmax"].toInt();
 	return canvasLengthMax;
+}
+
+QColor myconfig::getDiagramButtonBackgroundColor()
+{
+	static QColor color = QColor(m_userjson["diagrambutton"].toObject()["backgroundcolor"].toString());
+	return color;
+}
+
+bool myconfig::getDiagramButtonIsSizeFixed()
+{
+	static bool isSizeFixed = m_userjson["diagrambutton"].toObject()["isfixsize"].toBool();
+	return isSizeFixed;
+}
+
+double myconfig::getDiagramButtonWidgetRadio()
+{
+	static double radio = m_userjson["diagrambutton"].toObject()["widgetradio"].toDouble();
+	return radio;
+}
+
+QSize myconfig::getDiagramButtonFixedSize()
+{
+	static QSize size = QSize(m_userjson["diagrambutton"].toObject()["fixwidth"].toInt()
+		, m_userjson["diagrambutton"].toObject()["fixheight"].toInt());
+	return size;
+}
+
+QSize myconfig::getDiagramButtonMaxSize()
+{
+	static QSize size = QSize(m_userjson["diagrambutton"].toObject()["maxwidth"].toInt()
+		, m_userjson["diagrambutton"].toObject()["maxheight"].toInt());
+	return size;
+}
+
+QSize myconfig::getDiagramButtonMinSize()
+{
+	static QSize size = QSize(m_userjson["diagrambutton"].toObject()["minwidth"].toInt()
+		, m_userjson["diagrambutton"].toObject()["minheight"].toInt());
+	return size;
+}
+
+QString myconfig::getMimetype()
+{
+	static QString mimetype = m_userjson["mimetype"].toString();
+	return mimetype;
+}
+
+QColor myconfig::getCanvasBackgroundColor()
+{
+	static QColor color = QColor(m_userjson["canvas"].toObject()["backgroundcolor"].toString());
+	return color;
+}
+
+int myconfig::getClickTolerance()
+{
+	static int clickTolerance = m_devjson["other"].toObject()["clicktolerance"].toInt();
+	return clickTolerance;
 }
 
 
@@ -434,5 +492,4 @@ void myconfig::loadDevJson()
 		throw std::runtime_error("error");
 
 	m_devjson = jsonDoc.object();
-
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include <memory>
 #include <vector>
+#include <map>
+#include <qstring.h>
+#include <functional>
 
 class propertydata;
 class IpropertySet;

@@ -13,7 +13,7 @@
 #include <qmenubar.h>
 #include <qstackedwidget.h>
 #include <qsettings.h>
-#include "shuxingwidget.h"
+#include "propertywidget.h"
 
 class MyMainWindow : public QMainWindow
 {
@@ -33,7 +33,7 @@ protected:
 
 private:
 	void init();
-	void initconfig(const std::string& filepath = "config.json");
+	void initconfig(QString filepath = "userconfig.json");
 
 	QScrollArea* m_huabuparentscroll;
 	QWidget* m_huabuparentwidget;

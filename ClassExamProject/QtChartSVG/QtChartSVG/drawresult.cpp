@@ -1,0 +1,142 @@
+#include "drawresult.h"
+#include "myconfig.h"
+
+bool DrawResultRect::iscontainPoint(QPointF point)
+{
+	return m_rect.containsPoint(point, Qt::OddEvenFill);
+}
+
+QPainterPath DrawResultRect::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(1);
+
+	QPainterPath path;
+	path.addPolygon(m_rect);
+	path.closeSubpath();
+	return stroker.createStroke(path);
+}
+
+bool DrawResultCircle::iscontainPoint(QPointF point)
+{
+	if (m_circle.size() < 4) return false;
+
+	// 创建椭圆路径
+	QPainterPath path;
+	path.addEllipse(QRectF(m_circle[0], m_circle[2]));
+
+	return path.contains(point);
+}
+
+QPainterPath DrawResultCircle::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(1);
+
+	QPainterPath path;
+	path.addPolygon(m_circle);
+	path.closeSubpath();
+	return stroker.createStroke(path);
+}
+
+bool DrawResultTriangle::iscontainPoint(QPointF point)
+{
+	return m_triangle.containsPoint(point, Qt::OddEvenFill);
+}
+
+QPainterPath DrawResultTriangle::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(1);
+	QPainterPath path;
+	path.addPolygon(m_triangle);
+	path.closeSubpath();
+	return stroker.createStroke(path);
+}
+
+bool DrawResultLine::iscontainPoint(QPointF point)
+{
+	qreal distance = distanceToLine(m_line, point);
+	return distance <= myconfig::getInstance().getClickTolerance();
+}
+
+
+QPainterPath DrawResultLine::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(1);
+
+	QPainterPath path;
+	path.moveTo(m_line.p1());
+	path.lineTo(m_line.p2());
+	path.closeSubpath();
+
+	return stroker.createStroke(path);
+}
+
+qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
+{
+	// 向量AP (从line.p1()到point)
+	QPointF AP = point - line.p1();
+	// 向量AB (线段方向向量)
+	QPointF AB = line.p2() - line.p1();
+
+	// 计算AB的长度平方
+	qreal ab2 = AB.x() * AB.x() + AB.y() * AB.y();
+	// 计算AP与AB的点积
+	qreal ap_ab = AP.x() * AB.x() + AP.y() * AB.y();
+
+	// 计算归一化参数t (点在AB上的投影位置)
+	qreal t = ap_ab / ab2;
+
+	// 如果t在[0,1]之外，计算到端点的距离
+	if (t < 0.0) {
+		return QLineF(line.p1(), point).length();
+	}
+	else if (t > 1.0) {
+		return QLineF(line.p2(), point).length();
+	}
+
+	// 计算投影点
+	QPointF projection = line.p1() + t * AB;
+	// 返回点到投影点的距离
+	return QLineF(point, projection).length();
+
+}
+
+bool DrawResultMouse::iscontainPoint(QPointF point)
+{
+	QPainterPath circle;
+	int tolerance = myconfig::getInstance().getClickTolerance();
+	circle.addEllipse(point, tolerance, tolerance);
+
+	return m_path.intersects(circle);
+}
+
+QPainterPath DrawResultMouse::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(1);
+
+	QPainterPath path(m_path);
+	path.closeSubpath();
+
+	return stroker.createStroke(path);
+}
+
+QPainterPath DrawResultText::getPainterPath()
+{
+	QPainterPathStroker stroker;
+	stroker.setWidth(m_painterpen.width());
+
+	QPainterPath path;
+	path.addRect(m_rect);
+	path.closeSubpath();
+
+	return stroker.createStroke(path);
+}
+
+bool DrawResultText::iscontainPoint(QPointF point)
+{
+	return m_rect.contains(point);
+}

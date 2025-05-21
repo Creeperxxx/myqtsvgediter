@@ -1,6 +1,6 @@
 #pragma once
 #include <qcolor.h>
-#include <vector>
+#include <qvector.h>
 #include <memory>
 #include "diagramdrawparams.h"
 
@@ -68,8 +68,8 @@ class delegateParamsEnum : public IdelegatePramas
 {
 public:
 	~delegateParamsEnum();
-	delegateParamsEnum(std::vector<QString> vec, QString initstr);
-	std::vector<QString> m_vec;
+	delegateParamsEnum(QVector<QString> vec, QString initstr);
+	QVector<QString> m_vec;
 	QString m_initstring;
 };
 

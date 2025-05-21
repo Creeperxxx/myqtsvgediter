@@ -9,9 +9,9 @@
 #include <qsvggenerator.h>
 #include <qsettings.h>
 #include <qsvgrenderer.h>
-#include "shuxingwidget.h"
-#include "tuxingjiedian.h"
-#include "configmanager.h"
+#include "propertyset.h"
+#include "drawer.h"
+
 
 
 
@@ -48,17 +48,6 @@ public:
 
 
 
-
-
-
-
-
-
-//data datamanager   一个个data代表一个个属性，然后通过add方式交由datamanager管理。
-//datamanager tuxing datamanager交给tuxing管理
-//tuxing listerner listermanager tuxing持有listermanager 后者管理一系列listerner
-//然后data发出信号给manager manager发出信号给tuxing tuxing发出信号给manager manage
-//manager发出信号给listerner listerner看该属性是否由自己管理，如果是，则update
 
 
 

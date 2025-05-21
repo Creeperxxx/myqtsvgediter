@@ -1,10 +1,13 @@
-#include "huabu.h"
 #include <qdatetime.h>
+#include "qmessagebox.h"
+#include "huabu.h"
+#include "propertydatabuilder.h"
+#include "myconfig.h"
 
 huabu::huabu(QWidget* parent)
 	: QWidget(parent)
-	, m_mimetype(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype)))
-	, m_backgroundcolor(QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::backgroundcolor))))
+	, m_mimetype(myconfig::getInstance().getMimetype())
+	, m_backgroundcolor(Qt::white)
 	, m_tuxingnum(0)
 	, m_ismouseDrawing(false)
 	, m_isdrawing(false)
@@ -12,7 +15,6 @@ huabu::huabu(QWidget* parent)
 	, m_pasteOffset(20, 20)
 	, m_lastPasteDelta(0, 0)
 {
-	//ui.setupUi(this);
 	init();
 }
 
@@ -21,6 +23,7 @@ void huabu::init()
 	setAcceptDrops(true);
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
+
 	QSize canvassize;
 	if (m_setting.contains("canvas/size"))
 	{
@@ -28,7 +31,7 @@ void huabu::init()
 	}
 	else
 	{
-		canvassize = QSize(cfggetval<int>(qtcf::huabu::width), cfggetval<int>(qtcf::huabu::height));
+		canvassize = QSize(myconfig::getInstance().getCanvasWidth(), myconfig::getInstance().getCanvasHeight());
 		m_setting.setValue("canvas/size", canvassize);
 	}
 	setFixedSize(canvassize);
@@ -39,7 +42,7 @@ void huabu::init()
 	}
 	else
 	{
-		m_backgroundcolor = QColor(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::backgroundcolor)));
+		m_backgroundcolor = myconfig::getInstance().getCanvasBackgroundColor();
 		m_setting.setValue("canvas/backgroundcolor", m_backgroundcolor);
 	}
 
@@ -48,14 +51,14 @@ void huabu::init()
 	m_setManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::huabu;
 
 	auto otherset = std::make_shared<otherPropertySet>();
-	otherset->m_name = QString::fromStdString(cfggetval<std::string>(qtcf::huabu::name));
+	otherset->m_name = myconfig::getInstance().getCanvasName();
 	otherset->m_huabuheight = canvassize.height();
 	otherset->m_huabuwidth = canvassize.width();
 
 	std::shared_ptr<std::vector<QString>> namevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::huabu::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::huabu::widthname))
+		myconfig::getInstance().getNameName()
+			, myconfig::getInstance().getCanvasWidthName()
+			, myconfig::getInstance().getCanvasHeightName()
 	});
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(namevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
@@ -201,7 +204,7 @@ void huabu::dropEvent(QDropEvent* event)
 
 void huabu::dragMoveEvent(QDragMoveEvent* event)
 {
-	if (true == event->mimeData()->hasFormat(QString::fromStdString(cfggetval<std::string>(qtcf::mimetype))))
+	if (true == event->mimeData()->hasFormat(m_mimetype))
 	{
 		event->acceptProposedAction();
 	}
@@ -573,7 +576,7 @@ void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared
 	otherset->m_name = createTuxingName(params->m_type);
 	otherset->m_zvalue = QDateTime::currentMSecsSinceEpoch();
 	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
+		myconfig::getInstance().getNameName()
 	});
 	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
@@ -623,6 +626,7 @@ PropertyWidgetManager::propertyobjecttype huabu::shapetypeToObjectType(ShapeType
 
 void huabu::createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std::shared_ptr<IDiagramDrawer> drawer)
 {
+	params->m_isdrawInHuabu = true;
 	auto textedit = new TextLineEdit(this);
 	textedit->setParent(this);
 	textedit->setTextColor(params->m_pen.color());
@@ -714,85 +718,85 @@ std::shared_ptr<std::vector<QString>> huabu::createNameVec(ShapeType type)
 std::shared_ptr<std::vector<QString>> huabu::rectCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getRectRadioName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> huabu::circleCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getCircleRadioName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> huabu::triangleCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getTriangleRadioName()
+			, myconfig::getInstance().getEdgeTypeName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> huabu::lineCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getBrushColorName()
+			, myconfig::getInstance().getRotateAngleName()
+			, myconfig::getInstance().getScaleName()
+			, myconfig::getInstance().getSpaceWidthName()
+			, myconfig::getInstance().getSpaceHeightName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> huabu::mouseCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getPenWdithName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 
 std::shared_ptr<std::vector<QString>> huabu::textCreateNameVec()
 {
 	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname))
-			, QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname))
+		myconfig::getInstance().getPenColorName()
+			, myconfig::getInstance().getFontFamilyName()
+			, myconfig::getInstance().getFontSizeName()
+			, myconfig::getInstance().getCenterHOffsetName()
+			, myconfig::getInstance().getCenterVOffsetName()
 	});
 }
 

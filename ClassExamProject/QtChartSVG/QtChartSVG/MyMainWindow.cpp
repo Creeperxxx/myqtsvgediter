@@ -7,8 +7,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include "MyMainWindow.h"
-#include "tuxing.h"
+#include "drawer.h"
+#include "drawparamscreator.h"
+#include "propertydatabuilder.h"
+#include "myconfig.h"
 #include "huabu.h"
+#include "tuxing.h"
 
 //MyMainWindow::MyMainWindow(QWidget* parent)
 	//: QMainWindow(parent)
@@ -75,17 +79,22 @@ void MyMainWindow::fetchAndSetTooltips()
 
 void MyMainWindow::init()
 {
-	initconfig("config.json");
+	initconfig("userconfig.json");
 
+	if (m_settings.contains("window/geometry"))
+	{
+		restoreGeometry(m_settings.value("window/geometry").toByteArray());
+	}
+	else
+	{
+		resize(1200, 1200);
+	}
+	if (m_settings.contains("window/state"))
+	{
+		restoreState(m_settings.value("window/state").toByteArray());
+	}
 	
 
-
-	//resize(1200, 1200);
-	//ui = new Ui::MainWindow();
-	//ui->setupUi(this);
-	//menuButtonGroup = new QButtonGroup(this);
-	//initPageSwitch();
-	//菜单
 	QMenu* filemenu = menuBar()->addMenu("文件");
 
 	// 创建“保存为SVG”动作
@@ -121,6 +130,8 @@ void MyMainWindow::init()
 	QWidget* centralwidget = new QWidget(this);
 	//mainwindowlayout->addWidget(centralwidget);
 	QHBoxLayout* centralwidgetlayout = new QHBoxLayout(centralwidget);
+	centralwidgetlayout->setSpacing(0);
+	centralwidgetlayout->setContentsMargins(0, 0, 0, 0);
 	setCentralWidget(centralwidget);
 
 	//画布父窗口
@@ -187,58 +198,58 @@ void MyMainWindow::init()
 
 
 	propertyDataVecOfPropertySetCreatorFactor::getInstance()
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::colorname)), []() {
+		.addCreator(myconfig::getInstance().getPenColorName(), []() {
 		return std::make_shared<PenColorDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::pen::widthname)), []() {
+		.addCreator(myconfig::getInstance().getPenWdithName(), []() {
 		return std::make_shared<PenWidthDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::painter::brushcolorname)), []() {
+		.addCreator(myconfig::getInstance().getBrushColorName(), []() {
 		return std::make_shared<BrushDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rotatename)), []() {
+		.addCreator(myconfig::getInstance().getRotateAngleName(), []() {
 		return std::make_shared<RotateDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::widthname)), []() {
+		.addCreator(myconfig::getInstance().getSpaceWidthName(), []() {
 		return std::make_shared<SpacewidthDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::spacesize::heightname)), []() {
+		.addCreator(myconfig::getInstance().getSpaceHeightName(), []() {
 		return std::make_shared<SpaceheightDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::scalename)), []() {
+		.addCreator(myconfig::getInstance().getScaleName(), []() {
 		return std::make_shared<ScaleDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centerhoffsetname)), []() {
+		.addCreator(myconfig::getInstance().getCenterHOffsetName(), []() {
 		return std::make_shared<CenterHoffsetDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::centervoffsetname)), []() {
+		.addCreator(myconfig::getInstance().getCenterVOffsetName(), []() {
 		return std::make_shared<CenterVoffsetDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename)), []() {
+		.addCreator(myconfig::getInstance().getNameName(), []() {
 		return std::make_shared<NamePropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::rectangle::radioname)), []() {
+		.addCreator(myconfig::getInstance().getRectRadioName(), []() {
 		return std::make_shared<RectRadioDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::circle::radioname)), []() {
+		.addCreator(myconfig::getInstance().getCircleRadioName(), []() {
 		return std::make_shared<CircleRadioDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgeradio::radioname)), []() {
+		.addCreator(myconfig::getInstance().getTriangleRadioName(), []() {
 		return std::make_shared<TriangleRadioDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::triangle::edgetypename)), []() {
+		.addCreator(myconfig::getInstance().getEdgeTypeName(), []() {
 		return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::familyname)), []() {
+		.addCreator(myconfig::getInstance().getFontFamilyName(), []() {
 		return std::make_shared<TextFontFamilyDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::text::sizename)), []() {
+		.addCreator(myconfig::getInstance().getFontSizeName(), []() {
 		return std::make_shared<TextFontSizeDrawParamsPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::heightname)), []() {
+		.addCreator(myconfig::getInstance().getCanvasHeightName(), []() {
 		return std::make_shared<HuabuHeightPropertyDataBuilder>();
 			})
-		.addCreator(QString::fromStdString(cfggetval<std::string>(qtcf::huabu::widthname)), []() {
+		.addCreator(myconfig::getInstance().getCanvasWidthName(), []() {
 		return std::make_shared<HuabuWidthPropertyDataBuilder>();
 			});
 
@@ -305,7 +316,9 @@ void MyMainWindow::init()
 	huabuparentlayout->addWidget(huabuwidget);
 
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
-	centralwidgetlayout->addWidget(m_propertyWidgetManager->getstackwidget());
+	auto stackwidget = m_propertyWidgetManager->getstackwidget();
+	stackwidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	centralwidgetlayout->addWidget(stackwidget);
 
 	QObject::connect(juxing, &diagram::signalPropertyShow
 		, m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
@@ -368,23 +381,17 @@ void MyMainWindow::init()
 		});
 	QObject::connect(newhuabuAction, &QAction::triggered, huabuwidget, &huabu::onnewHuabu);
 
-	if (m_settings.contains("window/geometry"))
-	{
-		restoreGeometry(m_settings.value("window/geometry").toByteArray());
-	}
-	if (m_settings.contains("window/state"))
-	{
-		restoreState(m_settings.value("window/state").toByteArray());
-	}
+
 
 	QObject::connect(copyTuxingAction, &QAction::triggered, huabuwidget, &huabu::onCopyTuinxg);
 
 	QObject::connect(pasteTuxingAction, &QAction::triggered, huabuwidget, &huabu::oncrtyvTuxing);
 }
 
-void MyMainWindow::initconfig(const std::string& filepath)
+void MyMainWindow::initconfig(QString filepath)
 {
-	configmanager::init(filepath);
+	//configmanager::init(filepath);
+	myconfig::getInstance().loadUserJson(filepath);
 }
 
 void MyMainWindow::resizeEvent(QResizeEvent* event)

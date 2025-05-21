@@ -1,6 +1,7 @@
 #pragma once
 #include <QJsonObject>
 #include <QString>
+#include <qsize.h>
 
 class myconfig
 {
@@ -74,6 +75,16 @@ public:
 	int getCanvasWidth();
 	int getCanvasHeight();
 	int getCanvasLengthMax();
+	QColor getDiagramButtonBackgroundColor();
+	bool getDiagramButtonIsSizeFixed();
+	double getDiagramButtonWidgetRadio();
+	QSize getDiagramButtonFixedSize();
+	QSize getDiagramButtonMaxSize();
+	QSize getDiagramButtonMinSize();
+	QString getMimetype();
+	QColor getCanvasBackgroundColor();
+	int getClickTolerance();
+
 
 		
 private:

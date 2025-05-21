@@ -37,6 +37,7 @@
     }
   },
   "other": {
-    "defaultname": "defaultname"
+    "defaultname": "defaultname",
+    "clicktolerance": 5
   }
 }

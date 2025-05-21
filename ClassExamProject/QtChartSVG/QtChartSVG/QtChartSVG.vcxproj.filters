@@ -26,18 +26,6 @@
     <ClInclude Include="config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="configmanager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DiagramMimedata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="propertyPage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tuxingjiedian.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="myconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -53,6 +41,12 @@
     <ClInclude Include="propertydatabuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="drawresult.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="drawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
@@ -61,15 +55,6 @@
     <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="configmanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DiagramMimedata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="drawtool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="huabu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -79,25 +64,10 @@
     <ClCompile Include="MyMainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="propertyPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shuxingwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="tuxing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tuxingjiedian.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="drawparamitem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="myconfig.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="propertydelegage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="propertydelegateparams.cpp">
@@ -121,6 +91,15 @@
     <ClCompile Include="propertydatabuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="drawresult.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="drawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertydelegage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="huabu.h">
@@ -129,16 +108,7 @@
     <QtMoc Include="MyMainWindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="shuxingwidget.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="tuxing.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="drawtool.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="drawparamitem.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="propertydelegage.h">

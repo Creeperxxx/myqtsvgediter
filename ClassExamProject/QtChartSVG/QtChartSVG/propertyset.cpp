@@ -181,6 +181,11 @@ otherPropertySet::~otherPropertySet()
 {
 }
 
+IpropertySet::~IpropertySet()
+{
+
+}
+
 void otherPropertySet::onHuabuHeightChanged(QVariant value)
 {
 	if (!value.canConvert<int>())

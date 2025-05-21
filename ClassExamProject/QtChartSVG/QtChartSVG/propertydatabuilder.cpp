@@ -27,7 +27,7 @@ void PenColorDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsP
 
 void PenWidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getBrushColorName()
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getPenWdithName()
 		, QVariant::fromValue(set->m_params->m_pen.width()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenWidthChanged);
@@ -83,7 +83,7 @@ void CenterHoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPa
 
 void CenterVoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
-	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getCenterHOffsetName()
+	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getCenterVOffsetName()
 		, QVariant::fromValue(set->m_params->m_centerVoffset));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterVOffset);

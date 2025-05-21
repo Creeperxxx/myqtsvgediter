@@ -4,8 +4,8 @@
 #include <map>
 #include <vector>
 #include <qstackedwidget.h>
+#include "propertydelegateparams.h"
 
-class IdelegateParams;
 class propertydata;
 class IpropertyDelegate;
 
