@@ -269,6 +269,8 @@ void PropertyWidgetManager::buildDiagramHuabuPropertyWidget(propertyWidget* widg
 	buildPropertyWidgetName(widget);
 	buildPropertyWidgetHuabuSize(widget);
 
+	auto params = std::make_shared<delegateParamsDouble>(3.00, 0.01, 0.01, 2, 1);
+	widget->addPropertyItem(myconfig::getInstance().getCanvasScaleName(), params);
 }
 
 void PropertyWidgetManager::buildDefaultPropertyWidget(propertyWidget* widget)
@@ -363,6 +365,18 @@ void PropertyWidgetManager::buildPropertyWidgetPenAndBrush(propertyWidget* widge
 	widget->addPropertyItem(myconfig::getInstance().getPenWdithName()
 		, params);
 
+	QVector<QString> vec;
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::SolidLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::CustomDashLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::MPenStyle));
+	params = std::make_shared<delegateParamsEnum>(vec, myconfig::getInstance().getPenStyle());
+	widget->addPropertyItem(myconfig::getInstance().getPenStyleName(), params);
+
+
 	params = std::make_shared<delegateParamsColor>(myconfig::getInstance().getBrushColor());
 	widget->addPropertyItem(myconfig::getInstance().getBrushColorName()
 		, params);
@@ -408,6 +422,17 @@ void PropertyWidgetManager::buildPropertyWidgetPen(propertyWidget* widget)
 {
 	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(myconfig::getInstance().getPenColor());
 	widget->addPropertyItem(myconfig::getInstance().getPenColorName(), params);
+
+	QVector<QString> vec;
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::SolidLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::CustomDashLine));
+	vec.push_back(PenStyleToQstring(Qt::PenStyle::MPenStyle));
+	params = std::make_shared<delegateParamsEnum>(vec, myconfig::getInstance().getPenStyle());
+	widget->addPropertyItem(myconfig::getInstance().getPenStyleName(), params);
 
 	params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getPenWidthMax(), 1, 1, myconfig::getInstance().getPenWidth());
 	widget->addPropertyItem(myconfig::getInstance().getPenWdithName(), params);

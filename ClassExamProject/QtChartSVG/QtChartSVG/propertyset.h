@@ -28,6 +28,7 @@ public:
 	//如果绘画参数发生了改变，应该发出哪些信号？
 	void onPenColorChanged(QVariant value);
 	void onPenWidthChanged(QVariant value);
+	void onPenStyleChanged(QVariant value);
 	void onBrushColorChanged(QVariant value);
 	void onRotateChanged(QVariant value);
 	void onSpacewidthChanged(QVariant value);
@@ -57,17 +58,20 @@ class otherPropertySet :public IpropertySet
 signals:
 	void signalHuabuWidthChanged(int width);
 	void signalHuabuHeightChanged(int height);
+	void signalCanvasScaleChanged(double scale);
 public:
 	~otherPropertySet()override;
 
 	void onHuabuHeightChanged(QVariant value);
 	void onHuabuWidthChanged(QVariant value);
+	void onCanvasScaleChanged(QVariant value);
 
 
 	QString m_name;
 	qint64 m_zvalue;
 	int m_huabuwidth;
 	int m_huabuheight;
+	double m_scale;
 };
 
 

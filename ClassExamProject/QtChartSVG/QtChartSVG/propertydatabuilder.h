@@ -36,6 +36,12 @@ protected:
 	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
 };
 
+class PenStyleDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)override;
+};
+
 class BrushDrawParamsPropertyDataBuilder : public IDrawParamsPropertyDataBuilder
 {
 protected:
@@ -146,6 +152,12 @@ protected:
 };
 
 class HuabuWidthPropertyDataBuilder : public IOtherPropertyDataBuilder
+{
+protected:
+	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);
+};
+
+class HuabuScalePropertyDataBuilder : public IOtherPropertyDataBuilder
 {
 protected:
 	void probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> data);

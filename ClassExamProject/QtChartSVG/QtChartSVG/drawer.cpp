@@ -527,7 +527,9 @@ void DiagramDrawerMouse::draw(QPainter& painter)
 	if (m_params->m_isdrawInHuabu)
 	{
 		painter.setPen(m_params->m_pen);
-		painter.drawPath(*m_path);
+		painter.translate(m_params->m_centerHoffset, m_params->m_centerVoffset);
+		painter.drawPath(*m_params->m_path);
+		painter.resetTransform();
 		if (m_params->m_ischoosed)
 		{
 			painter.setPen(QPen(Qt::blue, 3));
@@ -554,7 +556,10 @@ void DiagramDrawerMouse::draw(QPainter& painter)
 std::shared_ptr<DrawResult> DiagramDrawerMouse::getResult()
 {
 	m_result->m_painterpen = m_params->m_pen;
-	m_result->m_path = *m_path;
+
+	m_result->m_path = *m_params->m_path;
+	m_result->m_path.translate(m_params->m_centerHoffset, m_params->m_centerVoffset);
+
 	return m_result;
 }
 
@@ -594,7 +599,7 @@ void DiagramDrawerText::draw(QPainter& painter)
 		if (m_params->m_textedit == nullptr)
 			throw std::runtime_error("error");
 		auto pos = m_params->m_center + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
-		auto newpos = pos - QPoint(m_params->m_textedit->size().width() / 2, m_params->m_textedit->size().height() / 2);
+		auto newpos = pos - m_params->m_textedit->rect().center();
 		m_params->m_textedit->move(newpos);
 		m_params->m_textedit->setFont(m_params->m_font);
 		m_params->m_textedit->setTextColor(m_params->m_pen.color());

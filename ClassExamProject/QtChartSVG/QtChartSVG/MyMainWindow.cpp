@@ -93,7 +93,7 @@ void MyMainWindow::init()
 	{
 		restoreState(m_settings.value("window/state").toByteArray());
 	}
-	
+
 
 	QMenu* filemenu = menuBar()->addMenu("文件");
 
@@ -106,6 +106,10 @@ void MyMainWindow::init()
 	copyTuxingAction->setShortcut(QKeySequence::Copy);
 	QAction* pasteTuxingAction = new QAction(tr("粘贴图形"), this);
 	pasteTuxingAction->setShortcut(QKeySequence::Paste);
+	QAction* quanxuanAction = new QAction(tr("全选"), this);
+	quanxuanAction->setShortcut(QKeySequence::SelectAll);
+	QAction* deleteAction = new QAction(tr("删除图形"), this);
+	deleteAction->setShortcut(QKeySequence::Delete);
 
 
 	// 将动作添加到文件菜单
@@ -115,6 +119,8 @@ void MyMainWindow::init()
 	filemenu->addAction(newhuabuAction);
 	filemenu->addAction(copyTuxingAction);
 	filemenu->addAction(pasteTuxingAction);
+	filemenu->addAction(quanxuanAction);
+	filemenu->addAction(deleteAction);
 
 	//主toolbar
 	QToolBar* maintoolbar = addToolBar("main toolbar");
@@ -148,6 +154,7 @@ void MyMainWindow::init()
 	m_huabuparentscroll->setWidgetResizable(true);
 	m_huabuparentscroll->setWidget(m_huabuparentwidget);
 	centralwidgetlayout->addWidget(m_huabuparentscroll);
+	m_huabuparentscroll->viewport()->installEventFilter(this);
 
 	DiagramDrawInterface::getInstance()
 		.addDrawerCreator(ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
@@ -251,6 +258,12 @@ void MyMainWindow::init()
 			})
 		.addCreator(myconfig::getInstance().getCanvasWidthName(), []() {
 		return std::make_shared<HuabuWidthPropertyDataBuilder>();
+			})
+		.addCreator(myconfig::getInstance().getCanvasScaleName(), []() {
+		return std::make_shared<HuabuScalePropertyDataBuilder>();
+			})
+		.addCreator(myconfig::getInstance().getPenStyleName(), []() {
+		return std::make_shared<PenStyleDrawParamsPropertyDataBuilder>();
 			});
 
 
@@ -386,6 +399,9 @@ void MyMainWindow::init()
 	QObject::connect(copyTuxingAction, &QAction::triggered, huabuwidget, &huabu::onCopyTuinxg);
 
 	QObject::connect(pasteTuxingAction, &QAction::triggered, huabuwidget, &huabu::oncrtyvTuxing);
+
+	QObject::connect(quanxuanAction, &QAction::triggered, huabuwidget, &huabu::onartyaTuxing);
+	QObject::connect(deleteAction, &QAction::triggered, huabuwidget, &huabu::onDeleteTuxing);
 }
 
 void MyMainWindow::initconfig(QString filepath)
@@ -426,4 +442,5 @@ void MyMainWindow::closeEvent(QCloseEvent* event)
 
 	QMainWindow::closeEvent(event);
 }
+
 

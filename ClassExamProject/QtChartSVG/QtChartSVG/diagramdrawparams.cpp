@@ -1,6 +1,7 @@
 #pragma once
 #include "myconfig.h"
 #include "diagramdrawparams.h"
+#include "qpainterpath.h"
 
 QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
 {
@@ -139,6 +140,7 @@ void IDidgramDrawParams::deserialize(QDataStream& in)
 
 
 }
+
 
 DiagramDrawParamsRect::DiagramDrawParamsRect(const DiagramDrawParamsRect& other)
 	:IDidgramDrawParams(other)
@@ -287,6 +289,7 @@ void DiagramDrawParamsLine::deserialize(QDataStream& in)
 
 DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
 	:IDidgramDrawParams(other)
+	, m_path(other.m_path)
 {
 
 }
@@ -335,6 +338,7 @@ TextLineEdit::TextLineEdit(QWidget* parent)
 	QObject::connect(this, &TextLineEdit::textChanged, this, &TextLineEdit::adjustsize);
 	QObject::connect(this, &TextLineEdit::editingFinished, this, &TextLineEdit::signalHasFocusOut);
 }
+
 
 void TextLineEdit::setTextColor(QColor textcolor)
 {

@@ -254,3 +254,19 @@ propertyDataVecOfPropertySetCreatorFactor& propertyDataVecOfPropertySetCreatorFa
 propertyDataVecOfPropertySetCreatorFactor::propertyDataVecOfPropertySetCreatorFactor()
 {
 }
+
+void HuabuScalePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto data = std::make_shared<propertydata>(myconfig::getInstance().getCanvasScaleName()
+		, QVariant::fromValue(set->m_scale));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onCanvasScaleChanged);
+}
+
+void PenStyleDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
+{
+	auto data = std::make_shared<propertydata>(myconfig::getInstance().getPenStyleName()
+		, QVariant::fromValue(PenStyleToQstring(set->m_params->m_pen.style())));
+	datavec->push_back(data);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenStyleChanged);
+}

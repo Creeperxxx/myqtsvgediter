@@ -8,6 +8,7 @@
 #include "diagramdrawparams.h"
 #include "propertyset.h"
 #include "propertywidget.h"
+#include "myconfig.h"
 
 void IpropertySet::addShowData(propertyWidget* widget)
 {
@@ -34,6 +35,14 @@ void drawParamsPropertySet::onPenWidthChanged(QVariant value)
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
 	m_params->m_pen.setWidth(value.value<int>());
+	emit SignalValueChangedByData();
+}
+
+void drawParamsPropertySet::onPenStyleChanged(QVariant value)
+{
+	if (!value.canConvert<QString>())
+		throw std::runtime_error("error");
+	m_params->m_pen.setStyle(QstringToPenStyle(value.value<QString>()));
 	emit SignalValueChangedByData();
 }
 
@@ -200,6 +209,14 @@ void otherPropertySet::onHuabuWidthChanged(QVariant value)
 		throw std::runtime_error("error");
 	m_huabuheight = value.value<int>();
 	emit signalHuabuHeightChanged(m_huabuheight);
+}
+
+void otherPropertySet::onCanvasScaleChanged(QVariant value)
+{
+	if (!value.canConvert<double>())
+		throw std::runtime_error("error");
+	m_scale = value.value<double>();
+	emit signalCanvasScaleChanged(m_scale);
 }
 
 void propertySetManager::addPropertySet(QString name, std::shared_ptr<IpropertySet> set)

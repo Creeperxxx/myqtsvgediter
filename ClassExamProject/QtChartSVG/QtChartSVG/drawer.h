@@ -105,7 +105,6 @@ public:
 
 
 	std::shared_ptr<DiagramDrawParamsMouse> m_params;
-	std::shared_ptr<QPainterPath> m_path;
 	std::shared_ptr<DrawResultMouse> m_result;
 };
 

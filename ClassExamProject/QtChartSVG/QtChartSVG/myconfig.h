@@ -84,6 +84,9 @@ public:
 	QString getMimetype();
 	QColor getCanvasBackgroundColor();
 	int getClickTolerance();
+	QString getCanvasScaleName();
+	QString getPenStyleName();
+	QString getPenStyle();
 
 
 		
@@ -97,3 +100,7 @@ private:
 	QJsonObject m_userjson;
 	QJsonObject m_devjson;
 };
+
+
+QString PenStyleToQstring(Qt::PenStyle style);
+Qt::PenStyle QstringToPenStyle(QString style);

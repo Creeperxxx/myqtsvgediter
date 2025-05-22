@@ -31,6 +31,7 @@ protected:
 
 	void closeEvent(QCloseEvent* event) override;
 
+
 private:
 	void init();
 	void initconfig(QString filepath = "userconfig.json");
@@ -43,4 +44,5 @@ private:
 	QSettings m_settings;
 
 	QMap<QString, QWidget*> m_tooltipsWidgets;
+
 };

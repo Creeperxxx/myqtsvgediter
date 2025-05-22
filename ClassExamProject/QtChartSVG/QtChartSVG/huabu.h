@@ -72,6 +72,8 @@ public:
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
 	void mouseReleaseEvent(QMouseEvent* event) override;
+	void mouseDoubleClickEvent(QMouseEvent* event) override;
+	void contextMenuEvent(QContextMenuEvent* event)override;
 
 	void onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params);
 
@@ -85,8 +87,15 @@ public:
 
 	void onCopyTuinxg();
 	void oncrtyvTuxing();
+	void onartyaTuxing();
+	void onDeleteTuxing();
 
 	void closeEvent(QCloseEvent* event) override;
+
+	void adjustcanvassize();
+	void onHeightChanged(int height);
+	void onWidthChanged(int width);
+	void onScaleChagned(double scale);
 
 signals:
 	void signalPropertyShow(std::shared_ptr<propertySetManager> setmanager);
@@ -114,6 +123,7 @@ private:
 	std::shared_ptr<std::vector<QString>> textCreateNameVec();
 	
 
+	bool isrectcontainpoint(QRect rect, QPoint point, int tolerance);
 
 
 	QString createTuxingName(ShapeType type);
@@ -155,4 +165,39 @@ private:
 	QPoint m_lastPasteDelta; // 新增成员变量用于记录偏移增量
 
 	bool m_needcopy;
+
+
+
+
+
+
+
+
+	enum class Mode
+	{
+		Select,
+		Draw
+	};
+
+	QPoint m_currentpoint;
+	Mode m_mode;
+
+	
+	QPoint m_dragoffset;
+	std::vector<std::shared_ptr<huabutuxing>> m_selectedShapes;
+	std::shared_ptr<DiagramDrawParamsRect> m_selectingParams;
+	std::shared_ptr<DiagramDrawerRect> m_selectingDrawer;
+
+
+	bool m_ischooseingone;
+	QRect m_chooseRect;
+	QPoint m_offset;
+	std::shared_ptr<IDidgramDrawParams> m_choosingParams;
+	std::vector<std::shared_ptr<IDidgramDrawParams>>  m_choosedParamsvec;
+	std::vector<QPoint> m_offsetvec;
+
+	std::vector<std::shared_ptr<IDidgramDrawParams>> m_neededcopyParamsVec;
+
+	QSize m_basesize;
+	double m_scale;
 };

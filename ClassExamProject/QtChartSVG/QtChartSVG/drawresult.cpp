@@ -17,6 +17,13 @@ QPainterPath DrawResultRect::getPainterPath()
 	return stroker.createStroke(path);
 }
 
+QRect DrawResultRect::getBoundingRect()
+{
+	auto rect = m_rect.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
 bool DrawResultCircle::iscontainPoint(QPointF point)
 {
 	if (m_circle.size() < 4) return false;
@@ -39,6 +46,13 @@ QPainterPath DrawResultCircle::getPainterPath()
 	return stroker.createStroke(path);
 }
 
+QRect DrawResultCircle::getBoundingRect()
+{
+	auto rect = m_circle.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
 bool DrawResultTriangle::iscontainPoint(QPointF point)
 {
 	return m_triangle.containsPoint(point, Qt::OddEvenFill);
@@ -52,6 +66,13 @@ QPainterPath DrawResultTriangle::getPainterPath()
 	path.addPolygon(m_triangle);
 	path.closeSubpath();
 	return stroker.createStroke(path);
+}
+
+QRect DrawResultTriangle::getBoundingRect()
+{
+	auto rect = m_triangle.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
 }
 
 bool DrawResultLine::iscontainPoint(QPointF point)
@@ -72,6 +93,15 @@ QPainterPath DrawResultLine::getPainterPath()
 	path.closeSubpath();
 
 	return stroker.createStroke(path);
+}
+
+QRect DrawResultLine::getBoundingRect()
+{
+	QSize size = QSize(m_line.p2().x() - m_line.p1().x()
+		, m_line.p2().y() - m_line.p1().y());
+	QRect rect = QRect(m_line.p1().toPoint(), size);
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
 }
 
 qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
@@ -124,6 +154,13 @@ QPainterPath DrawResultMouse::getPainterPath()
 	return stroker.createStroke(path);
 }
 
+QRect DrawResultMouse::getBoundingRect()
+{
+	QRect rect = m_path.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
 QPainterPath DrawResultText::getPainterPath()
 {
 	QPainterPathStroker stroker;
@@ -139,4 +176,11 @@ QPainterPath DrawResultText::getPainterPath()
 bool DrawResultText::iscontainPoint(QPointF point)
 {
 	return m_rect.contains(point);
+}
+
+QRect DrawResultText::getBoundingRect()
+{
+	QRect rect = m_rect.toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
 }

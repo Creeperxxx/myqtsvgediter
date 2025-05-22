@@ -39,6 +39,7 @@
   "painter": {
     "pen": {
       "color": "#000000",
+      "style": "SolidLine",
       "width": 2,
       "widthmax": 10
     },
@@ -54,7 +55,7 @@
   "canvas": {
     "width": 900,
     "height": 900,
-    "lenghtmax": 4000,
+    "lengthmax": 4000,
     "backgroundcolor": "#FFFFFF"
   },
   "diagrambutton": {

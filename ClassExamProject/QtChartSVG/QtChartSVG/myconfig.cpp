@@ -460,6 +460,24 @@ int myconfig::getClickTolerance()
 	return clickTolerance;
 }
 
+QString myconfig::getCanvasScaleName()
+{
+	static QString name = m_devjson["name"].toObject()["other"].toObject()["canvasscalename"].toString();
+	return name;
+}
+
+QString myconfig::getPenStyleName()
+{
+	static QString name = m_devjson["name"].toObject()["other"].toObject()["penstylename"].toString();
+	return name;
+}
+
+QString myconfig::getPenStyle()
+{
+	static QString style = m_userjson["painter"].toObject()["pen"].toObject()["style"].toString();
+	return style;
+}
+
 
 
 
@@ -492,4 +510,57 @@ void myconfig::loadDevJson()
 		throw std::runtime_error("error");
 
 	m_devjson = jsonDoc.object();
+}
+
+QString PenStyleToQstring(Qt::PenStyle style)
+{
+	switch (style)
+	{
+	default:
+	case Qt::NoPen:
+		return "NoPen";
+		break;
+	case Qt::SolidLine:
+		return "SolidLine";
+		break;
+	case Qt::DashLine:
+		return "DashLine";
+		break;
+	case Qt::DotLine:
+		return "DotLine";
+		break;
+	case Qt::DashDotLine:
+		return "DashDotLine";
+		break;
+	case Qt::DashDotDotLine:
+		return "DashDotDotLine";
+		break;
+	case Qt::CustomDashLine:
+		return "CustomDashLine";
+		break;
+	case Qt::MPenStyle:
+		return "MPenStyle";
+		break;
+
+	}
+}
+
+Qt::PenStyle QstringToPenStyle(QString style)
+{
+	if (style == "SolidLine")
+		return Qt::SolidLine;
+	else if (style == "DashLine")
+		return Qt::DashLine;
+	else if (style == "DotLine")
+		return Qt::DotLine;
+	else if (style == "DashDotLine")
+		return Qt::DashDotLine;
+	else if (style == "DashDotDotLine")
+		return Qt::DashDotDotLine;
+	else if (style == "CustomDashLine")
+		return Qt::CustomDashLine;
+	else if (style == "MPenStyle")
+		return Qt::MPenStyle;
+	else
+		return Qt::NoPen;
 }

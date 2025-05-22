@@ -130,6 +130,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
+	std::shared_ptr<QPainterPath> m_path;
 };
 
 class DiagramDrawParamsChoose : public IDidgramDrawParams
@@ -148,6 +149,7 @@ class TextLineEdit : public QLineEdit
 	Q_OBJECT
 public:
 	TextLineEdit(QWidget* parent = nullptr);
+	TextLineEdit(const TextLineEdit& other, QWidget* parent = nullptr);
 	void setTextColor(QColor textcolor);
 	void setBackGroundColor(QColor color);
 
@@ -159,6 +161,7 @@ public:
 	void adjustsize();
 signals:
 	void signalHasFocusOut();
+
 };
 
 class DiagramDrawParamsText : public IDidgramDrawParams
