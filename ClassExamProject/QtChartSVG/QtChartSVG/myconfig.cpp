@@ -478,6 +478,18 @@ QString myconfig::getPenStyle()
 	return style;
 }
 
+QString myconfig::getDrawParamsSetName()
+{
+	static QString name = m_devjson["other"].toObject()["drawparamssetname"].toString();
+	return name;
+}
+
+QString myconfig::getOtherSetName()
+{
+	static QString name = m_devjson["other"].toObject()["othersetname"].toString();
+	return name;
+}
+
 
 
 

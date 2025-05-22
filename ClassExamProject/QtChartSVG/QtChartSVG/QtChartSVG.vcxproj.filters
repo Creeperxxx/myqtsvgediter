@@ -47,6 +47,12 @@
     <ClInclude Include="drawer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="namespace.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="propertynamevec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
@@ -98,6 +104,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="propertydelegage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="namespace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="propertynamevec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

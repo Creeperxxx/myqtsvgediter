@@ -36,10 +36,12 @@
       "edgetypename": "指定边",
       "familyname": "字体",
       "fontsizename": "字体大小"
-    }
+    }j
   },
   "other": {
     "defaultname": "defaultname",
-    "clicktolerance": 5
+    "clicktolerance": 5,
+    "drawparamssetname": "drawparams",
+    "othersetname": "other"
   }
 }

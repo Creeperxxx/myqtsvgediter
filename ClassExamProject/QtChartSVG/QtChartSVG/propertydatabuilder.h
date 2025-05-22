@@ -173,22 +173,24 @@ class propertyDataVecOfPropertySetCreator
 {
 public:
 	std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> create(std::shared_ptr<IpropertySet> set);
-	void addBuilder(std::shared_ptr<IpropertyDataBuilder> builder);
+	void addBuilder(std::unique_ptr<IpropertyDataBuilder> builder);
 
-	std::vector<std::shared_ptr<IpropertyDataBuilder>> m_builders;
+	std::vector<std::unique_ptr<IpropertyDataBuilder>> m_builders;
 };
 
 class propertyDataVecOfPropertySetCreatorFactor
 {
 public:
 	static propertyDataVecOfPropertySetCreatorFactor& getInstance();
-	std::shared_ptr<propertyDataVecOfPropertySetCreator> create(std::shared_ptr<std::vector<QString>> propertynamevec);
-	propertyDataVecOfPropertySetCreatorFactor& addCreator(QString name, std::function<std::shared_ptr<IpropertyDataBuilder>()> func);
+	std::unique_ptr<propertyDataVecOfPropertySetCreator> create(const std::vector<QString>& propertynamevec);
+	propertyDataVecOfPropertySetCreatorFactor& addCreator(QString name, std::function<std::unique_ptr<IpropertyDataBuilder>()> func);
 
 
 private:
 	propertyDataVecOfPropertySetCreatorFactor();
+	void defaultinit();
 	propertyDataVecOfPropertySetCreatorFactor(const propertyDataVecOfPropertySetCreatorFactor&) = delete;
 
-	std::map<QString, std::function<std::shared_ptr<IpropertyDataBuilder>()>> m_builderCreatefunc;
+
+	std::map<QString, std::function<std::unique_ptr<IpropertyDataBuilder>()>> m_builderCreatefunc;
 };

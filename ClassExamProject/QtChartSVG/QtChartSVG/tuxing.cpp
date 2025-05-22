@@ -3,8 +3,11 @@
 #include "propertyset.h"
 #include "propertydatabuilder.h"
 #include "myconfig.h"
+#include "namespace.h"
+#include "propertynamevec.h"
+#include "drawparamscreator.h"
 
-diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
+diagram::diagram(myqtsvg::ShapeType type, QWidget* parent)
 	:QWidget(parent)
 	, m_dragStartPos(0, 0)
 	, m_issizefixed(myconfig::getInstance().getDiagramButtonIsSizeFixed())
@@ -12,47 +15,39 @@ diagram::diagram(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
 	, m_drawer(nullptr)
 	, m_mimetype(myconfig::getInstance().getMimetype())
 	, m_params(nullptr)
+	, m_propertySetManager(nullptr)
 {
-	if (m_issizefixed)
-	{
-		setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-		setFixedSize(myconfig::getInstance().getDiagramButtonFixedSize());
-	}
-	else
-	{
-		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-		setMaximumSize(myconfig::getInstance().getDiagramButtonMaxSize());
-		setMinimumSize(myconfig::getInstance().getDiagramButtonMinSize());
-		m_widgetRadio = myconfig::getInstance().getDiagramButtonWidgetRadio();
-	}
-	if (params == nullptr || params.get() == nullptr)
-		throw std::runtime_error("error");
-	m_params = params;
+	auto& config = myconfig::getInstance();
 
-	m_propertySetManager = std::make_shared<propertySetManager>();
-	m_propertySetManager->m_propertyObjectType = shapetypeToPropertytype(params->m_type);
+	myinitSizePolicy();
+	initDrawParams(type);
+	initDrawer();
 
-	m_drawer = DiagramDrawInterface::getInstance().getDrawer(params);
+	m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->m_type)
+		, m_params
+		, [this]() {
+			this->onParamsValueChanged();
+		});
 
-	std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
-	drawParamsSet->m_params = params;
-	auto propertynamevec = createNameVec(params->m_type);
-	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
-	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &diagram::onParamsValueChanged);
-	m_propertySetManager->addPropertySet(QString("drawParams"), drawParamsSet);
+	//m_propertySetManager = std::make_shared<propertySetManager>();
+	//m_propertySetManager->m_propertyWidgetType = myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->m_type);
 
 
+	//std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
+	//drawParamsSet->m_params = m_params;
+	//auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(type);
+	//auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	//drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
+	//QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &diagram::onParamsValueChanged);
+	//m_propertySetManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
 
-	std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-	otherset->m_name = getName(params->m_type);
-	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getNameName()
-	});
-	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	otherset->m_propertyDataVec = creator->create(otherset);
-	m_propertySetManager->addPropertySet(QString("other"), otherset);
-
+	//std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
+	//otherset->m_name = myqtsvg::ShapetypeEnumToQstring(type);
+	//propertynamevec.clear();
+	//propertynamevec.push_back(config.getNameName());
+	//creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	//otherset->m_propertyDataVec = creator->create(otherset);
+	//m_propertySetManager->addPropertySet(config.getOtherSetName(), otherset);
 
 }
 
@@ -73,8 +68,8 @@ void diagram::mouseMoveEvent(QMouseEvent* event)
 		return;
 	if ((event->localPos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
 		return;
-	if (m_params->m_type == ShapeType::Mouse 
-		|| m_params->m_type == ShapeType::choose)
+	if (m_params->m_type == myqtsvg::ShapeType::Mouse
+		|| m_params->m_type == myqtsvg::ShapeType::choose)
 		return;
 	createQDrag();
 	QWidget::mouseMoveEvent(event);
@@ -146,12 +141,12 @@ void diagram::paintEvent(QPaintEvent* event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-	QSize size = m_params->m_spacesize;
-	m_params->m_center = this->rect().center();
-	m_params->m_spacesize = this->size();
+	QSize spacesize = m_params->m_spacesize;
+	m_params->m_center = rect().center();
+	m_params->m_spacesize = size();
 
 	m_drawer->draw(painter);
-	m_params->m_spacesize = size;
+	m_params->m_spacesize = spacesize;
 }
 
 void diagram::onParamsValueChanged()
@@ -159,182 +154,41 @@ void diagram::onParamsValueChanged()
 	update();
 }
 
-std::shared_ptr<std::vector<QString>> diagram::createNameVec(ShapeType type)
+void diagram::myinitSizePolicy()
 {
-	switch (type)
+	auto& config = myconfig::getInstance();
+	if (m_issizefixed)
 	{
-	case ShapeType::Rect:
-		return createNameVecRect();
-		break;
-	case ShapeType::Circle:
-		return createNameVecCircle();
-		break;
-	case ShapeType::Triangle:
-		return createNameVecTriangle();
-		break;
-	case ShapeType::Line:
-		return createNameVecLine();
-		break;
-	case ShapeType::Mouse:
-		return createNamgeVecMouse();
-		break;
-	case ShapeType::choose:
-		return createNameVecChoose();
-		break;
-	case ShapeType::Text:
-		return createNameVecText();
-	default:
-		throw std::runtime_error("error");
-		break;
+		setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+		setFixedSize(config.getDiagramButtonFixedSize());
+	}
+	else
+	{
+		setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		setMaximumSize(config.getDiagramButtonMaxSize());
+		setMinimumSize(config.getDiagramButtonMinSize());
+		m_widgetRadio = config.getDiagramButtonWidgetRadio();
 	}
 }
 
-std::shared_ptr<std::vector<QString>> diagram::createNameVecRect()
+void diagram::initDrawParams(myqtsvg::ShapeType type)
 {
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getRectRadioName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNameVecCircle()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getCircleRadioName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNameVecTriangle()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getTriangleRadioName()
-			, myconfig::getInstance().getEdgeTypeName()
-	});
-
-
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNameVecLine()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNamgeVecMouse()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNameVecChoose()
-{
-	return std::make_shared<std::vector<QString>>();
-}
-
-std::shared_ptr<std::vector<QString>> diagram::createNameVecText()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getFontFamilyName()
-			, myconfig::getInstance().getFontSizeName()
-	});
-}
-
-QString diagram::getName(ShapeType type)
-{
-	switch (type)
-	{
-	case ShapeType::Rect:
-		return myconfig::getInstance().getRectName();
-		break;
-	case ShapeType::Circle:
-		return myconfig::getInstance().getCircleName();
-		break;
-	case ShapeType::Triangle:
-		return myconfig::getInstance().getTriangleName();
-		break;
-	case ShapeType::Line:
-		return myconfig::getInstance().getLineName();
-		break;
-	case ShapeType::Mouse:
-		return myconfig::getInstance().getMouseName();
-		break;
-	case ShapeType::choose:
-		return myconfig::getInstance().getChooseName();
-		break;
-	case ShapeType::Text:
-		return myconfig::getInstance().getTextName();
-		break;
-	default:
+	auto creator = createParamsInterface::getInstance().getParams(type);
+	auto params = creator->create();
+	if (params == nullptr || params.get() == nullptr || params->m_type != type)
 		throw std::runtime_error("error");
-		break;
-	}
+	m_params = params;
 }
 
-PropertyWidgetManager::propertyobjecttype diagram::shapetypeToPropertytype(ShapeType type)
+void diagram::initDrawer()
 {
-	switch (type)
-	{
-	case ShapeType::Rect:
-		return PropertyWidgetManager::propertyobjecttype::diagramRect;
-		break;
-	case ShapeType::Circle:
-		return PropertyWidgetManager::propertyobjecttype::diagramCircle;
-		break;
-	case ShapeType::Triangle:
-		return PropertyWidgetManager::propertyobjecttype::diagramTriangle;
-		break;
-	case ShapeType::Line:
-		return PropertyWidgetManager::propertyobjecttype::diagramLine;
-		break;
-	case ShapeType::Mouse:
-		return PropertyWidgetManager::propertyobjecttype::diagramMouse;
-		break;
-	case ShapeType::choose:
-		return PropertyWidgetManager::propertyobjecttype::defaulttype;
-		break;
-	case ShapeType::Text:
-		return PropertyWidgetManager::propertyobjecttype::diagramText;
-		break;
-	default:
+	m_drawer = DiagramDrawInterface::getInstance().getDrawer(m_params);
+	if (m_drawer == nullptr || m_drawer.get() == nullptr)
 		throw std::runtime_error("error");
-		break;
-	}
 }
+
+
+
 
 
 

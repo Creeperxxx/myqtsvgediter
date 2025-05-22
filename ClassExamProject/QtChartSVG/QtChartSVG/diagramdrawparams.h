@@ -6,23 +6,24 @@
 #include <qbrush.h>
 #include <qlineedit.h>
 #include <qdatastream.h>
+#include "namespace.h"
 
-enum class ShapeType
-{
-	Rect,
-	Circle,
-	Triangle,
-	Line,
-	Mouse,
-	choose,
-	Text
-};
+//enum class ShapeType
+//{
+	//Rect,
+	//Circle,
+	//Triangle,
+	//Line,
+	//Mouse,
+	//choose,
+	//Text
+//};
 
-namespace ShapeTypeTool
-{
-	QString shapetypeEnumToQstring(ShapeType type);
-	ShapeType shapetypeQstringToEnum(const QString& type);
-}
+//namespace ShapeTypeTool
+//{
+//	QString shapetypeEnumToQstring(ShapeType type);
+//	ShapeType shapetypeQstringToEnum(const QString& type);
+//}
 
 
 
@@ -33,6 +34,7 @@ signals:
 	void SignalParamsChanged();
 
 public:
+	virtual std::shared_ptr<IDidgramDrawParams> clone() = 0;
 	IDidgramDrawParams(const IDidgramDrawParams& other);
 	IDidgramDrawParams();
 
@@ -44,7 +46,7 @@ public:
 
 	QPoint m_center;
 	QSize m_spacesize;
-	ShapeType m_type;
+	myqtsvg::ShapeType m_type;
 	double m_scale;
 	QPen m_pen;
 	QBrush m_brush;
@@ -61,6 +63,8 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 public:
 	DiagramDrawParamsRect(const DiagramDrawParamsRect& other);
 	DiagramDrawParamsRect();
+	std::shared_ptr<IDidgramDrawParams> clone();
+
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
@@ -71,12 +75,14 @@ public:
 class DiagramDrawParamsCircle :public IDidgramDrawParams
 {
 public:
-	double m_boundingrectradio;
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
+	std::shared_ptr<IDidgramDrawParams> clone();
 	DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other);
 	DiagramDrawParamsCircle();
+
+	double m_boundingrectradio;
 };
 
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
@@ -84,6 +90,7 @@ class DiagramDrawParamsTriangle : public IDidgramDrawParams
 public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
+	std::shared_ptr<IDidgramDrawParams> clone();
 
 	enum class EdgeType
 	{
@@ -120,6 +127,8 @@ public:
 	DiagramDrawParamsLine();
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
+
+	std::shared_ptr<IDidgramDrawParams> clone();
 };
 
 class DiagramDrawParamsMouse : public IDidgramDrawParams
@@ -129,6 +138,8 @@ public:
 	DiagramDrawParamsMouse();
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
+
+	std::shared_ptr<IDidgramDrawParams> clone();
 
 	std::shared_ptr<QPainterPath> m_path;
 };
@@ -141,6 +152,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
+	std::shared_ptr<IDidgramDrawParams> clone();
 };
 
 
@@ -172,6 +184,8 @@ public:
 
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
+
+	std::shared_ptr<IDidgramDrawParams> clone();
 
 	QFont m_font;
 	TextLineEdit* m_textedit;

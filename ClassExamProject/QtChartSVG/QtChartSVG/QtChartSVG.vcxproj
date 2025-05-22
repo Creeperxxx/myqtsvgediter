@@ -117,10 +117,12 @@
     <ClInclude Include="myconfig.h" />
     <QtMoc Include="propertydelegage.h" />
     <QtMoc Include="propertydata.h" />
+    <ClInclude Include="namespace.h" />
     <ClInclude Include="propertydatabuilder.h" />
     <ClInclude Include="propertydelegateparams.h" />
     <QtMoc Include="propertyset.h" />
     <QtMoc Include="propertywidget.h" />
+    <ClInclude Include="propertynamevec.h" />
     <ClInclude Include="resource.h" />
     <QtMoc Include="tuxing.h" />
     <QtMoc Include="MyMainWindow.h" />
@@ -141,10 +143,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myconfig.cpp" />
     <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="namespace.cpp" />
     <ClCompile Include="propertydata.cpp" />
     <ClCompile Include="propertydatabuilder.cpp" />
     <ClCompile Include="propertydelegage.cpp" />
     <ClCompile Include="propertydelegateparams.cpp" />
+    <ClCompile Include="propertynamevec.cpp" />
     <ClCompile Include="propertyset.cpp" />
     <ClCompile Include="propertywidget.cpp" />
     <ClCompile Include="tuxing.cpp" />

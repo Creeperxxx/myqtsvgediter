@@ -3,69 +3,69 @@
 #include "diagramdrawparams.h"
 #include "qpainterpath.h"
 
-QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
-{
-	switch (type)
-	{
-	case ShapeType::Rect:
-		return myconfig::getInstance().getRectName();
-		break;
-	case ShapeType::Circle:
-		return myconfig::getInstance().getCircleName();
-		break;
-	case ShapeType::Triangle:
-		return myconfig::getInstance().getTriangleName();
-		break;
-	case ShapeType::Line:
-		return myconfig::getInstance().getLineName();
-		break;
-	case ShapeType::Mouse:
-		return myconfig::getInstance().getMouseName();
-		break;
-	case ShapeType::Text:
-		return myconfig::getInstance().getTextName();
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-}
-
-ShapeType ShapeTypeTool::shapetypeQstringToEnum(const QString& type)
-{
-	if (type == myconfig::getInstance().getRectName())
-	{
-		return ShapeType::Rect;
-	}
-	else if (type == myconfig::getInstance().getCircleName())
-	{
-		return ShapeType::Circle;
-	}
-	else if (type == myconfig::getInstance().getTriangleName())
-	{
-		return ShapeType::Triangle;
-	}
-	else if (type == myconfig::getInstance().getLineName())
-	{
-		return ShapeType::Line;
-	}
-	else if (type == myconfig::getInstance().getMouseName())
-	{
-		return ShapeType::Mouse;
-	}
-	else if (type == myconfig::getInstance().getChooseName())
-	{
-		return ShapeType::choose;
-	}
-	else if (type == myconfig::getInstance().getTextName())
-	{
-		return ShapeType::Text;
-	}
-	else
-	{
-		throw std::runtime_error("error");
-	}
-}
+//QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
+//{
+	//switch (type)
+	//{
+//	case ShapeType::Rect:
+//		return myconfig::getInstance().getRectName();
+//		break;
+//	case ShapeType::Circle:
+//		return myconfig::getInstance().getCircleName();
+//		break;
+//	case ShapeType::Triangle:
+//		return myconfig::getInstance().getTriangleName();
+//		break;
+//	case ShapeType::Line:
+//		return myconfig::getInstance().getLineName();
+//		break;
+//	case ShapeType::Mouse:
+//		return myconfig::getInstance().getMouseName();
+//		break;
+//	case ShapeType::Text:
+//		return myconfig::getInstance().getTextName();
+//		break;
+//	default:
+//		throw std::runtime_error("error");
+//		break;
+//	}
+//}
+//
+//ShapeType ShapeTypeTool::shapetypeQstringToEnum(const QString& type)
+//{
+//	if (type == myconfig::getInstance().getRectName())
+//	{
+//		return ShapeType::Rect;
+//	}
+//	else if (type == myconfig::getInstance().getCircleName())
+//	{
+//		return ShapeType::Circle;
+//	}
+//	else if (type == myconfig::getInstance().getTriangleName())
+//	{
+//		return ShapeType::Triangle;
+//	}
+//	else if (type == myconfig::getInstance().getLineName())
+//	{
+//		return ShapeType::Line;
+//	}
+//	else if (type == myconfig::getInstance().getMouseName())
+//	{
+//		return ShapeType::Mouse;
+//	}
+//	else if (type == myconfig::getInstance().getChooseName())
+//	{
+//		return ShapeType::choose;
+//	}
+//	else if (type == myconfig::getInstance().getTextName())
+//	{
+//		return ShapeType::Text;
+//	}
+//	else
+//	{
+//		throw std::runtime_error("error");
+//	}
+//}
 
 IDidgramDrawParams::IDidgramDrawParams(const IDidgramDrawParams& other)
 {
@@ -121,7 +121,7 @@ void IDidgramDrawParams::deserialize(QDataStream& in)
 
 	int inttype = 0;
 	in >> inttype;
-	m_type = static_cast<ShapeType>(inttype);
+	m_type = static_cast<myqtsvg::ShapeType>(inttype);
 
 	in >> m_scale;
 
@@ -153,6 +153,11 @@ DiagramDrawParamsRect::DiagramDrawParamsRect()
 
 }
 
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsRect::clone()
+{
+	return std::make_shared<DiagramDrawParamsRect>(*this);
+}
+
 void DiagramDrawParamsRect::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
@@ -175,6 +180,11 @@ void DiagramDrawParamsCircle::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
 	in >> m_boundingrectradio;
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsCircle::clone()
+{
+	return std::make_shared<DiagramDrawParamsCircle>(*this);
 }
 
 DiagramDrawParamsCircle::DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other)
@@ -206,6 +216,11 @@ void DiagramDrawParamsTriangle::deserialize(QDataStream& in)
 	int value;
 	in >> value;
 	m_edgetype = static_cast<EdgeType>(value);
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsTriangle::clone()
+{
+	return std::make_shared<DiagramDrawParamsTriangle>(*this);
 }
 
 DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::edgetypeStringToEnum(const QString& str)
@@ -287,6 +302,11 @@ void DiagramDrawParamsLine::deserialize(QDataStream& in)
 	IDidgramDrawParams::deserialize(in);
 }
 
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsLine::clone()
+{
+	return std::make_shared<DiagramDrawParamsLine>(*this);
+}
+
 DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
 	:IDidgramDrawParams(other)
 	, m_path(other.m_path)
@@ -309,6 +329,11 @@ void DiagramDrawParamsMouse::deserialize(QDataStream& in)
 	IDidgramDrawParams::deserialize(in);
 }
 
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsMouse::clone()
+{
+	return std::make_shared<DiagramDrawParamsMouse>(*this);
+}
+
 DiagramDrawParamsChoose::DiagramDrawParamsChoose(const DiagramDrawParamsChoose& other)
 	:IDidgramDrawParams(other)
 {
@@ -328,6 +353,11 @@ void DiagramDrawParamsChoose::serialize(QDataStream& out) const
 void DiagramDrawParamsChoose::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsChoose::clone()
+{
+	return std::make_shared<DiagramDrawParamsChoose>(*this);
 }
 
 TextLineEdit::TextLineEdit(QWidget* parent)
@@ -426,4 +456,9 @@ void DiagramDrawParamsText::deserialize(QDataStream& in)
 	m_font.setUnderline(underline);
 	m_font.setStrikeOut(strikeOut);
 
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsText::clone()
+{
+	return std::make_shared<DiagramDrawParamsText>(*this);
 }

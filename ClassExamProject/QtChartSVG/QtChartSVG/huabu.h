@@ -50,24 +50,18 @@ public:
 
 
 
-
-
-
-
 class huabu : public QWidget
 {
 	Q_OBJECT
 
 public:
-	huabu(QWidget *parent = nullptr);
+	huabu(QWidget* parent = nullptr);
 	~huabu();
 	void dragEnterEvent(QDragEnterEvent* event)override; //拖动操作进入控件触发，通过mime判断是否接受拖动操作
 	void dragMoveEvent(QDragMoveEvent* event) override; //拖动操作在控件中移动时触发，通常用于限制
 	void dropEvent(QDropEvent* event) override; //完成拖动时触发，完成数据交换
 	void paintEvent(QPaintEvent* event) override;
 
-
-	void enterEvent(QEvent* event) override;
 
 	void mousePressEvent(QMouseEvent* event) override;
 	void mouseMoveEvent(QMouseEvent* event) override;
@@ -103,43 +97,28 @@ signals:
 private:
 	void init();
 	void initPainter(QPainter& painter);
+	std::shared_ptr<IDidgramDrawParams> deserParams(QByteArray& array);
+	void loadSetting();
 
 
 	void createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer);
-	PropertyWidgetManager::propertyobjecttype shapetypeToObjectType(ShapeType type);
-
 	void createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std::shared_ptr<IDiagramDrawer> drawer);
 
-	
+
 	std::shared_ptr<IDidgramDrawParams> createDrawParams(std::shared_ptr<IDidgramDrawParams> params);
 
 
-	std::shared_ptr<std::vector<QString>> createNameVec(ShapeType type);
-	std::shared_ptr<std::vector<QString>> rectCreateNameVec();
-	std::shared_ptr<std::vector<QString>> circleCreateNameVec();
-	std::shared_ptr<std::vector<QString>> triangleCreateNameVec();
-	std::shared_ptr<std::vector<QString>> lineCreateNameVec();
-	std::shared_ptr<std::vector<QString>> mouseCreateNameVec();
-	std::shared_ptr<std::vector<QString>> textCreateNameVec();
-	
 
-	bool isrectcontainpoint(QRect rect, QPoint point, int tolerance);
-
-
-	QString createTuxingName(ShapeType type);
-	int m_tuxingnum;
 
 
 	std::shared_ptr<propertySetManager> m_setManager;
 
 
 	std::vector<std::shared_ptr<huabutuxing>> m_tuxingvec;
-	std::list<std::shared_ptr<huabutuxing>> m_tuxinglist;
 
 	QColor m_backgroundcolor;
-	QString m_mimetype; 
+	QString m_mimetype;
 
-	bool m_ismouseDrawing;
 	bool m_isdrawing;
 	bool m_hasmove;
 
@@ -149,40 +128,23 @@ private:
 	QPoint m_startpoint;
 	QPointF m_endpoint;
 	std::shared_ptr<QPainterPath> m_mousepath;
-	
+
 	QSvgRenderer* m_svgRenderer;
 
 	QSettings m_setting;
-
-	std::shared_ptr<DiagramDrawParamsRect> m_chooseParams;
-	std::shared_ptr<IDiagramDrawer> m_chooseDrawer;
-	bool m_ischoosingFirst;
-	bool m_ischoosingSecond;
 
 
 	std::shared_ptr<IDidgramDrawParams> m_choosedParams;
 	QPoint m_pasteOffset; // 成员变量，初始值为 QPoint(20, 20)
 	QPoint m_lastPasteDelta; // 新增成员变量用于记录偏移增量
 
-	bool m_needcopy;
 
 
-
-
-
-
-
-
-	enum class Mode
-	{
-		Select,
-		Draw
-	};
 
 	QPoint m_currentpoint;
-	Mode m_mode;
+	bool m_isselecting;
 
-	
+
 	QPoint m_dragoffset;
 	std::vector<std::shared_ptr<huabutuxing>> m_selectedShapes;
 	std::shared_ptr<DiagramDrawParamsRect> m_selectingParams;

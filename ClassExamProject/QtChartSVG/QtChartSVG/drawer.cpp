@@ -130,7 +130,7 @@ DiagramDrawerCircle::DiagramDrawerCircle(std::shared_ptr<IDidgramDrawParams> par
 {
 	if (params == nullptr
 		|| params.get() == nullptr
-		|| params->m_type != ShapeType::Circle)
+		|| params->m_type != myqtsvg::ShapeType::Circle)
 		throw std::runtime_error("error");
 
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(params);
@@ -437,7 +437,7 @@ DiagramDrawerLine::DiagramDrawerLine(std::shared_ptr<IDidgramDrawParams> params)
 	, m_result(std::make_shared<DrawResultLine>())
 	, m_line(QLineF())
 {
-	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::Line)
+	if (params == nullptr || params.get() == nullptr || params->m_type != myqtsvg::ShapeType::Line)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsLine>(params);
 	if (castparams == nullptr)
@@ -509,7 +509,7 @@ DiagramDrawerMouse::DiagramDrawerMouse(std::shared_ptr<IDidgramDrawParams> param
 	:m_params(nullptr)
 	, m_result(std::make_shared<DrawResultMouse>())
 {
-	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::Mouse)
+	if (params == nullptr || params.get() == nullptr || params->m_type != myqtsvg::ShapeType::Mouse)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params);
 	if (castparams == nullptr)
@@ -623,7 +623,7 @@ std::shared_ptr<DrawResult> DiagramDrawerText::getResult()
 
 DiagramDrawerChoose::DiagramDrawerChoose(std::shared_ptr<IDidgramDrawParams> params)
 {
-	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::choose)
+	if (params == nullptr || params.get() == nullptr || params->m_type != myqtsvg::ShapeType::choose)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsChoose>(params);
 	if (castparams == nullptr)
@@ -660,7 +660,7 @@ DiagramDrawInterface& DiagramDrawInterface::getInstance()
 	return instance;
 }
 
-DiagramDrawInterface& DiagramDrawInterface::addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer)
+DiagramDrawInterface& DiagramDrawInterface::addDrawerCreator(myqtsvg::ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer)
 {
 	m_drawerMap[type] = drawer;
 	return *this;
@@ -668,7 +668,7 @@ DiagramDrawInterface& DiagramDrawInterface::addDrawerCreator(ShapeType type, std
 
 std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(std::shared_ptr<IDidgramDrawParams> params)
 {
-	ShapeType type = params->m_type;
+	myqtsvg::ShapeType type = params->m_type;
 	if (m_drawerMap.find(type) != m_drawerMap.end())
 	{
 		return m_drawerMap[type](params);
@@ -678,6 +678,36 @@ std::shared_ptr<IDiagramDrawer> DiagramDrawInterface::getDrawer(std::shared_ptr<
 		throw std::runtime_error("error");
 	}
 
+}
+
+DiagramDrawInterface::DiagramDrawInterface()
+{
+	defaultinit();
+}
+
+void DiagramDrawInterface::defaultinit()
+{
+	addDrawerCreator(myqtsvg::ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerRect>(params);
+		})
+		.addDrawerCreator(myqtsvg::ShapeType::Circle, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerCircle>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Triangle, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerTriangle>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Line, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerLine>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::choose, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerChoose>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Mouse, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerMouse>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerText>(params);
+			});
 }
 
 

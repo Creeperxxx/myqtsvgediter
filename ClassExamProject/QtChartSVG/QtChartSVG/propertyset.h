@@ -3,6 +3,7 @@
 #include <memory>
 #include <unordered_map>
 #include "propertywidget.h"
+#include "namespace.h"
 
 class IDidgramDrawParams;
 class IpropertySet : public QObject
@@ -89,5 +90,17 @@ public:
 
 
 	std::unordered_map<QString, std::shared_ptr<IpropertySet>> m_propertySetMap;
-	PropertyWidgetManager::propertyobjecttype m_propertyObjectType;
+	//PropertyWidgetManager::propertyobjecttype m_propertyWidgetType;
+	myqtsvg::propertywidgettype m_propertyWidgetType;
+};
+
+class initPropertySetManager
+{
+public:
+	static std::shared_ptr<propertySetManager> createPropertySetManager(
+		myqtsvg::propertywidgettype type
+		, std::shared_ptr<IDidgramDrawParams> params
+		, std::function<void()> repaintcallback
+		, const std::vector<QString>& additionalProperties = {});
+		
 };

@@ -4,18 +4,19 @@
 #include "huabu.h"
 #include "propertydatabuilder.h"
 #include "myconfig.h"
+#include "drawparamscreator.h"
+#include "propertynamevec.h"
+#include "propertyset.h"
 
 huabu::huabu(QWidget* parent)
 	: QWidget(parent)
 	, m_mimetype(myconfig::getInstance().getMimetype())
 	, m_backgroundcolor(Qt::white)
-	, m_tuxingnum(0)
-	, m_ismouseDrawing(false)
 	, m_isdrawing(false)
 	, m_hasmove(false)
 	, m_pasteOffset(20, 20)
 	, m_lastPasteDelta(0, 0)
-	, m_mode(Mode::Select)
+	, m_isselecting(true)
 	, m_chooseRect(0, 0, 0, 0)
 {
 	init();
@@ -24,77 +25,39 @@ huabu::huabu(QWidget* parent)
 void huabu::init()
 {
 	setAcceptDrops(true);
+
+	auto& config = myconfig::getInstance();
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-
-	QSize canvassize;
-	if (m_setting.contains("canvas/size"))
-	{
-		canvassize = m_setting.value("canvas/size").toSize();
-	}
-	else
-	{
-		canvassize = QSize(myconfig::getInstance().getCanvasWidth(), myconfig::getInstance().getCanvasHeight());
-		m_setting.setValue("canvas/size", canvassize);
-	}
-	setFixedSize(canvassize);
-	m_basesize = canvassize;
+	loadSetting();
+	m_basesize = size();
 	m_scale = 1;
-
-	if (m_setting.contains("canvas/backgroundcolor"))
-	{
-		m_backgroundcolor = m_setting.value("canvas/backgroundcolor").value<QColor>();
-	}
-	else
-	{
-		m_backgroundcolor = myconfig::getInstance().getCanvasBackgroundColor();
-		m_setting.setValue("canvas/backgroundcolor", m_backgroundcolor);
-	}
 
 
 	m_setManager = std::make_shared<propertySetManager>();
-	m_setManager->m_propertyObjectType = PropertyWidgetManager::propertyobjecttype::huabu;
+	m_setManager->m_propertyWidgetType = myqtsvg::propertywidgettype::huabu;
 
 	auto otherset = std::make_shared<otherPropertySet>();
 	otherset->m_name = myconfig::getInstance().getCanvasName();
-	otherset->m_huabuheight = canvassize.height();
-	otherset->m_huabuwidth = canvassize.width();
+	otherset->m_huabuheight = m_basesize.height();
+	otherset->m_huabuwidth = m_basesize.width();
 	otherset->m_scale = 1;
 
-	std::shared_ptr<std::vector<QString>> namevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getNameName()
-			, myconfig::getInstance().getCanvasWidthName()
-			, myconfig::getInstance().getCanvasHeightName()
-			, myconfig::getInstance().getCanvasScaleName()
-	});
+	std::vector<QString> namevec{
+		config.getNameName()
+		, config.getCanvasWidthName()
+		, config.getCanvasHeightName()
+		, config.getCanvasScaleName()
+	};
+
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(namevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuHeightChanged, [=](int height)
-		{
-			onHeightChanged(height);
-		});
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuWidthChanged, [=](int width) {
-		onWidthChanged(width);
-		});
-	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasScaleChanged, [=](double scale) {
-		this->onScaleChagned(scale);
-		});
-	m_setManager->addPropertySet("other", otherset);
+
+	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuHeightChanged, this, &huabu::onHeightChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuWidthChanged, this, &huabu::onWidthChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasScaleChanged, this, &huabu::onScaleChagned);
+	m_setManager->addPropertySet(config.getOtherSetName(), otherset);
 
 
-	m_ischoosingFirst = false;
-	m_ischoosingSecond = false;
-	m_chooseParams = std::make_shared<DiagramDrawParamsRect>();
-	m_chooseParams->m_centerHoffset = 0;
-	m_chooseParams->m_centerVoffset = 0;
-	m_chooseParams->m_ischoosed = false;
-	m_chooseParams->m_pen = QPen(Qt::blue, 2, Qt::DashLine);
-	m_chooseParams->m_brush = Qt::transparent;
-	m_chooseParams->m_rotate = 0;
-	m_chooseParams->m_scale = 1;
-	m_chooseParams->m_type = ShapeType::Rect;
-
-	m_chooseDrawer = DiagramDrawInterface::getInstance().getDrawer(m_chooseParams);
 }
 
 
@@ -104,7 +67,7 @@ huabu::~huabu()
 
 void huabu::dragEnterEvent(QDragEnterEvent* event)
 {
-	if (true == event->mimeData()->hasFormat(m_mimetype))
+	if (event->mimeData()->hasFormat(m_mimetype))
 	{
 		event->acceptProposedAction();
 	}
@@ -117,40 +80,8 @@ void huabu::dropEvent(QDropEvent* event)
 	QByteArray array = event->mimeData()->data(m_mimetype);
 	if (array.isEmpty())
 		throw std::runtime_error("error");
-	QDataStream stream(array);
-	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
 
-	int inttype = 0;
-	stream >> inttype;
-	ShapeType type = static_cast<ShapeType>(inttype);
-	std::shared_ptr<IDidgramDrawParams> params = nullptr;
-	switch (type)
-	{
-	case ShapeType::Rect:
-		params = std::make_shared<DiagramDrawParamsRect>();
-		break;
-	case ShapeType::Circle:
-		params = std::make_shared<DiagramDrawParamsCircle>();
-		break;
-	case ShapeType::Triangle:
-		params = std::make_shared<DiagramDrawParamsTriangle>();
-		break;
-	case ShapeType::Line:
-		params = std::make_shared<DiagramDrawParamsLine>();
-		break;
-	case ShapeType::Text:
-		params = std::make_shared<DiagramDrawParamsText>();
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-
-	stream >> *params;
-
-
-	//std::shared_ptr<IDidgramDrawParams> params = buildParamsSpecial(data);
-
+	auto params = deserParams(array);
 	params->m_center = event->pos();
 
 	auto drawer = DiagramDrawInterface::getInstance().getDrawer(params);
@@ -255,18 +186,6 @@ void huabu::paintEvent(QPaintEvent* event)
 }
 
 
-void huabu::enterEvent(QEvent* event)
-{
-	if (m_drawParams == nullptr || m_drawParams->m_type == ShapeType::choose)
-	{
-		m_ismouseDrawing = false;
-	}
-	else
-	{
-		m_ismouseDrawing = true;
-	}
-	QWidget::enterEvent(event);
-}
 
 void huabu::mousePressEvent(QMouseEvent* event)
 {
@@ -274,7 +193,8 @@ void huabu::mousePressEvent(QMouseEvent* event)
 	{
 		m_startpoint = event->pos();
 		m_currentpoint = event->pos();
-		if (m_mode == Mode::Select)
+		//if (m_mode == Mode::Select)
+		if (m_isselecting)
 		{
 			m_ischooseingone = false;
 			//关于选中，只有点击图像才表示选中，点击其他地方则取消选中
@@ -446,7 +366,8 @@ void huabu::mouseMoveEvent(QMouseEvent* event)
 	{
 		m_currentpoint = event->pos();
 		m_endpoint = event->pos();
-		if (m_mode == Mode::Select)
+		//if (m_mode == Mode::Select)
+		if (m_isselecting)
 		{
 			if (m_choosedParamsvec.size() > 0)
 			{
@@ -560,7 +481,8 @@ void huabu::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		if (m_mode == Mode::Select)
+		//if (m_mode == Mode::Select)
+		if (m_isselecting)
 		{
 			if (!m_ischooseingone)
 			{
@@ -729,18 +651,14 @@ void huabu::contextMenuEvent(QContextMenuEvent* event)
 
 void huabu::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
 {
-	if (params == nullptr || params.get() == nullptr)
-		throw std::runtime_error("error");
 	m_drawParams = params;
-	if (params->m_type == ShapeType::choose)
+	if (params->m_type == myqtsvg::ShapeType::choose)
 	{
-		m_ismouseDrawing = false;
-		m_mode = Mode::Select;
+		m_isselecting = true;
 	}
 	else
 	{
-		m_ismouseDrawing = true;
-		m_mode = Mode::Draw;
+		m_isselecting = false;
 	}
 }
 
@@ -835,12 +753,12 @@ void huabu::oncrtyvTuxing()
 		{
 			auto p = createDrawParams(params);
 			p->m_center += m_pasteOffset + m_lastPasteDelta;
-			if (p->m_type == ShapeType::Mouse)
+			if (p->m_type == myqtsvg::ShapeType::Mouse)
 			{
 				std::dynamic_pointer_cast<DiagramDrawParamsMouse>(p)->m_path->translate(m_pasteOffset + m_lastPasteDelta);
 			}
 			auto drawer = DiagramDrawInterface::getInstance().getDrawer(p);
-			if (p->m_type == ShapeType::Text)
+			if (p->m_type == myqtsvg::ShapeType::Text)
 			{
 				createTextTuxing(std::dynamic_pointer_cast<DiagramDrawParamsText>(p), drawer);
 			}
@@ -903,7 +821,6 @@ void huabu::onDeleteTuxing()
 void huabu::closeEvent(QCloseEvent* event)
 {
 
-	QSize s = size();
 	m_setting.setValue("canvas/size", size());
 	m_setting.setValue("canvas/backgroundcolor", m_backgroundcolor);
 
@@ -941,40 +858,83 @@ void huabu::initPainter(QPainter& painter)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 }
 
+std::shared_ptr<IDidgramDrawParams> huabu::deserParams(QByteArray& array)
+{
+	QDataStream stream(array);
+	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+
+	int inttype = 0;
+	stream >> inttype;
+	myqtsvg::ShapeType type = static_cast<myqtsvg::ShapeType>(inttype);
+
+	auto creator = createParamsInterface::getInstance().getParams(type);
+	std::shared_ptr<IDidgramDrawParams> params = creator->create();
+	stream >> *params;
+	return params;
+}
+
+void huabu::loadSetting()
+{
+	QSize canvassize;
+	if (m_setting.contains("canvas/size"))
+		canvassize = m_setting.value("canvas/size").toSize();
+	else
+		canvassize = QSize(myconfig::getInstance().getCanvasWidth(), myconfig::getInstance().getCanvasHeight());
+	setFixedSize(canvassize);
+
+	if (m_setting.contains("canvas/backgroundcolor"))
+	{
+		m_backgroundcolor = m_setting.value("canvas/backgroundcolor").value<QColor>();
+	}
+	else
+	{
+		m_backgroundcolor = myconfig::getInstance().getCanvasBackgroundColor();
+	}
+
+}
+
 void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer)
 {
+	auto& config = myconfig::getInstance();
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
 	tuxing->m_drawer = drawer;
-	tuxing->m_propertySetManager = std::make_shared<propertySetManager>();
-	tuxing->m_propertySetManager->m_propertyObjectType = shapetypeToObjectType(params->m_type);
-
-
+	tuxing->m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->m_type)
+		, params
+		, [tuxing]()
+		{
+			emit tuxing->signalRepaint();
+		}
+		, {
+			config.getCenterVOffsetName()
+			, config.getCenterHOffsetName()
+		});
 
 	std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
 	drawParamsSet->m_params = params;
 
-	auto propertynamevec = createNameVec(params->m_type);
+
+
+	std::vector<QString> othernamevec{
+		config.getCenterVOffsetName()
+		, config.getCenterHOffsetName() };
+	auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(params->m_type, othernamevec);
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
 	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, tuxing.get(), &huabutuxing::signalRepaint);
-	tuxing->m_propertySetManager->addPropertySet(QString("drawParams"), drawParamsSet);
-
-
-
+	tuxing->m_propertySetManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
 
 
 
 
 
 	std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-	otherset->m_name = createTuxingName(params->m_type);
+	otherset->m_name = myqtsvg::ShapetypeEnumToQstring(params->m_type);
 	otherset->m_zvalue = QDateTime::currentMSecsSinceEpoch();
-	propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getNameName()
-	});
+	propertynamevec.clear();
+	propertynamevec.push_back(config.getNameName());
 	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
-	tuxing->m_propertySetManager->addPropertySet(QString("otherset"), otherset);
+	tuxing->m_propertySetManager->addPropertySet(config.getOtherSetName(), otherset);
 
 
 
@@ -987,36 +947,6 @@ void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared
 	m_tuxingvec.push_back(tuxing);
 }
 
-PropertyWidgetManager::propertyobjecttype huabu::shapetypeToObjectType(ShapeType type)
-{
-	switch (type)
-	{
-	case ShapeType::Rect:
-		return PropertyWidgetManager::propertyobjecttype::huabuRect;
-		break;
-	case ShapeType::Circle:
-		return PropertyWidgetManager::propertyobjecttype::huabuCircle;
-		break;
-	case ShapeType::Triangle:
-		return PropertyWidgetManager::propertyobjecttype::huabuTriangle;
-		break;
-	case ShapeType::Line:
-		return PropertyWidgetManager::propertyobjecttype::huabuLine;
-		break;
-	case ShapeType::Mouse:
-		return PropertyWidgetManager::propertyobjecttype::huabuMouse;
-		break;
-	case ShapeType::choose:
-		return PropertyWidgetManager::propertyobjecttype::huabu;
-		break;
-	case ShapeType::Text:
-		return PropertyWidgetManager::propertyobjecttype::huabuText;
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-}
 
 void huabu::createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std::shared_ptr<IDiagramDrawer> drawer)
 {
@@ -1052,177 +982,13 @@ void huabu::createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std:
 
 std::shared_ptr<IDidgramDrawParams> huabu::createDrawParams(std::shared_ptr<IDidgramDrawParams> params)
 {
-	switch (params->m_type)
-	{
-	case ShapeType::Rect:
-		return std::make_shared<DiagramDrawParamsRect>(*std::dynamic_pointer_cast<DiagramDrawParamsRect>(params));
-		break;
-	case ShapeType::Circle:
-		return std::make_shared<DiagramDrawParamsCircle>(*std::dynamic_pointer_cast<DiagramDrawParamsCircle>(params));
-		break;
-	case ShapeType::Triangle:
-		return std::make_shared<DiagramDrawParamsTriangle>(*std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(params));
-		break;
-	case ShapeType::Line:
-		return std::make_shared<DiagramDrawParamsLine>(*std::dynamic_pointer_cast<DiagramDrawParamsLine>(params));
-		break;
-	case ShapeType::Mouse:
-		return std::make_shared<DiagramDrawParamsMouse>(*std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params));
-		break;
-	case ShapeType::choose:
-		return std::make_shared<DiagramDrawParamsChoose>(*std::dynamic_pointer_cast<DiagramDrawParamsChoose>(params));
-		break;
-	case ShapeType::Text:
-		return std::make_shared<DiagramDrawParamsText>(*std::dynamic_pointer_cast<DiagramDrawParamsText>(params));
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-}
-
-std::shared_ptr<std::vector<QString>> huabu::createNameVec(ShapeType type)
-{
-	switch (type)
-	{
-	case ShapeType::Rect:
-		return rectCreateNameVec();
-		break;
-	case ShapeType::Circle:
-		return circleCreateNameVec();
-		break;
-	case ShapeType::Triangle:
-		return triangleCreateNameVec();
-		break;
-	case ShapeType::Line:
-		return lineCreateNameVec();
-		break;
-	case ShapeType::Mouse:
-		return mouseCreateNameVec();
-		break;
-	case ShapeType::Text:
-		return textCreateNameVec();
-		break;
-	default:
-		throw std::runtime_error("error");
-		break;
-	}
-}
-
-std::shared_ptr<std::vector<QString>> huabu::rectCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getRectRadioName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> huabu::circleCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getCircleRadioName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> huabu::triangleCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getTriangleRadioName()
-			, myconfig::getInstance().getEdgeTypeName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> huabu::lineCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getBrushColorName()
-			, myconfig::getInstance().getRotateAngleName()
-			, myconfig::getInstance().getScaleName()
-			, myconfig::getInstance().getSpaceWidthName()
-			, myconfig::getInstance().getSpaceHeightName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> huabu::mouseCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getPenWdithName()
-			, myconfig::getInstance().getPenStyleName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-std::shared_ptr<std::vector<QString>> huabu::textCreateNameVec()
-{
-	return std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-		myconfig::getInstance().getPenColorName()
-			, myconfig::getInstance().getFontFamilyName()
-			, myconfig::getInstance().getFontSizeName()
-			, myconfig::getInstance().getCenterHOffsetName()
-			, myconfig::getInstance().getCenterVOffsetName()
-	});
-}
-
-bool huabu::isrectcontainpoint(QRect rect, QPoint point, int tolerance)
-{
-	// 判断点是否在矩形外部或内部（排除中心区域）
-	if (!rect.adjusted(-tolerance, -tolerance, tolerance, tolerance).contains(point))
-	{
-		return false;
-	}
-
-	// 检查点是否在四条边的附近
-	bool nearLeft = abs(point.x() - rect.left()) <= tolerance;
-	bool nearRight = abs(point.x() - rect.right()) <= tolerance;
-	bool nearTop = abs(point.y() - rect.top()) <= tolerance;
-	bool nearBottom = abs(point.y() - rect.bottom()) <= tolerance;
-
-	return (nearLeft || nearRight || nearTop || nearBottom);
+	return params->clone();
 }
 
 
 
 
-QString huabu::createTuxingName(ShapeType type)
-{
-	return ShapeTypeTool::shapetypeEnumToQstring(type) + QString::number(m_tuxingnum++);
-}
+
 
 
 huabutuxing::huabutuxing()

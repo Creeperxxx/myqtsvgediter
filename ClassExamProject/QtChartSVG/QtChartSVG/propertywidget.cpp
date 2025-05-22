@@ -101,9 +101,9 @@ QStackedWidget* PropertyWidgetManager::getstackwidget()
 
 void PropertyWidgetManager::dealclicked(std::shared_ptr<propertySetManager> setmanager)
 {
-	if (m_propertyMap.find(setmanager->m_propertyObjectType) == m_propertyMap.end())
+	if (m_propertyMap.find(setmanager->m_propertyWidgetType) == m_propertyMap.end())
 		throw std::runtime_error("error");
-	auto widget = m_propertyMap[setmanager->m_propertyObjectType];
+	auto widget = m_propertyMap[setmanager->m_propertyWidgetType];
 	int index = widget->getstackwidgetindex();
 	m_propertyStackWidget->setCurrentIndex(index);
 

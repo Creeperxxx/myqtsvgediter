@@ -37,24 +37,6 @@ class PropertyWidgetManager : public QWidget
 	Q_OBJECT
 public:
 
-	enum class propertyobjecttype
-	{
-		defaulttype,
-		diagramRect,
-		diagramCircle,
-		diagramTriangle,
-		diagramLine,
-		diagramMouse,
-		diagramText,
-
-		huabu,
-		huabuRect,
-		huabuCircle,
-		huabuTriangle,
-		huabuLine,
-		huabuMouse,
-		huabuText
-	};
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
 	void dealclicked(std::shared_ptr<propertySetManager> setmanager);
@@ -72,7 +54,7 @@ private:
 	void buildDefaultPropertyWidget(propertyWidget* widget);
 
 
-	void addPropertyWidget(propertyobjecttype type, propertyWidget* widget);
+	void addPropertyWidget(myqtsvg::propertywidgettype type, propertyWidget* widget);
 
 
 	void buildPropertyWidgetName(propertyWidget* widget);
@@ -92,7 +74,7 @@ private:
 
 
 
-	std::map<propertyobjecttype, propertyWidget*> m_propertyMap;
+	std::map<myqtsvg::propertywidgettype, propertyWidget*> m_propertyMap;
 	QStackedWidget* m_propertyStackWidget;
 
 };

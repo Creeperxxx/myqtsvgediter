@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "diagramdrawparams.h"
+#include "namespace.h"
 
 class ICreateParams
 {
@@ -59,11 +60,11 @@ class createParamsInterface
 public:
 	static createParamsInterface& getInstance();
 	void defaultInit();
-	createParamsInterface& add(ShapeType type, std::function<std::shared_ptr<ICreateParams>()> creator);
-	std::shared_ptr<ICreateParams> getParams(ShapeType type);
+	createParamsInterface& add(myqtsvg::ShapeType type, std::function<std::shared_ptr<ICreateParams>()> creator);
+	std::shared_ptr<ICreateParams> getParams(myqtsvg::ShapeType type);
 private:
 	createParamsInterface();
 
-	std::map<ShapeType, std::function<std::shared_ptr<ICreateParams>()>> m_map;
+	std::map<myqtsvg::ShapeType, std::function<std::shared_ptr<ICreateParams>()>> m_map;
 
 };

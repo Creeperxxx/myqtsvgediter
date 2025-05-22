@@ -205,7 +205,7 @@ std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> propertyDataVecOfPro
 	return datavec;
 }
 
-void propertyDataVecOfPropertySetCreator::addBuilder(std::shared_ptr<IpropertyDataBuilder> builder)
+void propertyDataVecOfPropertySetCreator::addBuilder(std::unique_ptr<IpropertyDataBuilder> builder)
 {
 	if (builder == nullptr || builder.get() == nullptr)
 		throw std::runtime_error("error");
@@ -218,13 +218,10 @@ propertyDataVecOfPropertySetCreatorFactor& propertyDataVecOfPropertySetCreatorFa
 	return instance;
 }
 
-std::shared_ptr<propertyDataVecOfPropertySetCreator> propertyDataVecOfPropertySetCreatorFactor::create(std::shared_ptr<std::vector<QString>> propertynamevec)
+std::unique_ptr<propertyDataVecOfPropertySetCreator> propertyDataVecOfPropertySetCreatorFactor::create(const std::vector<QString>& propertynamevec)
 {
-	if (propertynamevec == nullptr || propertynamevec.get() == nullptr)
-		throw std::runtime_error("error");
-
-	std::shared_ptr<propertyDataVecOfPropertySetCreator> creator = std::make_shared<propertyDataVecOfPropertySetCreator>();
-	for (const auto& name : *propertynamevec)
+	std::unique_ptr<propertyDataVecOfPropertySetCreator> creator = std::make_unique<propertyDataVecOfPropertySetCreator>();
+	for (const auto& name : propertynamevec)
 	{
 		if (m_builderCreatefunc.find(name) != m_builderCreatefunc.end())
 		{
@@ -238,21 +235,80 @@ std::shared_ptr<propertyDataVecOfPropertySetCreator> propertyDataVecOfPropertySe
 	return creator;
 }
 
-propertyDataVecOfPropertySetCreatorFactor& propertyDataVecOfPropertySetCreatorFactor::addCreator(QString name, std::function<std::shared_ptr<IpropertyDataBuilder>()> func)
+propertyDataVecOfPropertySetCreatorFactor& propertyDataVecOfPropertySetCreatorFactor::addCreator(QString name, std::function<std::unique_ptr<IpropertyDataBuilder>()> func)
 {
-	if (m_builderCreatefunc.find(name) != m_builderCreatefunc.end())
-	{
-		throw std::runtime_error("error");
-	}
-	else
-	{
-		m_builderCreatefunc[name] = func;
-	}
+	m_builderCreatefunc[name] = func;
 	return *this;
 }
 
 propertyDataVecOfPropertySetCreatorFactor::propertyDataVecOfPropertySetCreatorFactor()
 {
+	defaultinit();
+}
+
+void propertyDataVecOfPropertySetCreatorFactor::defaultinit()
+{
+	auto& config = myconfig::getInstance();
+	addCreator(config.getPenColorName(), []() {
+		return std::make_unique<PenColorDrawParamsPropertyDataBuilder>();
+		})
+		.addCreator(config.getPenStyleName(), []() {
+		return std::make_unique<PenStyleDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getPenWdithName(), []() {
+		return std::make_unique<PenWidthDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getBrushColorName(), []() {
+		return std::make_unique<BrushDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getRotateAngleName(), []() {
+		return std::make_unique<RotateDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getSpaceWidthName(), []() {
+		return std::make_unique<SpacewidthDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getSpaceHeightName(), []() {
+		return std::make_unique<SpaceheightDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getScaleName(), []() {
+		return std::make_unique<ScaleDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getCenterHOffsetName(), []() {
+		return std::make_unique<CenterHoffsetDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getCenterVOffsetName(), []() {
+		return std::make_unique<CenterVoffsetDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getNameName(), []() {
+		return std::make_unique<NamePropertyDataBuilder>();
+			})
+		.addCreator(config.getRectRadioName(), []() {
+		return std::make_unique<RectRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getCircleRadioName(), []() {
+		return std::make_unique<CircleRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getTriangleRadioName(), []() {
+		return std::make_unique<TriangleRadioDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getEdgeTypeName(), []() {
+		return std::make_unique<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getFontFamilyName(), []() {
+		return std::make_unique<TextFontFamilyDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getFontSizeName(), []() {
+		return std::make_unique<TextFontSizeDrawParamsPropertyDataBuilder>();
+			})
+		.addCreator(config.getCanvasHeightName(), []() {
+		return std::make_unique<HuabuHeightPropertyDataBuilder>();
+			})
+		.addCreator(config.getCanvasWidthName(), []() {
+		return std::make_unique<HuabuWidthPropertyDataBuilder>();
+			})
+		.addCreator(config.getCanvasScaleName(), []() {
+		return std::make_unique<HuabuScalePropertyDataBuilder>();
+			});
 }
 
 void HuabuScalePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)

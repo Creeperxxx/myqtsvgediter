@@ -87,6 +87,8 @@ public:
 	QString getCanvasScaleName();
 	QString getPenStyleName();
 	QString getPenStyle();
+	QString getDrawParamsSetName();
+	QString getOtherSetName();
 
 
 		

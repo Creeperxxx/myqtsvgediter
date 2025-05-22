@@ -9,6 +9,8 @@
 #include "propertyset.h"
 #include "propertywidget.h"
 #include "myconfig.h"
+#include "propertynamevec.h"
+#include "propertydatabuilder.h"
 
 void IpropertySet::addShowData(propertyWidget* widget)
 {
@@ -104,7 +106,7 @@ void drawParamsPropertySet::onCenterVOffset(QVariant value)
 
 void drawParamsPropertySet::onRectRadioChanged(QVariant value)
 {
-	if (m_params->m_type != ShapeType::Rect)
+	if (m_params->m_type != myqtsvg::ShapeType::Rect)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsRect>(m_params);
 	if (castparams == nullptr)
@@ -118,7 +120,7 @@ void drawParamsPropertySet::onRectRadioChanged(QVariant value)
 
 void drawParamsPropertySet::onCricleRadioChanged(QVariant value)
 {
-	if (m_params->m_type != ShapeType::Circle)
+	if (m_params->m_type != myqtsvg::ShapeType::Circle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(m_params);
 	if (castparams == nullptr)
@@ -133,7 +135,7 @@ void drawParamsPropertySet::onCricleRadioChanged(QVariant value)
 
 void drawParamsPropertySet::onTriangleRadioChanged(QVariant value)
 {
-	if (m_params->m_type != ShapeType::Triangle)
+	if (m_params->m_type != myqtsvg::ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
 	if (castparams == nullptr)
@@ -147,7 +149,7 @@ void drawParamsPropertySet::onTriangleRadioChanged(QVariant value)
 
 void drawParamsPropertySet::onTriangleEdgetypeRadioChanged(QVariant value)
 {
-	if (m_params->m_type != ShapeType::Triangle)
+	if (m_params->m_type != myqtsvg::ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
 	if (castparams == nullptr)
@@ -240,4 +242,34 @@ void propertySetManager::dealShowData(propertyWidget* widget)
 	{
 		data.second->addShowData(widget);
 	}
+}
+
+std::shared_ptr<propertySetManager> initPropertySetManager::createPropertySetManager(myqtsvg::propertywidgettype type
+	, std::shared_ptr<IDidgramDrawParams> params
+	, std::function<void()> repaintcallback
+	, const std::vector<QString>& additionalProperties)
+{
+	auto& config = myconfig::getInstance();
+
+	auto setManager = std::make_shared<propertySetManager>();
+	setManager->m_propertyWidgetType = type;
+
+	auto drawParamsSet = std::make_shared<drawParamsPropertySet>();
+	drawParamsSet->m_params = params;
+
+	auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(params->m_type, additionalProperties);
+	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
+	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, repaintcallback);
+	setManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
+
+	auto otherset = std::make_shared<otherPropertySet>();
+	otherset->m_name = myqtsvg::ShapetypeEnumToQstring(params->m_type);
+	propertynamevec.clear();
+	propertynamevec.push_back(config.getNameName());
+	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
+	otherset->m_propertyDataVec = creator->create(otherset);
+	setManager->addPropertySet(config.getOtherSetName(), otherset);
+
+	return setManager;
 }

@@ -3,6 +3,7 @@
 #include <qpainter.h>
 #include "drawresult.h"
 #include "diagramdrawparams.h"
+#include "myconfig.h"
 
 class IDiagramDrawer
 {
@@ -140,8 +141,11 @@ class DiagramDrawInterface
 {
 public:
 	static DiagramDrawInterface& getInstance();
-	DiagramDrawInterface& addDrawerCreator(ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer);
+	DiagramDrawInterface& addDrawerCreator(myqtsvg::ShapeType type, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)> drawer);
 	std::shared_ptr<IDiagramDrawer> getDrawer(std::shared_ptr<IDidgramDrawParams> params);
 private:
-	std::unordered_map<ShapeType, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)>> m_drawerMap;
+	DiagramDrawInterface();
+	DiagramDrawInterface(const DiagramDrawInterface& other) = delete;
+	void defaultinit();
+	std::unordered_map<myqtsvg::ShapeType, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)>> m_drawerMap;
 };
