@@ -33,3 +33,4 @@ yarn-error.log*
 .DS_Store
 *.svg
 *.png
+/week08/practice/kdialog/bin
