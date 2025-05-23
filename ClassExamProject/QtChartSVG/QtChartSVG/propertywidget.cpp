@@ -90,7 +90,7 @@ PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 	m_propertyStackWidget->setFrameShadow(QFrame::Plain);
 
 	createonceWidget();
-	propertyWidget* defaultwidget = m_propertyMap[propertyobjecttype::defaulttype];
+	propertyWidget* defaultwidget = m_propertyMap[myqtsvg::propertywidgettype::defaultWidget];
 	m_propertyStackWidget->setCurrentIndex(defaultwidget->getstackwidgetindex());
 }
 
@@ -114,65 +114,65 @@ void PropertyWidgetManager::createonceWidget()
 {
 	propertyWidget* widget = createOriginalPropertyWidget();
 	buildDefaultPropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::defaulttype, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::defaultWidget, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramRectPropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramRect, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramRect, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramCirclePropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramCircle, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramCircle, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramTrianglePropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramTriangle, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramTriangle, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramLinePropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramLine, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramLine, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramMousePropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramMouse, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramMouse, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramTextPropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::diagramText, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::diagramText, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramHuabuPropertyWidget(widget);
-	addPropertyWidget(propertyobjecttype::huabu, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabu, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramRectPropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuRect, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabuRect, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramCirclePropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuCircle, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabuCircle, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramTrianglePropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuTriangle, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabuTriangle, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramLinePropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuLine, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype ::huabuLine, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramMousePropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuMouse, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabuMouse, widget);
 
 	widget = createOriginalPropertyWidget();
 	buildDiagramTextPropertyWidget(widget);
 	buildPropertyWidgetCentermove(widget);
-	addPropertyWidget(propertyobjecttype::huabuText, widget);
+	addPropertyWidget(myqtsvg::propertywidgettype::huabuText, widget);
 }
 
 propertyWidget* PropertyWidgetManager::createOriginalPropertyWidget()
@@ -280,7 +280,7 @@ void PropertyWidgetManager::buildDefaultPropertyWidget(propertyWidget* widget)
 	buildPropertyWidgetName(widget);
 }
 
-void PropertyWidgetManager::addPropertyWidget(propertyobjecttype type, propertyWidget* widget)
+void PropertyWidgetManager::addPropertyWidget(myqtsvg::propertywidgettype type, propertyWidget* widget)
 {
 	if (m_propertyMap.find(type) != m_propertyMap.end())
 		throw std::runtime_error("error");

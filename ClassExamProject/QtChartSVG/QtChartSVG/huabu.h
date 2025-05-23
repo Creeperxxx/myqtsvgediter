@@ -14,6 +14,58 @@
 
 
 
+class drawStragety
+{
+public:
+	virtual void handlePress(QPoint point) = 0;
+	virtual void handleMove(QPoint point) = 0;
+	virtual void handleRelease() = 0;
+
+	QPoint m_startpoint;
+	QPoint m_endpoint;
+};
+
+class shapeDrawStragety : public drawStragety
+{
+public:
+	shapeDrawStragety(std::shared_ptr<IDidgramDrawParams> params);
+	void handlePress(QPoint point) override;
+    void handleMove(QPoint point) override;
+    void handleRelease() override;
+
+	std::shared_ptr<IDidgramDrawParams> m_params;
+};
+
+class mouseDrawStragety : public drawStragety
+{
+public:
+	mouseDrawStragety(std::shared_ptr<IDidgramDrawParams> params);
+	void handlePress(QPoint point) override;
+    void handleMove(QPoint point) override;
+    void handleRelease() override;
+
+	std::shared_ptr<DiagramDrawParamsMouse> m_params;
+	std::shared_ptr<QPainterPath> m_path;
+};
+
+class TextDrawStragety : public drawStragety
+{
+public:
+    TextDrawStragety(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent);
+    void handlePress(QPoint point) override;
+    void handleMove(QPoint point) override;
+    void handleRelease() override;
+
+	std::shared_ptr<DiagramDrawParamsText> m_params;
+	QWidget* m_parent;
+
+};
+
+
+
+
+
+
 
 
 
@@ -38,6 +90,7 @@ public:
 
 	std::shared_ptr<propertySetManager> m_propertySetManager;
 	std::shared_ptr<IDiagramDrawer> m_drawer;
+	std::shared_ptr<IDidgramDrawParams> m_params;
 };
 
 
@@ -162,4 +215,30 @@ private:
 
 	QSize m_basesize;
 	double m_scale;
+
+
+
+	enum class MouseMode {
+		None,
+		Selecting,
+		Drawing,
+		MovingMultiple
+	};
+	void handleSelectPress(QMouseEvent* event);
+	void handleDrawPress(QMouseEvent* event);
+	void updateSelectingRect(QMouseEvent* event);
+	void handleDrawing(QMouseEvent* event);
+	void handleMoveMultiple(QMouseEvent* event);
+	void finalizeSelection(QMouseEvent* event);
+	void finalizeDrawing(QMouseEvent* event);
+	void finalizeMove(QMouseEvent* event);
+
+	MouseMode m_currentMode;
+
+	bool m_ismouseDrawing;
+
+	std::unique_ptr<drawStragety> m_currentDrawStragety;
+	bool m_isDrawing;
+	std::shared_ptr<IDiagramDrawer> m_drawingDrawer;
+	std::shared_ptr<IDidgramDrawParams> m_drawingParams;
 };

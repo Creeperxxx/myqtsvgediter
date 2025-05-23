@@ -207,9 +207,9 @@ std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> propertyDataVecOfPro
 
 void propertyDataVecOfPropertySetCreator::addBuilder(std::unique_ptr<IpropertyDataBuilder> builder)
 {
-	if (builder == nullptr || builder.get() == nullptr)
+	if (builder == nullptr)
 		throw std::runtime_error("error");
-	m_builders.push_back(builder);
+	m_builders.push_back(std::move(builder));
 }
 
 propertyDataVecOfPropertySetCreatorFactor& propertyDataVecOfPropertySetCreatorFactor::getInstance()

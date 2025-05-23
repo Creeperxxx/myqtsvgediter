@@ -156,155 +156,155 @@ void MyMainWindow::init()
 	centralwidgetlayout->addWidget(m_huabuparentscroll);
 	m_huabuparentscroll->viewport()->installEventFilter(this);
 
-	DiagramDrawInterface::getInstance()
-		.addDrawerCreator(ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerRect>(params);
-			})
-		.addDrawerCreator(ShapeType::Circle, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerCircle>(params);
-			})
-		.addDrawerCreator(ShapeType::Triangle, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerTriangle>(params);
-			})
-		.addDrawerCreator(ShapeType::Line, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerLine>(params);
-			})
-		.addDrawerCreator(ShapeType::Mouse, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerMouse>(params);
-			})
-		.addDrawerCreator(ShapeType::choose, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerChoose>(params);
-			})
-		.addDrawerCreator(ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
-		return std::make_shared<DiagramDrawerText>(params);
-			});
+	//DiagramDrawInterface::getInstance()
+	//	.addDrawerCreator(ShapeType::Rect, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerRect>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::Circle, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerCircle>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::Triangle, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerTriangle>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::Line, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerLine>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::Mouse, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerMouse>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::choose, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerChoose>(params);
+	//		})
+	//	.addDrawerCreator(ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
+	//	return std::make_shared<DiagramDrawerText>(params);
+	//		});
 
 
-	createParamsInterface::getInstance()
-		.add(ShapeType::Rect, []() {
-		return std::make_shared<createParamsRect>();
-			})
-		.add(ShapeType::Circle, []() {
-		return std::make_shared<createParamsCircle>();
-			})
-		.add(ShapeType::Triangle, []() {
-		return std::make_shared<createParamsTriangle>();
-			})
-		.add(ShapeType::Line, []() {
-		return std::make_shared<createParamsLine>();
-			})
-		.add(ShapeType::Mouse, []() {
-		return std::make_shared<createParamsMouse>();
-			})
-		.add(ShapeType::choose, []() {
-		return std::make_shared<createParamsChoose>();
-			})
-		.add(ShapeType::Text, []() {
-		return std::make_shared<createParamsText>();
-			});
+	//createParamsInterface::getInstance()
+	//	.add(ShapeType::Rect, []() {
+	//	return std::make_shared<createParamsRect>();
+	//		})
+	//	.add(ShapeType::Circle, []() {
+	//	return std::make_shared<createParamsCircle>();
+	//		})
+	//	.add(ShapeType::Triangle, []() {
+	//	return std::make_shared<createParamsTriangle>();
+	//		})
+	//	.add(ShapeType::Line, []() {
+	//	return std::make_shared<createParamsLine>();
+	//		})
+	//	.add(ShapeType::Mouse, []() {
+	//	return std::make_shared<createParamsMouse>();
+	//		})
+	//	.add(ShapeType::choose, []() {
+	//	return std::make_shared<createParamsChoose>();
+	//		})
+	//	.add(ShapeType::Text, []() {
+	//	return std::make_shared<createParamsText>();
+	//		});
 
 
-	propertyDataVecOfPropertySetCreatorFactor::getInstance()
-		.addCreator(myconfig::getInstance().getPenColorName(), []() {
-		return std::make_shared<PenColorDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getPenWdithName(), []() {
-		return std::make_shared<PenWidthDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getBrushColorName(), []() {
-		return std::make_shared<BrushDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getRotateAngleName(), []() {
-		return std::make_shared<RotateDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getSpaceWidthName(), []() {
-		return std::make_shared<SpacewidthDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getSpaceHeightName(), []() {
-		return std::make_shared<SpaceheightDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getScaleName(), []() {
-		return std::make_shared<ScaleDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCenterHOffsetName(), []() {
-		return std::make_shared<CenterHoffsetDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCenterVOffsetName(), []() {
-		return std::make_shared<CenterVoffsetDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getNameName(), []() {
-		return std::make_shared<NamePropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getRectRadioName(), []() {
-		return std::make_shared<RectRadioDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCircleRadioName(), []() {
-		return std::make_shared<CircleRadioDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getTriangleRadioName(), []() {
-		return std::make_shared<TriangleRadioDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getEdgeTypeName(), []() {
-		return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getFontFamilyName(), []() {
-		return std::make_shared<TextFontFamilyDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getFontSizeName(), []() {
-		return std::make_shared<TextFontSizeDrawParamsPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCanvasHeightName(), []() {
-		return std::make_shared<HuabuHeightPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCanvasWidthName(), []() {
-		return std::make_shared<HuabuWidthPropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getCanvasScaleName(), []() {
-		return std::make_shared<HuabuScalePropertyDataBuilder>();
-			})
-		.addCreator(myconfig::getInstance().getPenStyleName(), []() {
-		return std::make_shared<PenStyleDrawParamsPropertyDataBuilder>();
-			});
+	//propertyDataVecOfPropertySetCreatorFactor::getInstance()
+	//	.addCreator(myconfig::getInstance().getPenColorName(), []() {
+	//	return std::make_shared<PenColorDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getPenWdithName(), []() {
+	//	return std::make_shared<PenWidthDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getBrushColorName(), []() {
+	//	return std::make_shared<BrushDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getRotateAngleName(), []() {
+	//	return std::make_shared<RotateDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getSpaceWidthName(), []() {
+	//	return std::make_shared<SpacewidthDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getSpaceHeightName(), []() {
+	//	return std::make_shared<SpaceheightDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getScaleName(), []() {
+	//	return std::make_shared<ScaleDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCenterHOffsetName(), []() {
+	//	return std::make_shared<CenterHoffsetDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCenterVOffsetName(), []() {
+	//	return std::make_shared<CenterVoffsetDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getNameName(), []() {
+	//	return std::make_shared<NamePropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getRectRadioName(), []() {
+	//	return std::make_shared<RectRadioDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCircleRadioName(), []() {
+	//	return std::make_shared<CircleRadioDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getTriangleRadioName(), []() {
+	//	return std::make_shared<TriangleRadioDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getEdgeTypeName(), []() {
+	//	return std::make_shared<TriangleEdgetypeDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getFontFamilyName(), []() {
+	//	return std::make_shared<TextFontFamilyDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getFontSizeName(), []() {
+	//	return std::make_shared<TextFontSizeDrawParamsPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCanvasHeightName(), []() {
+	//	return std::make_shared<HuabuHeightPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCanvasWidthName(), []() {
+	//	return std::make_shared<HuabuWidthPropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getCanvasScaleName(), []() {
+	//	return std::make_shared<HuabuScalePropertyDataBuilder>();
+	//		})
+	//	.addCreator(myconfig::getInstance().getPenStyleName(), []() {
+	//	return std::make_shared<PenStyleDrawParamsPropertyDataBuilder>();
+	//		});
 
 
 
 
 
-	auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
-	auto p = creator->create();
-	auto juxing = new diagram(p);
+	//auto creator = createParamsInterface::getInstance().getParams(ShapeType::Rect);
+	//auto p = creator->create();
+	auto juxing = new diagram(myqtsvg::ShapeType::Rect);
 	m_tooltipsWidgets.insert("rectdrawbutton", juxing);
 
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::Circle);
-	p = creator->create();
-	auto yuanxing = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::Circle);
+	//p = creator->create();
+	auto yuanxing = new diagram(myqtsvg::ShapeType::Circle);
 	m_tooltipsWidgets.insert("quadrilateraldrawbutton", yuanxing);
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
-	p = creator->create();
-	auto sanjiaoxing = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::Triangle);
+	//p = creator->create();
+	auto sanjiaoxing = new diagram(myqtsvg::ShapeType::Triangle);
 	m_tooltipsWidgets.insert("pentagondrawbutton", sanjiaoxing);
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::Line);
-	p = creator->create();
-	auto xian = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::Line);
+	//p = creator->create();
+	auto xian = new diagram(myqtsvg::ShapeType::Line);
 	m_tooltipsWidgets.insert("linedrawbutton", xian);
 
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::Mouse);
-	p = creator->create();
-	auto mouse = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::Mouse);
+	//p = creator->create();
+	auto mouse = new diagram(myqtsvg::ShapeType::Mouse);
 	m_tooltipsWidgets.insert("freehandlinedrawbutton", mouse);
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::choose);
-	p = creator->create();
-	auto choose = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::choose);
+	//p = creator->create();
+	auto choose = new diagram(myqtsvg::ShapeType::choose);
 	m_tooltipsWidgets.insert("selectionbutton", choose);
 
-	creator = createParamsInterface::getInstance().getParams(ShapeType::Text);
-	p = creator->create();
-	auto text = new diagram(p);
+	//creator = createParamsInterface::getInstance().getParams(ShapeType::Text);
+	//p = creator->create();
+	auto text = new diagram(myqtsvg::ShapeType::Text);
 	m_tooltipsWidgets.insert("stardrawbutton", text);
 
 	maintoolbar->addWidget(juxing);

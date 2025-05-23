@@ -8,13 +8,10 @@ bool DrawResultRect::iscontainPoint(QPointF point)
 
 QPainterPath DrawResultRect::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(1);
-
 	QPainterPath path;
 	path.addPolygon(m_rect);
 	path.closeSubpath();
-	return stroker.createStroke(path);
+	return path;
 }
 
 QRect DrawResultRect::getBoundingRect()
@@ -26,24 +23,15 @@ QRect DrawResultRect::getBoundingRect()
 
 bool DrawResultCircle::iscontainPoint(QPointF point)
 {
-	if (m_circle.size() < 4) return false;
-
-	// 创建椭圆路径
-	QPainterPath path;
-	path.addEllipse(QRectF(m_circle[0], m_circle[2]));
-
-	return path.contains(point);
+	return m_circle.containsPoint(point, Qt::OddEvenFill);
 }
 
 QPainterPath DrawResultCircle::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(1);
-
 	QPainterPath path;
 	path.addPolygon(m_circle);
 	path.closeSubpath();
-	return stroker.createStroke(path);
+	return path;
 }
 
 QRect DrawResultCircle::getBoundingRect()
@@ -60,12 +48,10 @@ bool DrawResultTriangle::iscontainPoint(QPointF point)
 
 QPainterPath DrawResultTriangle::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(1);
 	QPainterPath path;
 	path.addPolygon(m_triangle);
 	path.closeSubpath();
-	return stroker.createStroke(path);
+	return path;
 }
 
 QRect DrawResultTriangle::getBoundingRect()
@@ -84,16 +70,15 @@ bool DrawResultLine::iscontainPoint(QPointF point)
 
 QPainterPath DrawResultLine::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(1);
-
 	QPainterPath path;
 	path.moveTo(m_line.p1());
 	path.lineTo(m_line.p2());
-	path.closeSubpath();
 
+	QPainterPathStroker stroker;
+	stroker.setWidth(myconfig::getInstance().getClickTolerance());
 	return stroker.createStroke(path);
 }
+
 
 QRect DrawResultLine::getBoundingRect()
 {
@@ -145,13 +130,10 @@ bool DrawResultMouse::iscontainPoint(QPointF point)
 
 QPainterPath DrawResultMouse::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(1);
-
 	QPainterPath path(m_path);
 	path.closeSubpath();
 
-	return stroker.createStroke(path);
+	return path;
 }
 
 QRect DrawResultMouse::getBoundingRect()
@@ -163,14 +145,10 @@ QRect DrawResultMouse::getBoundingRect()
 
 QPainterPath DrawResultText::getPainterPath()
 {
-	QPainterPathStroker stroker;
-	stroker.setWidth(m_painterpen.width());
-
 	QPainterPath path;
 	path.addRect(m_rect);
-	path.closeSubpath();
 
-	return stroker.createStroke(path);
+	return path;
 }
 
 bool DrawResultText::iscontainPoint(QPointF point)

@@ -365,6 +365,8 @@ TextLineEdit::TextLineEdit(QWidget* parent)
 	setFrame(false);
 	setAlignment(Qt::AlignCenter);
 
+	setStyleSheet("background:transparent;");
+
 	QObject::connect(this, &TextLineEdit::textChanged, this, &TextLineEdit::adjustsize);
 	QObject::connect(this, &TextLineEdit::editingFinished, this, &TextLineEdit::signalHasFocusOut);
 }

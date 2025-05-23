@@ -267,7 +267,7 @@ DiagramDrawerTriangle::DiagramDrawerTriangle(std::shared_ptr<IDidgramDrawParams>
 	, m_result(std::make_shared<DrawResultTriangle>())
 	, m_triangle(QPolygonF())
 {
-	if (params == nullptr || params.get() == nullptr || params->m_type != ShapeType::Triangle)
+	if (params == nullptr || params.get() == nullptr || params->m_type != myqtsvg::ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(params);
 	if (castparams == nullptr)
@@ -598,11 +598,11 @@ void DiagramDrawerText::draw(QPainter& painter)
 	{
 		if (m_params->m_textedit == nullptr)
 			throw std::runtime_error("error");
-		auto pos = m_params->m_center + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
-		auto newpos = pos - m_params->m_textedit->rect().center();
+		auto newpos = m_params->m_textedit->pos() + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
 		m_params->m_textedit->move(newpos);
 		m_params->m_textedit->setFont(m_params->m_font);
 		m_params->m_textedit->setTextColor(m_params->m_pen.color());
+		m_params->m_textedit->adjustsize();
 
 
 		auto rect = m_params->m_textedit->geometry();

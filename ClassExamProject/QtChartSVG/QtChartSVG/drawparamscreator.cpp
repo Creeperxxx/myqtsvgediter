@@ -149,4 +149,5 @@ std::shared_ptr<ICreateParams> createParamsInterface::getParams(myqtsvg::ShapeTy
 
 createParamsInterface::createParamsInterface()
 {
+	defaultInit();
 }

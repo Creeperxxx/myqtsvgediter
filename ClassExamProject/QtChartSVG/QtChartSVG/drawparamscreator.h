@@ -59,11 +59,12 @@ class createParamsInterface
 {
 public:
 	static createParamsInterface& getInstance();
-	void defaultInit();
 	createParamsInterface& add(myqtsvg::ShapeType type, std::function<std::shared_ptr<ICreateParams>()> creator);
 	std::shared_ptr<ICreateParams> getParams(myqtsvg::ShapeType type);
 private:
 	createParamsInterface();
+	createParamsInterface(const createParamsInterface& other) = delete;
+	void defaultInit();
 
 	std::map<myqtsvg::ShapeType, std::function<std::shared_ptr<ICreateParams>()>> m_map;
 

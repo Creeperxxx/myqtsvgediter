@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kdialog", "kdialog\kdialog.vcxproj", "{0208020B-5EE5-4A5E-9D23-E540C315B4DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Debug|x64.ActiveCfg = Debug|x64
+		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Debug|x64.Build.0 = Debug|x64
+		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Release|x64.ActiveCfg = Release|x64
+		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F1E1101-DBA0-4BB7-87C2-C724DC2CE8F5}
+	EndGlobalSection
+EndGlobal
