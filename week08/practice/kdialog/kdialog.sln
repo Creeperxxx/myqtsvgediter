@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kdialog", "kdialog\kdialog.vcxproj", "{0208020B-5EE5-4A5E-9D23-E540C315B4DD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kdemo", "kdialog\kdialog.vcxproj", "{0208020B-5EE5-4A5E-9D23-E540C315B4DD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0BC9257C-E29A-4137-9FB1-5BA177F710A3} = {0BC9257C-E29A-4137-9FB1-5BA177F710A3}
+		{874A0D48-FE78-4E5C-AFE1-9EE329586950} = {874A0D48-FE78-4E5C-AFE1-9EE329586950}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klogin", "klogin\klogin.vcxproj", "{0BC9257C-E29A-4137-9FB1-5BA177F710A3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kpurchase", "kpurchase\kpurchase.vcxproj", "{874A0D48-FE78-4E5C-AFE1-9EE329586950}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,14 @@ Global
 		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Debug|x64.Build.0 = Debug|x64
 		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Release|x64.ActiveCfg = Release|x64
 		{0208020B-5EE5-4A5E-9D23-E540C315B4DD}.Release|x64.Build.0 = Release|x64
+		{0BC9257C-E29A-4137-9FB1-5BA177F710A3}.Debug|x64.ActiveCfg = Debug|x64
+		{0BC9257C-E29A-4137-9FB1-5BA177F710A3}.Debug|x64.Build.0 = Debug|x64
+		{0BC9257C-E29A-4137-9FB1-5BA177F710A3}.Release|x64.ActiveCfg = Release|x64
+		{0BC9257C-E29A-4137-9FB1-5BA177F710A3}.Release|x64.Build.0 = Release|x64
+		{874A0D48-FE78-4E5C-AFE1-9EE329586950}.Debug|x64.ActiveCfg = Debug|x64
+		{874A0D48-FE78-4E5C-AFE1-9EE329586950}.Debug|x64.Build.0 = Debug|x64
+		{874A0D48-FE78-4E5C-AFE1-9EE329586950}.Release|x64.ActiveCfg = Release|x64
+		{874A0D48-FE78-4E5C-AFE1-9EE329586950}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

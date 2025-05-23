@@ -3,8 +3,14 @@
 
 #include "pch.h"
 #include "framework.h"
+#include "kpurchase.h"
 
-// TODO: 这是一个库函数示例
-void fnkpurchase()
+
+purchasedialog::purchasedialog(QWidget* parent)
+	:QDialog(parent)
 {
+	QHBoxLayout* layout = new QHBoxLayout();
+	setLayout(layout);
+	QPushButton* ok = new QPushButton("购买会员");
+	layout->addWidget(ok);
 }

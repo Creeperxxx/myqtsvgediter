@@ -1,0 +1,429 @@
+<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" FontFamily="Segoe UI" FontSize="12">
+  <FlowDocument.Tag><![CDATA[{
+  "timestamp": "2025-05-23 14:52:43",
+  "files": {
+    "D:\\Database\\Code\\vs\\c++\\KDevelop-Training\\KDevelop-Training\\week08\\practice\\kdialog\\klogin\\klogin.vcxproj": {
+      "before": "7VltU+M2EL7PnelvaMZDJ/CBOCFcU4rjG86BNHPhZQgv/dAZRrGVxIdteWSZI+31v3dlvThOnIMABy3DfWAu0q60frT77K7U/undO+vDbRhUbjBNfBK1jUatblRw5BLPj8ZtI2WjzV+ND/aPP1gnlHzGLqt08AilATtDdIxZ0jY+pn7gGRVYJYJfE8bi30wzcSc4REkt9F1KEjJiNZeEpodvcEBiTM0wGXI1c6tebxqweqVi9RgOu5SkcaWPhjhoG3JDh0Qjf5xSxMDARAiDeNlspRe5QerhttHBw3T89dKPmltKA3QKS9mZjGUWB7kp/J91EiA2IjS0s0UsU/8WEjAg8ChTv8O4UxxglOA7zJNSL2GgQO/2l+3HYgdLfBfkvmXavXFb0TjL1B4qHBYcAFyZTQtO2w3IEAW5m1440k8uRITZjVatbpkLw9KrPuHpF0I94XRc0zLVkJSQy3VT37P/rg/dna33LXcTb+2gze1Gs7W5Mxo2Nt8PUaPVGrUaddT8R7tqpiOXOSWEHaEQJzFysX0dkLEfWWZxVIpCAHjkSyICXoWB/pw6/5xvivBlMhtytGTEhzGhrCK/qG2srV84klZOEJts/Hmo2cOJ45oknloMuCdGxSw7BYhGz+dE0Taqa+uF2Nz4uraurN+ottvVGY6oGop0CirK/YvEcTaNsd2ZRgjIre8PKaLTuSDNJCR65wnONhKSPk5sRlNsmYvjUkHZeEZIkGBm3zS2m3kQqVEp7EwQRS7DdACS55EPvA1rF0aXwg+45ydSWQW5AoE9K3YjiK0nA+9yQgIMKIwpCo9j5of+X1mSkSe0dPpFsdfc/Ky4vx6fBdZ/VuRei8f2ViPrIkkL5UKi3L9lOOI1JzAXg1pTpkzIstlGmexsmigoD4D2sCfo+X4aiuwGEwxVq7ES3RUSRWYTJLRFPIDRKU+gHZ/Op66ZzFNLQUzlsBnSxbd+wpJ1yForr1Pd0OmrT1wU7MVxBzGkEolOlfeC9jFAzeWFN6h037Kk+MjI6A2m5TApj3p9QKk4K/AaD/1DxFtmHbS86YDK14+yslZIz9DGalWucjUncEgY+wGWA8Bnl4hGQMN93qLb2V+oOguDouwB0UGn70ywey3rJP1TC5xQDPzv4iQhNLc9sS97R82t3avO/sfz7u6n/nG3d3S1/8fJ8enZYPcKJjvHl/Cf88Fpp9/f/Xl9yTIbvJko30BbwMt4aN5R5OJDKImlpfOjWhzWg/sJDoj3O0YepjacRLbN3PByjQOOZuxOapMSvWxS6EJ1Pge+1fej6/wgBulwME3g1HkTyBsvy8yH9P5dHGG4EhG9RU98LO975JcundYL7EdoGODzPceWFUo+oAzVdonWNz/J2eT8SPdUAZ7dslTzhmsOo9Uc9CCNXA5G5sb8K8CxJTClUxqUXsSoD1WJq8RUt1YyoZW0/4siWf/UAsu8VYTD0Vs4FLjoQeEgnNc5PuzsnR2QgF9eygMvm9EnI7s+fIpHmMKtp+7OSya00tLYEue/dFovkEfai4beTCf5wnnhLSMU0/GDQmCp3/3P3FJlhELJN58zX2U+eMsETxAGZXwvIqBsRnNyCeELrZIJrfRfCrm8JoPYcAL5Epa/iI3gkhPD28J1baJ6i3JB8RZwP6mrcfbccZdwVharXRfeUYrPKplR0g9y670gCJEf1dw4VuuUC/KtuFBeTy/U9g+4+xFc5FAMFXdJef+0m6lS+Ltvp5j22Te8H5zzndKi46x2JcnEi7XyH3mDV+i/9aWkfIYqv2HkHpC9hdv/Ag==",
+      "after": "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"
+    }
+  }
+}]]></FlowDocument.Tag>
+  <Section Margin="0,24" TextAlignment="Center">
+    <Paragraph FontSize="24" FontWeight="Bold" Margin="12,0">
+      <LineBreak />
+      <Span Foreground="Gray">Qt Visual Studio Tools</Span>
+    </Paragraph>
+    <Paragraph FontSize="42" Margin="12,0" FontWeight="Bold">
+      <Span TextDecorations="Underline">Project Format Conversion</Span>
+    </Paragraph>
+    <Paragraph Margin="12,8" FontSize="18">
+      <Span>Report generated on 2025-05-23 14:52:43</Span>
+    </Paragraph>
+  </Section>
+  <Section>
+    <Paragraph FontSize="32" FontWeight="Bold" Margin="12,0">
+      <Span>Files</Span>
+    </Paragraph>
+    <Paragraph Margin="24,12,0,0">
+      <Span FontFamily="Consolas" FontSize="14" Background="WhiteSmoke"><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+      <LineBreak />
+      <Hyperlink NavigateUri="file://D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj?before">[Before]</Hyperlink>
+      <Hyperlink NavigateUri="file://D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj?after">[After]</Hyperlink>
+      <Hyperlink NavigateUri="file://D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj?diff&amp;before&amp;after">
+                        [Diff before/after]
+                    </Hyperlink>
+      <Hyperlink NavigateUri="file://D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj?diff&amp;before&amp;current">
+                        [Diff before/current]
+                    </Hyperlink>
+      <Hyperlink NavigateUri="file://D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj?diff&amp;after&amp;current">
+                        [Diff after/current]
+                    </Hyperlink>
+      <LineBreak />
+    </Paragraph>
+  </Section>
+  <Section>
+    <Paragraph FontSize="32" FontWeight="Bold" Margin="12,0">
+      <Span>Changes</Span>
+    </Paragraph>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Enabling multi-processor compilation]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[      <MultiProcessorCompilation>true</MultiProcessorCompilation>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Project format version]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Keyword>QtVS_v304</Keyword>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Fallback for QTMSBUILD environment variable]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Default Qt properties]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Import Project="$(QtMsBuild)\qt_defaults.props" Condition="Exists('$(QtMsBuild)\qt_defaults.props')" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt build settings]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <PropertyGroup Label="QtSettings" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Warn if Qt/MSBuild is not found]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') OR !Exists('$(QtMsBuild)\Qt.props')">]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  </Target>]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt property sheet]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[    <Import Project="$(QtMsBuild)\Qt.props" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+    <Paragraph FontSize="20" FontWeight="Bold" Margin="12">
+      <Span><![CDATA[🡺 Qt targets]]></Span>
+    </Paragraph>
+    <Table CellSpacing="0" BorderBrush="Gray" BorderThickness="0.5">
+      <Table.Columns>
+        <TableColumn />
+        <TableColumn />
+      </Table.Columns>
+      <TableRowGroup>
+        <TableRow Background="Orange">
+          <TableCell ColumnSpan="2" BorderThickness="0.5" BorderBrush="Gray">
+            <Paragraph Margin="10,5" FontWeight="Bold">
+              <Span><![CDATA[D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week08\practice\kdialog\klogin\klogin.vcxproj]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell ColumnSpan="2" Background="WhiteSmoke" BorderBrush="Gray" BorderThickness="0.5" />
+        </TableRow>
+        <TableRow>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0" />
+          </TableCell>
+          <TableCell BorderThickness="0, 0, 0.5, 0" BorderBrush="Gray">
+            <Paragraph FontFamily="Consolas" Margin="4, 0">
+              <Span Background="LightGreen"><![CDATA[  <Import Project="$(QtMsBuild)\qt.targets" Condition="Exists('$(QtMsBuild)\qt.targets')" />]]></Span>
+            </Paragraph>
+          </TableCell>
+        </TableRow>
+      </TableRowGroup>
+    </Table>
+  </Section>
+  <Section>
+    <Paragraph />
+  </Section>
+</FlowDocument>
+<!--Z57cyjspXrSbnm5I3dCBslcmqJqQC0jIcRvf3MKsOtc=-->
