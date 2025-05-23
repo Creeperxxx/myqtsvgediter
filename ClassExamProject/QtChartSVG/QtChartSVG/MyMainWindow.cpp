@@ -398,9 +398,9 @@ void MyMainWindow::init()
 
 	QObject::connect(copyTuxingAction, &QAction::triggered, huabuwidget, &huabu::onCopyTuinxg);
 
-	QObject::connect(pasteTuxingAction, &QAction::triggered, huabuwidget, &huabu::oncrtyvTuxing);
+	QObject::connect(pasteTuxingAction, &QAction::triggered, huabuwidget, &huabu::onpasteTuxing);
 
-	QObject::connect(quanxuanAction, &QAction::triggered, huabuwidget, &huabu::onartyaTuxing);
+	QObject::connect(quanxuanAction, &QAction::triggered, huabuwidget, &huabu::onSelectAllTuxing);
 	QObject::connect(deleteAction, &QAction::triggered, huabuwidget, &huabu::onDeleteTuxing);
 }
 

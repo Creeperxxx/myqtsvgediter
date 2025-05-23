@@ -38,13 +38,6 @@ public:
 
 	void onParamsValueChanged();
 
-
-
-
-
-
-
-
 	std::shared_ptr<IDiagramDrawer> m_drawer;
 	std::shared_ptr<IDidgramDrawParams> m_params;
 	std::shared_ptr<propertySetManager> m_propertySetManager;

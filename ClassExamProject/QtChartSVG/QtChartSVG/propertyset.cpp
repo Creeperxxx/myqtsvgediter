@@ -28,7 +28,7 @@ void drawParamsPropertySet::onPenColorChanged(QVariant value)
 {
 	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
-	m_params->m_pen.setColor(value.value<QColor>());
+	m_params->setPenColor(value.value<QColor>());
 	emit SignalValueChangedByData();
 }
 
@@ -36,7 +36,7 @@ void drawParamsPropertySet::onPenWidthChanged(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_params->m_pen.setWidth(value.value<int>());
+	m_params->setPenwidth(value.value<int>());
 	emit SignalValueChangedByData();
 }
 
@@ -44,7 +44,8 @@ void drawParamsPropertySet::onPenStyleChanged(QVariant value)
 {
 	if (!value.canConvert<QString>())
 		throw std::runtime_error("error");
-	m_params->m_pen.setStyle(QstringToPenStyle(value.value<QString>()));
+	m_params->setPenStyle(myqtsvg::QstringToPenStyle(value.value<QString>()));
+
 	emit SignalValueChangedByData();
 }
 
@@ -52,7 +53,7 @@ void drawParamsPropertySet::onBrushColorChanged(QVariant value)
 {
 	if (!value.canConvert<QColor>())
 		throw std::runtime_error("error");
-	m_params->m_brush.setColor(value.value<QColor>());
+	m_params->setBrushColor(value.value<QColor>());
 	emit SignalValueChangedByData();
 }
 
@@ -60,7 +61,7 @@ void drawParamsPropertySet::onRotateChanged(QVariant value)
 {
 	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
-	m_params->m_rotate = value.value<double>();
+	m_params->setRotate(value.value<double>());
 	emit SignalValueChangedByData();
 }
 
@@ -68,15 +69,20 @@ void drawParamsPropertySet::onSpacewidthChanged(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_params->m_spacesize.setWidth(value.value<int>());
+	QSize spacesize = m_params->getSpacesize();
+	spacesize.setWidth(value.value<int>());
+	m_params->setSpacesize(spacesize);
 	emit SignalValueChangedByData();
+
 }
 
 void drawParamsPropertySet::onSpaceHeightChanged(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_params->m_spacesize.setHeight(value.value<int>());
+	QSize size = m_params->getSpacesize();
+	size.setHeight(value.value<int>());
+	m_params->setSpacesize(size);
 	emit SignalValueChangedByData();
 }
 
@@ -84,7 +90,7 @@ void drawParamsPropertySet::onScaleChanged(QVariant value)
 {
 	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
-	m_params->m_scale = value.value<double>();
+	m_params->setScale(value.value<double>());
 	emit SignalValueChangedByData();
 }
 
@@ -92,7 +98,7 @@ void drawParamsPropertySet::onCenterHOffset(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_params->m_centerHoffset = value.value<int>();
+	m_params->setCenterHOffset(value.value<int>());
 	emit SignalValueChangedByData();
 }
 
@@ -100,13 +106,13 @@ void drawParamsPropertySet::onCenterVOffset(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_params->m_centerVoffset = value.value<int>();
+	m_params->setCenterVOffset(value.value<int>());
 	emit SignalValueChangedByData();
 }
 
 void drawParamsPropertySet::onRectRadioChanged(QVariant value)
 {
-	if (m_params->m_type != myqtsvg::ShapeType::Rect)
+	if (m_params->getType() != myqtsvg::ShapeType::Rect)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsRect>(m_params);
 	if (castparams == nullptr)
@@ -114,13 +120,13 @@ void drawParamsPropertySet::onRectRadioChanged(QVariant value)
 	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
 
-	castparams->m_boundingrectradio = value.value<double>();
+	castparams->setRadio(value.value<double>());
 	emit SignalValueChangedByData();
 }
 
 void drawParamsPropertySet::onCricleRadioChanged(QVariant value)
 {
-	if (m_params->m_type != myqtsvg::ShapeType::Circle)
+	if (m_params->getType() != myqtsvg::ShapeType::Circle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsCircle>(m_params);
 	if (castparams == nullptr)
@@ -128,28 +134,28 @@ void drawParamsPropertySet::onCricleRadioChanged(QVariant value)
 	if (!value.canConvert<double>())
 		throw std::runtime_error("error");
 
-	castparams->m_boundingrectradio = value.value<double>();
+	castparams->setRadio(value.value<double>());
 	emit SignalValueChangedByData();
 
 }
 
 void drawParamsPropertySet::onTriangleRadioChanged(QVariant value)
 {
-	if (m_params->m_type != myqtsvg::ShapeType::Triangle)
+	if (m_params->getType() != myqtsvg::ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	if (!value.canConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>())
+	if (!value.canConvert<DiagramDrawParamsTriangle::sideRadios>())
 		throw std::runtime_error("error");
 
-	castparams->m_triangleSizeRadios = value.value<DiagramDrawParamsTriangle::TriangleSizeRadios>();
+	castparams->setRadios(value.value<DiagramDrawParamsTriangle::sideRadios>());
 	emit SignalValueChangedByData();
 }
 
 void drawParamsPropertySet::onTriangleEdgetypeRadioChanged(QVariant value)
 {
-	if (m_params->m_type != myqtsvg::ShapeType::Triangle)
+	if (m_params->getType() != myqtsvg::ShapeType::Triangle)
 		throw std::runtime_error("error");
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(m_params);
 	if (castparams == nullptr)
@@ -157,7 +163,7 @@ void drawParamsPropertySet::onTriangleEdgetypeRadioChanged(QVariant value)
 	if (!value.canConvert<QString>())
 		throw std::runtime_error("error");
 
-	castparams->m_edgetype = DiagramDrawParamsTriangle::edgetypeStringToEnum(value.value<QString>());
+	castparams->setEdgeType(DiagramDrawParamsTriangle::edgetypeStringToEnum(value.value<QString>()));
 	emit SignalValueChangedByData();
 }
 
@@ -169,7 +175,7 @@ void drawParamsPropertySet::onTextFamilyChanged(QVariant value)
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 
-	castparams->m_font.setFamily(value.value<QString>());
+	castparams->setFontFamily(value.value<QString>());
 
 	emit SignalValueChangedByData();
 }
@@ -182,7 +188,7 @@ void drawParamsPropertySet::onTextSizeChanged(QVariant value)
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 
-	castparams->m_font.setPointSize(value.value<int>());
+	castparams->setFontSize(value.value<int>());
 
 	emit SignalValueChangedByData();
 
@@ -257,14 +263,14 @@ std::shared_ptr<propertySetManager> initPropertySetManager::createPropertySetMan
 	auto drawParamsSet = std::make_shared<drawParamsPropertySet>();
 	drawParamsSet->m_params = params;
 
-	auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(params->m_type, additionalProperties);
+	auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(params->getType(), additionalProperties);
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
 	drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
 	QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, repaintcallback);
 	setManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
 
 	auto otherset = std::make_shared<otherPropertySet>();
-	otherset->m_name = myqtsvg::ShapetypeEnumToQstring(params->m_type);
+	otherset->m_name = myqtsvg::ShapetypeEnumToQstring(params->getType());
 	propertynamevec.clear();
 	propertynamevec.push_back(config.getNameName());
 	creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);

@@ -27,24 +27,19 @@ void DiagramDrawerRect::draw(QPainter& painter)
 {
 	build();
 
-	QPen pen = m_params->m_pen;
-	QBrush brush = m_params->m_brush;
+	QPen pen = m_params->getPen();
+	QBrush brush = m_params->getBrushColor();
 	painter.setPen(pen);
 	painter.setBrush(brush);
 	painter.drawPolygon(m_rect);
-	if (m_params->m_ischoosed)
-	{
-		painter.setPen(QPen(Qt::blue, 3));
-		painter.drawPath(getResult()->getPainterPath());
-	}
 
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerRect::getResult()
 {
 	build();
-	m_result->m_painterpen = m_params->m_pen;
-	m_result->m_painterbrush = m_params->m_brush;
+	m_result->m_painterpen = m_params->getPen();
+	m_result->m_painterbrush = m_params->getBrushColor();
 	m_result->m_rect = m_rect;
 	return m_result;
 }
@@ -62,7 +57,7 @@ QPolygonF DiagramDrawerRect::calcuBasicalRect()
 {
 	double height = 50;
 
-	double radio = m_params->m_boundingrectradio;
+	double radio = m_params->getRadio();
 	if (radio < 1e-10)
 		throw std::runtime_error("error");
 	double width = height * radio;
@@ -84,7 +79,7 @@ QTransform DiagramDrawerRect::calcuRotateTransform(QPointF center)
 	qreal x = center.x();
 	qreal y = center.y();
 	rotatetransform.translate(x, y);
-	rotatetransform.rotate(m_params->m_rotate);
+	rotatetransform.rotate(m_params->getRotate());
 	rotatetransform.translate(-x, -y);
 	return rotatetransform;
 }
@@ -92,7 +87,7 @@ QTransform DiagramDrawerRect::calcuRotateTransform(QPointF center)
 QTransform DiagramDrawerRect::calcuTranslateTransform(QPointF center)
 {
 	QTransform translateTransform;
-	QPoint realcenter = calcuRealCenter(m_params->m_center, m_params->m_centerHoffset, m_params->m_centerVoffset);
+	QPoint realcenter = calcuRealCenter(m_params->getCenter(), m_params->getCenterHOffset(), m_params->getCenterVOffset());
 
 	QPointF finalpoint = realcenter - center;
 	translateTransform.translate(finalpoint.x(), finalpoint.y());
@@ -174,16 +169,11 @@ void DiagramDrawerCircle::draw(QPainter& painter)
 		throw std::runtime_error("error");
 	painter.scale(m_scale, m_scale);
 
-	double radio = m_params->m_boundingrectradio;
+	double radio = m_params->m_radio;
 	QSizeF size = QSizeF(m_initheight * radio, m_initheight);
 	painter.drawEllipse(QPointF(0, 0), size.width() / 2, size.height() / 2);
 	painter.resetTransform();
 
-	if (m_params->m_ischoosed)
-	{
-		painter.setPen(QPen(Qt::blue, 3));
-		painter.drawPath(getResult()->getPainterPath());
-	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerCircle::getResult()
@@ -201,7 +191,7 @@ std::shared_ptr<DrawResult> DiagramDrawerCircle::getResult()
 QPolygonF DiagramDrawerCircle::calcuBasicalCircle()
 {
 	qreal height = m_initheight;
-	double radio = m_params->m_boundingrectradio;
+	double radio = m_params->m_radio;
 	qreal width = height * radio;
 
 	QPointF lefttop(0, 0);
@@ -286,11 +276,6 @@ void DiagramDrawerTriangle::draw(QPainter& painter)
 	painter.setPen(m_params->m_pen);
 	painter.setBrush(m_params->m_brush);
 	painter.drawPolygon(m_triangle);
-	if (m_params->m_ischoosed)
-	{
-		painter.setPen(QPen(Qt::blue, 3));
-		painter.drawPath(getResult()->getPainterPath());
-	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerTriangle::getResult()
@@ -320,7 +305,7 @@ QPolygonF DiagramDrawerTriangle::calcuTriangle()
 QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 {
 
-	auto radios = m_params->m_triangleSizeRadios;
+	auto radios = m_params->m_sideRadios;
 	double bottom = radios.m_bottom;
 	double left = radios.m_left;
 	double right = radios.m_right;
@@ -341,7 +326,7 @@ QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 
 QTransform DiagramDrawerTriangle::calcuRotateTransform()
 {
-	auto radios = m_params->m_triangleSizeRadios;
+	auto radios = m_params->m_sideRadios;
 	double bottom = radios.m_bottom;
 	double left = radios.m_left;
 	double right = radios.m_right;
@@ -457,11 +442,6 @@ void DiagramDrawerLine::draw(QPainter& painter)
 	painter.setPen(m_params->m_pen);
 	painter.setBrush(m_params->m_brush);
 	painter.drawLine(m_line);
-	if (m_params->m_ischoosed)
-	{
-		painter.setPen(QPen(Qt::blue, 3));
-		painter.drawPath(getResult()->getPainterPath());
-	}
 }
 
 std::shared_ptr<DrawResult> DiagramDrawerLine::getResult()
@@ -530,11 +510,6 @@ void DiagramDrawerMouse::draw(QPainter& painter)
 		painter.translate(m_params->m_centerHoffset, m_params->m_centerVoffset);
 		painter.drawPath(*m_params->m_path);
 		painter.resetTransform();
-		if (m_params->m_ischoosed)
-		{
-			painter.setPen(QPen(Qt::blue, 3));
-			painter.drawPath(getResult()->getPainterPath());
-		}
 	}
 	else
 	{
@@ -598,12 +573,16 @@ void DiagramDrawerText::draw(QPainter& painter)
 	{
 		if (m_params->m_textedit == nullptr)
 			throw std::runtime_error("error");
-		auto newpos = m_params->m_textedit->pos() + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
-		m_params->m_textedit->move(newpos);
+		//auto newpos = m_params->m_textedit->pos() + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
+		//m_params->m_textedit->move(newpos);
+
 		m_params->m_textedit->setFont(m_params->m_font);
 		m_params->m_textedit->setTextColor(m_params->m_pen.color());
 		m_params->m_textedit->adjustsize();
-
+		QSize size = m_params->m_textedit->size();
+		auto newcenter = m_params->m_center + QPoint(m_params->m_centerHoffset, m_params->m_centerVoffset);
+		QPoint topleft(newcenter.x() - size.width() / 2, newcenter.y() - size.height() / 2);
+		m_params->m_textedit->move(topleft);
 
 		auto rect = m_params->m_textedit->geometry();
 		auto text = m_params->m_textedit->text();

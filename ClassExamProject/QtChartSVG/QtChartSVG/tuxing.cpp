@@ -23,7 +23,7 @@ diagram::diagram(myqtsvg::ShapeType type, QWidget* parent)
 	initDrawParams(type);
 	initDrawer();
 
-	m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->m_type)
+	m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->getType())
 		, m_params
 		, [this]() {
 			this->onParamsValueChanged();
@@ -68,8 +68,8 @@ void diagram::mouseMoveEvent(QMouseEvent* event)
 		return;
 	if ((event->localPos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
 		return;
-	if (m_params->m_type == myqtsvg::ShapeType::Mouse
-		|| m_params->m_type == myqtsvg::ShapeType::choose)
+	if (m_params->getType() == myqtsvg::ShapeType::Mouse
+		|| m_params->getType() == myqtsvg::ShapeType::choose)
 		return;
 	createQDrag();
 	QWidget::mouseMoveEvent(event);
@@ -114,20 +114,20 @@ void diagram::createQDrag()
 	QByteArray array;
 	QDataStream stream(&array, QIODevice::WriteOnly);
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
-	int inttype = static_cast<int>(m_params->m_type);
+	int inttype = static_cast<int>(m_params->getType());
 	stream << inttype;
 	stream << *m_params;
 
 	qmimedata->setData(m_mimetype, array);
 	drag->setMimeData(qmimedata);
 
-	QPixmap pixmap(m_params->m_spacesize);
+	QPixmap pixmap(m_params->getSpacesize());
 	pixmap.fill(Qt::transparent);
 	QPainter painter(&pixmap);
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-	m_params->m_center = pixmap.rect().center();
+	m_params->setCenter(pixmap.rect().center());
 	m_drawer->draw(painter);
 
 	drag->setPixmap(pixmap);
@@ -141,12 +141,12 @@ void diagram::paintEvent(QPaintEvent* event)
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 
-	QSize spacesize = m_params->m_spacesize;
-	m_params->m_center = rect().center();
-	m_params->m_spacesize = size();
+	QSize spacesize = m_params->getSpacesize();
+	m_params->setCenter(rect().center());
+	m_params->setSpacesize(size());
 
 	m_drawer->draw(painter);
-	m_params->m_spacesize = spacesize;
+	m_params->setSpacesize(spacesize);
 }
 
 void diagram::onParamsValueChanged()
@@ -175,7 +175,7 @@ void diagram::initDrawParams(myqtsvg::ShapeType type)
 {
 	auto creator = createParamsInterface::getInstance().getParams(type);
 	auto params = creator->create();
-	if (params == nullptr || params.get() == nullptr || params->m_type != type)
+	if (params == nullptr || params.get() == nullptr || params->getType() != type)
 		throw std::runtime_error("error");
 	m_params = params;
 }

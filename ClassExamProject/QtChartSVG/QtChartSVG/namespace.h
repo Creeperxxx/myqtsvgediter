@@ -38,5 +38,7 @@ namespace myqtsvg
 
 	propertywidgettype diagramShapetypeToPropertyWidgetType(ShapeType type);
 	propertywidgettype huabuShapetypeToPropertyWidgetType(ShapeType type);
-	
+
+	QString PenStyleToQstring(Qt::PenStyle style);
+	Qt::PenStyle QstringToPenStyle(QString style);
 }

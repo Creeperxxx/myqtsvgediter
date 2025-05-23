@@ -11,83 +11,88 @@ std::shared_ptr<IDidgramDrawParams> ICreateParams::create()
 
 void ICreateParams::createRest(std::shared_ptr<IDidgramDrawParams> params)
 {
-	params->m_brush = QBrush(myconfig::getInstance().getBrushColor());
-	params->m_center = QPoint(0, 0);
-	params->m_centerHoffset = 0;
-	params->m_centerVoffset = 0;
-	params->m_ischoosed = false;
-	params->m_isdrawInHuabu = false;
-	params->m_pen = QPen(myconfig::getInstance().getPenColor()
-		, myconfig::getInstance().getPenWidth());
-	params->m_spacesize = QSize(myconfig::getInstance().getSpaceWidth()
-		, myconfig::getInstance().getSpaceHeight());
+	auto& config = myconfig::getInstance();
+	params->setBrushColor(config.getBrushColor());
+	params->setCenter(QPoint(0,0));
+	params->setCenterHOffset(0);
+	params->setCenterVOffset(0);
+	params->setIsDrawInCanvas(false);
+	params->setPenColor(config.getPenColor());
+	params->setPenwidth(config.getPenWidth());
+	params->setPenStyle(myqtsvg::QstringToPenStyle(config.getPenStyle()));
+	params->setSpacesize(QSize(config.getSpaceWidth(), config.getSpaceHeight()));
 }
+
 
 std::shared_ptr<IDidgramDrawParams> createParamsRect::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsRect>();
-	p->m_boundingrectradio = myconfig::getInstance().getRectRadio();
-	p->m_rotate = myconfig::getInstance().getRectRotate();
-	p->m_scale = myconfig::getInstance().getRectScale();
-	p->m_type = myqtsvg::ShapeType::Rect;
+	p->setRadio(config.getRectRadio());
+	p->setRotate(config.getRectRotate());
+	p->setScale(config.getRectScale());
+	p->setType(myqtsvg::ShapeType::Rect);
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsCircle::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsCircle>();
-	p->m_boundingrectradio = myconfig::getInstance().getCircleRadio();
-	p->m_rotate = myconfig::getInstance().getCircleRotate();
-	p->m_scale = myconfig::getInstance().getCircleScale();
-	p->m_type = myqtsvg::ShapeType::Circle;
+	p->setRadio(config.getCircleRadio());
+	p->setRotate(config.getCircleRotate());
+	p->setScale(config.getCircleScale());
+	p->setType(myqtsvg::ShapeType::Circle);
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsTriangle::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsTriangle>();
-	p->m_edgetype = DiagramDrawParamsTriangle::edgetypeStringToEnum(myconfig::getInstance().getTriangleEdgetype());
-	p->m_rotate = myconfig::getInstance().getTriangleRotate();
-	p->m_scale = myconfig::getInstance().getTriangleScale();
-	p->m_type = myqtsvg::ShapeType::Triangle;
-	p->m_triangleSizeRadios = DiagramDrawParamsTriangle::TriangleSizeRadios(
-		myconfig::getInstance().getTriangleBottomRadio(),
-		myconfig::getInstance().getTriangleLeftRadio(),
-		myconfig::getInstance().getTriangleRightRadio()
-	);
+	p->setEdgeType(DiagramDrawParamsTriangle::edgetypeStringToEnum(config.getTriangleEdgetype()));
+	p->setRotate(config.getTriangleRotate());
+	p->setScale(config.getTriangleScale());
+	p->setBottomRadio(config.getTriangleBottomRadio());
+	p->setLeftRadio(config.getTriangleLeftRadio());
+	p->setRightRadio(config.getTriangleRightRadio());
+	p->setType(myqtsvg::ShapeType::Triangle);
 	return p;
 
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsLine::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsLine>();
-	p->m_rotate = myconfig::getInstance().getLineRotate();
-	p->m_scale = myconfig::getInstance().getLineScale();
-	p->m_type = myqtsvg::ShapeType::Line;
+	
+	p->setRotate(config.getLineRotate());
+	p->setScale(config.getLineScale());
+	p->setType(myqtsvg::ShapeType::Line);
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsMouse::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsMouse>();
-	p->m_type = myqtsvg::ShapeType::Mouse;
+	p->setType(myqtsvg::ShapeType::Mouse);
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsChoose::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsChoose>();
-	p->m_type = myqtsvg::ShapeType::choose;
+	p->setType(myqtsvg::ShapeType::choose);
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsText::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsText>();
-	p->m_font.setFamily(myconfig::getInstance().getTextFamily());
-	p->m_font.setPointSize(myconfig::getInstance().getTextSize());
-	p->m_type = myqtsvg::ShapeType::Text;
+	p->setFontFamily(config.getTextFamily());
+	p->setFontSize(config.getTextSize());
+	p->setType(myqtsvg::ShapeType::Text);
 	return p;
 }
 

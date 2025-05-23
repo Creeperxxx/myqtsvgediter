@@ -3,6 +3,7 @@
 #include "propertydata.h"
 #include "propertydelegage.h"
 #include "myconfig.h"
+#include "propertydelegateparams.h"
 #include <qfontdatabase.h>
 
 
@@ -366,13 +367,13 @@ void PropertyWidgetManager::buildPropertyWidgetPenAndBrush(propertyWidget* widge
 		, params);
 
 	QVector<QString> vec;
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::SolidLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::CustomDashLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::MPenStyle));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::SolidLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashDotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::CustomDashLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::MPenStyle));
 	params = std::make_shared<delegateParamsEnum>(vec, myconfig::getInstance().getPenStyle());
 	widget->addPropertyItem(myconfig::getInstance().getPenStyleName(), params);
 
@@ -424,13 +425,13 @@ void PropertyWidgetManager::buildPropertyWidgetPen(propertyWidget* widget)
 	widget->addPropertyItem(myconfig::getInstance().getPenColorName(), params);
 
 	QVector<QString> vec;
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::SolidLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::CustomDashLine));
-	vec.push_back(PenStyleToQstring(Qt::PenStyle::MPenStyle));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::SolidLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashDotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::DashDotDotLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::CustomDashLine));
+	vec.push_back(myqtsvg::PenStyleToQstring(Qt::PenStyle::MPenStyle));
 	params = std::make_shared<delegateParamsEnum>(vec, myconfig::getInstance().getPenStyle());
 	widget->addPropertyItem(myconfig::getInstance().getPenStyleName(), params);
 

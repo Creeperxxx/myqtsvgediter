@@ -8,26 +8,7 @@
 #include <qdatastream.h>
 #include "namespace.h"
 
-//enum class ShapeType
-//{
-	//Rect,
-	//Circle,
-	//Triangle,
-	//Line,
-	//Mouse,
-	//choose,
-	//Text
-//};
-
-//namespace ShapeTypeTool
-//{
-//	QString shapetypeEnumToQstring(ShapeType type);
-//	ShapeType shapetypeQstringToEnum(const QString& type);
-//}
-
-
-
-class IDidgramDrawParams : QObject
+class IDidgramDrawParams : QObject            //绘制图形所需参数
 {
 	Q_OBJECT
 signals:
@@ -43,19 +24,46 @@ public:
 	virtual void serialize(QDataStream& out) const;
 	virtual void deserialize(QDataStream& in);
 
+	QPoint getCenter();
+	void setCenter(QPoint center);
+	QSize getSpacesize();
+	void setSpacesize(QSize size);
+	void setType(myqtsvg::ShapeType type);
+	myqtsvg::ShapeType getType();
+	void setScale(double scale);
+	double getScale();
+	void setPenColor(QColor color);
+	QColor getPenColor();
+	void setPenwidth(int width);
+	int getPenwidth();
+	void setPenStyle(Qt::PenStyle style);
+	Qt::PenStyle getPenstyle();
+	void setPen(QPen pen);
+	QPen getPen();
+	void setBrushColor(QColor color);
+	QColor getBrushColor();
+	void setRotate(int rotate);
+	int getRotate();
+	void setCenterHOffset(int offset);
+	int getCenterHOffset();
+	void setCenterVOffset(int offset);
+	int getCenterVOffset();
+	void setIsDrawInCanvas(bool flag);
+	bool getIsDrawInCanvas();
 
-	QPoint m_center;
-	QSize m_spacesize;
+
+private:
+	QPoint m_center;       //绘制空间的中心
+	QSize m_spacesize;     //绘制空间的size
 	myqtsvg::ShapeType m_type;
-	double m_scale;
-	QPen m_pen;
+	double m_scale;        //缩放
+	QPen m_pen;            
 	QBrush m_brush;
-	int m_rotate;
-	int m_centerHoffset;
-	int m_centerVoffset;
-	bool m_isdrawInHuabu;
+	int m_rotate;          //旋转
+	int m_centerHoffset;   //中心偏移
+	int m_centerVoffset;   
+	bool m_isdrawInHuabu;  //是否在画布上作画
 
-	bool m_ischoosed = false;
 };
 
 class DiagramDrawParamsRect : public IDidgramDrawParams
@@ -68,8 +76,11 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
+	void setRadio(double radio);
+	double getRadio();
+private:
 
-	double m_boundingrectradio;
+	double m_radio;
 };
 
 class DiagramDrawParamsCircle :public IDidgramDrawParams
@@ -82,7 +93,10 @@ public:
 	DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other);
 	DiagramDrawParamsCircle();
 
-	double m_boundingrectradio;
+	void setRadio(double radio);
+	double getRadio();
+private:
+	double m_radio;
 };
 
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
@@ -102,23 +116,40 @@ public:
 	static QString edgetypeEnumToString(EdgeType edgetype);
 	DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other);
 	DiagramDrawParamsTriangle();
-	class TriangleSizeRadios
+	class sideRadios
 	{
 	public:
-		TriangleSizeRadios();
-		TriangleSizeRadios(int bottom, int left, int right);
+		sideRadios();
+		sideRadios(int bottom, int left, int right);
 		int m_bottom;
 		int m_left;
 		int m_right;
+		void setBottom(int bottom);
+		int getBottom();
+		void setLeft(int left);
+		int getLeft();
+		void setRight(int right);
+		int getRight();
 	};
 
+	void setBottomRadio(int bottom);
+	void setLeftRadio(int left);
+	void setRightRadio(int right);
+	int getBottomRadio();
+	int getLeftRadio();
+	int getRightRadio();
+	void setRadios(sideRadios radios);
+	sideRadios getRadios();
+	void setEdgeType(EdgeType type);
+	EdgeType getEdgeType();
 
-	TriangleSizeRadios m_triangleSizeRadios;
+private:
+	sideRadios m_sideRadios;
 	EdgeType m_edgetype;
 
 };
 
-Q_DECLARE_METATYPE(DiagramDrawParamsTriangle::TriangleSizeRadios)
+Q_DECLARE_METATYPE(DiagramDrawParamsTriangle::sideRadios)
 
 class DiagramDrawParamsLine : public IDidgramDrawParams
 {
@@ -141,6 +172,10 @@ public:
 
 	std::shared_ptr<IDidgramDrawParams> clone();
 
+	void setPath(std::shared_ptr<QPainterPath> path);
+	std::shared_ptr<QPainterPath> getPaht();
+
+private:
 	std::shared_ptr<QPainterPath> m_path;
 };
 
@@ -171,9 +206,13 @@ public:
 	void focusOutEvent(QFocusEvent* event)override;
 
 	void adjustsize();
+
+	static void createTextLineEdit(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent = nullptr);
 signals:
 	void signalHasFocusOut();
 
+private:
+	QColor m_textcolor;
 };
 
 class DiagramDrawParamsText : public IDidgramDrawParams
@@ -187,6 +226,16 @@ public:
 
 	std::shared_ptr<IDidgramDrawParams> clone();
 
+	void setFontFamily(QString family);
+	QString getFontFamily();
+	void setFontSize(int size);
+	int getFontSize();
+	void setFont(QFont font);
+	QFont getFont();
+	void setTextEdit(TextLineEdit* edit);
+	TextLineEdit* getTextEdit();
+
+private:
 	QFont m_font;
 	TextLineEdit* m_textedit;
 };

@@ -109,7 +109,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
+    <ClInclude Include="canvasdrawstragety.h" />
     <QtMoc Include="diagramdrawparams.h" />
     <ClInclude Include="drawer.h" />
     <ClInclude Include="drawparamscreator.h" />
@@ -135,6 +135,7 @@
     <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="canvasdrawstragety.cpp" />
     <ClCompile Include="diagramdrawparams.cpp" />
     <ClCompile Include="drawer.cpp" />
     <ClCompile Include="drawparamscreator.cpp" />
@@ -152,16 +153,6 @@
     <ClCompile Include="propertyset.cpp" />
     <ClCompile Include="propertywidget.cpp" />
     <ClCompile Include="tuxing.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="juxing.png" />
-    <Image Include="liubianxing.png" />
-    <Image Include="qipao.png" />
-    <Image Include="sanjiaoxing.png" />
-    <Image Include="wubianxing.png" />
-    <Image Include="wujiaoxing.png" />
-    <Image Include="xian.png" />
-    <Image Include="yuanxing.png" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MyMainWindow.ui" />

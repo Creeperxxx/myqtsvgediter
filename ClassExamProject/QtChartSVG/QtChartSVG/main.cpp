@@ -1,11 +1,12 @@
 #include <QtWidgets/QApplication>
 #include "MyMainWindow.h"
+#include "diagramdrawparams.h"
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    qRegisterMetaType<DiagramDrawParamsTriangle::TriangleSizeRadios>("DiagramDrawParamsTriangle::TriangleSizeRadios");
+    qRegisterMetaType<DiagramDrawParamsTriangle::sideRadios>("DiagramDrawParamsTriangle::TriangleSizeRadios");
 
     QCoreApplication::setOrganizationName("svgeditor"); 
     QCoreApplication::setApplicationName("svgeditor");

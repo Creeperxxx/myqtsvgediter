@@ -93,5 +93,5 @@ public:
 	QString m_leftstr;
 	QString m_rightstr;
 	int m_Radiomax;
-	DiagramDrawParamsTriangle::TriangleSizeRadios m_radios;
+	DiagramDrawParamsTriangle::sideRadios m_radios;
 };

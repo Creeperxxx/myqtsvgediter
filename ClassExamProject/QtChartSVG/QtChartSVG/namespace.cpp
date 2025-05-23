@@ -48,6 +48,8 @@ myqtsvg::ShapeType myqtsvg::ShapetypeQstringToEnum(const QString& type)
 		return myqtsvg::ShapeType::choose;
 	else if (type == myconfig::getInstance().getTextName())
 		return myqtsvg::ShapeType::Text;
+	else
+		throw std::runtime_error("error");
 
 
 }
@@ -112,4 +114,57 @@ myqtsvg::propertywidgettype myqtsvg::huabuShapetypeToPropertyWidgetType(ShapeTyp
 		throw std::runtime_error("error");
 		break;
 	}
+}
+
+QString myqtsvg::PenStyleToQstring(Qt::PenStyle style)
+{
+	switch (style)
+	{
+	default:
+	case Qt::NoPen:
+		return "NoPen";
+		break;
+	case Qt::SolidLine:
+		return "SolidLine";
+		break;
+	case Qt::DashLine:
+		return "DashLine";
+		break;
+	case Qt::DotLine:
+		return "DotLine";
+		break;
+	case Qt::DashDotLine:
+		return "DashDotLine";
+		break;
+	case Qt::DashDotDotLine:
+		return "DashDotDotLine";
+		break;
+	case Qt::CustomDashLine:
+		return "CustomDashLine";
+		break;
+	case Qt::MPenStyle:
+		return "MPenStyle";
+		break;
+
+	}
+}
+
+Qt::PenStyle myqtsvg::QstringToPenStyle(QString style)
+{
+	if (style == "SolidLine")
+		return Qt::SolidLine;
+	else if (style == "DashLine")
+		return Qt::DashLine;
+	else if (style == "DotLine")
+		return Qt::DotLine;
+	else if (style == "DashDotLine")
+		return Qt::DashDotLine;
+	else if (style == "DashDotDotLine")
+		return Qt::DashDotDotLine;
+	else if (style == "CustomDashLine")
+		return Qt::CustomDashLine;
+	else if (style == "MPenStyle")
+		return Qt::MPenStyle;
+	else
+		return Qt::NoPen;
 }

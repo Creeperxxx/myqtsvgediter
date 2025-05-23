@@ -4,12 +4,14 @@
 #include <map>
 #include <vector>
 #include <qstackedwidget.h>
-#include "propertydelegateparams.h"
+#include "namespace.h"
 
-class propertydata;
+
+
+
 class IpropertyDelegate;
-
-
+class propertydata;
+class IdelegatePramas;
 class propertyWidget : public QWidget
 {
 	Q_OBJECT
@@ -24,12 +26,11 @@ public:
 private:
 	std::shared_ptr<IpropertyDelegate> createDelegate(std::shared_ptr<IdelegatePramas> params);
 
-
-
 	std::map<QString, std::shared_ptr<IpropertyDelegate>> m_propertyDelegateMap;
 	QFormLayout* m_shuxinglayout;
 	int m_stackwidgetindex;
 };
+
 
 class propertySetManager;
 class PropertyWidgetManager : public QWidget
@@ -69,8 +70,6 @@ private:
 	void buildPropertyWidgetHuabuSize(propertyWidget* widget);
 	void buildPropertyWidgetCentermove(propertyWidget* widget);
 	void buildPropertyWidgetPen(propertyWidget* widget);
-
-
 
 
 

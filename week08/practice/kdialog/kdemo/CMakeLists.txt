@@ -9,7 +9,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # 查找Qt5组件
-find_package(Qt5 REQUIRED COMPONENTS Widgets Core Gui)
+set(Qt5_DIR "D:/Application/Vcpkg/vcpkg/installed/x64-windows/share/cmake/Qt5")
+find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
 
 # 添加可执行文件
 add_executable(kdialog 

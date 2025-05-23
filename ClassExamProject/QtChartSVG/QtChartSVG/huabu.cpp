@@ -12,11 +12,8 @@ huabu::huabu(QWidget* parent)
 	: QWidget(parent)
 	, m_mimetype(myconfig::getInstance().getMimetype())
 	, m_backgroundcolor(Qt::white)
-	, m_isdrawing(false)
-	, m_hasmove(false)
 	, m_pasteOffset(20, 20)
 	, m_lastPasteDelta(0, 0)
-	, m_isselecting(true)
 	, m_chooseRect(0, 0, 0, 0)
 	, m_currentMode(huabu::MouseMode::None)
 {
@@ -83,63 +80,18 @@ void huabu::dropEvent(QDropEvent* event)
 		throw std::runtime_error("error");
 
 	auto params = deserParams(array);
-	params->m_center = event->pos();
+	params->setCenter(event->pos());
+	params->setIsDrawInCanvas(true);
 
 	auto drawer = DiagramDrawInterface::getInstance().getDrawer(params);
-	if (params->m_type == myqtsvg::ShapeType::Text)
+	if(params->getType() == myqtsvg::ShapeType::Text)
 	{
-		createTextTuxing(std::dynamic_pointer_cast<DiagramDrawParamsText>(params), drawer);
-	}
-	else
-	{
-		createTuxing(params, drawer);
+		TextLineEdit::createTextLineEdit(params, this);
 	}
 
+	createTuxing(params, drawer);
 	update();
 
-	//std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
-	//tuxing->m_drawer = drawer;
-	//tuxing->m_propertySetManager = std::make_shared<propertySetManager>();
-
-
-
-	//std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
-	//drawParamsSet->m_params = params;
-
-	//auto propertynamevec = createNameVec(params->m_type);
-	//auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	//drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
-	//QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, tuxing.get(), &huabutuxing::signalRepaint);
-	//tuxing->m_propertySetManager->addPropertySet(QString("drawParams"), drawParamsSet);
-
-
-
-
-
-
-
-
-	//std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-	//otherset->m_name = createTuxingName(type);
-	//otherset->m_zvalue = QDateTime::currentMSecsSinceEpoch();
-	//propertynamevec = std::make_shared<std::vector<QString>>(std::initializer_list<QString>{
-	//	QString::fromStdString(cfggetval<std::string>(qtcf::tuxing::all::namename))
-	//});
-	//creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	//otherset->m_propertyDataVec = creator->create(otherset);
-	//tuxing->m_propertySetManager->addPropertySet(QString("otherset"), otherset);
-
-
-
-
-
-
-
-	//QObject::connect(tuxing.get(), &huabutuxing::signalRepaint, this, qOverload<>(&huabu::update));
-
-	//m_tuxingvec.push_back(tuxing);
-
-	//update(); //触发重绘，会调用paintEvent，可以选择重绘部分区域
 	event->acceptProposedAction();
 }
 
@@ -155,8 +107,7 @@ void huabu::dragMoveEvent(QDragMoveEvent* event)
 void huabu::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing, true);
-	painter.setRenderHint(QPainter::TextAntialiasing, true);
+	initPainter(painter);
 
 	painter.fillRect(this->rect(), m_backgroundcolor);
 
@@ -183,10 +134,6 @@ void huabu::paintEvent(QPaintEvent* event)
 		m_svgRenderer->render(&painter);
 	}
 
-	//if (m_ischoosingFirst && m_ischoosingSecond)
-	//{
-	//	m_chooseDrawer->draw(painter);
-	//}
 	QWidget::paintEvent(event);
 }
 
@@ -216,125 +163,7 @@ void huabu::mousePressEvent(QMouseEvent* event)
 	QWidget::mousePressEvent(event);
 	update();
 	return;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (event->button() == Qt::LeftButton)
-	{
-		m_startpoint = event->pos();
-		m_currentpoint = event->pos();
-		//if (m_mode == Mode::Select)
-		if (m_isselecting)
-		{
-			m_ischooseingone = false;
-			//关于选中，只有点击图像才表示选中，点击其他地方则取消选中
-			if (m_choosedParamsvec.size() > 0)
-			{
-				if (m_chooseRect.contains(m_startpoint))
-				{
-					m_offsetvec.clear();
-					for (auto& params : m_choosedParamsvec)
-					{
-						m_offsetvec.push_back(params->m_center - m_startpoint);
-					}
-					m_offset = m_chooseRect.center() - m_startpoint;
-					QWidget::mousePressEvent(event);
-					return;
-				}
-			}
-			if (m_choosingParams != nullptr)
-			{
-				m_offset = m_choosingParams->m_center - event->pos();
-				if (m_chooseRect.contains(m_startpoint))
-					m_ischooseingone = true;
-			}
-			else
-			{
-				for (auto& diagram : m_tuxingvec)
-				{
-					if (diagram->m_drawer->getResult()->iscontainPoint(event->pos()))
-					{
-						m_ischooseingone = true;
-						m_chooseRect = diagram->m_drawer->getResult()->getBoundingRect();
-						m_choosingParams = std::dynamic_pointer_cast<drawParamsPropertySet>(diagram->m_propertySetManager->getPropertySet(myconfig::getInstance().getDrawParamsSetName()))->m_params;
-						m_offset = m_choosingParams->m_center - event->pos();
-						emit signalPropertyShow(diagram->m_propertySetManager);
-						break;
-					}
-				}
-			}
-
-
-
-			if (!m_ischooseingone)
-			{
-
-				//没有选中图形 
-				m_chooseRect = QRect(m_startpoint, m_startpoint);
-				m_choosingParams = nullptr;
-				emit signalPropertyShow(m_setManager);
-
-			}
-			m_choosedParamsvec.clear();
-			update();
-		}
-		else
-		{
-			if (m_drawParams->m_type == myqtsvg::ShapeType::Mouse)
-				m_ismouseDrawing = true;
-			else
-				m_ismouseDrawing = false;
-			QWidget::mousePressEvent(event);
-			update();
-			return;
-
-
-
-			m_isdrawing = true;
-			m_hasmove = false;
-
-			auto params = createDrawParams(m_drawParams);
-			m_copyParams = params;
-			m_drawer = DiagramDrawInterface::getInstance().getDrawer(params);
-
-
-
-			if (m_copyParams->m_type == myqtsvg::ShapeType::Mouse)
-			{
-				m_copyParams->m_isdrawInHuabu = true;
-				auto drawer = std::dynamic_pointer_cast<DiagramDrawerMouse>(m_drawer);
-				m_mousepath = std::make_shared<QPainterPath>();
-				m_mousepath->moveTo(m_startpoint);
-				drawer->m_params->m_path = m_mousepath;
-			}
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	}
-	QWidget::mousePressEvent(event);
+	
 }
 
 void huabu::mouseMoveEvent(QMouseEvent* event)
@@ -364,112 +193,6 @@ void huabu::mouseMoveEvent(QMouseEvent* event)
 	update();
 	return;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (event->buttons() == Qt::LeftButton)
-	{
-		m_currentpoint = event->pos();
-		m_endpoint = event->pos();
-		//if (m_mode == Mode::Select)
-		if (m_isselecting)
-		{
-			if (m_choosedParamsvec.size() > 0)
-			{
-				for (int i = 0; i < m_choosedParamsvec.size(); i++)
-				{
-					//m_choosedParamsvec[i]->m_center = m_offsetvec[i] + m_currentpoint;
-
-					m_choosedParamsvec[i]->m_centerHoffset = m_currentpoint.x() - m_startpoint.x();
-					m_choosedParamsvec[i]->m_centerVoffset = m_currentpoint.y() - m_startpoint.y();
-				}
-				m_chooseRect.moveCenter(m_offset + m_currentpoint);
-				update();
-				return;
-			}
-			if (m_ischooseingone)
-			{
-				QPoint newpoint = m_offset + event->pos();
-				m_choosingParams->m_center = newpoint;
-				m_chooseRect.moveCenter(newpoint);
-				update();
-			}
-			else
-			{
-				m_chooseRect = QRect(m_startpoint, m_currentpoint);
-				m_chooseRect.moveBottomRight(m_currentpoint);
-				update();
-			}
-		}
-		else
-		{
-			m_isdrawing = true;
-			auto params = m_drawParams->clone();
-
-
-
-
-
-
-
-			if (m_isdrawing)
-			{
-				if (m_copyParams->m_type == myqtsvg::ShapeType::Text)
-				{
-					m_isdrawing = false;
-					return;
-				}
-				if (m_copyParams->m_type != myqtsvg::ShapeType::Mouse)
-				{
-					auto center = (m_startpoint + m_endpoint) / 2;
-					QSize size = QSize(std::max(1, static_cast<int>(std::abs(m_startpoint.x() - m_endpoint.x())))
-						, std::max(1, static_cast<int>(std::abs(m_startpoint.y() - m_endpoint.y()))));
-					m_copyParams->m_center = center.toPoint();
-					m_copyParams->m_spacesize = size;
-				}
-				else
-				{
-					m_mousepath->lineTo(m_endpoint);
-				}
-				m_hasmove = true;
-				update();
-			}
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-	}
-	QWidget::mouseMoveEvent(event);
 }
 
 void huabu::mouseReleaseEvent(QMouseEvent* event)
@@ -498,116 +221,15 @@ void huabu::mouseReleaseEvent(QMouseEvent* event)
 	update();
 	return;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	if (event->button() == Qt::LeftButton)
-	{
-		//if (m_mode == Mode::Select)
-		if (m_isselecting)
-		{
-			if (!m_ischooseingone)
-			{
-				if (m_choosedParamsvec.size() > 0)
-				{
-					for (auto& tuxing : m_choosedParamsvec)
-					{
-						tuxing->m_center += QPoint(tuxing->m_centerHoffset, tuxing->m_centerVoffset);
-						if (tuxing->m_type == myqtsvg::ShapeType::Mouse)
-						{
-							std::dynamic_pointer_cast<DiagramDrawParamsMouse>(tuxing)->m_path->translate(tuxing->m_centerHoffset, tuxing->m_centerVoffset);
-						}
-						tuxing->m_centerHoffset = 0;
-						tuxing->m_centerVoffset = 0;
-					}
-					QWidget::mouseReleaseEvent(event);
-					return;
-				}
-
-
-				QRect totalrect;
-				for (auto& tuxing : m_tuxingvec)
-				{
-					if (tuxing->m_drawer->getResult()->getPainterPath().intersects(m_chooseRect))
-					{
-						//QRect temprect = tuxing->m_drawer->getResult()->getPainterPath().boundingRect().toRect();
-						QRect temprect = tuxing->m_drawer->getResult()->getBoundingRect();
-						if (temprect.isNull())
-						{
-							totalrect = temprect;
-						}
-						else
-						{
-							totalrect = totalrect.united(temprect);
-						}
-
-						m_choosedParamsvec.push_back(std::dynamic_pointer_cast<drawParamsPropertySet>(tuxing->m_propertySetManager->getPropertySet(myconfig::getInstance().getDrawParamsSetName()))->m_params);
-					}
-				}
-				m_chooseRect = totalrect;
-				if (m_choosedParamsvec.size() == 1)
-				{
-					m_choosingParams = m_choosedParamsvec[0];
-					m_choosedParamsvec.clear();
-					m_ischooseingone = true;
-				}
-				update();
-			}
-		}
-		else
-		{
-			if (m_copyParams->m_type == myqtsvg::ShapeType::Text)
-			{
-				auto params = std::dynamic_pointer_cast<DiagramDrawParamsText>(m_copyParams);
-				params->m_center = m_startpoint;
-				createTextTuxing(params, m_drawer);
-			}
-			else
-			{
-				if (m_hasmove)
-				{
-					createTuxing(m_copyParams, m_drawer);
-				}
-			}
-			m_isdrawing = false;
-			update();
-		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	}
 }
 
 void huabu::mouseDoubleClickEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		if (m_choosingParams != nullptr && m_choosingParams->m_type == myqtsvg::ShapeType::Text)
+		if (m_choosedParamsvec.size() == 1 && m_choosedParamsvec[0]->getType() == myqtsvg::ShapeType::Text)
 		{
-			std::dynamic_pointer_cast<DiagramDrawParamsText>(m_choosingParams)->m_textedit->show();
+			std::dynamic_pointer_cast<DiagramDrawParamsText>(m_choosedParamsvec[0])->getTextEdit()->show();
 		}
 	}
 }
@@ -616,56 +238,38 @@ void huabu::contextMenuEvent(QContextMenuEvent* event)
 {
 	QMenu menu(this);
 
-	// 添加菜单项
 	QAction* copyAction = menu.addAction("复制");
 	QAction* pasteAction = menu.addAction("粘贴");
-	QAction* quanxuanaction = menu.addAction("全选");
+	QAction* selectAllAction = menu.addAction("全选");
 	QAction* deleteAction = menu.addAction("删除");
 
 
-	// 显示菜单
 	QAction* selectedAction = menu.exec(event->globalPos());
 
-	// 根据选择执行相应操作
-	if (selectedAction == copyAction) {
-		// 执行复制操作
+	if (selectedAction == copyAction) 
 		onCopyTuinxg();
-	}
-	else if (selectedAction == pasteAction) {
-		// 执行粘贴操作
-		oncrtyvTuxing();
-	}
-	else if (selectedAction == quanxuanaction)
-	{
-		onartyaTuxing();
-	}
+	else if (selectedAction == pasteAction) 
+		onpasteTuxing();
+	else if (selectedAction == selectAllAction)
+		onSelectAllTuxing();
 	else if (selectedAction == deleteAction)
-	{
 		onDeleteTuxing();
-	}
 }
 
 void huabu::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
 {
 	m_drawParams = params;
-	if (params->m_type == myqtsvg::ShapeType::choose)
+	if (params->getType() == myqtsvg::ShapeType::choose)
 	{
-		m_isselecting = true;
 		m_currentMode = MouseMode::Selecting;
 	}
 	else
 	{
-		m_isselecting = false;
 		m_currentMode = MouseMode::Drawing;
 	}
 }
 
 void huabu::onSaveToSvg(QString filepath)
-{
-	saveToSvg(filepath);
-}
-
-void huabu::saveToSvg(QString filepath)
 {
 	QSvgGenerator generator;
 	generator.setFileName(filepath); // 设置SVG文件路径
@@ -693,24 +297,16 @@ void huabu::saveToSvg(QString filepath)
 	QMessageBox::information(this, tr("保存成功"), tr("文件已成功保存为SVG格式。"));
 }
 
-void huabu::onLoadSvg(QString filepath)
-{
-	loadSvg(filepath);
-}
 
-void huabu::loadSvg(QString filepath)
+void huabu::onLoadSvg(QString filepath)
 {
 	m_svgRenderer = new QSvgRenderer(filepath, this);
 	QObject::connect(m_svgRenderer, &QSvgRenderer::repaintNeeded, this, qOverload<>(&huabu::update));
 	update();
 }
 
-void huabu::onSaveToPng(QString filepath)
-{
-	SaveToPng(filepath);
-}
 
-void huabu::SaveToPng(QString filepath)
+void huabu::onSaveToPng(QString filepath)
 {
 	QPixmap pixmap(size());
 	QPainter painter(&pixmap);
@@ -718,6 +314,7 @@ void huabu::SaveToPng(QString filepath)
 	pixmap.save(filepath, "PNG");
 	QMessageBox::information(this, "保存成功", "保存成功");
 }
+
 
 void huabu::onnewHuabu()
 {
@@ -727,57 +324,50 @@ void huabu::onnewHuabu()
 
 void huabu::onCopyTuinxg()
 {
-	m_neededcopyParamsVec.clear();
-	if (m_choosingParams != nullptr)
-	{
-		m_neededcopyParamsVec.push_back(m_choosingParams);
-	}
-	if (m_choosedParamsvec.size() > 0)
-	{
-		for (auto& params : m_choosedParamsvec)
-		{
-			m_neededcopyParamsVec.push_back(params);
-		}
-	}
+	m_copyParamsVec.clear();
+	if (m_choosedParamsvec.size() == 0)
+		return;
+	m_copyParamsVec.insert(m_copyParamsVec.end(), m_choosedParamsvec.begin(), m_choosedParamsvec.end());
+
 	m_pasteOffset = QPoint(20, 20);
 	m_lastPasteDelta = QPoint(0, 0);
 }
 
-void huabu::oncrtyvTuxing()
+void huabu::onpasteTuxing()
 {
-	if (m_neededcopyParamsVec.size() > 0)
+
+	if (m_copyParamsVec.size() > 0)
 	{
-		for (auto& params : m_neededcopyParamsVec)
+		for (auto& params : m_copyParamsVec)
 		{
-			auto p = createDrawParams(params);
-			p->m_center += m_pasteOffset + m_lastPasteDelta;
-			if (p->m_type == myqtsvg::ShapeType::Mouse)
+			auto p = params->clone();
+			//p->m_center += m_pasteOffset + m_lastPasteDelta;
+			p->setCenter(p->getCenter() + m_pasteOffset + m_lastPasteDelta);
+			//if (p->m_type == myqtsvg::ShapeType::Mouse)
+			if(p->getType() == myqtsvg::ShapeType::Mouse)
 			{
-				std::dynamic_pointer_cast<DiagramDrawParamsMouse>(p)->m_path->translate(m_pasteOffset + m_lastPasteDelta);
+				std::dynamic_pointer_cast<DiagramDrawParamsMouse>(p)->getPaht()->translate(m_pasteOffset + m_lastPasteDelta);
 			}
 			auto drawer = DiagramDrawInterface::getInstance().getDrawer(p);
-			if (p->m_type == myqtsvg::ShapeType::Text)
-			{
-				createTextTuxing(std::dynamic_pointer_cast<DiagramDrawParamsText>(p), drawer);
-			}
-			else
-			{
-				createTuxing(p, drawer);
-			}
+			//if (p->m_type == myqtsvg::ShapeType::Text)
+			//{
+				//auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(p);
+				//if (castparams == nullptr)
+					//throw std::runtime_error("error");
+				//TextLineEdit::createTextLineEdit(castparams, this);
+			//}
+			createTuxing(p, drawer);
 		}
-		m_lastPasteDelta += m_pasteOffset;
-		update();
 	}
 }
 
-void huabu::onartyaTuxing()
+void huabu::onSelectAllTuxing()
 {
-	m_choosingParams = nullptr;
 	m_choosedParamsvec.clear();
 	QRect rect;
 	for (auto& tuxing : m_tuxingvec)
 	{
-		m_choosedParamsvec.push_back(std::dynamic_pointer_cast<drawParamsPropertySet>(tuxing->m_propertySetManager->getPropertySet(myconfig::getInstance().getDrawParamsSetName()))->m_params);
+		m_choosedParamsvec.push_back(tuxing->m_params);
 		if (rect.isNull())
 		{
 			rect = tuxing->m_drawer->getResult()->getBoundingRect();
@@ -795,15 +385,11 @@ void huabu::onartyaTuxing()
 
 void huabu::onDeleteTuxing()
 {
-	if (m_choosingParams != nullptr)
-	{
-		m_choosedParamsvec.push_back(m_choosingParams);
-	}
 	for (auto& params : m_choosedParamsvec)
 	{
 		for (auto it = m_tuxingvec.begin(); it != m_tuxingvec.end(); it++)
 		{
-			auto p = std::dynamic_pointer_cast<drawParamsPropertySet>((*it)->m_propertySetManager->getPropertySet(myconfig::getInstance().getDrawParamsSetName()))->m_params;
+			auto p = (*it)->m_params;
 			if (params.get() == p.get())
 			{
 				m_tuxingvec.erase(it);
@@ -854,6 +440,7 @@ void huabu::onScaleChagned(double scale)
 void huabu::initPainter(QPainter& painter)
 {
 	painter.setRenderHint(QPainter::Antialiasing, true);
+	painter.setRenderHint(QPainter::TextAntialiasing, true);
 }
 
 std::shared_ptr<IDidgramDrawParams> huabu::deserParams(QByteArray& array)
@@ -897,7 +484,7 @@ void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared
 	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
 	tuxing->m_drawer = drawer;
 	tuxing->m_params = params;
-	tuxing->m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->m_type)
+	tuxing->m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->getType())
 		, params
 		, [tuxing]()
 		{
@@ -908,87 +495,10 @@ void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared
 			, config.getCenterHOffsetName()
 		});
 
-		//std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
-		//drawParamsSet->m_params = params;
-
-
-
-		//std::vector<QString> othernamevec{
-		//	config.getCenterVOffsetName()
-		//	, config.getCenterHOffsetName() };
-		//auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(params->m_type, othernamevec);
-		//auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-		//drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
-		//QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, tuxing.get(), &huabutuxing::signalRepaint);
-		//tuxing->m_propertySetManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
-
-
-
-
-
-		//std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-		//otherset->m_name = myqtsvg::ShapetypeEnumToQstring(params->m_type);
-		//otherset->m_zvalue = QDateTime::currentMSecsSinceEpoch();
-		//propertynamevec.clear();
-		//propertynamevec.push_back(config.getNameName());
-		//creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-		//otherset->m_propertyDataVec = creator->create(otherset);
-		//tuxing->m_propertySetManager->addPropertySet(config.getOtherSetName(), otherset);
-
-
-
-
-
-
-
 		QObject::connect(tuxing.get(), &huabutuxing::signalRepaint, this, qOverload<>(&huabu::update));
 
 		m_tuxingvec.push_back(tuxing);
 }
-
-
-void huabu::createTextTuxing(std::shared_ptr<DiagramDrawParamsText> params, std::shared_ptr<IDiagramDrawer> drawer)
-{
-	params->m_isdrawInHuabu = true;
-	auto textedit = new TextLineEdit(this);
-	textedit->setParent(this);
-	textedit->setTextColor(params->m_pen.color());
-	textedit->setBackGroundColor(m_backgroundcolor);
-	textedit->setText("编辑");
-	textedit->setFont(params->m_font);
-	textedit->adjustsize();
-
-	QSize size = textedit->size();
-
-	QPoint topleft = QPoint(params->m_center.x() - size.width() / 2, params->m_center.y() - size.height() / 2);
-	textedit->move(topleft);
-	textedit->show();
-
-	QObject::connect(textedit, &TextLineEdit::signalHasFocusOut, [=]() {
-		auto rect = textedit->geometry();
-		params->m_center = rect.center();
-		params->m_spacesize = rect.size();
-
-		if (!textedit->isHidden())
-		{
-			textedit->hide();
-		}
-		});
-	params->m_textedit = textedit;
-
-	createTuxing(params, drawer);
-}
-
-std::shared_ptr<IDidgramDrawParams> huabu::createDrawParams(std::shared_ptr<IDidgramDrawParams> params)
-{
-	return params->clone();
-}
-
-
-
-
-
-
 
 huabutuxing::huabutuxing()
 {
@@ -999,17 +509,15 @@ void huabu::handleSelectPress(QMouseEvent* event)
 {
 	if (m_choosedParamsvec.size() > 0)
 	{
-		//有选中的图形，就先处理
 		if (m_chooseRect.contains(m_currentpoint))
 		{
-			//代表要movemultiple
 			m_offsetvec.clear();
 			for (auto& params : m_choosedParamsvec)
 			{
-				params->m_center += QPoint(params->m_centerHoffset, params->m_centerVoffset);
-				params->m_centerHoffset = 0;
-				params->m_centerVoffset = 0;
-				m_offsetvec.push_back(params->m_center - m_currentpoint);
+				params->setCenter(params->getCenter() + QPoint(params->getCenterHOffset(), params->getCenterVOffset()));
+				params->setCenterHOffset(0);
+				params->setCenterVOffset(0);
+				m_offsetvec.push_back(params->getCenter() - m_currentpoint);
 			}
 			m_offset = m_chooseRect.center() - m_currentpoint;
 			m_currentMode = MouseMode::MovingMultiple;
@@ -1017,15 +525,7 @@ void huabu::handleSelectPress(QMouseEvent* event)
 			return;
 		}
 
-		//else
-		//{
-			////有选中的图形但没有点击选中区域,那么结束选中并清空
-			//m_choosedParamsvec.clear();
-			//m_chooseRect = QRect();
-			//m_currentMode = MouseMode::Selecting;
-		//}
 	}
-	//开始选中图形
 	m_choosedParamsvec.clear();
 	m_chooseRect = QRect(m_currentpoint, QSize(1, 1));
 
@@ -1037,9 +537,11 @@ void huabu::handleDrawPress(QMouseEvent* event)
 	m_drawingParams = m_drawParams->clone();
 	m_drawingDrawer = DiagramDrawInterface::getInstance().getDrawer(m_drawingParams);
 	m_isDrawing = true;
-	m_drawingParams->m_isdrawInHuabu = true;
+	//m_drawingParams->m_isdrawInHuabu = true;
+	m_drawingParams->setIsDrawInCanvas(true);
 
-	switch (m_drawParams->m_type)
+	//switch (m_drawParams->m_type)
+	switch(m_drawingParams->getType())
 	{
 	case myqtsvg::ShapeType::Mouse:
 		m_currentDrawStragety = std::make_unique<mouseDrawStragety>(m_drawingParams);
@@ -1070,8 +572,8 @@ void huabu::handleMoveMultiple(QMouseEvent* event)
 {
 	for (int i = 0; i < m_choosedParamsvec.size(); i++)
 	{
-		m_choosedParamsvec[i]->m_centerHoffset = m_currentpoint.x() - m_startpoint.x();
-		m_choosedParamsvec[i]->m_centerVoffset = m_currentpoint.y() - m_startpoint.y();
+		m_choosedParamsvec[i]->setCenterHOffset(m_currentpoint.x() - m_startpoint.x());
+		m_choosedParamsvec[i]->setCenterVOffset(m_currentpoint.y() - m_startpoint.y());
 	}
 	m_chooseRect.moveCenter(m_offset + m_currentpoint);
 	return;
@@ -1113,119 +615,16 @@ void huabu::finalizeMove(QMouseEvent* event)
 {
 	for (auto& params : m_choosedParamsvec)
 	{
-		params->m_center += QPoint(params->m_centerHoffset, params->m_centerVoffset);
-		if (params->m_type == myqtsvg::ShapeType::Mouse)
+		params->setCenter(params->getCenter() + QPoint(params->getCenterHOffset(), params->getCenterVOffset()));
+		
+		if(params->getType() == myqtsvg::ShapeType::Mouse)
 		{
-			std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params)->m_path->translate(params->m_centerHoffset, params->m_centerVoffset);
+			std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params)->getPaht()->translate(params->getCenterHOffset(), params->getCenterVOffset());
 		}
-		params->m_centerHoffset = 0;
-		params->m_centerVoffset = 0;
+		params->setCenterHOffset(0);
+		params->setCenterVOffset(0);
 	}
 	m_currentMode = MouseMode::Selecting;
 }
 
 
-shapeDrawStragety::shapeDrawStragety(std::shared_ptr<IDidgramDrawParams> params)
-	:m_params(params)
-{
-
-}
-
-void shapeDrawStragety::handlePress(QPoint point)
-{
-	m_startpoint = point;
-	m_params->m_center = m_startpoint;
-}
-
-void shapeDrawStragety::handleMove(QPoint point)
-{
-	m_endpoint = point;
-
-	m_params->m_center = (m_startpoint + m_endpoint) / 2;
-	m_params->m_spacesize = QSize(std::max(1, std::abs(m_startpoint.x() - m_endpoint.x()))
-		, std::max(1, std::abs(m_startpoint.y() - m_endpoint.y())));
-}
-
-void shapeDrawStragety::handleRelease()
-{
-
-}
-
-mouseDrawStragety::mouseDrawStragety(std::shared_ptr<IDidgramDrawParams> params)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	auto p = std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params);
-	if (p == nullptr)
-		throw std::runtime_error("error");
-	m_params = p;
-}
-
-void mouseDrawStragety::handlePress(QPoint point)
-{
-	m_startpoint = point;
-	m_path = std::make_shared<QPainterPath>();
-	m_path->moveTo(m_startpoint);
-	m_params->m_path = m_path;
-}
-
-void mouseDrawStragety::handleMove(QPoint point)
-{
-	m_endpoint = point;
-	m_path->lineTo(m_endpoint);
-}
-
-void mouseDrawStragety::handleRelease()
-{
-
-}
-
-TextDrawStragety::TextDrawStragety(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
-	:m_params(nullptr)
-	, m_parent(parent)
-{
-	if (params == nullptr)
-		throw std::runtime_error("error");
-	auto p = std::dynamic_pointer_cast<DiagramDrawParamsText>(params);
-	if (p == nullptr)
-		throw std::runtime_error("error");
-	m_params = p;
-}
-
-void TextDrawStragety::handlePress(QPoint point)
-{
-	m_startpoint = point;
-	m_params->m_center = m_startpoint;
-
-	auto textedit = new TextLineEdit(m_parent);
-	textedit->setTextColor(m_params->m_pen.color());
-	textedit->setText("编辑");
-	textedit->setFont(m_params->m_font);
-	textedit->adjustsize();
-
-	QSize size = textedit->size();
-	QPoint topleft = QPoint(m_params->m_center.x() - size.width() / 2
-		, m_params->m_center.y() - size.height() / 2);
-	textedit->move(topleft);
-
-	QObject::connect(textedit, &TextLineEdit::signalHasFocusOut, [=]() {
-		auto rect = textedit->geometry();
-		m_params->m_center = rect.center();
-		m_params->m_spacesize = rect.size();
-		});
-	m_params->m_textedit = textedit;
-}
-
-void TextDrawStragety::handleMove(QPoint point) 
-{
-	m_endpoint = point;
-
-	m_params->m_center = (m_startpoint + m_endpoint) / 2;
-	m_params->m_spacesize = QSize(std::max(1, std::abs(m_startpoint.x() - m_endpoint.x()))
-		, std::max(1, std::abs(m_startpoint.y() - m_endpoint.y())));
-}
-
-void TextDrawStragety::handleRelease()
-{
-	m_params->m_textedit->show();
-}

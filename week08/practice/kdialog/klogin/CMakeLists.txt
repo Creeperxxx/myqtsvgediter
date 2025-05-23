@@ -8,11 +8,9 @@ project(klogin VERSION 1.0.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# 指定 vcpkg 工具链文件
-set(CMAKE_TOOLCHAIN_FILE "D:\Application\Vcpkg\vcpkg\scripts\buildsystems/vcpkg.cmake")
-
 # 查找 Qt5 并指定需要的组件
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+set(Qt5_DIR "D:/Application/Vcpkg/vcpkg/installed/x64-windows/share/cmake/Qt5")
+find_package(Qt5  COMPONENTS Core Gui Widgets REQUIRED)
 #  AxServer AxContainer
 # 添加包含目录
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

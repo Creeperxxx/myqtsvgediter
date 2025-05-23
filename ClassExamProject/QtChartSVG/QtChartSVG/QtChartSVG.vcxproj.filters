@@ -23,9 +23,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="myconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -51,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="propertynamevec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="canvasdrawstragety.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -112,6 +112,9 @@
     <ClCompile Include="propertynamevec.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="canvasdrawstragety.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="huabu.h">
@@ -138,32 +141,6 @@
     <QtMoc Include="propertyset.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="juxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="liubianxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="qipao.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="sanjiaoxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="wubianxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="wujiaoxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="xian.png">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="yuanxing.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MyMainWindow.ui">

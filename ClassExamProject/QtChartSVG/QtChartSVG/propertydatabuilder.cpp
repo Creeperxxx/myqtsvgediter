@@ -20,7 +20,7 @@ void IDrawParamsPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, st
 void PenColorDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getPenColorName()
-		, QVariant(set->m_params->m_pen.color()));
+		, QVariant(set->m_params->getPenColor()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenColorChanged);
 }
@@ -28,7 +28,7 @@ void PenColorDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsP
 void PenWidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getPenWdithName()
-		, QVariant::fromValue(set->m_params->m_pen.width()));
+		, QVariant::fromValue(set->m_params->getPenwidth()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenWidthChanged);
 }
@@ -36,7 +36,7 @@ void PenWidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsP
 void BrushDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getBrushColorName()
-		, QVariant::fromValue(set->m_params->m_brush.color()));
+		, QVariant::fromValue(set->m_params->getBrushColor()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onBrushColorChanged);
 }
@@ -44,7 +44,7 @@ void BrushDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsProp
 void RotateDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getRotateAngleName()
-		, QVariant::fromValue(set->m_params->m_rotate));
+		, QVariant::fromValue(set->m_params->getRotate()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onRotateChanged);
 }
@@ -52,7 +52,7 @@ void RotateDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPro
 void SpacewidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getSpaceWidthName()
-		, set->m_params->m_spacesize.width());
+		, set->m_params->getSpacesize().width());
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onSpacewidthChanged);
 }
@@ -60,7 +60,7 @@ void SpacewidthDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParam
 void SpaceheightDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getSpaceHeightName()
-		, QVariant::fromValue(set->m_params->m_spacesize.height()));
+		, QVariant::fromValue(set->m_params->getSpacesize().height()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onSpaceHeightChanged);
 }
@@ -68,7 +68,7 @@ void SpaceheightDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPara
 void ScaleDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getScaleName()
-		, QVariant::fromValue(set->m_params->m_scale));
+		, QVariant::fromValue(set->m_params->getScale()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onScaleChanged);
 }
@@ -76,7 +76,7 @@ void ScaleDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsProp
 void CenterHoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getCenterHOffsetName()
-		, QVariant(set->m_params->m_centerHoffset));
+		, QVariant(set->m_params->getCenterHOffset()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterHOffset);
 }
@@ -84,7 +84,7 @@ void CenterHoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPa
 void CenterVoffsetDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getCenterVOffsetName()
-		, QVariant::fromValue(set->m_params->m_centerVoffset));
+		, QVariant::fromValue(set->m_params->getCenterVOffset()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCenterVOffset);
 }
@@ -95,7 +95,7 @@ void RectRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParams
 	if (castparams == nullptr || castparams.get() == nullptr)
 		throw std::runtime_error("error");
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getRectRadioName()
-		, QVariant::fromValue(castparams->m_boundingrectradio));
+		, QVariant::fromValue(castparams->getRadio()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onRectRadioChanged);
 }
@@ -108,7 +108,7 @@ void CircleRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPara
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getCircleRadioName()
-		, QVariant::fromValue(castparams->m_boundingrectradio));
+		, QVariant::fromValue(castparams->getRadio()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onCricleRadioChanged);
 }
@@ -119,7 +119,7 @@ void TriangleRadioDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPa
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getTriangleRadioName()
-		, QVariant::fromValue(castparams->m_triangleSizeRadios));
+		, QVariant::fromValue(castparams->getRadios()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTriangleRadioChanged);
 }
@@ -130,7 +130,7 @@ void TriangleEdgetypeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<dra
 	auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsTriangle>(set->m_params);
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
-	QString edgetype = DiagramDrawParamsTriangle::edgetypeEnumToString(castparams->m_edgetype);
+	QString edgetype = DiagramDrawParamsTriangle::edgetypeEnumToString(castparams->getEdgeType());
 	std::shared_ptr<propertydata> data = std::make_shared<propertydata>(myconfig::getInstance().getEdgeTypeName()
 		, QVariant::fromValue(edgetype));
 	datavec->push_back(data);
@@ -143,7 +143,7 @@ void TextFontFamilyDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawP
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	auto data = std::make_shared<propertydata>(myconfig::getInstance().getFontFamilyName()
-		, QVariant::fromValue(castparams->m_font.family()));
+		, QVariant::fromValue(castparams->getFontFamily()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextFamilyChanged);
 }
@@ -154,7 +154,7 @@ void TextFontSizeDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawPar
 	if (castparams == nullptr)
 		throw std::runtime_error("error");
 	auto data = std::make_shared<propertydata>(myconfig::getInstance().getFontSizeName()
-		, QVariant::fromValue(castparams->m_font.pointSize()));
+		, QVariant::fromValue(castparams->getFontSize()));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onTextSizeChanged);
 }
@@ -322,7 +322,7 @@ void HuabuScalePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> s
 void PenStyleDrawParamsPropertyDataBuilder::probuild(std::shared_ptr<drawParamsPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	auto data = std::make_shared<propertydata>(myconfig::getInstance().getPenStyleName()
-		, QVariant::fromValue(PenStyleToQstring(set->m_params->m_pen.style())));
+		, QVariant::fromValue(myqtsvg::PenStyleToQstring(set->m_params->getPenstyle())));
 	datavec->push_back(data);
 	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &drawParamsPropertySet::onPenStyleChanged);
 }

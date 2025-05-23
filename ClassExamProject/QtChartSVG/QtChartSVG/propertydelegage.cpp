@@ -345,7 +345,7 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 
 void triangleSideRadioDelegate::setValue(QVariant value)
 {
-	auto radios = isDataCanConvert<DiagramDrawParamsTriangle::TriangleSizeRadios>(value);
+	auto radios = isDataCanConvert<DiagramDrawParamsTriangle::sideRadios>(value);
 	m_bottombox->setValue(radios.m_bottom);
 	m_leftbox->setValue(radios.m_left);
 	m_rightbox->setValue(radios.m_right);
@@ -353,7 +353,7 @@ void triangleSideRadioDelegate::setValue(QVariant value)
 
 QVariant triangleSideRadioDelegate::value()
 {
-	DiagramDrawParamsTriangle::TriangleSizeRadios radios;
+	DiagramDrawParamsTriangle::sideRadios radios;
 	radios.m_bottom = m_bottombox->value();
 	radios.m_left = m_leftbox->value();
 	radios.m_right = m_rightbox->value();

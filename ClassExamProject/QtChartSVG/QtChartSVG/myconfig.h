@@ -104,5 +104,4 @@ private:
 };
 
 
-QString PenStyleToQstring(Qt::PenStyle style);
-Qt::PenStyle QstringToPenStyle(QString style);
+

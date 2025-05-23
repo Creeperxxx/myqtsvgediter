@@ -141,11 +141,142 @@ void IDidgramDrawParams::deserialize(QDataStream& in)
 
 }
 
+QPoint IDidgramDrawParams::getCenter()
+{
+	return m_center;
+}
+
+void IDidgramDrawParams::setCenter(QPoint center)
+{
+	m_center = center;
+}
+
+QSize IDidgramDrawParams::getSpacesize()
+{
+	return m_spacesize;
+}
+
+void IDidgramDrawParams::setSpacesize(QSize size)
+{
+	m_spacesize = size;
+}
+
+void IDidgramDrawParams::setType(myqtsvg::ShapeType type)
+{
+	m_type = type;
+}
+
+myqtsvg::ShapeType IDidgramDrawParams::getType()
+{
+	return m_type;
+}
+
+void IDidgramDrawParams::setScale(double scale)
+{
+	m_scale = scale;
+}
+
+double IDidgramDrawParams::getScale()
+{
+	return m_scale;
+}
+
+void IDidgramDrawParams::setPenColor(QColor color)
+{
+	m_pen.setColor(color);
+}
+
+QColor IDidgramDrawParams::getPenColor()
+{
+	return m_pen.color();
+}
+
+void IDidgramDrawParams::setPenwidth(int width)
+{
+	m_pen.setWidth(width);
+}
+
+int IDidgramDrawParams::getPenwidth()
+{
+	return m_pen.width();
+}
+
+void IDidgramDrawParams::setPenStyle(Qt::PenStyle style)
+{
+	m_pen.setStyle(style);
+}
+
+Qt::PenStyle IDidgramDrawParams::getPenstyle()
+{
+	return m_pen.style();
+}
+
+void IDidgramDrawParams::setPen(QPen pen)
+{
+	m_pen = pen;
+}
+
+QPen IDidgramDrawParams::getPen()
+{
+	return m_pen;
+}
+
+void IDidgramDrawParams::setBrushColor(QColor color)
+{
+	m_brush.setColor(color);
+}
+
+QColor IDidgramDrawParams::getBrushColor()
+{
+	return m_brush.color();
+}
+
+void IDidgramDrawParams::setRotate(int rotate)
+{
+	m_rotate = rotate;
+}
+
+int IDidgramDrawParams::getRotate()
+{
+	return m_rotate;
+}
+
+void IDidgramDrawParams::setCenterHOffset(int offset)
+{
+	m_centerHoffset = offset;
+}
+
+int IDidgramDrawParams::getCenterHOffset()
+{
+	return m_centerHoffset;
+}
+
+void IDidgramDrawParams::setCenterVOffset(int offset)
+{
+	m_centerVoffset = offset;
+}
+
+int IDidgramDrawParams::getCenterVOffset()
+{
+	return m_centerVoffset;
+}
+
+void IDidgramDrawParams::setIsDrawInCanvas(bool flag)
+{
+	m_isdrawInHuabu = flag;
+}
+
+bool IDidgramDrawParams::getIsDrawInCanvas()
+{
+	return m_isdrawInHuabu;
+}
+
+
 
 DiagramDrawParamsRect::DiagramDrawParamsRect(const DiagramDrawParamsRect& other)
 	:IDidgramDrawParams(other)
 {
-	m_boundingrectradio = other.m_boundingrectradio;
+	m_radio = other.m_radio;
 }
 
 DiagramDrawParamsRect::DiagramDrawParamsRect()
@@ -161,25 +292,35 @@ std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsRect::clone()
 void DiagramDrawParamsRect::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
-	out << m_boundingrectradio;
+	out << m_radio;
 }
 
 void DiagramDrawParamsRect::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
-	in >> m_boundingrectradio;
+	in >> m_radio;
+}
+
+void DiagramDrawParamsRect::setRadio(double radio)
+{
+	m_radio = radio;
+}
+
+double DiagramDrawParamsRect::getRadio()
+{
+	return m_radio;
 }
 
 void DiagramDrawParamsCircle::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
-	out << m_boundingrectradio;
+	out << m_radio;
 }
 
 void DiagramDrawParamsCircle::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
-	in >> m_boundingrectradio;
+	in >> m_radio;
 }
 
 std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsCircle::clone()
@@ -190,7 +331,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsCircle::clone()
 DiagramDrawParamsCircle::DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other)
 	:IDidgramDrawParams(other)
 {
-	m_boundingrectradio = other.m_boundingrectradio;
+	m_radio = other.m_radio;
 }
 
 DiagramDrawParamsCircle::DiagramDrawParamsCircle()
@@ -198,21 +339,31 @@ DiagramDrawParamsCircle::DiagramDrawParamsCircle()
 
 }
 
+void DiagramDrawParamsCircle::setRadio(double radio)
+{
+	m_radio = radio;
+}
+
+double DiagramDrawParamsCircle::getRadio()
+{
+	return m_radio;
+}
+
 void DiagramDrawParamsTriangle::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
-	out << m_triangleSizeRadios.m_bottom
-		<< m_triangleSizeRadios.m_left
-		<< m_triangleSizeRadios.m_right
+	out << m_sideRadios.m_bottom
+		<< m_sideRadios.m_left
+		<< m_sideRadios.m_right
 		<< static_cast<int>(m_edgetype);
 }
 
 void DiagramDrawParamsTriangle::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
-	in >> m_triangleSizeRadios.m_bottom
-		>> m_triangleSizeRadios.m_left
-		>> m_triangleSizeRadios.m_right;
+	in >> m_sideRadios.m_bottom
+		>> m_sideRadios.m_left
+		>> m_sideRadios.m_right;
 	int value;
 	in >> value;
 	m_edgetype = static_cast<EdgeType>(value);
@@ -257,9 +408,9 @@ QString DiagramDrawParamsTriangle::edgetypeEnumToString(EdgeType edgetype)
 DiagramDrawParamsTriangle::DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other)
 	:IDidgramDrawParams(other)
 {
-	m_triangleSizeRadios.m_bottom = other.m_triangleSizeRadios.m_bottom;
-	m_triangleSizeRadios.m_left = other.m_triangleSizeRadios.m_left;
-	m_triangleSizeRadios.m_right = other.m_triangleSizeRadios.m_right;
+	m_sideRadios.m_bottom = other.m_sideRadios.m_bottom;
+	m_sideRadios.m_left = other.m_sideRadios.m_left;
+	m_sideRadios.m_right = other.m_sideRadios.m_right;
 	m_edgetype = other.m_edgetype;
 }
 
@@ -268,17 +419,47 @@ DiagramDrawParamsTriangle::DiagramDrawParamsTriangle()
 
 }
 
-DiagramDrawParamsTriangle::TriangleSizeRadios::TriangleSizeRadios()
+DiagramDrawParamsTriangle::sideRadios::sideRadios()
 	:m_bottom(0)
 	, m_left(0)
 	, m_right(0)
 {
 }
 
-DiagramDrawParamsTriangle::TriangleSizeRadios::TriangleSizeRadios(int bottom, int left, int right)
+DiagramDrawParamsTriangle::sideRadios::sideRadios(int bottom, int left, int right)
 	: m_bottom(bottom)
 	, m_left(left)
 	, m_right(right) {
+}
+
+void DiagramDrawParamsTriangle::sideRadios::setBottom(int bottom)
+{
+	m_bottom = bottom;
+}
+
+int DiagramDrawParamsTriangle::sideRadios::getBottom()
+{
+	return m_bottom;
+}
+
+void DiagramDrawParamsTriangle::sideRadios::setLeft(int left)
+{
+	m_left = left;
+}
+
+int DiagramDrawParamsTriangle::sideRadios::getLeft()
+{
+	return m_left;
+}
+
+void DiagramDrawParamsTriangle::sideRadios::setRight(int right)
+{
+	m_right = right;
+}
+
+int DiagramDrawParamsTriangle::sideRadios::getRight()
+{
+	return m_right;
 }
 
 DiagramDrawParamsLine::DiagramDrawParamsLine(const DiagramDrawParamsLine& other)
@@ -309,7 +490,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsLine::clone()
 
 DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
 	:IDidgramDrawParams(other)
-	, m_path(other.m_path)
+	, m_path(std::make_shared<QPainterPath>(*other.m_path))
 {
 
 }
@@ -332,6 +513,16 @@ void DiagramDrawParamsMouse::deserialize(QDataStream& in)
 std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsMouse::clone()
 {
 	return std::make_shared<DiagramDrawParamsMouse>(*this);
+}
+
+void DiagramDrawParamsMouse::setPath(std::shared_ptr<QPainterPath> path)
+{
+	m_path = path;
+}
+
+std::shared_ptr<QPainterPath> DiagramDrawParamsMouse::getPaht()
+{
+	return m_path;
 }
 
 DiagramDrawParamsChoose::DiagramDrawParamsChoose(const DiagramDrawParamsChoose& other)
@@ -371,12 +562,24 @@ TextLineEdit::TextLineEdit(QWidget* parent)
 	QObject::connect(this, &TextLineEdit::editingFinished, this, &TextLineEdit::signalHasFocusOut);
 }
 
+TextLineEdit::TextLineEdit(const TextLineEdit& other, QWidget* parent)
+{
+	setParent(other.parentWidget());
+	setTextColor(other.m_textcolor);
+	setText(other.text());
+	setFont(other.font());
+	adjustsize();
+	
+	move(other.pos());
+}
+
 
 void TextLineEdit::setTextColor(QColor textcolor)
 {
 	setStyleSheet(QString("color: rgba(%1,%2,%3,%4);")
 		.arg(textcolor.red()).arg(textcolor.green())
 		.arg(textcolor.blue()).arg(textcolor.alpha()));
+	m_textcolor = textcolor;
 }
 
 void TextLineEdit::setBackGroundColor(QColor color)
@@ -413,10 +616,37 @@ void TextLineEdit::adjustsize()
 	setFixedSize(width, height);
 }
 
+void TextLineEdit::createTextLineEdit(std::shared_ptr<IDidgramDrawParams> params, QWidget* parent)
+{
+	if (params == nullptr)
+		throw std::runtime_error("error");
+	auto p = std::dynamic_pointer_cast<DiagramDrawParamsText>(params);
+	if (p == nullptr)
+		throw std::runtime_error("error");
+
+	if (parent == nullptr)
+	{
+		int a = 0;
+	}
+	auto textedit = new TextLineEdit(parent);
+	textedit->setTextColor(p->getPenColor());
+	textedit->setText("编辑");
+	textedit->setFont(p->getFont());
+	textedit->adjustsize();
+	
+	QSize size = textedit->size();
+	QPoint topleft = QPoint(p->getCenter() - size.width() / 2, p->getCenter().y() - size.height() / 2);
+	textedit->move(topleft);
+
+	p->setTextEdit(textedit);
+
+}
+
 DiagramDrawParamsText::DiagramDrawParamsText(const DiagramDrawParamsText& other)
 	:IDidgramDrawParams(other)
 {
 	m_font = other.m_font;
+	m_textedit = new TextLineEdit(*other.m_textedit);
 }
 
 DiagramDrawParamsText::DiagramDrawParamsText()
@@ -463,4 +693,94 @@ void DiagramDrawParamsText::deserialize(QDataStream& in)
 std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsText::clone()
 {
 	return std::make_shared<DiagramDrawParamsText>(*this);
+}
+
+void DiagramDrawParamsText::setFontFamily(QString family)
+{
+	m_font.setFamily(family);
+}
+
+QString DiagramDrawParamsText::getFontFamily()
+{
+	return m_font.family();
+}
+
+void DiagramDrawParamsText::setFontSize(int size)
+{
+	m_font.setPointSize(size);
+}
+
+int DiagramDrawParamsText::getFontSize()
+{
+	return m_font.pointSize();
+}
+
+void DiagramDrawParamsText::setFont(QFont font)
+{
+	m_font = font;
+}
+
+QFont DiagramDrawParamsText::getFont()
+{
+	return m_font;
+}
+
+void DiagramDrawParamsText::setTextEdit(TextLineEdit* edit)
+{
+	m_textedit = edit;
+}
+
+TextLineEdit* DiagramDrawParamsText::getTextEdit()
+{
+	return m_textedit;
+}
+
+void DiagramDrawParamsTriangle::setBottomRadio(int bottom)
+{
+	m_sideRadios.setBottom(bottom);
+}
+
+void DiagramDrawParamsTriangle::setLeftRadio(int left)
+{
+	return m_sideRadios.setLeft(left);
+}
+
+void DiagramDrawParamsTriangle::setRightRadio(int right)
+{
+	m_sideRadios.setRight(right);
+}
+
+int DiagramDrawParamsTriangle::getBottomRadio()
+{
+	return m_sideRadios.getBottom();
+}
+
+int DiagramDrawParamsTriangle::getLeftRadio()
+{
+	return m_sideRadios.getLeft();
+}
+
+int DiagramDrawParamsTriangle::getRightRadio()
+{
+	return m_sideRadios.getRight();
+}
+
+void DiagramDrawParamsTriangle::setRadios(sideRadios radios)
+{
+	m_sideRadios = radios;
+}
+
+DiagramDrawParamsTriangle::sideRadios DiagramDrawParamsTriangle::getRadios()
+{
+	return m_sideRadios;
+}
+
+void DiagramDrawParamsTriangle::setEdgeType(EdgeType type)
+{
+	m_edgetype = type;
+}
+
+DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::getEdgeType()
+{
+	return m_edgetype;
 }
