@@ -23,7 +23,7 @@ public:
 	void slotValueChanged(QVariant value);
 private:
 	QString m_name;
-	QVariant m_data;
+	QVariant m_value;
 
 };
 

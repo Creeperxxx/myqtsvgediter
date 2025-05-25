@@ -34,6 +34,18 @@
     "text": {
       "family": "Arial",
       "size": 12
+    },
+    "pentagon": {
+      "rotate": 0,
+      "scale": 1
+    },
+    "hexagon": {
+      "rotate": 0,
+      "scale": 1
+    },
+    "star": {
+      "rotate": 0,
+      "scale": 1
     }
   },
   "painter": {

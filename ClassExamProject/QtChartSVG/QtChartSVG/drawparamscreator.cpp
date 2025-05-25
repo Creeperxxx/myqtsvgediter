@@ -173,21 +173,30 @@ createParamsInterface::createParamsInterface()
 
 std::shared_ptr<IDidgramDrawParams> createParamsPentagon::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsPentagon>();
 	p->setType(myqtsvg::ShapeType::Pentagon);
+	p->setRotate(config.getPentagonRotate());
+	p->setScale(config.getPentagonScale());
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsHexagon::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsHexagon>();
 	p->setType(myqtsvg::ShapeType::Hexagon);
+	p->setRotate(config.getHexagonRotate());
+	p->setScale(config.getHexagonScale());
 	return p;
 }
 
 std::shared_ptr<IDidgramDrawParams> createParamsStar::createSpecial()
 {
+	auto& config = myconfig::getInstance();
 	auto p = std::make_shared<DiagramDrawParamsStar>();
 	p->setType(myqtsvg::ShapeType::Star);
+	p->setRotate(config.getStarRotate());
+	p->setScale(config.getStarScale());
 	return p;
 }

@@ -59,11 +59,11 @@ private:
 	QSize m_spacesize;     //绘制空间的size
 	myqtsvg::ShapeType m_type;
 	double m_scale;        //缩放
-	QPen m_pen;            
+	QPen m_pen;
 	QBrush m_brush;
 	int m_rotate;          //旋转
 	int m_centerHoffset;   //中心偏移
-	int m_centerVoffset;   
+	int m_centerVoffset;
 	bool m_isdrawInHuabu;  //是否在画布上作画
 
 };
@@ -73,7 +73,7 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 public:
 	DiagramDrawParamsRect(const DiagramDrawParamsRect& other);
 	DiagramDrawParamsRect();
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
@@ -91,7 +91,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 	DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other);
 	DiagramDrawParamsCircle();
 
@@ -104,35 +104,40 @@ private:
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
 {
 public:
-	void serialize(QDataStream& out) const override;
-	void deserialize(QDataStream& in) override;
-    std::shared_ptr<IDidgramDrawParams> clone() override;
-
 	enum class EdgeType
 	{
 		Left,
 		Right,
 		Bottom
 	};
-	static EdgeType edgetypeStringToEnum(const QString& edgetype);
-	static QString edgetypeEnumToString(EdgeType edgetype);
-	DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other);
-	DiagramDrawParamsTriangle();
+
 	class sideRadios
 	{
 	public:
 		sideRadios();
+		sideRadios(const sideRadios& other);
 		sideRadios(int bottom, int left, int right);
+		void setBottom(int bottom);
+		int getBottom() const;
+		void setLeft(int left);
+		int getLeft() const;
+		void setRight(int right);
+		int getRight() const;
+	private:
 		int m_bottom;
 		int m_left;
 		int m_right;
-		void setBottom(int bottom);
-		int getBottom();
-		void setLeft(int left);
-		int getLeft();
-		void setRight(int right);
-		int getRight();
 	};
+
+	DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other);
+	DiagramDrawParamsTriangle();
+
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
+
+	static EdgeType edgetypeStringToEnum(const QString& edgetype);
+	static QString edgetypeEnumToString(EdgeType edgetype);
 
 	void setBottomRadio(int bottom);
 	void setLeftRadio(int left);
@@ -161,7 +166,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 class DiagramDrawParamsMouse : public IDidgramDrawParams
@@ -172,7 +177,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void setPath(std::shared_ptr<QPainterPath> path);
 	std::shared_ptr<QPainterPath> getPaht();
@@ -189,7 +194,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 
@@ -198,7 +203,7 @@ class TextLineEdit : public QLineEdit
 	Q_OBJECT
 public:
 	TextLineEdit(QWidget* parent = nullptr);
-    TextLineEdit(const TextLineEdit& other);
+	TextLineEdit(const TextLineEdit& other);
 	void setTextColor(QColor textcolor);
 	void setBackGroundColor(QColor color);
 
@@ -226,7 +231,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void setFontFamily(QString family);
 	QString getFontFamily();
@@ -250,7 +255,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 class DiagramDrawParamsHexagon : public IDidgramDrawParams
@@ -261,7 +266,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 class DiagramDrawParamsStar : public IDidgramDrawParams
@@ -272,7 +277,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-    std::shared_ptr<IDidgramDrawParams> clone() override;
+	std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 

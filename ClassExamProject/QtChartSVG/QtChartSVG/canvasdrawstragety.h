@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CANVASDRAWSTRAGETY_H 
 #define CANVASDRAWSTRAGETY_H
 

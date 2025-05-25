@@ -10,7 +10,7 @@ class canvasDiagram : public QObject
 {
 	Q_OBJECT
 signals:
-	void signalRepaint();
+	void signalRepaint(QRect rect);
 public:
 	canvasDiagram();
 
@@ -20,6 +20,8 @@ public:
 	std::shared_ptr<IDiagramDrawer> getDrawer();
 	void setParams(std::shared_ptr<IDidgramDrawParams> params);
 	std::shared_ptr<IDidgramDrawParams> getParams();
+
+	void onDealValueChanged();
 
 private:
 	std::shared_ptr<propertySetManager> m_propertySetManager;

@@ -53,21 +53,20 @@ class otherPropertySet :public IpropertySet
 {
 	Q_OBJECT
 signals:
-	void signalHuabuWidthChanged(int width);
-	void signalHuabuHeightChanged(int height);
+	void signalCanvasWidthChanged(int width);
+	void signalCanvasHeightChanged(int height);
 	void signalCanvasScaleChanged(double scale);
 public:
 	~otherPropertySet()override;
 
-	void onHuabuHeightChanged(QVariant value);
-	void onHuabuWidthChanged(QVariant value);
+	void onCanvasHeightChanged(QVariant value);
+	void onCanvasWidthChanged(QVariant value);
 	void onCanvasScaleChanged(QVariant value);
 
 
 	QString m_name;
-	qint64 m_zvalue;
-	int m_huabuwidth;
-	int m_huabuheight;
+	int m_canvasWidth;
+	int m_canvasHeight;
 	double m_scale;
 };
 

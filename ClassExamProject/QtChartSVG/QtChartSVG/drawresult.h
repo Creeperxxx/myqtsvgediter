@@ -1,7 +1,5 @@
 #ifndef DRAWRESULT_H
 #define DRAWRESULT_H
-
-
 #include "qpainterpath.h"
 #include "qpoint.h"
 #include "qpen.h"
@@ -9,7 +7,6 @@
 
 class DrawResult
 {
-
 public:
 	virtual bool iscontainPoint(QPointF point) = 0;
 	virtual QPainterPath getPainterPath() = 0;

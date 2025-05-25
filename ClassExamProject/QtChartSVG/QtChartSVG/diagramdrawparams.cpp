@@ -116,7 +116,8 @@ void IDidgramDrawParams::serialize(QDataStream& out) const
 		<< m_brush.color()
 		<< m_rotate
 		<< m_centerHoffset
-		<< m_centerVoffset;
+		<< m_centerVoffset
+		<< static_cast<int>(m_pen.style());
 }
 
 void IDidgramDrawParams::deserialize(QDataStream& in)
@@ -146,7 +147,9 @@ void IDidgramDrawParams::deserialize(QDataStream& in)
 	in >> m_centerHoffset;
 	in >> m_centerVoffset;
 
-
+	int style;
+	in >> style;
+	m_pen.setStyle(static_cast<Qt::PenStyle>(style));
 }
 
 QPoint IDidgramDrawParams::getCenter()
@@ -360,18 +363,22 @@ double DiagramDrawParamsCircle::getRadio()
 void DiagramDrawParamsTriangle::serialize(QDataStream& out) const
 {
 	IDidgramDrawParams::serialize(out);
-	out << m_sideRadios.m_bottom
-		<< m_sideRadios.m_left
-		<< m_sideRadios.m_right
+	out << m_sideRadios.getBottom()
+		<< m_sideRadios.getLeft()
+		<< m_sideRadios.getRight()
 		<< static_cast<int>(m_edgetype);
 }
 
 void DiagramDrawParamsTriangle::deserialize(QDataStream& in)
 {
 	IDidgramDrawParams::deserialize(in);
-	in >> m_sideRadios.m_bottom
-		>> m_sideRadios.m_left
-		>> m_sideRadios.m_right;
+	int bottom;
+	int left;
+	int right;
+	in >> bottom >> left >> right;
+	m_sideRadios.setBottom(bottom);
+	m_sideRadios.setLeft(left);
+	m_sideRadios.setRight(right);
 	int value;
 	in >> value;
 	m_edgetype = static_cast<EdgeType>(value);
@@ -416,9 +423,7 @@ QString DiagramDrawParamsTriangle::edgetypeEnumToString(EdgeType edgetype)
 DiagramDrawParamsTriangle::DiagramDrawParamsTriangle(const DiagramDrawParamsTriangle& other)
 	:IDidgramDrawParams(other)
 {
-	m_sideRadios.m_bottom = other.m_sideRadios.m_bottom;
-	m_sideRadios.m_left = other.m_sideRadios.m_left;
-	m_sideRadios.m_right = other.m_sideRadios.m_right;
+	m_sideRadios = other.m_sideRadios;
 	m_edgetype = other.m_edgetype;
 }
 
@@ -434,6 +439,13 @@ DiagramDrawParamsTriangle::sideRadios::sideRadios()
 {
 }
 
+DiagramDrawParamsTriangle::sideRadios::sideRadios(const sideRadios& other)
+	:m_bottom(other.m_bottom)
+	, m_left(other.m_left)
+	, m_right(other.m_right)
+{
+}
+
 DiagramDrawParamsTriangle::sideRadios::sideRadios(int bottom, int left, int right)
 	: m_bottom(bottom)
 	, m_left(left)
@@ -445,7 +457,7 @@ void DiagramDrawParamsTriangle::sideRadios::setBottom(int bottom)
 	m_bottom = bottom;
 }
 
-int DiagramDrawParamsTriangle::sideRadios::getBottom()
+int DiagramDrawParamsTriangle::sideRadios::getBottom() const
 {
 	return m_bottom;
 }
@@ -455,7 +467,7 @@ void DiagramDrawParamsTriangle::sideRadios::setLeft(int left)
 	m_left = left;
 }
 
-int DiagramDrawParamsTriangle::sideRadios::getLeft()
+int DiagramDrawParamsTriangle::sideRadios::getLeft() const
 {
 	return m_left;
 }
@@ -465,7 +477,7 @@ void DiagramDrawParamsTriangle::sideRadios::setRight(int right)
 	m_right = right;
 }
 
-int DiagramDrawParamsTriangle::sideRadios::getRight()
+int DiagramDrawParamsTriangle::sideRadios::getRight() const
 {
 	return m_right;
 }

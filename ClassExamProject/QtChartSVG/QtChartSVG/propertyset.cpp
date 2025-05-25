@@ -203,20 +203,20 @@ IpropertySet::~IpropertySet()
 
 }
 
-void otherPropertySet::onHuabuHeightChanged(QVariant value)
+void otherPropertySet::onCanvasHeightChanged(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_huabuwidth = value.value<int>();
-	emit signalHuabuWidthChanged(m_huabuwidth);
+	m_canvasWidth = value.value<int>();
+	emit signalCanvasWidthChanged(m_canvasWidth);
 }
 
-void otherPropertySet::onHuabuWidthChanged(QVariant value)
+void otherPropertySet::onCanvasWidthChanged(QVariant value)
 {
 	if (!value.canConvert<int>())
 		throw std::runtime_error("error");
-	m_huabuheight = value.value<int>();
-	emit signalHuabuHeightChanged(m_huabuheight);
+	m_canvasHeight = value.value<int>();
+	emit signalCanvasHeightChanged(m_canvasHeight);
 }
 
 void otherPropertySet::onCanvasScaleChanged(QVariant value)

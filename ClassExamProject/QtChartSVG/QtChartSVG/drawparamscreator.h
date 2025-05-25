@@ -1,7 +1,5 @@
 #ifndef DRAWPARAMSCREATOR_H
 #define DRAWPARAMSCREATOR_H
-
-
 #include <memory>
 #include "diagramdrawparams.h"
 #include "namespace.h"

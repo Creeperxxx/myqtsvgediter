@@ -19,18 +19,18 @@ class propertyWidget : public QWidget
 	Q_OBJECT
 public:
 	propertyWidget(QWidget* parent = nullptr);
-	void setstackwidgetindex(int index);
-	int getstackwidgetindex();
+	void setStackIndex(int index);
+	int getStackIndex();
 
-	void addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params);
+	void addPropertyDelegate(QString name, std::shared_ptr<IdelegatePramas> params);
 	void addShowingData(std::shared_ptr<propertydata> data);
 
 private:
 	std::shared_ptr<IpropertyDelegate> createDelegate(std::shared_ptr<IdelegatePramas> params);
 
 	std::map<QString, std::shared_ptr<IpropertyDelegate>> m_propertyDelegateMap;
-	QFormLayout* m_shuxinglayout;
-	int m_stackwidgetindex;
+	QFormLayout* m_layout;
+	int m_stackIndex;
 };
 
 
@@ -41,13 +41,13 @@ class PropertyWidgetManager : public QWidget
 public:
 
 	PropertyWidgetManager(QWidget* parent);
-	QStackedWidget* getstackwidget();
-	void dealclicked(std::shared_ptr<propertySetManager> setmanager);
+	QStackedWidget* getStackwidget();
+	void onDealClicked(std::shared_ptr<propertySetManager> setmanager);
 	void addPropertyWidget(myqtsvg::propertyWidgetType type, propertyWidget* widget);
 private:
 
 	std::map<myqtsvg::propertyWidgetType, propertyWidget*> m_propertyMap;
-	QStackedWidget* m_propertyStackWidget;
+	QStackedWidget* m_stackwidget;
 
 };
 

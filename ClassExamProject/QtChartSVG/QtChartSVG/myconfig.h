@@ -97,6 +97,12 @@ public:
 	QString getPentagonName();
 	QString getHexagonName();
 	QString getStarName();
+	int getPentagonRotate();
+	int getHexagonRotate();
+	int getStarRotate();
+	double getPentagonScale();
+	double getHexagonScale();
+	double getStarScale();
 
 		
 private:

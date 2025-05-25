@@ -9,28 +9,28 @@
 
 propertyWidget::propertyWidget(QWidget* parent)
 	: QWidget(parent)
-	, m_stackwidgetindex(0)
+	, m_stackIndex(0)
 {
-	m_shuxinglayout = new QFormLayout(this);
-	m_shuxinglayout->setAlignment(Qt::AlignLeft);
-	m_shuxinglayout->setContentsMargins(0, 0, 0, 0);
-	m_shuxinglayout->setSpacing(0);
-	setLayout(m_shuxinglayout);
+	m_layout = new QFormLayout(this);
+	m_layout->setAlignment(Qt::AlignLeft);
+	m_layout->setContentsMargins(0, 0, 0, 0);
+	m_layout->setSpacing(0);
+	setLayout(m_layout);
 
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
 
-void propertyWidget::setstackwidgetindex(int index)
+void propertyWidget::setStackIndex(int index)
 {
-	m_stackwidgetindex = index;
+	m_stackIndex = index;
 }
 
-int propertyWidget::getstackwidgetindex()
+int propertyWidget::getStackIndex()
 {
-	return m_stackwidgetindex;
+	return m_stackIndex;
 }
 
-void propertyWidget::addPropertyItem(QString name, std::shared_ptr<IdelegatePramas> params)
+void propertyWidget::addPropertyDelegate(QString name, std::shared_ptr<IdelegatePramas> params)
 {
 	std::shared_ptr<IpropertyDelegate> delegate = createDelegate(params);
 
@@ -42,7 +42,7 @@ void propertyWidget::addPropertyItem(QString name, std::shared_ptr<IdelegatePram
 	QWidget* delegatewidget = delegate->getEditWidget();
 	if (delegatewidget == nullptr)
 		throw std::runtime_error("error");
-	m_shuxinglayout->addRow(name, delegatewidget);
+	m_layout->addRow(name, delegatewidget);
 	m_propertyDelegateMap[name] = delegate;
 }
 
@@ -84,30 +84,30 @@ std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegate(std::shared_pt
 
 PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 {
-	m_propertyStackWidget = new QStackedWidget(parent);
-	m_propertyStackWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	m_propertyStackWidget->setContentsMargins(0, 0, 0, 0);
-	m_propertyStackWidget->setFrameShape(QFrame::NoFrame);
-	m_propertyStackWidget->setFrameShadow(QFrame::Plain);
+	m_stackwidget = new QStackedWidget(parent);
+	m_stackwidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+	m_stackwidget->setContentsMargins(0, 0, 0, 0);
+	m_stackwidget->setFrameShape(QFrame::NoFrame);
+	m_stackwidget->setFrameShadow(QFrame::Plain);
 
 
 	propertyWidgetManagerIniter::getInstance().initmanager(this);
 	propertyWidget* defaultwidget = m_propertyMap[myqtsvg::propertyWidgetType::defaultWidget];
-	m_propertyStackWidget->setCurrentIndex(defaultwidget->getstackwidgetindex());
+	m_stackwidget->setCurrentIndex(defaultwidget->getStackIndex());
 }
 
-QStackedWidget* PropertyWidgetManager::getstackwidget()
+QStackedWidget* PropertyWidgetManager::getStackwidget()
 {
-	return m_propertyStackWidget;
+	return m_stackwidget;
 }
 
-void PropertyWidgetManager::dealclicked(std::shared_ptr<propertySetManager> setmanager)
+void PropertyWidgetManager::onDealClicked(std::shared_ptr<propertySetManager> setmanager)
 {
 	if (m_propertyMap.find(setmanager->getWidgetType()) == m_propertyMap.end())
 		throw std::runtime_error("error");
 	auto widget = m_propertyMap[setmanager->getWidgetType()];
-	int index = widget->getstackwidgetindex();
-	m_propertyStackWidget->setCurrentIndex(index);
+	int index = widget->getStackIndex();
+	m_stackwidget->setCurrentIndex(index);
 
 	setmanager->dealShowData(widget);
 }
@@ -115,8 +115,8 @@ void PropertyWidgetManager::dealclicked(std::shared_ptr<propertySetManager> setm
 
 void PropertyWidgetManager::addPropertyWidget(myqtsvg::propertyWidgetType type, propertyWidget* widget)
 {
-	int index = m_propertyStackWidget->addWidget(widget);
-	widget->setstackwidgetindex(index);
+	int index = m_stackwidget->addWidget(widget);
+	widget->setStackIndex(index);
 
 	m_propertyMap[type] = widget;
 }
@@ -318,6 +318,8 @@ propertyWidget* propertyWidgetManagerIniter::createDiagramPentagon()
 {
 	auto widget = new propertyWidget();
 	buildName(widget);
+	buildRotate(widget);
+	buildScale(widget);
 	buildSpacesize(widget);
 	buildPen(widget);
 	buildBrush(widget);
@@ -328,6 +330,8 @@ propertyWidget* propertyWidgetManagerIniter::createDiagramHexagon()
 {
 	auto widget = new propertyWidget();
 	buildName(widget);
+	buildRotate(widget);
+	buildScale(widget);
 	buildSpacesize(widget);
 	buildPen(widget);
 	buildBrush(widget);
@@ -338,6 +342,8 @@ propertyWidget* propertyWidgetManagerIniter::createDiagramStar()
 {
 	auto widget = new propertyWidget();
 	buildName(widget);
+	buildRotate(widget);
+	buildScale(widget);
 	buildSpacesize(widget);
 	buildPen(widget);
 	buildBrush(widget);
@@ -357,7 +363,7 @@ propertyWidget* propertyWidgetManagerIniter::createCanvas()
 void propertyWidgetManagerIniter::buildName(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsString>(myconfig::getInstance().getDefaultName());
-	widget->addPropertyItem(myconfig::getInstance().getNameName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getNameName(), params);
 
 }
 
@@ -365,10 +371,10 @@ void propertyWidgetManagerIniter::buildPen(propertyWidget* widget)
 {
 	auto& config = myconfig::getInstance();
 	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(config.getPenColor());
-	widget->addPropertyItem(config.getPenColorName(), params);
+	widget->addPropertyDelegate(config.getPenColorName(), params);
 
 	params = std::make_shared<delegateParamsInt>(config.getPenWidthMax(), 1, 1, config.getPenWidth());
-	widget->addPropertyItem(config.getPenWdithName(), params);
+	widget->addPropertyDelegate(config.getPenWdithName(), params);
 
 	static QVector<QString> penstylelist{
 		myqtsvg::PenStyleToQstring(Qt::PenStyle::SolidLine)
@@ -380,56 +386,56 @@ void propertyWidgetManagerIniter::buildPen(propertyWidget* widget)
 		, myqtsvg::PenStyleToQstring(Qt::PenStyle::MPenStyle)
 	};
 	params = std::make_shared<delegateParamsEnum>(penstylelist, config.getPenStyle());
-	widget->addPropertyItem(config.getPenStyleName(), params);
+	widget->addPropertyDelegate(config.getPenStyleName(), params);
 }
 
 void propertyWidgetManagerIniter::buildBrush(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsColor>(myconfig::getInstance().getBrushColor());
-	widget->addPropertyItem(myconfig::getInstance().getBrushColorName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getBrushColorName(), params);
 }
 
 void propertyWidgetManagerIniter::buildCenterMove(propertyWidget* widget)
 {
 	int lengthmax = myconfig::getInstance().getCanvasLengthMax();
 	auto params = std::make_shared<delegateParamsInt>(lengthmax, -lengthmax, 1, 0);
-	widget->addPropertyItem(myconfig::getInstance().getCenterHOffsetName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCenterHOffsetName(), params);
 
 	params = std::make_shared<delegateParamsInt>(lengthmax, -lengthmax, 1, 0);
-	widget->addPropertyItem(myconfig::getInstance().getCenterVOffsetName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCenterVOffsetName(), params);
 }
 
 void propertyWidgetManagerIniter::buildScale(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(myconfig::getInstance().getScaleMax(), 0.01, 0.01, 2, 1.00);
-	widget->addPropertyItem(myconfig::getInstance().getScaleName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getScaleName(), params);
 }
 
 void propertyWidgetManagerIniter::buildRotate(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(180, -180, 1, 0);
-	widget->addPropertyItem(myconfig::getInstance().getRotateAngleName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getRotateAngleName(), params);
 }
 
 void propertyWidgetManagerIniter::buildSpacesize(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getSpaceLengthMax(), 1, 1, myconfig::getInstance().getSpaceHeight());
-	widget->addPropertyItem(myconfig::getInstance().getSpaceHeightName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getSpaceHeightName(), params);
 
 	params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getSpaceLengthMax(), 1, 1, myconfig::getInstance().getSpaceWidth());
-	widget->addPropertyItem(myconfig::getInstance().getSpaceWidthName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getSpaceWidthName(), params);
 }
 
 void propertyWidgetManagerIniter::buildRectRadio(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(myconfig::getInstance().getRectRadioMax(), myconfig::getInstance().getRectRadioMin(), 0.01, 2, myconfig::getInstance().getRectRadio());
-	widget->addPropertyItem(myconfig::getInstance().getRectRadioName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getRectRadioName(), params);
 }
 
 void propertyWidgetManagerIniter::buildCircleRadio(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(myconfig::getInstance().getCircleRadioMax(), myconfig::getInstance().getCircleRadioMin(), 0.01, 2, myconfig::getInstance().getCircleRadio());
-	widget->addPropertyItem(myconfig::getInstance().getCircleRadioName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCircleRadioName(), params);
 }
 
 void propertyWidgetManagerIniter::buildTriangleRadios(propertyWidget* widget)
@@ -438,7 +444,7 @@ void propertyWidgetManagerIniter::buildTriangleRadios(propertyWidget* widget)
 		, myconfig::getInstance().getTriangleRadioLeftName()
 		, myconfig::getInstance().getTriangleRadioRightName()
 		, myconfig::getInstance().getTriangleRadioMax());
-	widget->addPropertyItem(myconfig::getInstance().getTriangleRadioName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getTriangleRadioName(), params);
 }
 
 void propertyWidgetManagerIniter::buildTriangleEdgeType(propertyWidget* widget)
@@ -449,16 +455,16 @@ void propertyWidgetManagerIniter::buildTriangleEdgeType(propertyWidget* widget)
 		, DiagramDrawParamsTriangle::edgetypeEnumToString(DiagramDrawParamsTriangle::EdgeType::Right)
 	};
 	auto params = std::make_shared<delegateParamsEnum>(edgetype, myconfig::getInstance().getTriangleEdgetype());
-	widget->addPropertyItem(myconfig::getInstance().getEdgeTypeName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getEdgeTypeName(), params);
 }
 
 void propertyWidgetManagerIniter::buildCanvasSize(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getCanvasLengthMax(), 1, 1, myconfig::getInstance().getCanvasHeight());
-	widget->addPropertyItem(myconfig::getInstance().getCanvasHeightName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCanvasHeightName(), params);
 
 	params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getCanvasLengthMax(), 1, 1, myconfig::getInstance().getCanvasWidth());
-	widget->addPropertyItem(myconfig::getInstance().getCanvasWidthName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCanvasWidthName(), params);
 }
 
 void propertyWidgetManagerIniter::buildFont(propertyWidget* widget)
@@ -468,21 +474,21 @@ void propertyWidgetManagerIniter::buildFont(propertyWidget* widget)
 		return fontdatabase.families();
 		}();
 	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsEnum>(QVector<QString>::fromList(fontFamilies), myconfig::getInstance().getTextFamily());
-	widget->addPropertyItem(myconfig::getInstance().getFontFamilyName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getFontFamilyName(), params);
 
 	params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getFontSizeMax(), 1, 1, myconfig::getInstance().getTextSize());
-	widget->addPropertyItem(myconfig::getInstance().getFontSizeName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getFontSizeName(), params);
 }
 
 void propertyWidgetManagerIniter::buildPenColor(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsColor>(myconfig::getInstance().getPenColor());
-	widget->addPropertyItem(myconfig::getInstance().getPenColorName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getPenColorName(), params);
 }
 
 void propertyWidgetManagerIniter::buildCanvasScale(propertyWidget* widget)
 {
 	auto params = std::make_shared<delegateParamsDouble>(myconfig::getInstance().getScaleMax(), 0.01, 0.01, 2, 1.00);
-	widget->addPropertyItem(myconfig::getInstance().getCanvasScaleName(), params);
+	widget->addPropertyDelegate(myconfig::getInstance().getCanvasScaleName(), params);
 }
 

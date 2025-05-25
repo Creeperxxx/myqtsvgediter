@@ -1,27 +1,18 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 
-
-#include <QWidget>
-#include <qevent.h>
-#include <qmimedata.h>
-#include <qdebug.h>
 #include <vector>
-// #include <list>
-// #include <qsvggenerator.h>
-#include <QtSvg/QSvgGenerator>
+#include <qwidget.h>
+#include <qsvggenerator.h>
+#include <qsvgrenderer.h>
 #include <qsettings.h>
-// #include <qsvgrenderer.h>
-#include <QtSvg/QSvgRenderer>
-#include "propertyset.h"
-#include "drawer.h"
-#include "canvasdrawstragety.h"
-#include "canvasdiagram.h"
 
 
-
-
-
+class canvasDiagram;
+class IDidgramDrawParams;
+class propertySetManager;
+class drawStragety;
+class IDiagramDrawer;
 
 class canvas : public QWidget
 {
@@ -37,18 +28,15 @@ public:
 	void onSaveToSvg(QString filepath);
 	void onLoadSvg(QString filepath);
 	void onSaveToPng(QString filepath);
-	void onnewHuabu();
+	void onNewCanvas();
 
-	void onCopyTuinxg();
-	void onpasteTuxing();
-	void onSelectAllTuxing();
-	void onDeleteTuxing();
-	void onUndoTuxing();
+	void onCopyDiagram();
+	void onPasteDiagram();
+	void onSelectAllDiagram();
+	void onDeleteDiagram();
+	void onUndoDiagram();
 
-	void adjustcanvassize();
-	void onHeightChanged(int height);
-	void onWidthChanged(int width);
-	void onScaleChagned(double scale);
+	void adjustCanvasSize();
 protected:
 
 	void dragEnterEvent(QDragEnterEvent* event)override; 
@@ -64,6 +52,10 @@ protected:
 	void closeEvent(QCloseEvent* event) override;
 	void contextMenuEvent(QContextMenuEvent* event)override;
 
+	void onDealDiagramUpdate(QRect rect);
+	void onHeightChanged(int height);
+	void onWidthChanged(int width);
+	void onScaleChagned(double scale);
 signals:
 	void signalPropertyShow(std::shared_ptr<propertySetManager> setmanager); //显示属性
 
@@ -74,7 +66,7 @@ private:
 	void loadSetting();
 
 	//用来创建一个图形
-	void createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer);
+	void createDiagram(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer);
 
     void handleSelectPress();
     void handleDrawPress();
@@ -91,7 +83,7 @@ private:
 	QSize m_basesize;
 	double m_scale;
 
-	std::vector<std::shared_ptr<canvasDiagram>> m_tuxingvec;
+	std::vector<std::shared_ptr<canvasDiagram>> m_diagramVec;
 
 	std::shared_ptr<propertySetManager> m_setManager;
 

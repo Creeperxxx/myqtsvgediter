@@ -37,3 +37,9 @@ std::shared_ptr<IDidgramDrawParams> canvasDiagram::getParams()
 {
 	return m_params;
 }
+
+void canvasDiagram::onDealValueChanged()
+{
+	QRect rect = m_drawer->getResult()->getBoundingRect();
+	emit signalRepaint(rect);
+}

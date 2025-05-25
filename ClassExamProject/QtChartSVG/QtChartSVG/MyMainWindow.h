@@ -42,9 +42,9 @@ private:
 
 	void dealNetworkReply(QNetworkReply* reply);
 
-	canvas* m_huabuwidget;
-	QWidget* m_huabuparentwidget;
-	QScrollArea* m_huabuparentscroll;
+	canvas* m_canvasWidget;
+	QWidget* m_canvasParentWidget;
+	QScrollArea* m_canvasParentScroll;
 
 	PropertyWidgetManager* m_propertyWidgetManager;
 	QSettings m_settings;

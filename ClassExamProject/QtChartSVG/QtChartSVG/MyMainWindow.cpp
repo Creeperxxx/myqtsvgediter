@@ -54,8 +54,8 @@ void MyMainWindow::init()
 	setupToolbar();
 	fetchAndSetTooltips();
 
-	connect(m_huabuwidget, &canvas::signalPropertyShow,
-		m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+	connect(m_canvasWidget, &canvas::signalPropertyShow,
+		m_propertyWidgetManager, &PropertyWidgetManager::onDealClicked);
 
 }
 
@@ -96,7 +96,7 @@ void MyMainWindow::savesvg()
 		{
 			filepath.append(".svg");
 		}
-		m_huabuwidget->onSaveToSvg(filepath);
+		m_canvasWidget->onSaveToSvg(filepath);
 	}
 }
 
@@ -105,7 +105,7 @@ void MyMainWindow::loadfile()
 	QString filepath = QFileDialog::getOpenFileName(this, "openfile", "", "SVG files (*.svg);;All files (*)");
 	if (!filepath.isEmpty())
 	{
-		m_huabuwidget->onLoadSvg(filepath);
+		m_canvasWidget->onLoadSvg(filepath);
 	}
 }
 
@@ -114,38 +114,38 @@ void MyMainWindow::savepng()
 	QString filepath = QFileDialog::getSaveFileName(this, "save png", "", "PNG files (*.png);;All files (*)");
 	if (!filepath.isEmpty())
 	{
-		m_huabuwidget->onSaveToPng(filepath);
+		m_canvasWidget->onSaveToPng(filepath);
 	}
 }
 
 void MyMainWindow::newcanvas()
 {
-	m_huabuwidget->onnewHuabu();
+	m_canvasWidget->onNewCanvas();
 }
 
 void MyMainWindow::copyDiagram()
 {
-	m_huabuwidget->onCopyTuinxg();
+	m_canvasWidget->onCopyDiagram();
 }
 
 void MyMainWindow::pasteDiagram()
 {
-	m_huabuwidget->onpasteTuxing();
+	m_canvasWidget->onPasteDiagram();
 }
 
 void MyMainWindow::selectAllDiagram()
 {
-	m_huabuwidget->onSelectAllTuxing();
+	m_canvasWidget->onSelectAllDiagram();
 }
 
 void MyMainWindow::deleteDiagram()
 {
-	m_huabuwidget->onDeleteTuxing();
+	m_canvasWidget->onDeleteDiagram();
 }
 
 void MyMainWindow::undoDiagram()
 {
-	m_huabuwidget->onUndoTuxing();
+	m_canvasWidget->onUndoDiagram();
 }
 
 void MyMainWindow::dealNetworkReply(QNetworkReply* reply)
@@ -205,9 +205,9 @@ void MyMainWindow::setupToolbar()
 		maintoolbar->addSeparator();
 
 		connect(diagramWidget, &diagram::signalPropertyShow,
-			m_propertyWidgetManager, &PropertyWidgetManager::dealclicked);
+			m_propertyWidgetManager, &PropertyWidgetManager::onDealClicked);
 		connect(diagramWidget, &diagram::signalMouseDrawing,
-			m_huabuwidget, &canvas::onDiagramClicked);
+			m_canvasWidget, &canvas::onDiagramClicked);
 	}
 }
 
@@ -220,50 +220,50 @@ void MyMainWindow::setupMainLayout()
 	setCentralWidget(centralwidget);
 
 	// 画布父窗口
-	m_huabuparentwidget = new QWidget(centralwidget);
-	m_huabuparentwidget->setStyleSheet("background-color: rgb(120,120,120);");
-	m_huabuparentwidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	m_huabuparentwidget->setMinimumSize(8000, 8000);
-	new QGridLayout(m_huabuparentwidget);
+	m_canvasParentWidget = new QWidget(centralwidget);
+	m_canvasParentWidget->setStyleSheet("background-color: rgb(120,120,120);");
+	m_canvasParentWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	m_canvasParentWidget->setMinimumSize(8000, 8000);
+	new QGridLayout(m_canvasParentWidget);
 
 	// 滚动区域
-	m_huabuparentscroll = new QScrollArea(centralwidget);
-	m_huabuparentscroll->setWidgetResizable(true);
-	m_huabuparentscroll->setWidget(m_huabuparentwidget);
-	centralwidgetlayout->addWidget(m_huabuparentscroll);
-	m_huabuparentscroll->viewport()->installEventFilter(this);
+	m_canvasParentScroll = new QScrollArea(centralwidget);
+	m_canvasParentScroll->setWidgetResizable(true);
+	m_canvasParentScroll->setWidget(m_canvasParentWidget);
+	centralwidgetlayout->addWidget(m_canvasParentScroll);
+	m_canvasParentScroll->viewport()->installEventFilter(this);
 
 	// 画布
-	m_huabuwidget = new canvas(m_huabuparentwidget);
-	m_huabuparentwidget->layout()->addWidget(m_huabuwidget);
+	m_canvasWidget = new canvas(m_canvasParentWidget);
+	m_canvasParentWidget->layout()->addWidget(m_canvasWidget);
 
 	// 属性面板
 	m_propertyWidgetManager = new PropertyWidgetManager(centralwidget);
-	auto stackwidget = m_propertyWidgetManager->getstackwidget();
+	auto stackwidget = m_propertyWidgetManager->getStackwidget();
 	centralwidgetlayout->addWidget(stackwidget);
 }
 
 void MyMainWindow::resizeEvent(QResizeEvent* event)
 {
 	//这个和下面那个都是为了让画布居中显示
-	if (m_huabuparentwidget && m_huabuparentscroll) 
+	if (m_canvasParentWidget && m_canvasParentScroll) 
 	{ 
-		int centerx = m_huabuparentwidget->width() / 2 - m_huabuparentscroll->viewport()->size().width() / 2;
-		int centery = m_huabuparentwidget->height() / 2 - m_huabuparentscroll->viewport()->size().height() / 2;
-		m_huabuparentscroll->horizontalScrollBar()->setValue(centerx);
-		m_huabuparentscroll->verticalScrollBar()->setValue(centery);
+		int centerx = m_canvasParentWidget->width() / 2 - m_canvasParentScroll->viewport()->size().width() / 2;
+		int centery = m_canvasParentWidget->height() / 2 - m_canvasParentScroll->viewport()->size().height() / 2;
+		m_canvasParentScroll->horizontalScrollBar()->setValue(centerx);
+		m_canvasParentScroll->verticalScrollBar()->setValue(centery);
 	}
 	QMainWindow::resizeEvent(event);
 }
 
 void MyMainWindow::showEvent(QShowEvent* event)
 {
-	if (m_huabuparentwidget && m_huabuparentscroll) 
+	if (m_canvasParentWidget && m_canvasParentScroll) 
 	{ 
-		int centerx = m_huabuparentwidget->width() / 2 - m_huabuparentscroll->viewport()->size().width() / 2;
-		int centery = m_huabuparentwidget->height() / 2 - m_huabuparentscroll->viewport()->size().height() / 2;
-		m_huabuparentscroll->horizontalScrollBar()->setValue(centerx);
-		m_huabuparentscroll->verticalScrollBar()->setValue(centery);
+		int centerx = m_canvasParentWidget->width() / 2 - m_canvasParentScroll->viewport()->size().width() / 2;
+		int centery = m_canvasParentWidget->height() / 2 - m_canvasParentScroll->viewport()->size().height() / 2;
+		m_canvasParentScroll->horizontalScrollBar()->setValue(centerx);
+		m_canvasParentScroll->verticalScrollBar()->setValue(centery);
 	}
 	QMainWindow::showEvent(event);
 }

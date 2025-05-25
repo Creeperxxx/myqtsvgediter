@@ -20,7 +20,7 @@ void myconfig::loadUserJson(QString filepath)
 	QByteArray jsondata = configfile.readAll();
 	QJsonDocument jsonDoc = QJsonDocument::fromJson(jsondata);
 	configfile.close();
-	if(!jsonDoc.isObject())
+	if (!jsonDoc.isObject())
 		throw std::runtime_error("error");
 	m_userjson = jsonDoc.object();
 }
@@ -521,6 +521,46 @@ QString myconfig::getStarName()
 	return name;
 }
 
+int myconfig::getPentagonRotate()
+{
+	static int rotate = m_userjson["diagram"].toObject()["pentagon"].toObject()["rotate"].toInt();
+	return rotate;
+}
+
+int myconfig::getHexagonRotate()
+{
+	static int rotate = m_userjson["diagram"].toObject()["hexagon"].toObject()["rotate"].toInt();
+	return rotate;
+}
+
+int myconfig::getStarRotate()
+{
+	static int rotate = m_userjson["diagram"].toObject()["star"].toObject()["rotate"].toInt();
+	return rotate;
+}
+
+double myconfig::getPentagonScale()
+{
+	static double scale = m_userjson["diagram"].toObject()["pentagon"].toObject()["scale"].toDouble();
+	return scale;
+}
+
+double myconfig::getHexagonScale()
+{
+	static double scale = m_userjson["diagram"].toObject()["hexagon"].toObject()["scale"].toDouble();
+	return scale;
+}
+
+double myconfig::getStarScale()
+{
+	static double scale = m_userjson["diagram"].toObject()["star"].toObject()["scale"].toDouble();
+	return scale;
+}
+
+
+
+
+
 
 
 
@@ -547,9 +587,9 @@ void myconfig::loadDevJson()
 	if (!configfile.open(QIODevice::ReadOnly))
 		throw std::runtime_error("error");
 	QByteArray jsondata = configfile.readAll();
-	QJsonDocument jsonDoc= QJsonDocument::fromJson(jsondata);
+	QJsonDocument jsonDoc = QJsonDocument::fromJson(jsondata);
 	configfile.close();
-	if(!jsonDoc.isObject())
+	if (!jsonDoc.isObject())
 		throw std::runtime_error("error");
 
 	m_devjson = jsonDoc.object();

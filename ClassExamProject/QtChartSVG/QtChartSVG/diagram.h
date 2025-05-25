@@ -1,7 +1,6 @@
 #ifndef DIAGRAM_H
 #define DIAGRAM_H
 
-
 #include <qwidget.h>
 #include <qpoint.h>
 #include <qmimedata.h>

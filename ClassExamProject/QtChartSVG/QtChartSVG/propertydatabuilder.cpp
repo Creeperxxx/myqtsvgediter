@@ -170,17 +170,17 @@ void NamePropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, st
 void HuabuHeightPropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	auto data = std::make_shared<propertydata>(myconfig::getInstance().getCanvasHeightName()
-		, QVariant::fromValue(set->m_huabuheight));
+		, QVariant::fromValue(set->m_canvasHeight));
 	datavec->push_back(data);
-	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onHuabuHeightChanged);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onCanvasHeightChanged);
 }
 
 void HuabuWidthPropertyDataBuilder::probuild(std::shared_ptr<otherPropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)
 {
 	auto data = std::make_shared<propertydata>(myconfig::getInstance().getCanvasWidthName()
-		, QVariant::fromValue(set->m_huabuwidth));
+		, QVariant::fromValue(set->m_canvasWidth));
 	datavec->push_back(data);
-	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onHuabuWidthChanged);
+	QObject::connect(data.get(), &propertydata::signalValueChanged, set.get(), &otherPropertySet::onCanvasWidthChanged);
 }
 
 void IOtherPropertyDataBuilder::build(std::shared_ptr<IpropertySet> set, std::shared_ptr<std::vector<std::shared_ptr<propertydata>>> datavec)

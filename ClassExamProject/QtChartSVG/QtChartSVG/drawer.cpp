@@ -307,13 +307,13 @@ QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 {
 
 	auto radios = m_params->getRadios();
-	double bottom = radios.m_bottom;
-	double left = radios.m_left;
-	double right = radios.m_right;
+	int bottom = radios.getBottom();
+	int left = radios.getLeft();
+	int right = radios.getRight();
 
 	QPointF bottomleft = QPointF(0, 0);
 	QPointF bottomright = QPointF(bottom, 0);
-	qreal constheta = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
+	double constheta = (left * left + bottom * bottom - right * right) * 1.0 / (2 * left * bottom) * 1.0;
 	constheta = qBound(-1.0, constheta, 1.0);
 	qreal theta = acos(constheta);
 	qreal x = left * cos(theta);
@@ -327,65 +327,49 @@ QPolygonF DiagramDrawerTriangle::calcuBasicalTriangle()
 
 QTransform DiagramDrawerTriangle::calcuRotateTransform()
 {
+
 	auto radios = m_params->getRadios();
-	double bottom = radios.m_bottom;
-	double left = radios.m_left;
-	double right = radios.m_right;
+	int bottom = radios.getBottom();
+	int left = radios.getLeft();
+	int right = radios.getRight();
+	qreal targetAngle = m_params->getRotate() * 1.0;
 
-	// 计算顶点C的坐标
-	double cosA = (left * left + bottom * bottom - right * right) / (2 * left * bottom);
+	double cosA = (left * left + bottom * bottom - right * right) / (2.0 * left * bottom);
 	double sinA = std::sqrt(1 - cosA * cosA);
-	QPointF C(left * cosA, -left * sinA);
+	QPointF C(left * cosA, -left * sinA); 
 
-	qreal angle = m_params->getRotate();
+	QPointF A(0, 0);
+	QPointF B(bottom, 0);
+	QPointF D = C; 
 
+	QPointF center = (A + B + D) / 3.0;
+
+	QPointF direction;
 	DiagramDrawParamsTriangle::EdgeType edgetype = m_params->getEdgeType();
-
-	// 计算各边的方向
-	double targetsin = std::sin(qDegreesToRadians(angle));
-	double targetcos = std::cos(qDegreesToRadians(angle));
-
-	double newsin = 0;
-	double newcos = 1; // 默认为无旋转
 
 	switch (edgetype)
 	{
 	case DiagramDrawParamsTriangle::EdgeType::Bottom:
-	{ // 边AB (A→B)
-		double cosAB = 1.0;  // 方向 (a,0)
-		double sinAB = 0.0;
-		newsin = targetsin * cosAB - targetcos * sinAB;
-		newcos = targetcos * cosAB + targetsin * sinAB;
+		direction = B - A; 
 		break;
-	}
 	case DiagramDrawParamsTriangle::EdgeType::Left:
-	{ // 边AC (A→C)
-		double cosAC = cosA;
-		double sinAC = sinA;
-		newsin = targetsin * cosAC - targetcos * sinAC;
-		newcos = targetcos * cosAC + targetsin * sinAC;
+		direction = D - A; 
 		break;
-	}
 	case DiagramDrawParamsTriangle::EdgeType::Right:
-	{ // 边BC (B→C)
-		double bcX = C.x() - bottom; // B→C 的向量
-		double bcY = C.y();
-		double lengthBC = qSqrt(bcX * bcX + bcY * bcY);
-		double cosBC = bcX / lengthBC;
-		double sinBC = bcY / lengthBC;
-		newsin = targetsin * cosBC - targetcos * sinBC;
-		newcos = targetcos * cosBC + targetsin * sinBC;
+		direction = D - B; 
 		break;
-	}
 	default:
-		throw std::runtime_error("Invalid edge type");
-		break; // 无效输入，保持无旋转
+		throw std::runtime_error("error");
 	}
+	double currentAngle = std::atan2(direction.y(), direction.x());
+	double currentAngleDegrees = qRadiansToDegrees(currentAngle);
+	double rotationAngle = targetAngle - currentAngleDegrees;
 
 	QTransform transform;
-	transform.setMatrix(newcos, -newsin, 0,
-		newsin, newcos, 0,
-		0, 0, 1);
+	transform.translate(center.x(), center.y());    
+	transform.rotate(rotationAngle);                
+	transform.translate(-center.x(), -center.y());  
+
 	return transform;
 }
 
@@ -461,20 +445,15 @@ QLineF DiagramDrawerLine::calcuLine()
 	double halfwidth = (spacesize.width() - penwidth) / 2.0;
 	double halfheight = (spacesize.height() - penwidth) / 2.0;
 
-	// Convert rotation angle to radians
 	int angle = m_params->getRotate();
 	double radians = qDegreesToRadians(static_cast<double>(angle));
 
-	// Calculate direction vector
 	double dx = std::cos(radians);
 	double dy = std::sin(radians);
-
-	// Avoid division by zero and handle extreme angles
 	if (dx == 0 && dy == 0) {
 		throw std::runtime_error("Direction vector is undefined.");
 	}
 
-	// Calculate scaling factor t for line length based on space size
 	double tWidth = (dx != 0) ? std::abs(halfwidth / dx) : std::numeric_limits<double>::max();
 	double tHeight = (dy != 0) ? std::abs(halfheight / dy) : std::numeric_limits<double>::max();
 	double t = std::min(tWidth, tHeight) * m_params->getScale();
@@ -507,10 +486,11 @@ void DiagramDrawerMouse::draw(QPainter& painter)
 {
 	if (m_params->getIsDrawInCanvas())
 	{
+		painter.save();
 		painter.setPen(m_params->getPen());
 		painter.translate(m_params->getCenterHOffset(), m_params->getCenterVOffset());
 		painter.drawPath(*m_params->getPaht());
-		painter.resetTransform();
+		painter.restore();
 	}
 	else
 	{
@@ -735,6 +715,15 @@ void DiagramDrawerPentagon::build()
 		qreal y = cy + radius * sin(angle);
 		polygon.append(QPointF(x, y));
 	}
+
+	QTransform transfrom;
+	transfrom.translate(center.x(), center.y());
+	transfrom.rotate(m_params->getRotate());
+	transfrom.scale(m_params->getScale(), m_params->getScale());
+	transfrom.translate(-center.x(), -center.y());
+	polygon = polygon * transfrom;
+	
+
 	m_pentagon = polygon;
 }
 
@@ -785,6 +774,14 @@ void DiagramdrawerHexagon::build()
 		qreal y = cy + radius * sin(angle);
 		polygon.append(QPointF(x, y));
 	}
+
+	QTransform transfrom;
+	transfrom.translate(center.x(), center.y());
+	transfrom.rotate(m_params->getRotate());
+	transfrom.scale(m_params->getScale(), m_params->getScale());
+	transfrom.translate(-center.x(), -center.y());
+	polygon = polygon * transfrom;
+
 	m_hexagon = polygon;
 }
 
@@ -841,6 +838,14 @@ void DiagramDrawerStar::build()
 
 		star.append(QPointF(x, y));
 	}
+
+	QTransform transfrom;
+	transfrom.translate(center.x(), center.y());
+	transfrom.rotate(m_params->getRotate());
+	transfrom.scale(m_params->getScale(), m_params->getScale());
+	transfrom.translate(-center.x(), -center.y());
+	star = star * transfrom;
+
 	m_star = star;
 }
 

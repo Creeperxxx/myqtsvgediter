@@ -1,12 +1,18 @@
-#include <qdatetime.h>
+#include <qevent.h>
+#include <qmimedata.h>
 #include <qmenu.h>
+#include <qmessagebox.h>
 #include "canvas.h"
-#include "qmessagebox.h"
-#include "propertydatabuilder.h"
 #include "myconfig.h"
-#include "drawparamscreator.h"
-#include "propertynamevec.h"
+#include "propertydatabuilder.h"
 #include "propertyset.h"
+#include "diagramdrawparams.h"
+#include "drawer.h"
+#include "canvasdiagram.h"
+#include "canvasdrawstragety.h"
+#include "drawparamscreator.h"
+
+
 
 canvas::canvas(QWidget* parent)
 	: QWidget(parent)
@@ -15,7 +21,7 @@ canvas::canvas(QWidget* parent)
 	, m_pasteOffset(20, 20)
 	, m_lastPasteDelta(0, 0)
 	, m_chooseRect(0, 0, 0, 0)
-	, m_currentMode(canvas::MouseMode::None)
+	, m_currentMode(canvas::MouseMode::Selecting)
     , m_isDrawing(false)
 {
 	init();
@@ -37,8 +43,8 @@ void canvas::init()
 
 	auto otherset = std::make_shared<otherPropertySet>();
 	otherset->m_name = myconfig::getInstance().getCanvasName();
-	otherset->m_huabuheight = m_basesize.height();
-	otherset->m_huabuwidth = m_basesize.width();
+	otherset->m_canvasHeight = m_basesize.height();
+	otherset->m_canvasWidth = m_basesize.width();
 	otherset->m_scale = 1;
 
 	std::vector<QString> namevec{
@@ -51,12 +57,10 @@ void canvas::init()
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(namevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
 
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuHeightChanged, this, &canvas::onHeightChanged);
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuWidthChanged, this, &canvas::onWidthChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasHeightChanged, this, &canvas::onHeightChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasWidthChanged, this, &canvas::onWidthChanged);
 	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasScaleChanged, this, &canvas::onScaleChagned);
 	m_setManager->addPropertySet(config.getOtherSetName(), otherset);
-
-
 }
 
 canvas::~canvas()
@@ -89,7 +93,7 @@ void canvas::dropEvent(QDropEvent* event)
 		TextLineEdit::createTextLineEdit(params, this);
 	}
 
-	createTuxing(params, drawer);
+	createDiagram(params, drawer);
 	update();
 
 	event->acceptProposedAction();
@@ -120,7 +124,7 @@ void canvas::paintEvent(QPaintEvent* event)
 	painter.setBrush(Qt::transparent);
 	painter.drawRect(m_chooseRect);
 
-	for (auto& diagram : m_tuxingvec)
+	for (auto& diagram : m_diagramVec)
 	{
 		diagram->getDrawer()->draw(painter);
 	}
@@ -159,7 +163,6 @@ void canvas::mousePressEvent(QMouseEvent* event)
 	QWidget::mousePressEvent(event);
 	update();
 	return;
-
 }
 
 void canvas::mouseMoveEvent(QMouseEvent* event)
@@ -198,6 +201,7 @@ void canvas::mouseReleaseEvent(QMouseEvent* event)
 		QWidget::mouseReleaseEvent(event);
 		return;
 	}
+	m_currentpoint = event->pos();
 
 	switch (m_currentMode)
 	{
@@ -244,15 +248,20 @@ void canvas::contextMenuEvent(QContextMenuEvent* event)
 	QAction* selectedAction = menu.exec(event->globalPos());
 
 	if (selectedAction == copyAction)
-		onCopyTuinxg();
+		onCopyDiagram();
 	else if (selectedAction == pasteAction)
-		onpasteTuxing();
+		onPasteDiagram();
 	else if (selectedAction == selectAllAction)
-		onSelectAllTuxing();
+		onSelectAllDiagram();
 	else if (selectedAction == deleteAction)
-		onDeleteTuxing();
+		onDeleteDiagram();
 	else if (selectedAction == undoAction)
-		onUndoTuxing();
+		onUndoDiagram();
+}
+
+void canvas::onDealDiagramUpdate(QRect rect)
+{
+	update(rect);
 }
 
 void canvas::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
@@ -287,7 +296,7 @@ void canvas::onSaveToSvg(QString filepath)
 	}
 
 
-	for (const auto& diagram : m_tuxingvec) {
+	for (const auto& diagram : m_diagramVec) {
 		diagram->getDrawer()->draw(painter);
 	}
 
@@ -314,14 +323,14 @@ void canvas::onSaveToPng(QString filepath)
 }
 
 
-void canvas::onnewHuabu()
+void canvas::onNewCanvas()
 {
-	m_tuxingvec.clear();
+	m_diagramVec.clear();
     m_svgRenderer = nullptr;
 	update();
 }
 
-void canvas::onCopyTuinxg()
+void canvas::onCopyDiagram()
 {
 	m_copyParamsVec.clear();
 	if (m_choosedParamsvec.size() == 0)
@@ -332,7 +341,7 @@ void canvas::onCopyTuinxg()
 	m_lastPasteDelta = QPoint(0, 0);
 }
 
-void canvas::onpasteTuxing()
+void canvas::onPasteDiagram()
 {
 
 	if (m_copyParamsVec.size() > 0)
@@ -347,17 +356,17 @@ void canvas::onpasteTuxing()
 				std::dynamic_pointer_cast<DiagramDrawParamsMouse>(p)->getPaht()->translate(m_pasteOffset + m_lastPasteDelta);
 			}
 			auto drawer = DiagramDrawInterface::getInstance().getDrawer(p);
-			createTuxing(p, drawer);
+			createDiagram(p, drawer);
 		}
 	}
     update();
 }
 
-void canvas::onSelectAllTuxing()
+void canvas::onSelectAllDiagram()
 {
 	m_choosedParamsvec.clear();
 	QRect rect;
-	for (auto& tuxing : m_tuxingvec)
+	for (auto& tuxing : m_diagramVec)
 	{
 		m_choosedParamsvec.push_back(tuxing->getParams());
 		if (rect.isNull())
@@ -375,16 +384,16 @@ void canvas::onSelectAllTuxing()
 
 }
 
-void canvas::onDeleteTuxing()
+void canvas::onDeleteDiagram()
 {
 	for (auto& params : m_choosedParamsvec)
 	{
-		for (auto it = m_tuxingvec.begin(); it != m_tuxingvec.end(); it++)
+		for (auto it = m_diagramVec.begin(); it != m_diagramVec.end(); it++)
 		{
 			auto p = (*it)->getParams();
 			if (params.get() == p.get())
 			{
-				m_tuxingvec.erase(it);
+				m_diagramVec.erase(it);
 				break;
 			}
 		}
@@ -394,11 +403,12 @@ void canvas::onDeleteTuxing()
 	update();
 }
 
-void canvas::onUndoTuxing()
+void canvas::onUndoDiagram()
 {
-	if (!m_tuxingvec.empty())
+	if (!m_diagramVec.empty())
 	{
-		m_tuxingvec.pop_back();
+		m_diagramVec.pop_back();
+		update();
 	}
 }
 
@@ -411,7 +421,7 @@ void canvas::closeEvent(QCloseEvent* event)
 	QWidget::closeEvent(event);
 }
 
-void canvas::adjustcanvassize()
+void canvas::adjustCanvasSize()
 {
 	QSize size = m_basesize * m_scale;
 	setFixedSize(size);
@@ -420,19 +430,19 @@ void canvas::adjustcanvassize()
 void canvas::onHeightChanged(int height)
 {
 	m_basesize.setHeight(height);
-	adjustcanvassize();
+	adjustCanvasSize();
 }
 
 void canvas::onWidthChanged(int width)
 {
 	m_basesize.setWidth(width);
-	adjustcanvassize();
+	adjustCanvasSize();
 }
 
 void canvas::onScaleChagned(double scale)
 {
 	m_scale = scale;
-	adjustcanvassize();
+	adjustCanvasSize();
 }
 
 
@@ -478,17 +488,17 @@ void canvas::loadSetting()
 
 }
 
-void canvas::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer)
+void canvas::createDiagram(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer)
 {
 	auto& config = myconfig::getInstance();
-	std::shared_ptr<canvasDiagram> tuxing = std::make_shared<canvasDiagram>();
-	tuxing->setDrawer(drawer);
-	tuxing->setParams(params);
-	tuxing->setSetManager(initPropertySetManager::createPropertySetManager(myqtsvg::canvasShapetypeToPropertyWidgetType(params->getType())
+	std::shared_ptr<canvasDiagram> diagram = std::make_shared<canvasDiagram>();
+	diagram->setDrawer(drawer);
+	diagram->setParams(params);
+	diagram->setSetManager(initPropertySetManager::createPropertySetManager(myqtsvg::canvasShapetypeToPropertyWidgetType(params->getType())
 		, params
-		, [tuxing]()
+		, [diagram]()
 		{
-			emit tuxing->signalRepaint();
+			diagram->onDealValueChanged();
 		}
 		,
 		{
@@ -497,9 +507,9 @@ void canvas::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::share
 		}
 	));
 
-	QObject::connect(tuxing.get(), &canvasDiagram::signalRepaint, this, qOverload<>(&canvas::update));
+	QObject::connect(diagram.get(), &canvasDiagram::signalRepaint, this, &canvas::onDealDiagramUpdate);
 
-	m_tuxingvec.push_back(tuxing);
+	m_diagramVec.push_back(diagram);
 }
 
 
@@ -580,7 +590,7 @@ void canvas::finalizeSelection()
 	QRect totalrect;
 	QRect boundrect;
 	std::shared_ptr<propertySetManager> setmanager;
-	for (auto& tuxing : m_tuxingvec)
+	for (auto& tuxing : m_diagramVec)
 	{
 		if (tuxing->getDrawer()->getResult()->getPainterPath().intersects(m_chooseRect))
 		{
@@ -606,7 +616,7 @@ void canvas::finalizeSelection()
 
 void canvas::finalizeDrawing()
 {
-	createTuxing(m_drawingParams, m_drawingDrawer);
+	createDiagram(m_drawingParams, m_drawingDrawer);
 	m_drawingDrawer.reset();
 	m_drawingParams.reset();
 	m_isDrawing = false;

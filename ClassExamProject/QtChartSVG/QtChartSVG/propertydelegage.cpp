@@ -312,17 +312,17 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 	m_bottombox = new QSpinBox();
 	m_bottombox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_bottombox->setRange(0, castparams->m_Radiomax);
-	m_bottombox->setValue(castparams->m_radios.m_bottom);
+	m_bottombox->setValue(castparams->m_radios.getBottom());
 
 	m_leftbox = new QSpinBox();
 	m_leftbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_leftbox->setRange(0, castparams->m_Radiomax);
-	m_leftbox->setValue(castparams->m_radios.m_left);
+	m_leftbox->setValue(castparams->m_radios.getLeft());
 
 	m_rightbox = new QSpinBox();
 	m_rightbox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	m_rightbox->setRange(0, castparams->m_Radiomax);
-	m_rightbox->setValue(castparams->m_radios.m_right);
+	m_rightbox->setValue(castparams->m_radios.getRight());
 
 	m_formlayout->addRow(castparams->m_bottomstr, m_bottombox);
 	m_formlayout->addRow(castparams->m_leftstr, m_leftbox);
@@ -346,17 +346,17 @@ void triangleSideRadioDelegate::createWidget(std::shared_ptr<IdelegatePramas> pa
 void triangleSideRadioDelegate::setValue(QVariant value)
 {
 	auto radios = isDataCanConvert<DiagramDrawParamsTriangle::sideRadios>(value);
-	m_bottombox->setValue(radios.m_bottom);
-	m_leftbox->setValue(radios.m_left);
-	m_rightbox->setValue(radios.m_right);
+	m_bottombox->setValue(radios.getBottom());
+	m_leftbox->setValue(radios.getLeft());
+	m_rightbox->setValue(radios.getRight());
 }
 
 QVariant triangleSideRadioDelegate::value()
 {
 	DiagramDrawParamsTriangle::sideRadios radios;
-	radios.m_bottom = m_bottombox->value();
-	radios.m_left = m_leftbox->value();
-	radios.m_right = m_rightbox->value();
+	radios.setBottom(m_bottombox->value());
+	radios.setLeft(m_leftbox->value());
+	radios.setRight(m_rightbox->value());
 	QVariant value = QVariant::fromValue(radios);
 	return value;
 }

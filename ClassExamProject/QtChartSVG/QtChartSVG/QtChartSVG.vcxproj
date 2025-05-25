@@ -124,7 +124,6 @@
     <QtMoc Include="propertyset.h" />
     <QtMoc Include="propertywidget.h" />
     <ClInclude Include="propertynamevec.h" />
-    <ClInclude Include="resource.h" />
     <QtMoc Include="diagram.h" />
     <QtMoc Include="mymainwindow.h" />
     <QtMoc Include="canvas.h" />
@@ -164,6 +163,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="devconfig.qrc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

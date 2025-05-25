@@ -1,5 +1,5 @@
-#include "canvasdrawstragety.h"
 #include <qpainterpath.h>
+#include "canvasdrawstragety.h"
 
 shapeDrawStragety::shapeDrawStragety(std::shared_ptr<IDidgramDrawParams> params)
 	:m_params(params)

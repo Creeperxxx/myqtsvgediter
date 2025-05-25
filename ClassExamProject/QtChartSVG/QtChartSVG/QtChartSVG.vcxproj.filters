@@ -26,9 +26,6 @@
     <ClInclude Include="myconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="propertydelegateparams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -162,5 +159,8 @@
     <QtRcc Include="devconfig.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

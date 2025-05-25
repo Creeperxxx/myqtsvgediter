@@ -3,13 +3,13 @@
 
 propertydata::propertydata(QString name, QVariant data)
 	: m_name(name)
-	, m_data(data)
+	, m_value(data)
 {
 }
 
 void propertydata::slotValueChanged(QVariant value)
 {
-	m_data = value;
+	m_value = value;
 	emit signalValueChanged(value);
 }
 
@@ -20,12 +20,12 @@ QString propertydata::getName()
 
 QVariant propertydata::getValue()
 {
-	return m_data;
+	return m_value;
 }
 
 void propertydata::setValue(QVariant value)
 {
-	m_data = value;
+	m_value = value;
 }
 
 void propertydata::setName(QString name)

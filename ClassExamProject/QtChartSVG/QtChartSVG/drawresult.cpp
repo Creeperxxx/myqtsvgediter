@@ -163,7 +163,6 @@ bool DrawResultMouse::iscontainPoint(QPointF point)
 QPainterPath DrawResultMouse::getPainterPath()
 {
 	QPainterPath path(m_path);
-	path.closeSubpath();
 
 	return path;
 }
