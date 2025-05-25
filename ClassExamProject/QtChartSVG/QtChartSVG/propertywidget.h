@@ -43,10 +43,10 @@ public:
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
 	void dealclicked(std::shared_ptr<propertySetManager> setmanager);
-	void addPropertyWidget(myqtsvg::propertywidgettype type, propertyWidget* widget);
+	void addPropertyWidget(myqtsvg::propertyWidgetType type, propertyWidget* widget);
 private:
 
-	std::map<myqtsvg::propertywidgettype, propertyWidget*> m_propertyMap;
+	std::map<myqtsvg::propertyWidgetType, propertyWidget*> m_propertyMap;
 	QStackedWidget* m_propertyStackWidget;
 
 };
@@ -57,7 +57,7 @@ class propertyWidgetManagerIniter
 public:
 	void initmanager(PropertyWidgetManager* widgetmanager);
 	static propertyWidgetManagerIniter& getInstance();
-	void add(myqtsvg::propertywidgettype type, std::function<propertyWidget* ()> func);
+	void add(myqtsvg::propertyWidgetType type, std::function<propertyWidget* ()> func);
 private:
 	propertyWidgetManagerIniter();
 	void defaultinit();
@@ -70,6 +70,9 @@ private:
 	propertyWidget* createDiagramChoose();
 	propertyWidget* createDiagramMouse();
 	propertyWidget* createDiagramText();
+	propertyWidget* createDiagramPentagon();
+	propertyWidget* createDiagramHexagon();
+	propertyWidget* createDiagramStar();
 	propertyWidget* createCanvas();
 	
 	void buildName(propertyWidget* widget);
@@ -88,6 +91,6 @@ private:
 	void buildPenColor(propertyWidget* widget);
 	void buildCanvasScale(propertyWidget* widget);
 	
-	std::map<myqtsvg::propertywidgettype, std::function<propertyWidget*()>> m_map;
+	std::map<myqtsvg::propertyWidgetType, std::function<propertyWidget*()>> m_map;
 };
 #endif // PROPERTYWIDGET_H

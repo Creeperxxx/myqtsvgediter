@@ -33,7 +33,7 @@ void canvas::init()
 
 
 	m_setManager = std::make_shared<propertySetManager>();
-	m_setManager->setWidgetType(myqtsvg::propertywidgettype::canvas);
+	m_setManager->setWidgetType(myqtsvg::propertyWidgetType::canvas);
 
 	auto otherset = std::make_shared<otherPropertySet>();
 	otherset->m_name = myconfig::getInstance().getCanvasName();
@@ -238,6 +238,7 @@ void canvas::contextMenuEvent(QContextMenuEvent* event)
 	QAction* pasteAction = menu.addAction("粘贴");
 	QAction* selectAllAction = menu.addAction("全选");
 	QAction* deleteAction = menu.addAction("删除");
+	QAction* undoAction = menu.addAction("撤销");
 
 
 	QAction* selectedAction = menu.exec(event->globalPos());
@@ -250,6 +251,8 @@ void canvas::contextMenuEvent(QContextMenuEvent* event)
 		onSelectAllTuxing();
 	else if (selectedAction == deleteAction)
 		onDeleteTuxing();
+	else if (selectedAction == undoAction)
+		onUndoTuxing();
 }
 
 void canvas::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
@@ -391,6 +394,14 @@ void canvas::onDeleteTuxing()
 	update();
 }
 
+void canvas::onUndoTuxing()
+{
+	if (!m_tuxingvec.empty())
+	{
+		m_tuxingvec.pop_back();
+	}
+}
+
 void canvas::closeEvent(QCloseEvent* event)
 {
 
@@ -473,7 +484,7 @@ void canvas::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::share
 	std::shared_ptr<canvasDiagram> tuxing = std::make_shared<canvasDiagram>();
 	tuxing->setDrawer(drawer);
 	tuxing->setParams(params);
-	tuxing->setSetManager(initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->getType())
+	tuxing->setSetManager(initPropertySetManager::createPropertySetManager(myqtsvg::canvasShapetypeToPropertyWidgetType(params->getType())
 		, params
 		, [tuxing]()
 		{

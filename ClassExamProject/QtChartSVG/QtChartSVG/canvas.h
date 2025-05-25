@@ -43,6 +43,7 @@ public:
 	void onpasteTuxing();
 	void onSelectAllTuxing();
 	void onDeleteTuxing();
+	void onUndoTuxing();
 
 	void adjustcanvassize();
 	void onHeightChanged(int height);

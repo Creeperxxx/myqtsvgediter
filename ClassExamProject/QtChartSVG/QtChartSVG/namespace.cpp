@@ -26,6 +26,15 @@ QString myqtsvg::ShapetypeEnumToQstring(ShapeType type)
 	case myqtsvg::ShapeType::Text:
 		return myconfig::getInstance().getTextName();
 		break;
+	case myqtsvg::ShapeType::Pentagon:
+		return myconfig::getInstance().getPentagonName();
+		break;
+	case myqtsvg::ShapeType::Hexagon:
+		return myconfig::getInstance().getHexagonName();
+		break;
+	case myqtsvg::ShapeType::Star:
+		return myconfig::getInstance().getStarName();
+		break;
 	default:
 		throw std::runtime_error("error");
 		break;
@@ -48,36 +57,50 @@ myqtsvg::ShapeType myqtsvg::ShapetypeQstringToEnum(const QString& type)
 		return myqtsvg::ShapeType::choose;
 	else if (type == myconfig::getInstance().getTextName())
 		return myqtsvg::ShapeType::Text;
+	else if (type == myconfig::getInstance().getPentagonName())
+		return myqtsvg::ShapeType::Pentagon;
+	else if (type == myconfig::getInstance().getHexagonName())
+		return myqtsvg::ShapeType::Hexagon;
+	else if (type == myconfig::getInstance().getStarName())
+		return myqtsvg::ShapeType::Star;
 	else
 		throw std::runtime_error("error");
 
-
 }
 
-myqtsvg::propertywidgettype myqtsvg::diagramShapetypeToPropertyWidgetType(ShapeType type)
+myqtsvg::propertyWidgetType myqtsvg::diagramShapetypeToPropertyWidgetType(ShapeType type)
 {
 	switch (type)
 	{
 	case myqtsvg::ShapeType::Rect:
-		return propertywidgettype::diagramRect;
+		return propertyWidgetType::diagramRect;
 		break;
 	case myqtsvg::ShapeType::Circle:
-		return propertywidgettype::diagramCircle;
+		return propertyWidgetType::diagramCircle;
 		break;
 	case myqtsvg::ShapeType::Triangle:
-		return propertywidgettype::diagramTriangle;
+		return propertyWidgetType::diagramTriangle;
 		break;
 	case myqtsvg::ShapeType::Line:
-		return propertywidgettype::diagramLine;
+		return propertyWidgetType::diagramLine;
 		break;
 	case myqtsvg::ShapeType::Mouse:
-		return propertywidgettype::diagramMouse;
+		return propertyWidgetType::diagramMouse;
 		break;
 	case myqtsvg::ShapeType::choose:
-		return propertywidgettype::defaultWidget;
+		return propertyWidgetType::defaultWidget;
 		break;
 	case myqtsvg::ShapeType::Text:
-		return propertywidgettype::diagramText;
+		return propertyWidgetType::diagramText;
+		break;
+	case myqtsvg::ShapeType::Pentagon:
+		return propertyWidgetType::diagramPentagon;
+		break;
+	case myqtsvg::ShapeType::Hexagon:
+		return propertyWidgetType::diagramHexagon;
+		break;
+	case myqtsvg::ShapeType::Star:
+		return propertyWidgetType::diagramStar;
 		break;
 	default:
 		throw std::runtime_error("error");
@@ -85,30 +108,39 @@ myqtsvg::propertywidgettype myqtsvg::diagramShapetypeToPropertyWidgetType(ShapeT
 	}
 }
 
-myqtsvg::propertywidgettype myqtsvg::huabuShapetypeToPropertyWidgetType(ShapeType type)
+myqtsvg::propertyWidgetType myqtsvg::canvasShapetypeToPropertyWidgetType(ShapeType type)
 {
 	switch (type)
 	{
 	case myqtsvg::ShapeType::Rect:
-		return propertywidgettype::huabuRect;
+		return propertyWidgetType::canvasRect;
 		break;
 	case myqtsvg::ShapeType::Circle:
-		return propertywidgettype::huabuCircle;
+		return propertyWidgetType::canvasCircle;
 		break;
 	case myqtsvg::ShapeType::Triangle:
-		return propertywidgettype::huabuTriangle;
+		return propertyWidgetType::canvasTriangle;
 		break;
 	case myqtsvg::ShapeType::Line:
-		return propertywidgettype::huabuLine;
+		return propertyWidgetType::canvasLine;
 		break;
 	case myqtsvg::ShapeType::Mouse:
-		return propertywidgettype::huabuMouse;
+		return propertyWidgetType::canvasMouse;
 		break;
 	case myqtsvg::ShapeType::choose:
-		return propertywidgettype::canvas;
+		return propertyWidgetType::canvas;
 		break;
 	case myqtsvg::ShapeType::Text:
-		return propertywidgettype::huabuText;
+		return propertyWidgetType::canvasText;
+		break;
+	case myqtsvg::ShapeType::Pentagon:
+		return propertyWidgetType::canvasPentagon;
+		break;
+	case myqtsvg::ShapeType::Hexagon:
+		return propertyWidgetType::canvasHexagon;
+		break;
+	case myqtsvg::ShapeType::Star:
+		return propertyWidgetType::canvasStar;
 		break;
 	default:
 		throw std::runtime_error("error");

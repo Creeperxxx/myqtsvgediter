@@ -242,4 +242,46 @@ private:
 	TextLineEdit* m_textedit;
 };
 
+class DiagramDrawParamsPentagon : public IDidgramDrawParams
+{
+public:
+	DiagramDrawParamsPentagon(const DiagramDrawParamsPentagon& params);
+	DiagramDrawParamsPentagon();
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+
+    std::shared_ptr<IDidgramDrawParams> clone() override;
+};
+
+class DiagramDrawParamsHexagon : public IDidgramDrawParams
+{
+public:
+	DiagramDrawParamsHexagon(const DiagramDrawParamsHexagon& params);
+	DiagramDrawParamsHexagon();
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+
+    std::shared_ptr<IDidgramDrawParams> clone() override;
+};
+
+class DiagramDrawParamsStar : public IDidgramDrawParams
+{
+public:
+	DiagramDrawParamsStar(const DiagramDrawParamsHexagon& params);
+	DiagramDrawParamsStar();
+	void serialize(QDataStream& out) const override;
+	void deserialize(QDataStream& in) override;
+
+    std::shared_ptr<IDidgramDrawParams> clone() override;
+};
+
+
+
+
+
+
+
+
+
+
 #endif //DIAGRAMDRAWPARAMS_H

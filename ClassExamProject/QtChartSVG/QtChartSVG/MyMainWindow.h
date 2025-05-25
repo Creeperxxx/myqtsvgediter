@@ -38,6 +38,7 @@ private:
 	void pasteDiagram();
 	void selectAllDiagram();
 	void deleteDiagram();
+	void undoDiagram();
 
 	void dealNetworkReply(QNetworkReply* reply);
 

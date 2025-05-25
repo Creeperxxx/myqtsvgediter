@@ -5,6 +5,7 @@
 #include <qstring.h>
 #include <map>
 #include <stdexcept>
+
 namespace myqtsvg
 {
 	enum class ShapeType
@@ -15,12 +16,15 @@ namespace myqtsvg
 		Line,
 		Mouse,
 		choose,
-		Text
+		Text,
+		Pentagon,
+        Hexagon,
+		Star
 	};
 	QString ShapetypeEnumToQstring(ShapeType type);
 	ShapeType ShapetypeQstringToEnum(const QString& type);
 
-	enum class propertywidgettype
+	enum class propertyWidgetType
 	{
 		defaultWidget,
 
@@ -30,18 +34,24 @@ namespace myqtsvg
 		diagramLine,
 		diagramMouse,
 		diagramText,
+		diagramPentagon,
+		diagramHexagon,
+		diagramStar,
 
 		canvas,
-		huabuRect,
-		huabuCircle,
-		huabuTriangle,
-		huabuLine,
-		huabuMouse,
-		huabuText
+		canvasRect,
+		canvasCircle,
+		canvasTriangle,
+		canvasLine,
+		canvasMouse,
+		canvasText,
+		canvasPentagon,
+		canvasHexagon,
+		canvasStar
 	};
 
-	propertywidgettype diagramShapetypeToPropertyWidgetType(ShapeType type);
-	propertywidgettype huabuShapetypeToPropertyWidgetType(ShapeType type);
+	propertyWidgetType diagramShapetypeToPropertyWidgetType(ShapeType type);
+	propertyWidgetType canvasShapetypeToPropertyWidgetType(ShapeType type);
 
 	QString PenStyleToQstring(Qt::PenStyle style);
 	Qt::PenStyle QstringToPenStyle(QString style);

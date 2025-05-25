@@ -254,3 +254,93 @@ QBrush DrawResult::getBrush()
 {
 	return m_painterbrush;
 }
+
+QPainterPath DrawResultPentagon::getPainterPath()
+{
+	QPainterPath path;
+	path.addPolygon(m_pentagon);
+	path.closeSubpath();
+	return path;
+}
+
+bool DrawResultPentagon::iscontainPoint(QPointF point)
+{
+	return m_pentagon.containsPoint(point, Qt::OddEvenFill);
+}
+
+QRect DrawResultPentagon::getBoundingRect()
+{
+	QRect rect = m_pentagon.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
+void DrawResultPentagon::setPentagon(QPolygonF pentagon)
+{
+	m_pentagon = pentagon;
+}
+
+QPolygonF DrawResultPentagon::getPentagon()
+{
+	return m_pentagon;
+}
+
+QPainterPath DrawResultHexagon::getPainterPath()
+{
+	QPainterPath path;
+	path.addPolygon(m_hexagon);
+    path.closeSubpath();
+	return path;
+}
+
+bool DrawResultHexagon::iscontainPoint(QPointF point)
+{
+	return m_hexagon.containsPoint(point, Qt::OddEvenFill);
+}
+
+QRect DrawResultHexagon::getBoundingRect()
+{
+	QRect rect = m_hexagon.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
+void DrawResultHexagon::setHexagon(QPolygonF hexagon)
+{
+	m_hexagon = hexagon;
+}
+
+QPolygonF DrawResultHexagon::getHexagon()
+{
+	return m_hexagon;	
+}
+
+QPainterPath DrawResultStar::getPainterPath()
+{
+	QPainterPath path;
+	path.addPolygon(m_star);
+	path.closeSubpath();
+	return path;
+}
+
+bool DrawResultStar::iscontainPoint(QPointF point)
+{
+	return m_star.containsPoint(point, Qt::OddEvenFill);
+}
+
+QRect DrawResultStar::getBoundingRect()
+{
+	QRect rect = m_star.boundingRect().toRect();
+	rect.adjust(-10, -10, 10, 10);
+	return rect;
+}
+
+void DrawResultStar::setStar(QPolygonF star)
+{
+	m_star = star;
+}
+
+QPolygonF DrawResultStar::getStar()
+{
+	return m_star;
+}

@@ -7,7 +7,10 @@
       "line": "line",
       "mouse": "mouse",
       "choose": "choose",
-      "text": "text"
+      "text": "text",
+      "pentagon": "pentagon",
+      "hexagon": "hexagon",
+      "star": "star"
     },
     "canvas": {
       "widthname": "画布宽度",

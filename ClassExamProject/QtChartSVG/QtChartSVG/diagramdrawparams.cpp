@@ -81,6 +81,14 @@ IDidgramDrawParams::IDidgramDrawParams(const IDidgramDrawParams& other)
 	m_isdrawInHuabu = other.m_isdrawInHuabu;
 }
 IDidgramDrawParams::IDidgramDrawParams()
+	:m_center(QPoint(0,0))
+	, m_spacesize(QSize(0,0))
+	, m_type(myqtsvg::ShapeType::Rect)
+	, m_scale(1)
+	, m_rotate(0)
+	, m_centerHoffset(0)
+	, m_centerVoffset(0)
+	, m_isdrawInHuabu(false)
 {
 
 }
@@ -789,4 +797,76 @@ void DiagramDrawParamsTriangle::setEdgeType(EdgeType type)
 DiagramDrawParamsTriangle::EdgeType DiagramDrawParamsTriangle::getEdgeType()
 {
 	return m_edgetype;
+}
+
+DiagramDrawParamsPentagon::DiagramDrawParamsPentagon(const DiagramDrawParamsPentagon& params)
+	:IDidgramDrawParams(params)
+{
+}
+
+DiagramDrawParamsPentagon::DiagramDrawParamsPentagon()
+{
+}
+
+void DiagramDrawParamsPentagon::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+}
+
+void DiagramDrawParamsPentagon::deserialize(QDataStream& in)
+{
+	IDidgramDrawParams::deserialize(in);
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsPentagon::clone()
+{
+	return std::make_shared<DiagramDrawParamsPentagon>(*this);
+}
+
+DiagramDrawParamsHexagon::DiagramDrawParamsHexagon(const DiagramDrawParamsHexagon& params)
+	:IDidgramDrawParams(params)
+{
+}
+
+DiagramDrawParamsHexagon::DiagramDrawParamsHexagon()
+{
+}
+
+void DiagramDrawParamsHexagon::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+}
+
+void DiagramDrawParamsHexagon::deserialize(QDataStream& in)
+{
+	IDidgramDrawParams::deserialize(in);
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsHexagon::clone()
+{
+	return std::make_shared<DiagramDrawParamsHexagon>(*this);
+}
+
+DiagramDrawParamsStar::DiagramDrawParamsStar(const DiagramDrawParamsHexagon& params)
+	:IDidgramDrawParams(params)
+{
+}
+
+DiagramDrawParamsStar::DiagramDrawParamsStar()
+{
+}
+
+void DiagramDrawParamsStar::serialize(QDataStream& out) const
+{
+	IDidgramDrawParams::serialize(out);
+}
+
+void DiagramDrawParamsStar::deserialize(QDataStream& in)
+{
+	IDidgramDrawParams::deserialize(in);
+}
+
+std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsStar::clone()
+{
+	return std::make_shared<DiagramDrawParamsStar>(*this);
 }

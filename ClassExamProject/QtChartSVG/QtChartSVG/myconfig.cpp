@@ -503,6 +503,24 @@ int myconfig::getFontSizeMax()
 	return max;
 }
 
+QString myconfig::getPentagonName()
+{
+	static QString name = m_devjson["name"].toObject()["diagram"].toObject()["pentagon"].toString();
+	return name;
+}
+
+QString myconfig::getHexagonName()
+{
+	static QString name = m_devjson["name"].toObject()["diagram"].toObject()["hexagon"].toString();
+	return name;
+}
+
+QString myconfig::getStarName()
+{
+	static QString name = m_devjson["name"].toObject()["diagram"].toObject()["star"].toString();
+	return name;
+}
+
 
 
 

@@ -250,17 +250,17 @@ void propertySetManager::dealShowData(propertyWidget* widget)
 	}
 }
 
-void propertySetManager::setWidgetType(myqtsvg::propertywidgettype type)
+void propertySetManager::setWidgetType(myqtsvg::propertyWidgetType type)
 {
 	m_propertyWidgetType = type;
 }
 
-myqtsvg::propertywidgettype propertySetManager::getWidgetType()
+myqtsvg::propertyWidgetType propertySetManager::getWidgetType()
 {
 	return m_propertyWidgetType;
 }
 
-std::shared_ptr<propertySetManager> initPropertySetManager::createPropertySetManager(myqtsvg::propertywidgettype type
+std::shared_ptr<propertySetManager> initPropertySetManager::createPropertySetManager(myqtsvg::propertyWidgetType type
 	, std::shared_ptr<IDidgramDrawParams> params
 	, std::function<void()> repaintcallback
 	, const std::vector<QString>& additionalProperties)

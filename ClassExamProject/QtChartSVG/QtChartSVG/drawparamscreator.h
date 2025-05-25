@@ -58,6 +58,24 @@ protected:
 	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
 };
 
+class createParamsPentagon : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
+};
+
+class createParamsHexagon : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
+};
+
+class createParamsStar : public ICreateParams
+{
+protected:
+	std::shared_ptr<IDidgramDrawParams> createSpecial()override;
+};
+
 class createParamsInterface
 {
 public:

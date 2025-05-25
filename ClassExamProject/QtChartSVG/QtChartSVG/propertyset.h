@@ -83,20 +83,20 @@ public:
 	std::shared_ptr<IpropertySet> getPropertySet(QString name);
 
 	void dealShowData(propertyWidget* widget);
-	void setWidgetType(myqtsvg::propertywidgettype type);
-	myqtsvg::propertywidgettype getWidgetType();
+	void setWidgetType(myqtsvg::propertyWidgetType type);
+	myqtsvg::propertyWidgetType getWidgetType();
 
 
 private:
 	std::unordered_map<QString, std::shared_ptr<IpropertySet>> m_propertySetMap;
-	myqtsvg::propertywidgettype m_propertyWidgetType;
+	myqtsvg::propertyWidgetType m_propertyWidgetType;
 };
 
 class initPropertySetManager
 {
 public:
 	static std::shared_ptr<propertySetManager> createPropertySetManager(
-		myqtsvg::propertywidgettype type
+		myqtsvg::propertyWidgetType type
 		, std::shared_ptr<IDidgramDrawParams> params
 		, std::function<void()> repaintcallback
 		, const std::vector<QString>& additionalProperties = {});

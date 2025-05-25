@@ -84,6 +84,7 @@ void MyMainWindow::setupAction()
 	addAction("粘贴图形", [this]() {this->pasteDiagram(); }, QKeySequence::Paste);
 	addAction("全选", [this]() {this->selectAllDiagram(); }, QKeySequence::SelectAll);
 	addAction("删除图形", [this]() {this->deleteDiagram(); }, QKeySequence::Delete);
+	addAction("撤销", [this]() {this->undoDiagram(); }, QKeySequence::Undo);
 }
 
 void MyMainWindow::savesvg()
@@ -142,6 +143,11 @@ void MyMainWindow::deleteDiagram()
 	m_huabuwidget->onDeleteTuxing();
 }
 
+void MyMainWindow::undoDiagram()
+{
+	m_huabuwidget->onUndoTuxing();
+}
+
 void MyMainWindow::dealNetworkReply(QNetworkReply* reply)
 {
 	if (reply->error() != QNetworkReply::NoError)
@@ -158,7 +164,7 @@ void MyMainWindow::dealNetworkReply(QNetworkReply* reply)
 		{
 			QString key = it.key();
 			QWidget* widget = this->m_tooltipsWidgets.value(key, nullptr);
-			if (widget)
+			if (widget != nullptr)
 			{
 				QJsonObject obj = it.value().toObject();
 				QString title = obj["title"].toString();
@@ -172,7 +178,8 @@ void MyMainWindow::dealNetworkReply(QNetworkReply* reply)
 
 void MyMainWindow::setupToolbar()
 {
-	QToolBar* maintoolbar = addToolBar("main toolbar");
+	QToolBar* maintoolbar = addToolBar("maintoolbar");
+	maintoolbar->setObjectName("maintoolbar");
 	addToolBar(Qt::LeftToolBarArea, maintoolbar);
 	maintoolbar->setAllowedAreas(Qt::LeftToolBarArea);
 	maintoolbar->setFloatable(false);
@@ -181,11 +188,14 @@ void MyMainWindow::setupToolbar()
 	const QVector<std::pair<QString, myqtsvg::ShapeType>> shapes = {
 		{"rectdrawbutton", myqtsvg::ShapeType::Rect},
 		{"quadrilateraldrawbutton", myqtsvg::ShapeType::Circle},
-		{"pentagondrawbutton", myqtsvg::ShapeType::Triangle},
+		{"zoominbutton", myqtsvg::ShapeType::Triangle},
 		{"linedrawbutton", myqtsvg::ShapeType::Line},
 		{"freehandlinedrawbutton", myqtsvg::ShapeType::Mouse},
 		{"selectionbutton", myqtsvg::ShapeType::choose},
-		{"stardrawbutton", myqtsvg::ShapeType::Text}
+		{"textdrawbutton", myqtsvg::ShapeType::Text},
+		{"pentagondrawbutton", myqtsvg::ShapeType::Pentagon},
+		{"zoomoutbutton", myqtsvg::ShapeType::Hexagon},
+		{"stardrawbutton", myqtsvg::ShapeType::Star}
 	};
 
 	for (const auto& [key, type] : shapes) {

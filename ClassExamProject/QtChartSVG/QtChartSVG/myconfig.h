@@ -94,7 +94,9 @@ public:
 	QString getOtherSetName();
 	double getScaleMax();
 	int getFontSizeMax();
-
+	QString getPentagonName();
+	QString getHexagonName();
+	QString getStarName();
 
 		
 private:

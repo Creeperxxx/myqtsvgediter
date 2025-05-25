@@ -139,6 +139,47 @@ private:
 	std::shared_ptr<DiagramDrawParamsChoose> m_params;
 };
 
+class DiagramDrawerPentagon : public IDiagramDrawer
+{
+public:
+	DiagramDrawerPentagon(std::shared_ptr<IDidgramDrawParams> params);
+	void build()override;
+	void draw(QPainter& painter) override;
+	std::shared_ptr<DrawResult> getResult() override;
+
+private:
+	std::shared_ptr<DiagramDrawParamsPentagon> m_params;
+	QPolygonF m_pentagon;
+	std::shared_ptr<DrawResultPentagon> m_result;
+};
+
+class DiagramdrawerHexagon : public IDiagramDrawer
+{
+public:
+	DiagramdrawerHexagon(std::shared_ptr<IDidgramDrawParams> params);
+	void build()override;
+	void draw(QPainter& painter)override;
+	std::shared_ptr<DrawResult> getResult() override;
+private:
+	std::shared_ptr<DiagramDrawParamsHexagon> m_params;
+	std::shared_ptr<DrawResultHexagon> m_result;
+	QPolygonF m_hexagon;
+};
+
+class DiagramDrawerStar : public IDiagramDrawer
+{
+public:
+	DiagramDrawerStar(std::shared_ptr<IDidgramDrawParams> params);
+	void build()override;
+	void draw(QPainter& painter)override;
+	std::shared_ptr<DrawResult> getResult() override;
+private:
+	std::shared_ptr<DiagramDrawParamsStar> m_params;
+	std::shared_ptr<DrawResultStar> m_result;
+	QPolygonF m_star;
+
+};
+
 
 
 

@@ -617,6 +617,7 @@ DiagramDrawerChoose::DiagramDrawerChoose(std::shared_ptr<IDidgramDrawParams> par
 
 void DiagramDrawerChoose::build()
 {
+
 }
 
 void DiagramDrawerChoose::draw(QPainter& painter)
@@ -691,7 +692,171 @@ void DiagramDrawInterface::defaultinit()
 			})
 		.addDrawerCreator(myqtsvg::ShapeType::Text, [](std::shared_ptr<IDidgramDrawParams> params) {
 		return std::make_shared<DiagramDrawerText>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Pentagon, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerPentagon>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Hexagon, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramdrawerHexagon>(params);
+			})
+		.addDrawerCreator(myqtsvg::ShapeType::Star, [](std::shared_ptr<IDidgramDrawParams> params) {
+		return std::make_shared<DiagramDrawerStar>(params);
 			});
 }
 
+DiagramDrawerPentagon::DiagramDrawerPentagon(std::shared_ptr<IDidgramDrawParams> params)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultPentagon>())
+{
+	if (params == nullptr)
+		throw std::runtime_error("error");
+	auto p = std::dynamic_pointer_cast<DiagramDrawParamsPentagon>(params);
+	if (p == nullptr)
+		throw std::runtime_error("error");
+	m_params = p;
+}
 
+void DiagramDrawerPentagon::build()
+{
+	QPoint center = calcuRealCenter(m_params->getCenter(), m_params->getCenterHOffset(), m_params->getCenterVOffset());
+	int cx = center.x();
+	int cy = center.y();
+
+	QSize spacesize = m_params->getSpacesize();
+	qreal radius = qMin(spacesize.width(), spacesize.height()) / 2.0 * 0.9;
+
+	// 创建多边形
+	QPolygonF polygon;
+
+	for (int i = 0; i < 5; ++i)
+	{
+		double angle = 2 * M_PI * i / 5 - M_PI / 2;
+		qreal x = cx + radius * cos(angle);
+		qreal y = cy + radius * sin(angle);
+		polygon.append(QPointF(x, y));
+	}
+	m_pentagon = polygon;
+}
+
+void DiagramDrawerPentagon::draw(QPainter& painter)
+{
+	build();
+	painter.setPen(m_params->getPen());
+	painter.setBrush(m_params->getBrushColor());
+	painter.drawPolygon(m_pentagon);
+}
+
+std::shared_ptr<DrawResult> DiagramDrawerPentagon::getResult()
+{
+	build();
+	m_result->setPen(m_params->getPen());
+	m_result->setBrush(m_params->getBrushColor());
+	m_result->setPentagon(m_pentagon);
+	return m_result;
+}
+
+DiagramdrawerHexagon::DiagramdrawerHexagon(std::shared_ptr<IDidgramDrawParams> params)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultHexagon>())
+{
+	if (params == nullptr)
+		throw std::runtime_error("error");
+	auto p = std::dynamic_pointer_cast<DiagramDrawParamsHexagon>(params);
+	if (p == nullptr)
+		throw std::runtime_error("error");
+	m_params = p;
+}
+
+void DiagramdrawerHexagon::build()
+{
+	QPoint center = calcuRealCenter(m_params->getCenter(), m_params->getCenterHOffset(), m_params->getCenterVOffset());
+	int cx = center.x();
+	int cy = center.y();
+
+	QSize spacesize = m_params->getSpacesize();
+	qreal radius = qMin(spacesize.width(), spacesize.height()) / 2.0 * 0.9;
+
+	QPolygonF polygon;
+
+	for (int i = 0; i < 6; ++i)
+	{
+		double angle = 2 * M_PI * i / 6 - M_PI / 6;
+		qreal x = cx + radius * cos(angle);
+		qreal y = cy + radius * sin(angle);
+		polygon.append(QPointF(x, y));
+	}
+	m_hexagon = polygon;
+}
+
+void DiagramdrawerHexagon::draw(QPainter& painter)
+{
+	build();
+	painter.setPen(m_params->getPen());
+	painter.setBrush(m_params->getBrushColor());
+	painter.drawPolygon(m_hexagon);
+}
+
+std::shared_ptr<DrawResult> DiagramdrawerHexagon::getResult()
+{
+	build();
+	m_result->setPen(m_params->getPen());
+	m_result->setBrush(m_params->getBrushColor());
+	m_result->setHexagon(m_hexagon);
+	return m_result;
+}
+
+DiagramDrawerStar::DiagramDrawerStar(std::shared_ptr<IDidgramDrawParams> params)
+	:m_params(nullptr)
+	, m_result(std::make_shared<DrawResultStar>())
+{
+	if (params == nullptr)
+		throw std::runtime_error("error");
+	auto p = std::dynamic_pointer_cast<DiagramDrawParamsStar>(params);
+	if (p == nullptr)
+		throw std::runtime_error("error");
+	m_params = p;
+}
+
+void DiagramDrawerStar::build()
+{
+	QPoint center = calcuRealCenter(m_params->getCenter(), m_params->getCenterHOffset(), m_params->getCenterVOffset());
+	int cx = center.x();
+	int cy = center.y();
+
+	QSize spacesize = m_params->getSpacesize();
+	double radius = qMin(spacesize.width(), spacesize.height()) / 2.0 * 0.9;
+
+	QPolygonF star;
+
+	double innerRadius = radius * 0.382;
+
+	for (int i = 0; i < 10; ++i) 
+	{
+		double angle = 2 * M_PI * i / 10 - M_PI / 2;
+
+		qreal currentRadius = (i % 2 == 0) ? radius : innerRadius;
+
+		qreal x = cx + currentRadius * cos(angle);
+		qreal y = cy + currentRadius * sin(angle);
+
+		star.append(QPointF(x, y));
+	}
+	m_star = star;
+}
+
+void DiagramDrawerStar::draw(QPainter& painter)
+{
+	build();
+	painter.setPen(m_params->getPen());
+	painter.setBrush(m_params->getBrushColor());
+	painter.drawPolygon(m_star);
+}
+
+std::shared_ptr<DrawResult> DiagramDrawerStar::getResult()
+{
+	build();
+	m_result->setPen(m_params->getPen());
+	m_result->setBrush(m_params->getBrushColor());
+	m_result->setStar(m_star);
+	return m_result;
+}

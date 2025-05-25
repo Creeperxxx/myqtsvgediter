@@ -127,6 +127,18 @@ void createParamsInterface::defaultInit()
 		.add(myqtsvg::ShapeType::Text, []()
 			{
 				return std::make_shared<createParamsText>();
+			})
+		.add(myqtsvg::ShapeType::Pentagon, []()
+			{
+				return std::make_shared<createParamsPentagon>();
+			})
+		.add(myqtsvg::ShapeType::Hexagon, []()
+			{
+				return std::make_shared<createParamsHexagon>();
+			})
+		.add(myqtsvg::ShapeType::Star, []()
+			{
+				return std::make_shared<createParamsStar>();
 			});
 }
 
@@ -157,4 +169,25 @@ std::shared_ptr<ICreateParams> createParamsInterface::getParams(myqtsvg::ShapeTy
 createParamsInterface::createParamsInterface()
 {
 	defaultInit();
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsPentagon::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsPentagon>();
+	p->setType(myqtsvg::ShapeType::Pentagon);
+	return p;
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsHexagon::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsHexagon>();
+	p->setType(myqtsvg::ShapeType::Hexagon);
+	return p;
+}
+
+std::shared_ptr<IDidgramDrawParams> createParamsStar::createSpecial()
+{
+	auto p = std::make_shared<DiagramDrawParamsStar>();
+	p->setType(myqtsvg::ShapeType::Star);
+	return p;
 }

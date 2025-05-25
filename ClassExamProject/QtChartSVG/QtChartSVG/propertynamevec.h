@@ -25,6 +25,9 @@ private:
 	void setChoosePropertyNameVec();
 	void setMousePropertyNameVec();
 	void setTextPropertyNameVec();
+	void setPentagonPropertyNameVec();
+	void setHexagonPropertyNameVec();
+	void setStarPropertyNameVec();
 	
 
 

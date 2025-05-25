@@ -92,7 +92,7 @@ PropertyWidgetManager::PropertyWidgetManager(QWidget* parent)
 
 
 	propertyWidgetManagerIniter::getInstance().initmanager(this);
-	propertyWidget* defaultwidget = m_propertyMap[myqtsvg::propertywidgettype::defaultWidget];
+	propertyWidget* defaultwidget = m_propertyMap[myqtsvg::propertyWidgetType::defaultWidget];
 	m_propertyStackWidget->setCurrentIndex(defaultwidget->getstackwidgetindex());
 }
 
@@ -113,7 +113,7 @@ void PropertyWidgetManager::dealclicked(std::shared_ptr<propertySetManager> setm
 }
 
 
-void PropertyWidgetManager::addPropertyWidget(myqtsvg::propertywidgettype type, propertyWidget* widget)
+void PropertyWidgetManager::addPropertyWidget(myqtsvg::propertyWidgetType type, propertyWidget* widget)
 {
 	int index = m_propertyStackWidget->addWidget(widget);
 	widget->setstackwidgetindex(index);
@@ -137,7 +137,7 @@ propertyWidgetManagerIniter& propertyWidgetManagerIniter::getInstance()
 	return instance;
 }
 
-void propertyWidgetManagerIniter::add(myqtsvg::propertywidgettype type, std::function<propertyWidget* ()> func)
+void propertyWidgetManagerIniter::add(myqtsvg::propertyWidgetType type, std::function<propertyWidget* ()> func)
 {
 	m_map[type] = func;
 }
@@ -149,59 +149,83 @@ propertyWidgetManagerIniter::propertyWidgetManagerIniter()
 
 void propertyWidgetManagerIniter::defaultinit()
 {
-	m_map[myqtsvg::propertywidgettype::canvas] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvas] = [this]() {
 		return this->createCanvas();
 		};
-	m_map[myqtsvg::propertywidgettype::defaultWidget] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::defaultWidget] = [this]() {
 		return this->createDefault();
 		};
 
-	m_map[myqtsvg::propertywidgettype::diagramRect] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramRect] = [this]() {
 		return this->createDiagramRect();
 		};
 
-	m_map[myqtsvg::propertywidgettype::diagramCircle] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramCircle] = [this]() {
 		return this->createDiagramCircle();
 		};
-	m_map[myqtsvg::propertywidgettype::diagramTriangle] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramTriangle] = [this]() {
 		return this->createDiagramTriangle();
 		};
-	m_map[myqtsvg::propertywidgettype::diagramLine] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramLine] = [this]() {
 		return this->createDiagramLine();
 		};
-	m_map[myqtsvg::propertywidgettype::diagramMouse] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramMouse] = [this]() {
 		return this->createDiagramMouse();
 		};
-	m_map[myqtsvg::propertywidgettype::diagramText] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramText] = [this]() {
 		return this->createDiagramText();
 		};
-	m_map[myqtsvg::propertywidgettype::huabuRect] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::diagramPentagon] = [this]() {
+		return this->createDiagramPentagon();
+		};
+	m_map[myqtsvg::propertyWidgetType::diagramHexagon] = [this]() {
+		return this->createDiagramHexagon();
+		};
+	m_map[myqtsvg::propertyWidgetType::diagramStar] = [this]() {
+		return this->createDiagramStar();
+		};
+	m_map[myqtsvg::propertyWidgetType::canvasRect] = [this]() {
 		auto widget = createDiagramRect();
 		this->buildCenterMove(widget);
 		return widget;
 		};
-	m_map[myqtsvg::propertywidgettype::huabuCircle] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvasCircle] = [this]() {
 		auto widget = createDiagramCircle();
 		this->buildCenterMove(widget);
 		return widget;
 		};
-	m_map[myqtsvg::propertywidgettype::huabuTriangle] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvasTriangle] = [this]() {
 		auto widget = createDiagramTriangle();
 		this->buildCenterMove(widget);
 		return widget;
 		};
-	m_map[myqtsvg::propertywidgettype::huabuLine] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvasLine] = [this]() {
 		auto widget = createDiagramLine();
 		this->buildCenterMove(widget);
 		return widget;
 		};
-	m_map[myqtsvg::propertywidgettype::huabuMouse] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvasMouse] = [this]() {
 		auto widget = createDiagramMouse();
 		this->buildCenterMove(widget);
 		return widget;
 		};
-	m_map[myqtsvg::propertywidgettype::huabuText] = [this]() {
+	m_map[myqtsvg::propertyWidgetType::canvasText] = [this]() {
 		auto widget = createDiagramText();
+		this->buildCenterMove(widget);
+		return widget;
+		};
+	m_map[myqtsvg::propertyWidgetType::canvasPentagon] = [this]() {
+		auto widget = createDiagramPentagon();
+		this->buildCenterMove(widget);
+		return widget;
+		};
+	m_map[myqtsvg::propertyWidgetType::canvasHexagon] = [this]() {
+		auto widget = createDiagramHexagon();
+		this->buildCenterMove(widget);
+		return widget;
+		};
+	m_map[myqtsvg::propertyWidgetType::canvasStar] = [this]() {
+		auto widget = createDiagramStar();
 		this->buildCenterMove(widget);
 		return widget;
 		};
@@ -290,6 +314,37 @@ propertyWidget* propertyWidgetManagerIniter::createDiagramText()
 	return widget;
 }
 
+propertyWidget* propertyWidgetManagerIniter::createDiagramPentagon()
+{
+	auto widget = new propertyWidget();
+	buildName(widget);
+	buildSpacesize(widget);
+	buildPen(widget);
+	buildBrush(widget);
+	return widget;
+}
+
+propertyWidget* propertyWidgetManagerIniter::createDiagramHexagon()
+{
+	auto widget = new propertyWidget();
+	buildName(widget);
+	buildSpacesize(widget);
+	buildPen(widget);
+	buildBrush(widget);
+	return widget;
+}
+
+propertyWidget* propertyWidgetManagerIniter::createDiagramStar()
+{
+	auto widget = new propertyWidget();
+	buildName(widget);
+	buildSpacesize(widget);
+	buildPen(widget);
+	buildBrush(widget);
+	return widget;
+
+}
+
 propertyWidget* propertyWidgetManagerIniter::createCanvas()
 {
 	auto widget = new propertyWidget();
@@ -311,7 +366,7 @@ void propertyWidgetManagerIniter::buildPen(propertyWidget* widget)
 	auto& config = myconfig::getInstance();
 	std::shared_ptr<IdelegatePramas> params = std::make_shared<delegateParamsColor>(config.getPenColor());
 	widget->addPropertyItem(config.getPenColorName(), params);
-	
+
 	params = std::make_shared<delegateParamsInt>(config.getPenWidthMax(), 1, 1, config.getPenWidth());
 	widget->addPropertyItem(config.getPenWdithName(), params);
 
@@ -336,10 +391,11 @@ void propertyWidgetManagerIniter::buildBrush(propertyWidget* widget)
 
 void propertyWidgetManagerIniter::buildCenterMove(propertyWidget* widget)
 {
-	auto params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getCanvasLengthMax(), 0, 1, 0);
+	int lengthmax = myconfig::getInstance().getCanvasLengthMax();
+	auto params = std::make_shared<delegateParamsInt>(lengthmax, -lengthmax, 1, 0);
 	widget->addPropertyItem(myconfig::getInstance().getCenterHOffsetName(), params);
 
-	params = std::make_shared<delegateParamsInt>(myconfig::getInstance().getCanvasLengthMax(), 0, 1, 0);
+	params = std::make_shared<delegateParamsInt>(lengthmax, -lengthmax, 1, 0);
 	widget->addPropertyItem(myconfig::getInstance().getCenterVOffsetName(), params);
 }
 

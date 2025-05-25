@@ -36,6 +36,9 @@ void propertyNameVecInterface::defaultinit()
 	setChoosePropertyNameVec();
 	setMousePropertyNameVec();
 	setTextPropertyNameVec();
+	setPentagonPropertyNameVec();
+	setHexagonPropertyNameVec();
+	setStarPropertyNameVec();
 }
 
 void propertyNameVecInterface::setRectPropertyNameVec()
@@ -124,6 +127,45 @@ void propertyNameVecInterface::setTextPropertyNameVec()
 		config.getPenColorName()
 		, config.getFontFamilyName()
 		, config.getFontSizeName()
+	};
+}
+
+void propertyNameVecInterface::setPentagonPropertyNameVec()
+{
+	auto& config = myconfig::getInstance();
+	m_propertyNameMap[myqtsvg::ShapeType::Pentagon] = {
+		config.getPenColorName()
+		, config.getPenStyleName()
+		, config.getPenWdithName()
+		, config.getBrushColorName()
+		, config.getSpaceWidthName()
+		, config.getSpaceHeightName()
+	};
+}
+
+void propertyNameVecInterface::setHexagonPropertyNameVec()
+{
+	auto& config = myconfig::getInstance();
+	m_propertyNameMap[myqtsvg::ShapeType::Hexagon] = {
+		config.getPenColorName()
+		, config.getPenStyleName()
+		, config.getPenWdithName()
+		, config.getBrushColorName()
+		, config.getSpaceWidthName()
+		, config.getSpaceHeightName()
+	};
+}
+
+void propertyNameVecInterface::setStarPropertyNameVec()
+{
+	auto& config = myconfig::getInstance();
+	m_propertyNameMap[myqtsvg::ShapeType::Star] = {
+		config.getPenColorName()
+		, config.getPenStyleName()
+		, config.getPenWdithName()
+		, config.getBrushColorName()
+		, config.getSpaceWidthName()
+		, config.getSpaceHeightName()
 	};
 }
 

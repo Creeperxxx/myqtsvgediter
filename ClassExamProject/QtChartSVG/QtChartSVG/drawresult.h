@@ -113,4 +113,48 @@ private:
 	QRectF m_rect;
 };
 
+class DrawResultPentagon : public DrawResult
+{
+public:
+	QPainterPath getPainterPath() override;
+	bool iscontainPoint(QPointF point) override;
+	QRect getBoundingRect()override;
+
+	void setPentagon(QPolygonF pentagon);
+    QPolygonF getPentagon();
+private:
+	QPolygonF m_pentagon;
+};
+
+class DrawResultHexagon : public DrawResult
+{
+public:
+	QPainterPath getPainterPath() override;
+	bool iscontainPoint(QPointF point) override;
+	QRect getBoundingRect()override;
+
+	void setHexagon(QPolygonF hexagon);
+    QPolygonF getHexagon();
+private:
+
+	QPolygonF m_hexagon;
+};
+
+class DrawResultStar : public DrawResult
+{
+public:
+	QPainterPath getPainterPath() override;
+	bool iscontainPoint(QPointF point) override;
+	QRect getBoundingRect()override;
+
+	void setStar(QPolygonF star);
+    QPolygonF getStar();
+private:
+
+	QPolygonF m_star;
+
+};
+
+
+
 #endif // DRAWRESULT_H
