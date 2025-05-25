@@ -1,71 +1,7 @@
-
 #include "myconfig.h"
 #include "diagramdrawparams.h"
 #include "qpainterpath.h"
 
-//QString ShapeTypeTool::shapetypeEnumToQstring(ShapeType type)
-//{
-	//switch (type)
-	//{
-//	case ShapeType::Rect:
-//		return myconfig::getInstance().getRectName();
-//		break;
-//	case ShapeType::Circle:
-//		return myconfig::getInstance().getCircleName();
-//		break;
-//	case ShapeType::Triangle:
-//		return myconfig::getInstance().getTriangleName();
-//		break;
-//	case ShapeType::Line:
-//		return myconfig::getInstance().getLineName();
-//		break;
-//	case ShapeType::Mouse:
-//		return myconfig::getInstance().getMouseName();
-//		break;
-//	case ShapeType::Text:
-//		return myconfig::getInstance().getTextName();
-//		break;
-//	default:
-//		throw std::runtime_error("error");
-//		break;
-//	}
-//}
-//
-//ShapeType ShapeTypeTool::shapetypeQstringToEnum(const QString& type)
-//{
-//	if (type == myconfig::getInstance().getRectName())
-//	{
-//		return ShapeType::Rect;
-//	}
-//	else if (type == myconfig::getInstance().getCircleName())
-//	{
-//		return ShapeType::Circle;
-//	}
-//	else if (type == myconfig::getInstance().getTriangleName())
-//	{
-//		return ShapeType::Triangle;
-//	}
-//	else if (type == myconfig::getInstance().getLineName())
-//	{
-//		return ShapeType::Line;
-//	}
-//	else if (type == myconfig::getInstance().getMouseName())
-//	{
-//		return ShapeType::Mouse;
-//	}
-//	else if (type == myconfig::getInstance().getChooseName())
-//	{
-//		return ShapeType::choose;
-//	}
-//	else if (type == myconfig::getInstance().getTextName())
-//	{
-//		return ShapeType::Text;
-//	}
-//	else
-//	{
-//		throw std::runtime_error("error");
-//	}
-//}
 
 IDidgramDrawParams::IDidgramDrawParams(const IDidgramDrawParams& other)
 {

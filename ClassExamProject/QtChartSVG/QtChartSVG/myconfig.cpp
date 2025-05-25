@@ -557,6 +557,12 @@ double myconfig::getStarScale()
 	return scale;
 }
 
+QString myconfig::getTooltipInterfaceUrl()
+{
+	static QString url = m_devjson["other"].toObject()["tooltipurl"].toString();
+	return url;
+}
+
 
 
 

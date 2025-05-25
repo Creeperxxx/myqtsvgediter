@@ -1,7 +1,6 @@
 #ifndef PROPERTYDATABUILDER_H
 #define PROPERTYDATABUILDER_H
 
-
 #include <memory>
 #include <vector>
 #include <map>

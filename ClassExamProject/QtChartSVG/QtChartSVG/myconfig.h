@@ -103,6 +103,7 @@ public:
 	double getPentagonScale();
 	double getHexagonScale();
 	double getStarScale();
+	QString getTooltipInterfaceUrl();
 
 		
 private:

@@ -8,21 +8,15 @@
 #include "diagramdrawparams.h"
 
 
-enum class delegateType
-{
-	Double,
-	Int,
-	Enum,
-	Color,
-	String,
-	TriangleSides
-};
+
+
 
 class IdelegatePramas
 {
 public:
-	delegateType m_type;
-	IdelegatePramas(delegateType type);
+	
+	myqtsvg::delegateType m_type;
+	IdelegatePramas(myqtsvg::delegateType type);
 	virtual ~IdelegatePramas() = 0;
 };
 

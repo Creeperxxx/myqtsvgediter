@@ -1,10 +1,10 @@
-#include "propertywidget.h"
+#include <qfontdatabase.h>
 #include "propertyset.h"
 #include "propertydata.h"
 #include "propertydelegage.h"
 #include "myconfig.h"
 #include "propertydelegateparams.h"
-#include <qfontdatabase.h>
+#include "propertywidget.h"
 
 
 propertyWidget::propertyWidget(QWidget* parent)
@@ -58,22 +58,22 @@ std::shared_ptr<IpropertyDelegate> propertyWidget::createDelegate(std::shared_pt
 {
 	switch (params->m_type)
 	{
-	case delegateType::Double:
+	case myqtsvg::delegateType::Double:
 		return std::make_shared<doubleDelegate>(params);
 		break;
-	case delegateType::Int:
+	case myqtsvg::delegateType::Int:
 		return std::make_shared<intDelegate>(params);
 		break;
-	case delegateType::Enum:
+	case myqtsvg::delegateType::Enum:
 		return std::make_shared<enumDelegate>(params);
 		break;
-	case delegateType::Color:
+	case myqtsvg::delegateType::Color:
 		return std::make_shared<colorDelete>(params);
 		break;
-	case delegateType::String:
+	case myqtsvg::delegateType::String:
 		return std::make_shared<stringDelegate>(params);
 		break;
-	case delegateType::TriangleSides:
+	case myqtsvg::delegateType::TriangleSides:
 		return std::make_shared<triangleSideRadioDelegate>(params);
 		break;
 	default:

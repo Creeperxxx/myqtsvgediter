@@ -42,12 +42,12 @@ protected:
 	void paintEvent(QPaintEvent* event)override;
 
 signals:
-	void signalMouseDrawing(std::shared_ptr<IDidgramDrawParams> params);
+	void signalMouseDrawing(std::shared_ptr<IDidgramDrawParams> params);  //向canvas传递绘制参数
 	void signalPropertyShow(std::shared_ptr<propertySetManager> setmanager);
 
 private:
 	void myinitSizePolicy();
-	void initDrawParams(myqtsvg::ShapeType type);
+	void initDrawParams(myqtsvg::ShapeType type); 
 	void initDrawer();
 	void createQDrag();
 

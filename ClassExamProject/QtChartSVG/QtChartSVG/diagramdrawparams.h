@@ -104,6 +104,7 @@ private:
 class DiagramDrawParamsTriangle : public IDidgramDrawParams
 {
 public:
+	//指定边 配合rotate 得指定边与x轴正方向成一定角度
 	enum class EdgeType
 	{
 		Left,
@@ -198,7 +199,7 @@ public:
 };
 
 
-class TextLineEdit : public QLineEdit
+class TextLineEdit : public QLineEdit   //text绘制中用到的edit
 {
 	Q_OBJECT
 public:

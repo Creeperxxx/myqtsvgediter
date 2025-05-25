@@ -14,7 +14,7 @@ class propertySetManager;
 class drawStragety;
 class IDiagramDrawer;
 
-class canvas : public QWidget
+class canvas : public QWidget 
 {
 	Q_OBJECT
 
@@ -103,8 +103,8 @@ private:
 	QPoint m_startpoint;
 	QPoint m_currentpoint;
 
-	QPoint m_pasteOffset; // 成员变量，初始值为 QPoint(20, 20)
-	QPoint m_lastPasteDelta; // 新增成员变量用于记录偏移增量
+	QPoint m_pasteOffset; 
+	QPoint m_lastPasteDelta; 
 
 	QRect m_chooseRect;
 	QPoint m_rectOffset;

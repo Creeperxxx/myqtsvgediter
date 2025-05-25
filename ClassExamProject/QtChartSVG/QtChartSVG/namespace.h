@@ -55,5 +55,15 @@ namespace myqtsvg
 
 	QString PenStyleToQstring(Qt::PenStyle style);
 	Qt::PenStyle QstringToPenStyle(QString style);
+
+	enum class delegateType
+	{
+		Double,
+		Int,
+		Enum,
+		Color,
+		String,
+		TriangleSides
+	};
 }
 #endif // NAMESPACE_H

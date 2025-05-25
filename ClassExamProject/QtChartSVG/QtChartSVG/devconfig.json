@@ -47,6 +47,7 @@
     "drawparamssetname": "drawparams",
     "othersetname": "other",
     "scalemax": 3,
-    "fontsizemax": 20
+    "fontsizemax": 20,
+    "tooltipurl": "https://m1.apifoxmock.com/m1/6237106-5930859-default/app/buttontips"
   }
 }

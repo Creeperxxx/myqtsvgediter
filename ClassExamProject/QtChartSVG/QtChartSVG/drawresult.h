@@ -1,9 +1,10 @@
 #ifndef DRAWRESULT_H
 #define DRAWRESULT_H
-#include "qpainterpath.h"
-#include "qpoint.h"
-#include "qpen.h"
-#include "qfont.h"
+
+#include <qpainterpath.h>
+#include <qpen.h>
+#include <qfont.h>
+#include <qpoint.h>
 
 class DrawResult
 {

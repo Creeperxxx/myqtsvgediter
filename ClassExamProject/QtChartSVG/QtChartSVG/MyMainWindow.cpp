@@ -26,7 +26,7 @@ void MyMainWindow::fetchAndSetTooltips()
 	QNetworkAccessManager* m_networkAccessManager = new QNetworkAccessManager(this);
 	QObject::connect(m_networkAccessManager, &QNetworkAccessManager::finished
 		, this, &MyMainWindow::dealNetworkReply);
-	QUrl url("https://m1.apifoxmock.com/m1/6237106-5930859-default/app/buttontips");
+	QUrl url(myconfig::getInstance().getTooltipInterfaceUrl());
 	QNetworkRequest request(url);
 	m_networkAccessManager->get(request);
 }

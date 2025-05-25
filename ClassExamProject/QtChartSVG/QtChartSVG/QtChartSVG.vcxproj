@@ -129,8 +129,6 @@
     <QtMoc Include="canvas.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="config.json" />
-    <None Include="cpp.hint" />
     <None Include="devconfig.json" />
     <None Include="userconfig.json" />
   </ItemGroup>
@@ -154,12 +152,6 @@
     <ClCompile Include="propertyset.cpp" />
     <ClCompile Include="propertywidget.cpp" />
     <ClCompile Include="diagram.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="MyMainWindow.ui" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="QtChartSVG.rc" />
   </ItemGroup>
   <ItemGroup>
     <QtRcc Include="devconfig.qrc" />

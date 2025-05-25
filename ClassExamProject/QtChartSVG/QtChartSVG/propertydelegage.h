@@ -12,7 +12,7 @@
 #include "propertydata.h"
 
 
-
+//delegate就是属性框，用来显示属性，被加入到widget中，接受一个data来按照自己的方式显示出来
 class IpropertyDelegate : public QObject
 {
 	Q_OBJECT

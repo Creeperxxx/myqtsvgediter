@@ -1,6 +1,6 @@
 #include "propertydelegateparams.h"
 
-IdelegatePramas::IdelegatePramas(delegateType type)
+IdelegatePramas::IdelegatePramas(myqtsvg::delegateType type)
 	:m_type(type)
 {
 }
@@ -40,7 +40,7 @@ delegateParamsDouble::delegateParamsDouble(double max, double min, double step, 
 	, m_valuestep(step)
 	, m_valuedecimals(decimals)
 	, m_initvalue(initvalue)
-	, IdelegatePramas(delegateType::Double)
+	, IdelegatePramas(myqtsvg::delegateType::Double)
 {
 }
 
@@ -49,18 +49,18 @@ delegateParamsInt::delegateParamsInt(int max, int min, int step, int initvalue)
 	, m_valuemin(min)
 	, m_valuestep(step)
 	, m_initvalue(initvalue)
-	, IdelegatePramas(delegateType::Int)
+	, IdelegatePramas(myqtsvg::delegateType::Int)
 {
 }
 
 delegateParamsColor::delegateParamsColor(QColor initcolor)
 	:m_initcolor(initcolor)
-	, IdelegatePramas(delegateType::Color)
+	, IdelegatePramas(myqtsvg::delegateType::Color)
 {
 }
 
 delegateParamsEnum::delegateParamsEnum(QVector<QString> vec, QString initstr)
-	: IdelegatePramas(delegateType::Enum)
+	: IdelegatePramas(myqtsvg::delegateType::Enum)
 	, m_vec(vec)
 	, m_initstring(initstr)
 {
@@ -68,12 +68,12 @@ delegateParamsEnum::delegateParamsEnum(QVector<QString> vec, QString initstr)
 
 delegateParamsString::delegateParamsString(QString str)
 	:m_initstring(str)
-	, IdelegatePramas(delegateType::String)
+	, IdelegatePramas(myqtsvg::delegateType::String)
 {
 }
 
 delegateParamsTriangleSides::delegateParamsTriangleSides(QString bottomstr, QString leftstr, QString rightstr, int radiomax)
-	:IdelegatePramas(delegateType::TriangleSides)
+	:IdelegatePramas(myqtsvg::delegateType::TriangleSides)
 	, m_bottomstr(bottomstr)
 	, m_leftstr(leftstr)
 	, m_rightstr(rightstr)

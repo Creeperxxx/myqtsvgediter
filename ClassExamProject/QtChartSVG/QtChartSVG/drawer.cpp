@@ -1,5 +1,5 @@
-#include "drawer.h"
 #include <qmath.h>
+#include "drawer.h"
 
 QPoint IDiagramDrawer::calcuRealCenter(QPoint center, int hmove, int vmove)
 {
@@ -705,7 +705,6 @@ void DiagramDrawerPentagon::build()
 	QSize spacesize = m_params->getSpacesize();
 	qreal radius = qMin(spacesize.width(), spacesize.height()) / 2.0 * 0.9;
 
-	// 创建多边形
 	QPolygonF polygon;
 
 	for (int i = 0; i < 5; ++i)
