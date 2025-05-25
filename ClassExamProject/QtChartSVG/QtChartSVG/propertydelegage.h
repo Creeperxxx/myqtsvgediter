@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROPERTYDELEGATE_H
+#define PROPERTYDELEGATE_H
+
 #include <qobject.h>
 #include <qspinbox.h>
 #include <qpushbutton.h>
@@ -81,7 +83,7 @@ public:
 
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
-	QVariant value();
+    QVariant value() override;
 	void setValue(QVariant value) override;
 
 private:
@@ -97,7 +99,7 @@ public:
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	void setValue(QVariant value) override;
-	QVariant value();
+    QVariant value() override;
 
 private:
 	QSpinBox* m_editwidget;
@@ -112,7 +114,7 @@ public:
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	void setValue(QVariant value) override;
-	QVariant value();
+    QVariant value() override;
 
 private:
 
@@ -131,7 +133,7 @@ public:
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	void setValue(QVariant value) override;
-	QVariant value();
+    QVariant value()override;
 
 private:
 
@@ -146,7 +148,7 @@ public:
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	void setValue(QVariant value) override;
-	QVariant value();
+    QVariant value() override;
 private:
 
 	QComboBox* m_combobox;
@@ -163,7 +165,7 @@ public:
 protected:
 	void createWidget(std::shared_ptr<IdelegatePramas> params) override;
 	void setValue(QVariant value) override;
-	QVariant value();
+    QVariant value() override;
 private:
 
 
@@ -178,3 +180,5 @@ private:
 
 };
 
+
+#endif // PROPERTYDELEGATE_H

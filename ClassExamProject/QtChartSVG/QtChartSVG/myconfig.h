@@ -1,4 +1,7 @@
-#pragma once
+#ifndef MYCONFIG_H
+#define MYCONFIG_H
+
+
 #include <QJsonObject>
 #include <QString>
 #include <qsize.h>
@@ -89,6 +92,8 @@ public:
 	QString getPenStyle();
 	QString getDrawParamsSetName();
 	QString getOtherSetName();
+	double getScaleMax();
+	int getFontSizeMax();
 
 
 		
@@ -103,5 +108,6 @@ private:
 	QJsonObject m_devjson;
 };
 
+#endif // MYCONFIG_H
 
 

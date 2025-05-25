@@ -1,4 +1,4 @@
-#pragma once
+
 #include "myconfig.h"
 #include "diagramdrawparams.h"
 #include "qpainterpath.h"
@@ -490,7 +490,8 @@ std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsLine::clone()
 
 DiagramDrawParamsMouse::DiagramDrawParamsMouse(const DiagramDrawParamsMouse& other)
 	:IDidgramDrawParams(other)
-	, m_path(std::make_shared<QPainterPath>(*other.m_path))
+	//, m_path(std::make_shared<QPainterPath>(*other.m_path))
+	, m_path(other.m_path == nullptr ? std::make_shared<QPainterPath>() : std::make_shared<QPainterPath>(*other.m_path))
 {
 
 }
@@ -552,6 +553,7 @@ std::shared_ptr<IDidgramDrawParams> DiagramDrawParamsChoose::clone()
 }
 
 TextLineEdit::TextLineEdit(QWidget* parent)
+	:QLineEdit(parent)
 {
 	setFrame(false);
 	setAlignment(Qt::AlignCenter);
@@ -560,11 +562,15 @@ TextLineEdit::TextLineEdit(QWidget* parent)
 
 	QObject::connect(this, &TextLineEdit::textChanged, this, &TextLineEdit::adjustsize);
 	QObject::connect(this, &TextLineEdit::editingFinished, this, &TextLineEdit::signalHasFocusOut);
+	QObject::connect(this, &TextLineEdit::signalHasFocusOut, this, [this]() {
+		this->hide();
+		});
 }
 
-TextLineEdit::TextLineEdit(const TextLineEdit& other, QWidget* parent)
+TextLineEdit::TextLineEdit(const TextLineEdit& other)
 {
-	setParent(other.parentWidget());
+	if (other.parentWidget() != nullptr)
+		setParent(other.parentWidget());
 	setTextColor(other.m_textcolor);
 	setText(other.text());
 	setFont(other.font());
@@ -603,7 +609,7 @@ void TextLineEdit::setFont(const QFont& font)
 
 void TextLineEdit::focusOutEvent(QFocusEvent* event)
 {
-	hide();
+	emit signalHasFocusOut();
 	QLineEdit::focusOutEvent(event);
 }
 
@@ -624,10 +630,6 @@ void TextLineEdit::createTextLineEdit(std::shared_ptr<IDidgramDrawParams> params
 	if (p == nullptr)
 		throw std::runtime_error("error");
 
-	if (parent == nullptr)
-	{
-		int a = 0;
-	}
 	auto textedit = new TextLineEdit(parent);
 	textedit->setTextColor(p->getPenColor());
 	textedit->setText("编辑");
@@ -635,9 +637,10 @@ void TextLineEdit::createTextLineEdit(std::shared_ptr<IDidgramDrawParams> params
 	textedit->adjustsize();
 	
 	QSize size = textedit->size();
-	QPoint topleft = QPoint(p->getCenter() - size.width() / 2, p->getCenter().y() - size.height() / 2);
+	QPoint topleft = QPoint(p->getCenter().x() - size.width() / 2, p->getCenter().y() - size.height() / 2);
 	textedit->move(topleft);
 
+    textedit->show();
 	p->setTextEdit(textedit);
 
 }
@@ -646,7 +649,10 @@ DiagramDrawParamsText::DiagramDrawParamsText(const DiagramDrawParamsText& other)
 	:IDidgramDrawParams(other)
 {
 	m_font = other.m_font;
-	m_textedit = new TextLineEdit(*other.m_textedit);
+	if (other.m_textedit == nullptr)
+		m_textedit = nullptr;
+	else
+		m_textedit = new TextLineEdit(*other.m_textedit);
 }
 
 DiagramDrawParamsText::DiagramDrawParamsText()

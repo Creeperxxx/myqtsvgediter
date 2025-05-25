@@ -1,4 +1,4 @@
-#pragma once
+
 #include "drawparamscreator.h"
 #include "myconfig.h"
 
@@ -76,6 +76,7 @@ std::shared_ptr<IDidgramDrawParams> createParamsMouse::createSpecial()
 {
 	auto p = std::make_shared<DiagramDrawParamsMouse>();
 	p->setType(myqtsvg::ShapeType::Mouse);
+	p->setPath(nullptr);
 	return p;
 }
 
@@ -93,6 +94,7 @@ std::shared_ptr<IDidgramDrawParams> createParamsText::createSpecial()
 	p->setFontFamily(config.getTextFamily());
 	p->setFontSize(config.getTextSize());
 	p->setType(myqtsvg::ShapeType::Text);
+	p->setTextEdit(nullptr);
 	return p;
 }
 

@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PROPERTYDATA_H
+#define PROPERTYDATA_H
+
+
 #include <qobject.h>
 #include <qvariant.h>
 #include <qstring.h>
@@ -14,11 +17,14 @@ public:
 	propertydata(QString name, QVariant data);
 	QString getName();
 	QVariant getValue();
-
+	void setValue(QVariant value);
+	void setName(QString name);
 
 	void slotValueChanged(QVariant value);
-public:
+private:
 	QString m_name;
 	QVariant m_data;
 
 };
+
+#endif // PROPERTYDATA_H

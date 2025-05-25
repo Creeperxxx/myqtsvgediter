@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROPERTYSET_H
+#define PROPERTYSET_H
+
 #include <qobject.h>
 #include <memory>
 #include <unordered_map>
@@ -19,7 +21,6 @@ public:
 class drawParamsPropertySet : public IpropertySet
 {
 	Q_OBJECT
-public:
 signals:
 	void SignalValueChangedByData();
 public:
@@ -82,8 +83,11 @@ public:
 	std::shared_ptr<IpropertySet> getPropertySet(QString name);
 
 	void dealShowData(propertyWidget* widget);
+	void setWidgetType(myqtsvg::propertywidgettype type);
+	myqtsvg::propertywidgettype getWidgetType();
 
 
+private:
 	std::unordered_map<QString, std::shared_ptr<IpropertySet>> m_propertySetMap;
 	myqtsvg::propertywidgettype m_propertyWidgetType;
 };
@@ -98,3 +102,5 @@ public:
 		, const std::vector<QString>& additionalProperties = {});
 		
 };
+
+#endif // PROPERTYSET_H

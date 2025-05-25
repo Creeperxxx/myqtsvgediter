@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/new">
         <file>devconfig.json</file>
+        <file>userconfig.json</file>
     </qresource>
 </RCC>

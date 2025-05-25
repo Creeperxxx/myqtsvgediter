@@ -1,9 +1,12 @@
-#pragma once
+#ifndef DRAWER_H 
+#define DRAWER_H
+
 #include <memory>
 #include <qpainter.h>
+#include <unordered_map>
+#include "myconfig.h"
 #include "drawresult.h"
 #include "diagramdrawparams.h"
-#include "myconfig.h"
 
 class IDiagramDrawer
 {
@@ -104,6 +107,7 @@ public:
 	void draw(QPainter& painter)override;
 	std::shared_ptr<DrawResult> getResult()override;
 
+private:
 
 	std::shared_ptr<DiagramDrawParamsMouse> m_params;
 	std::shared_ptr<DrawResultMouse> m_result;
@@ -115,9 +119,10 @@ class DiagramDrawerText : public IDiagramDrawer
 public:
 	DiagramDrawerText(std::shared_ptr<IDidgramDrawParams> params);
 	void build() override;
-	void draw(QPainter& painter);
+    void draw(QPainter& painter) override;
 	std::shared_ptr<DrawResult> getResult() override;
 
+private:
 	std::shared_ptr<DiagramDrawParamsText> m_params;
 	std::shared_ptr<DrawResultText> m_result;
 };
@@ -129,7 +134,7 @@ public:
 	void build() override;
 	void draw(QPainter& painter) override;
 	std::shared_ptr<DrawResult> getResult() override;
-
+private:
 
 	std::shared_ptr<DiagramDrawParamsChoose> m_params;
 };
@@ -149,3 +154,4 @@ private:
 	void defaultinit();
 	std::unordered_map<myqtsvg::ShapeType, std::function<std::shared_ptr<IDiagramDrawer>(std::shared_ptr<IDidgramDrawParams>)>> m_drawerMap;
 };
+#endif //DRAWER_H

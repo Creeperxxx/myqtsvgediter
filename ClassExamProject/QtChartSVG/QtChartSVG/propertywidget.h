@@ -1,4 +1,6 @@
-#pragma once
+#ifndef PROPERTYWIDGET_H
+#define PROPERTYWIDGET_H
+
 #include <qwidget.h>
 #include <qformlayout.h>
 #include <map>
@@ -41,39 +43,51 @@ public:
 	PropertyWidgetManager(QWidget* parent);
 	QStackedWidget* getstackwidget();
 	void dealclicked(std::shared_ptr<propertySetManager> setmanager);
-private:
-
-	void createonceWidget();
-	propertyWidget* createOriginalPropertyWidget();
-	void buildDiagramRectPropertyWidget(propertyWidget* widget);
-	void buildDiagramCirclePropertyWidget(propertyWidget* widget);
-	void buildDiagramTrianglePropertyWidget(propertyWidget* widget);
-	void buildDiagramLinePropertyWidget(propertyWidget* widget);
-	void buildDiagramMousePropertyWidget(propertyWidget* widget);
-	void buildDiagramTextPropertyWidget(propertyWidget* widget);
-	void buildDiagramHuabuPropertyWidget(propertyWidget* widget);
-	void buildDefaultPropertyWidget(propertyWidget* widget);
-
-
 	void addPropertyWidget(myqtsvg::propertywidgettype type, propertyWidget* widget);
-
-
-	void buildPropertyWidgetName(propertyWidget* widget);
-	void buildPropertyWidgetRectRadio(propertyWidget* widget);
-	void buildPropertyWidgetRotate(propertyWidget* widget);
-	void buildProertyWidgetCircleRadio(propertyWidget* widget);
-	void buildPropertyWidgetScale(propertyWidget* widget);
-	void buildPropertyWidgetTriangleSideRadio(propertyWidget* widget);
-	void buildPropertyWidgetTriangleEdgetype(propertyWidget* widget);
-	void buildPropertyWidgetPenAndBrush(propertyWidget* widget);
-	void buildPropertyWidgetSpacesize(propertyWidget* widget);
-	void buildPropertyWidgetHuabuSize(propertyWidget* widget);
-	void buildPropertyWidgetCentermove(propertyWidget* widget);
-	void buildPropertyWidgetPen(propertyWidget* widget);
-
-
+private:
 
 	std::map<myqtsvg::propertywidgettype, propertyWidget*> m_propertyMap;
 	QStackedWidget* m_propertyStackWidget;
 
 };
+
+
+class propertyWidgetManagerIniter
+{
+public:
+	void initmanager(PropertyWidgetManager* widgetmanager);
+	static propertyWidgetManagerIniter& getInstance();
+	void add(myqtsvg::propertywidgettype type, std::function<propertyWidget* ()> func);
+private:
+	propertyWidgetManagerIniter();
+	void defaultinit();
+
+	propertyWidget* createDefault();
+	propertyWidget* createDiagramRect();
+	propertyWidget* createDiagramCircle();
+	propertyWidget* createDiagramTriangle();
+	propertyWidget* createDiagramLine();
+	propertyWidget* createDiagramChoose();
+	propertyWidget* createDiagramMouse();
+	propertyWidget* createDiagramText();
+	propertyWidget* createCanvas();
+	
+	void buildName(propertyWidget* widget);
+	void buildPen(propertyWidget* widget);
+	void buildBrush(propertyWidget* widget);
+	void buildCenterMove(propertyWidget* widget);
+	void buildScale(propertyWidget* widget);
+	void buildRotate(propertyWidget* widget);
+	void buildSpacesize(propertyWidget* widget);
+	void buildRectRadio(propertyWidget* widget);
+	void buildCircleRadio(propertyWidget* widget);
+	void buildTriangleRadios(propertyWidget* widget);
+	void buildTriangleEdgeType(propertyWidget* widget);
+	void buildCanvasSize(propertyWidget* widget);
+	void buildFont(propertyWidget* widget);
+	void buildPenColor(propertyWidget* widget);
+	void buildCanvasScale(propertyWidget* widget);
+	
+	std::map<myqtsvg::propertywidgettype, std::function<propertyWidget*()>> m_map;
+};
+#endif // PROPERTYWIDGET_H

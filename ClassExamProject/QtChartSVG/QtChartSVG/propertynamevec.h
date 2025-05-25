@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PROPERTYNAMEVEC_H
+#define PROPERTYNAMEVEC_H
+
+
 #include <map>
 #include "namespace.h"
 #include <qstring.h>
@@ -27,3 +30,5 @@ private:
 
 	std::map<myqtsvg::ShapeType, std::vector<QString>> m_propertyNameMap;
 };
+
+#endif // PROPERTYNAMEVEC_H

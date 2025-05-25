@@ -61,16 +61,16 @@
     <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="huabu.cpp">
+    <ClCompile Include="canvas.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyMainWindow.cpp">
+    <ClCompile Include="mymainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tuxing.cpp">
+    <ClCompile Include="diagram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="myconfig.cpp">
@@ -115,15 +115,18 @@
     <ClCompile Include="canvasdrawstragety.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="canvasdiagram.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="huabu.h">
+    <QtMoc Include="canvas.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="MyMainWindow.h">
+    <QtMoc Include="mymainwindow.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="tuxing.h">
+    <QtMoc Include="diagram.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="propertydelegage.h">
@@ -139,6 +142,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="propertyset.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="canvasdiagram.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

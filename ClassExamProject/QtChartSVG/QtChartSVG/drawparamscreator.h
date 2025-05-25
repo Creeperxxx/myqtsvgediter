@@ -1,4 +1,7 @@
-#pragma once
+#ifndef DRAWPARAMSCREATOR_H
+#define DRAWPARAMSCREATOR_H
+
+
 #include <memory>
 #include "diagramdrawparams.h"
 #include "namespace.h"
@@ -69,3 +72,5 @@ private:
 	std::map<myqtsvg::ShapeType, std::function<std::shared_ptr<ICreateParams>()>> m_map;
 
 };
+
+#endif // DRAWPARAMSCREATOR_H

@@ -1,20 +1,13 @@
-#pragma once
+#ifndef MYMAINWINDOW_H
+#define MYMAINWINDOW_H
 
-#include <QWidget>
 #include <qmainwindow.h>
-#include <qdebug.h>
-#include <qsizepolicy.h>
-#include <qcolor.h>
-#include <string>
-#include <qstring.h>
 #include <qscrollarea.h>
-#include <qtoolbar.h>
-#include <qscrollbar.h>
-#include <qmenubar.h>
-#include <qstackedwidget.h>
+#include <qnetworkreply.h>
 #include <qsettings.h>
-#include "propertywidget.h"
 
+class canvas;
+class PropertyWidgetManager; 
 class MyMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -23,26 +16,38 @@ public:
 	MyMainWindow(QWidget *parent = nullptr);
 	~MyMainWindow();
 
-	void fetchAndSetTooltips();
-	//void initalltuxing();
 protected:
 	void resizeEvent(QResizeEvent* event) override;
 	void showEvent(QShowEvent* event) override;
-
 	void closeEvent(QCloseEvent* event) override;
-
 
 private:
 	void init();
 	void initconfig(QString filepath = "userconfig.json");
 
-	QScrollArea* m_huabuparentscroll;
+	void setupMainLayout();
+	void setupToolbar();
+	void setupAction();
+	void fetchAndSetTooltips();
+
+	void savesvg();
+	void loadfile();
+	void savepng();
+	void newcanvas();
+	void copyDiagram();
+	void pasteDiagram();
+	void selectAllDiagram();
+	void deleteDiagram();
+
+	void dealNetworkReply(QNetworkReply* reply);
+
+	canvas* m_huabuwidget;
 	QWidget* m_huabuparentwidget;
+	QScrollArea* m_huabuparentscroll;
 
 	PropertyWidgetManager* m_propertyWidgetManager;
-
 	QSettings m_settings;
-
 	QMap<QString, QWidget*> m_tooltipsWidgets;
-
 };
+
+#endif // MYMAINWINDOW_H

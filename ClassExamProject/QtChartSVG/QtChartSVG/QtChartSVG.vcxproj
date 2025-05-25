@@ -36,7 +36,7 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>qt5</QtInstall>
+    <QtInstall>6.8.0_msvc2022_64</QtInstall>
     <QtModules>core;network;gui;svg;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
@@ -109,6 +109,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <QtMoc Include="canvasdiagram.h" />
     <ClInclude Include="canvasdrawstragety.h" />
     <QtMoc Include="diagramdrawparams.h" />
     <ClInclude Include="drawer.h" />
@@ -124,9 +125,9 @@
     <QtMoc Include="propertywidget.h" />
     <ClInclude Include="propertynamevec.h" />
     <ClInclude Include="resource.h" />
-    <QtMoc Include="tuxing.h" />
-    <QtMoc Include="MyMainWindow.h" />
-    <QtMoc Include="huabu.h" />
+    <QtMoc Include="diagram.h" />
+    <QtMoc Include="mymainwindow.h" />
+    <QtMoc Include="canvas.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
@@ -135,15 +136,16 @@
     <None Include="userconfig.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="canvasdiagram.cpp" />
     <ClCompile Include="canvasdrawstragety.cpp" />
     <ClCompile Include="diagramdrawparams.cpp" />
     <ClCompile Include="drawer.cpp" />
     <ClCompile Include="drawparamscreator.cpp" />
     <ClCompile Include="drawresult.cpp" />
-    <ClCompile Include="huabu.cpp" />
+    <ClCompile Include="canvas.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="myconfig.cpp" />
-    <ClCompile Include="MyMainWindow.cpp" />
+    <ClCompile Include="mymainwindow.cpp" />
     <ClCompile Include="namespace.cpp" />
     <ClCompile Include="propertydata.cpp" />
     <ClCompile Include="propertydatabuilder.cpp" />
@@ -152,7 +154,7 @@
     <ClCompile Include="propertynamevec.cpp" />
     <ClCompile Include="propertyset.cpp" />
     <ClCompile Include="propertywidget.cpp" />
-    <ClCompile Include="tuxing.cpp" />
+    <ClCompile Include="diagram.cpp" />
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="MyMainWindow.ui" />

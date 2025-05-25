@@ -1,4 +1,3 @@
-#pragma once
 #include "canvasdrawstragety.h"
 #include <qpainterpath.h>
 

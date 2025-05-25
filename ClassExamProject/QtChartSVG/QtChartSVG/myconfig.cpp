@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QJsonValue>
 #include <qcolor.h>
+#include <stdexcept>
 #include "myconfig.h"
 
 
@@ -488,6 +489,18 @@ QString myconfig::getOtherSetName()
 {
 	static QString name = m_devjson["other"].toObject()["othersetname"].toString();
 	return name;
+}
+
+double myconfig::getScaleMax()
+{
+	static double max = m_devjson["other"].toObject()["scalemax"].toDouble();
+	return max;
+}
+
+int myconfig::getFontSizeMax()
+{
+	static int max = m_devjson["other"].toObject()["fontsizemax"].toInt();
+	return max;
 }
 
 

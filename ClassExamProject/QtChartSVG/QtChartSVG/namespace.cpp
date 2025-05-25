@@ -105,7 +105,7 @@ myqtsvg::propertywidgettype myqtsvg::huabuShapetypeToPropertyWidgetType(ShapeTyp
 		return propertywidgettype::huabuMouse;
 		break;
 	case myqtsvg::ShapeType::choose:
-		return propertywidgettype::huabu;
+		return propertywidgettype::canvas;
 		break;
 	case myqtsvg::ShapeType::Text:
 		return propertywidgettype::huabuText;

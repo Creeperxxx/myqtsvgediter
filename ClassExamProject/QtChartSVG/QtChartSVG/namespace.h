@@ -1,6 +1,10 @@
-#pragma once
+#ifndef NAMESPACE_H
+#define NAMESPACE_H
+
+
 #include <qstring.h>
 #include <map>
+#include <stdexcept>
 namespace myqtsvg
 {
 	enum class ShapeType
@@ -27,7 +31,7 @@ namespace myqtsvg
 		diagramMouse,
 		diagramText,
 
-		huabu,
+		canvas,
 		huabuRect,
 		huabuCircle,
 		huabuTriangle,
@@ -42,3 +46,4 @@ namespace myqtsvg
 	QString PenStyleToQstring(Qt::PenStyle style);
 	Qt::PenStyle QstringToPenStyle(QString style);
 }
+#endif // NAMESPACE_H

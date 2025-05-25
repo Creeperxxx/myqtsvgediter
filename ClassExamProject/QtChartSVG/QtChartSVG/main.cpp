@@ -1,5 +1,5 @@
 #include <QtWidgets/QApplication>
-#include "MyMainWindow.h"
+#include "mymainwindow.h"
 #include "diagramdrawparams.h"
 
 

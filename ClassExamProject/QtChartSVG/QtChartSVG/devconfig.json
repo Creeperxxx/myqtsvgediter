@@ -42,6 +42,8 @@
     "defaultname": "defaultname",
     "clicktolerance": 5,
     "drawparamssetname": "drawparams",
-    "othersetname": "other"
+    "othersetname": "other",
+    "scalemax": 3,
+    "fontsizemax": 20
   }
 }

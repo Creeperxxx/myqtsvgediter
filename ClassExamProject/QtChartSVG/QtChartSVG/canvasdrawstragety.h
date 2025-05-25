@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CANVASDRAWSTRAGETY_H 
+#define CANVASDRAWSTRAGETY_H
+
 #include <qpoint.h>
 #include <memory>
 #include <diagramdrawparams.h>
@@ -52,3 +55,4 @@ private:
 	QWidget* m_parent;
 
 };
+#endif //CANVASDRAWSTRAGETY_H

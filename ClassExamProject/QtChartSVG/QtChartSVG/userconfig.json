@@ -3,16 +3,16 @@
     "rectangle": {
       "radio": 2,
       "radiomax": 10,
-      "radiomin": 0.5,
-      "radiostep": 0.1,
+      "radiomin": 1,
+      "radiostep": 1,
       "rotate": 0,
       "scale": 1
     },
     "circle": {
       "radio": 1,
       "radiomax": 10,
-      "radiomin": 0.5,
-      "radiostep": 0.1,
+      "radiomin": 1,
+      "radiostep": 1,
       "rotate": 0,
       "scale": 1
     },

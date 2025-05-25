@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PROPERTYDELEGATEPARAMS_H
+#define PROPERTYDELEGATEPARAMS_H
+
+
 #include <qcolor.h>
 #include <qvector.h>
 #include <memory>
@@ -95,3 +98,5 @@ public:
 	int m_Radiomax;
 	DiagramDrawParamsTriangle::sideRadios m_radios;
 };
+
+#endif // PROPERTYDELEGATEPARAMS_H

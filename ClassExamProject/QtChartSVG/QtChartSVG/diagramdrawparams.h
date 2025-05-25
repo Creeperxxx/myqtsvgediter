@@ -1,4 +1,6 @@
-#pragma once
+#ifndef DIAGRAMDRAWPARAMS_H 
+#define DIAGRAMDRAWPARAMS_H
+
 #include <qstring.h>
 #include <qobject.h>
 #include <qsize.h>
@@ -71,7 +73,7 @@ class DiagramDrawParamsRect : public IDidgramDrawParams
 public:
 	DiagramDrawParamsRect(const DiagramDrawParamsRect& other);
 	DiagramDrawParamsRect();
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
@@ -89,7 +91,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 	DiagramDrawParamsCircle(const DiagramDrawParamsCircle& other);
 	DiagramDrawParamsCircle();
 
@@ -104,7 +106,7 @@ class DiagramDrawParamsTriangle : public IDidgramDrawParams
 public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	enum class EdgeType
 	{
@@ -159,7 +161,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 class DiagramDrawParamsMouse : public IDidgramDrawParams
@@ -170,7 +172,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void setPath(std::shared_ptr<QPainterPath> path);
 	std::shared_ptr<QPainterPath> getPaht();
@@ -187,7 +189,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 };
 
 
@@ -196,7 +198,7 @@ class TextLineEdit : public QLineEdit
 	Q_OBJECT
 public:
 	TextLineEdit(QWidget* parent = nullptr);
-	TextLineEdit(const TextLineEdit& other, QWidget* parent = nullptr);
+    TextLineEdit(const TextLineEdit& other);
 	void setTextColor(QColor textcolor);
 	void setBackGroundColor(QColor color);
 
@@ -224,7 +226,7 @@ public:
 	void serialize(QDataStream& out) const override;
 	void deserialize(QDataStream& in) override;
 
-	std::shared_ptr<IDidgramDrawParams> clone();
+    std::shared_ptr<IDidgramDrawParams> clone() override;
 
 	void setFontFamily(QString family);
 	QString getFontFamily();
@@ -239,3 +241,5 @@ private:
 	QFont m_font;
 	TextLineEdit* m_textedit;
 };
+
+#endif //DIAGRAMDRAWPARAMS_H

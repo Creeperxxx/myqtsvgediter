@@ -21,6 +21,16 @@ QRect DrawResultRect::getBoundingRect()
 	return rect;
 }
 
+void DrawResultRect::setRect(QPolygonF rect)
+{
+	m_rect = rect;
+}
+
+QPolygonF DrawResultRect::getRect()
+{
+	return m_rect;
+}
+
 bool DrawResultCircle::iscontainPoint(QPointF point)
 {
 	return m_circle.containsPoint(point, Qt::OddEvenFill);
@@ -41,6 +51,16 @@ QRect DrawResultCircle::getBoundingRect()
 	return rect;
 }
 
+void DrawResultCircle::setCircle(QPolygonF circle)
+{
+	m_circle = circle;
+}
+
+QPolygonF DrawResultCircle::getCircle()
+{
+	return m_circle;
+}
+
 bool DrawResultTriangle::iscontainPoint(QPointF point)
 {
 	return m_triangle.containsPoint(point, Qt::OddEvenFill);
@@ -59,6 +79,16 @@ QRect DrawResultTriangle::getBoundingRect()
 	auto rect = m_triangle.boundingRect().toRect();
 	rect.adjust(-10, -10, 10, 10);
 	return rect;
+}
+
+void DrawResultTriangle::setTriangle(QPolygonF triangle)
+{
+	m_triangle = triangle;
+}
+
+QPolygonF DrawResultTriangle::getTriangle()
+{
+	return m_triangle;
 }
 
 bool DrawResultLine::iscontainPoint(QPointF point)
@@ -89,22 +119,26 @@ QRect DrawResultLine::getBoundingRect()
 	return rect;
 }
 
+void DrawResultLine::setLine(QLineF line)
+{
+	m_line = line;
+}
+
+QLineF DrawResultLine::getLine()
+{
+	return m_line;
+}
+
 qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
 {
-	// 向量AP (从line.p1()到point)
 	QPointF AP = point - line.p1();
-	// 向量AB (线段方向向量)
 	QPointF AB = line.p2() - line.p1();
 
-	// 计算AB的长度平方
 	qreal ab2 = AB.x() * AB.x() + AB.y() * AB.y();
-	// 计算AP与AB的点积
 	qreal ap_ab = AP.x() * AB.x() + AP.y() * AB.y();
 
-	// 计算归一化参数t (点在AB上的投影位置)
 	qreal t = ap_ab / ab2;
 
-	// 如果t在[0,1]之外，计算到端点的距离
 	if (t < 0.0) {
 		return QLineF(line.p1(), point).length();
 	}
@@ -112,9 +146,7 @@ qreal DrawResultLine::distanceToLine(const QLineF& line, const QPointF& point)
 		return QLineF(line.p2(), point).length();
 	}
 
-	// 计算投影点
 	QPointF projection = line.p1() + t * AB;
-	// 返回点到投影点的距离
 	return QLineF(point, projection).length();
 
 }
@@ -143,6 +175,16 @@ QRect DrawResultMouse::getBoundingRect()
 	return rect;
 }
 
+void DrawResultMouse::setPath(QPainterPath path)
+{
+	m_path = path;
+}
+
+QPainterPath DrawResultMouse::getPath()
+{
+	return m_path;
+}
+
 QPainterPath DrawResultText::getPainterPath()
 {
 	QPainterPath path;
@@ -161,4 +203,54 @@ QRect DrawResultText::getBoundingRect()
 	QRect rect = m_rect.toRect();
 	rect.adjust(-10, -10, 10, 10);
 	return rect;
+}
+
+void DrawResultText::setText(QString text)
+{
+	m_text = text;
+}
+
+QString DrawResultText::getText()
+{
+	return m_text;
+}
+
+void DrawResultText::setFont(QFont font)
+{
+	m_font = font;
+}
+
+QFont DrawResultText::setFont()
+{
+	return m_font;
+}
+
+void DrawResultText::setRect(QRectF rect)
+{
+	m_rect = rect;
+}
+
+QRectF DrawResultText::getRect()
+{
+	return m_rect;
+}
+
+void DrawResult::setPen(QPen pen)
+{
+	m_painterpen = pen;
+}
+
+QPen DrawResult::getPen()
+{
+	return m_painterpen;
+}
+
+void DrawResult::setBrush(QBrush brush)
+{
+	m_painterbrush = brush;
+}
+
+QBrush DrawResult::getBrush()
+{
+	return m_painterbrush;
 }

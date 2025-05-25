@@ -1,4 +1,7 @@
-#pragma once
+#ifndef PROPERTYDATABUILDER_H
+#define PROPERTYDATABUILDER_H
+
+
 #include <memory>
 #include <vector>
 #include <map>
@@ -194,3 +197,4 @@ private:
 
 	std::map<QString, std::function<std::unique_ptr<IpropertyDataBuilder>()>> m_builderCreatefunc;
 };
+#endif // PROPERTYDATABUILDER_H

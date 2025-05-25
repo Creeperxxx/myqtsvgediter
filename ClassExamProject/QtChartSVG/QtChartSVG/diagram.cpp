@@ -1,4 +1,4 @@
-#include "tuxing.h"
+#include "diagram.h"
 #include "propertywidget.h"
 #include "propertyset.h"
 #include "propertydatabuilder.h"
@@ -23,31 +23,12 @@ diagram::diagram(myqtsvg::ShapeType type, QWidget* parent)
 	initDrawParams(type);
 	initDrawer();
 
-	m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->getType())
+	m_propertySetManager = initPropertySetManager::createPropertySetManager(
+		myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->getType())
 		, m_params
 		, [this]() {
 			this->onParamsValueChanged();
 		});
-
-	//m_propertySetManager = std::make_shared<propertySetManager>();
-	//m_propertySetManager->m_propertyWidgetType = myqtsvg::diagramShapetypeToPropertyWidgetType(m_params->m_type);
-
-
-	//std::shared_ptr<drawParamsPropertySet> drawParamsSet = std::make_shared<drawParamsPropertySet>();
-	//drawParamsSet->m_params = m_params;
-	//auto propertynamevec = propertyNameVecInterface::getinstance().getPropertyNameVec(type);
-	//auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	//drawParamsSet->m_propertyDataVec = creator->create(drawParamsSet);
-	//QObject::connect(drawParamsSet.get(), &drawParamsPropertySet::SignalValueChangedByData, this, &diagram::onParamsValueChanged);
-	//m_propertySetManager->addPropertySet(config.getDrawParamsSetName(), drawParamsSet);
-
-	//std::shared_ptr<otherPropertySet> otherset = std::make_shared<otherPropertySet>();
-	//otherset->m_name = myqtsvg::ShapetypeEnumToQstring(type);
-	//propertynamevec.clear();
-	//propertynamevec.push_back(config.getNameName());
-	//creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(propertynamevec);
-	//otherset->m_propertyDataVec = creator->create(otherset);
-	//m_propertySetManager->addPropertySet(config.getOtherSetName(), otherset);
 
 }
 
@@ -55,7 +36,7 @@ void diagram::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
-		m_dragStartPos = event->localPos();
+		m_dragStartPos = event->pos();
 		emit signalPropertyShow(m_propertySetManager);
 		emit signalMouseDrawing(m_params);
 	}
@@ -66,7 +47,7 @@ void diagram::mouseMoveEvent(QMouseEvent* event)
 {
 	if (!(event->buttons() & Qt::LeftButton))
 		return;
-	if ((event->localPos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
+	if ((event->pos() - m_dragStartPos).manhattanLength() < QApplication::startDragDistance())
 		return;
 	if (m_params->getType() == myqtsvg::ShapeType::Mouse
 		|| m_params->getType() == myqtsvg::ShapeType::choose)
@@ -78,11 +59,10 @@ void diagram::mouseMoveEvent(QMouseEvent* event)
 
 void diagram::resizeEvent(QResizeEvent* event)
 {
-	QWidget::resizeEvent(event);
 	if (!m_issizefixed)
 	{
 		QSize allocated = event->size();
-		const float ratio = m_widgetRadio; // 宽高比
+		float ratio = m_widgetRadio;
 
 		// 候选方案1：以宽度为主导
 		int w1 = qBound(minimumSize().width(), allocated.width(), maximumSize().width());
@@ -103,6 +83,8 @@ void diagram::resizeEvent(QResizeEvent* event)
 		QSize finalSize = (ratioDiffW < ratioDiffH) ? candidateW : candidateH;
 		this->resize(finalSize);
 	}
+
+	QWidget::resizeEvent(event);
 }
 
 void diagram::createQDrag()
@@ -147,12 +129,44 @@ void diagram::paintEvent(QPaintEvent* event)
 
 	m_drawer->draw(painter);
 	m_params->setSpacesize(spacesize);
+	QWidget::paintEvent(event);
 }
 
 void diagram::onParamsValueChanged()
 {
 	update();
 }
+
+void diagram::setDrawer(std::shared_ptr<IDiagramDrawer> drawer)
+{
+	m_drawer = drawer;
+}
+
+std::shared_ptr<IDiagramDrawer> diagram::getDrawer()
+{
+	return m_drawer;
+}
+
+void diagram::setParams(std::shared_ptr<IDidgramDrawParams> params)
+{
+	m_params = params;
+}
+
+std::shared_ptr<IDidgramDrawParams> diagram::getParams()
+{
+	return m_params;
+}
+
+void diagram::setSetManager(std::shared_ptr<propertySetManager> setmanager)
+{
+	m_propertySetManager = setmanager;
+}
+
+std::shared_ptr<propertySetManager> diagram::getSetManager()
+{
+	return m_propertySetManager;
+}
+
 
 void diagram::myinitSizePolicy()
 {
@@ -175,7 +189,7 @@ void diagram::initDrawParams(myqtsvg::ShapeType type)
 {
 	auto creator = createParamsInterface::getInstance().getParams(type);
 	auto params = creator->create();
-	if (params == nullptr || params.get() == nullptr || params->getType() != type)
+	if (params == nullptr || params->getType() != type)
 		throw std::runtime_error("error");
 	m_params = params;
 }
@@ -183,7 +197,7 @@ void diagram::initDrawParams(myqtsvg::ShapeType type)
 void diagram::initDrawer()
 {
 	m_drawer = DiagramDrawInterface::getInstance().getDrawer(m_params);
-	if (m_drawer == nullptr || m_drawer.get() == nullptr)
+	if (m_drawer == nullptr)
 		throw std::runtime_error("error");
 }
 

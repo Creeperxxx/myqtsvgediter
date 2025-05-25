@@ -1,4 +1,7 @@
-#pragma once
+#ifndef DRAWRESULT_H
+#define DRAWRESULT_H
+
+
 #include "qpainterpath.h"
 #include "qpoint.h"
 #include "qpen.h"
@@ -10,9 +13,14 @@ class DrawResult
 public:
 	virtual bool iscontainPoint(QPointF point) = 0;
 	virtual QPainterPath getPainterPath() = 0;
-
 	virtual QRect getBoundingRect() = 0;
 
+	void setPen(QPen pen);
+	QPen getPen();
+	void setBrush(QBrush brush);
+	QBrush getBrush();
+
+private:
 	QPen m_painterpen;
 	QBrush m_painterbrush;
 };
@@ -23,7 +31,10 @@ public:
 	bool iscontainPoint(QPointF point) override;
 	QPainterPath getPainterPath() override;
 	QRect getBoundingRect()override;
-
+	
+	void setRect(QPolygonF rect);
+	QPolygonF getRect();
+private:
 	QPolygonF m_rect;
 };
 
@@ -33,6 +44,11 @@ public:
 	bool iscontainPoint(QPointF point) override;
 	QPainterPath getPainterPath() override;
 	QRect getBoundingRect()override;
+
+	void setCircle(QPolygonF circle);
+	QPolygonF getCircle();
+
+private:
 	QPolygonF m_circle;
 };
 
@@ -43,6 +59,10 @@ public:
 	QPainterPath getPainterPath() override;
 	QRect getBoundingRect()override;
 
+	void setTriangle(QPolygonF triangle);
+	QPolygonF getTriangle();
+
+private:
 	QPolygonF m_triangle;
 };
 
@@ -52,9 +72,13 @@ public:
 	bool iscontainPoint(QPointF point) override;
 	QPainterPath getPainterPath() override;
 	QRect getBoundingRect()override;
-	QLineF m_line;
+
+	void setLine(QLineF line);
+	QLineF getLine();
 private:
 	qreal distanceToLine(const QLineF& line, const QPointF& point);
+
+	QLineF m_line;
 };
 
 class DrawResultMouse : public DrawResult
@@ -64,17 +88,29 @@ public:
 	QPainterPath getPainterPath()override;
 	QRect getBoundingRect() override;
 
+	void setPath(QPainterPath path);
+	QPainterPath getPath();
+private:
 	QPainterPath m_path;
 };
 
 class DrawResultText : public DrawResult
 {
 public:
-
 	QPainterPath getPainterPath()override;
 	bool iscontainPoint(QPointF point)override;
 	QRect getBoundingRect()override;
+	
+	void setText(QString text);
+	QString getText();
+	void setFont(QFont font);
+	QFont setFont();
+	void setRect(QRectF rect);
+	QRectF getRect();
+private:
 	QString m_text;
 	QFont m_font;
 	QRectF m_rect;
 };
+
+#endif // DRAWRESULT_H

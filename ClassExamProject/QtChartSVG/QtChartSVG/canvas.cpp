@@ -1,26 +1,27 @@
 #include <qdatetime.h>
 #include <qmenu.h>
+#include "canvas.h"
 #include "qmessagebox.h"
-#include "huabu.h"
 #include "propertydatabuilder.h"
 #include "myconfig.h"
 #include "drawparamscreator.h"
 #include "propertynamevec.h"
 #include "propertyset.h"
 
-huabu::huabu(QWidget* parent)
+canvas::canvas(QWidget* parent)
 	: QWidget(parent)
 	, m_mimetype(myconfig::getInstance().getMimetype())
 	, m_backgroundcolor(Qt::white)
 	, m_pasteOffset(20, 20)
 	, m_lastPasteDelta(0, 0)
 	, m_chooseRect(0, 0, 0, 0)
-	, m_currentMode(huabu::MouseMode::None)
+	, m_currentMode(canvas::MouseMode::None)
+    , m_isDrawing(false)
 {
 	init();
 }
 
-void huabu::init()
+void canvas::init()
 {
 	setAcceptDrops(true);
 
@@ -32,7 +33,7 @@ void huabu::init()
 
 
 	m_setManager = std::make_shared<propertySetManager>();
-	m_setManager->m_propertyWidgetType = myqtsvg::propertywidgettype::huabu;
+	m_setManager->setWidgetType(myqtsvg::propertywidgettype::canvas);
 
 	auto otherset = std::make_shared<otherPropertySet>();
 	otherset->m_name = myconfig::getInstance().getCanvasName();
@@ -50,20 +51,19 @@ void huabu::init()
 	auto creator = propertyDataVecOfPropertySetCreatorFactor::getInstance().create(namevec);
 	otherset->m_propertyDataVec = creator->create(otherset);
 
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuHeightChanged, this, &huabu::onHeightChanged);
-	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuWidthChanged, this, &huabu::onWidthChanged);
-	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasScaleChanged, this, &huabu::onScaleChagned);
+	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuHeightChanged, this, &canvas::onHeightChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalHuabuWidthChanged, this, &canvas::onWidthChanged);
+	QObject::connect(otherset.get(), &otherPropertySet::signalCanvasScaleChanged, this, &canvas::onScaleChagned);
 	m_setManager->addPropertySet(config.getOtherSetName(), otherset);
 
 
 }
 
-
-huabu::~huabu()
+canvas::~canvas()
 {
 }
 
-void huabu::dragEnterEvent(QDragEnterEvent* event)
+void canvas::dragEnterEvent(QDragEnterEvent* event)
 {
 	if (event->mimeData()->hasFormat(m_mimetype))
 	{
@@ -73,7 +73,7 @@ void huabu::dragEnterEvent(QDragEnterEvent* event)
 }
 
 
-void huabu::dropEvent(QDropEvent* event)
+void canvas::dropEvent(QDropEvent* event)
 {
 	QByteArray array = event->mimeData()->data(m_mimetype);
 	if (array.isEmpty())
@@ -84,7 +84,7 @@ void huabu::dropEvent(QDropEvent* event)
 	params->setIsDrawInCanvas(true);
 
 	auto drawer = DiagramDrawInterface::getInstance().getDrawer(params);
-	if(params->getType() == myqtsvg::ShapeType::Text)
+	if (params->getType() == myqtsvg::ShapeType::Text)
 	{
 		TextLineEdit::createTextLineEdit(params, this);
 	}
@@ -96,7 +96,7 @@ void huabu::dropEvent(QDropEvent* event)
 }
 
 
-void huabu::dragMoveEvent(QDragMoveEvent* event)
+void canvas::dragMoveEvent(QDragMoveEvent* event)
 {
 	if (true == event->mimeData()->hasFormat(m_mimetype))
 	{
@@ -104,17 +104,13 @@ void huabu::dragMoveEvent(QDragMoveEvent* event)
 	}
 }
 
-void huabu::paintEvent(QPaintEvent* event)
+void canvas::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
-	initPainter(painter);
+    myinitPainter(painter);
 
 	painter.fillRect(this->rect(), m_backgroundcolor);
 
-	//if (m_isdrawing && m_hasmove)
-	//{
-		//m_drawer->draw(painter);
-	//}
 	if (m_isDrawing)
 	{
 		m_drawingDrawer->draw(painter);
@@ -126,7 +122,7 @@ void huabu::paintEvent(QPaintEvent* event)
 
 	for (auto& diagram : m_tuxingvec)
 	{
-		diagram->m_drawer->draw(painter);
+		diagram->getDrawer()->draw(painter);
 	}
 
 	if (m_svgRenderer != nullptr)
@@ -139,7 +135,7 @@ void huabu::paintEvent(QPaintEvent* event)
 
 
 
-void huabu::mousePressEvent(QMouseEvent* event)
+void canvas::mousePressEvent(QMouseEvent* event)
 {
 	if (event->button() != Qt::LeftButton)
 	{
@@ -151,11 +147,11 @@ void huabu::mousePressEvent(QMouseEvent* event)
 
 	switch (m_currentMode)
 	{
-	case huabu::MouseMode::Selecting:
-		handleSelectPress(event);
+	case canvas::MouseMode::Selecting:
+        handleSelectPress();
 		break;
-	case huabu::MouseMode::Drawing:
-		handleDrawPress(event);
+	case canvas::MouseMode::Drawing:
+        handleDrawPress();
 		break;
 	default:
 		break;
@@ -163,10 +159,10 @@ void huabu::mousePressEvent(QMouseEvent* event)
 	QWidget::mousePressEvent(event);
 	update();
 	return;
-	
+
 }
 
-void huabu::mouseMoveEvent(QMouseEvent* event)
+void canvas::mouseMoveEvent(QMouseEvent* event)
 {
 	if (event->buttons() != Qt::LeftButton)
 	{
@@ -177,14 +173,14 @@ void huabu::mouseMoveEvent(QMouseEvent* event)
 
 	switch (m_currentMode)
 	{
-	case huabu::MouseMode::Selecting:
-		updateSelectingRect(event);
+	case canvas::MouseMode::Selecting:
+        updateSelectingRect();
 		break;
-	case huabu::MouseMode::Drawing:
-		handleDrawing(event);
+	case canvas::MouseMode::Drawing:
+        handleDrawing();
 		break;
-	case huabu::MouseMode::MovingMultiple:
-		handleMoveMultiple(event);
+	case canvas::MouseMode::MovingMultiple:
+        handleMoveMultiple();
 		break;
 	default:
 		break;
@@ -195,7 +191,7 @@ void huabu::mouseMoveEvent(QMouseEvent* event)
 
 }
 
-void huabu::mouseReleaseEvent(QMouseEvent* event)
+void canvas::mouseReleaseEvent(QMouseEvent* event)
 {
 	if (event->button() != Qt::LeftButton)
 	{
@@ -205,14 +201,14 @@ void huabu::mouseReleaseEvent(QMouseEvent* event)
 
 	switch (m_currentMode)
 	{
-	case huabu::MouseMode::Selecting:
-		finalizeSelection(event);
+	case canvas::MouseMode::Selecting:
+        finalizeSelection();
 		break;
-	case huabu::MouseMode::Drawing:
-		finalizeDrawing(event);
+	case canvas::MouseMode::Drawing:
+        finalizeDrawing();
 		break;
-	case huabu::MouseMode::MovingMultiple:
-		finalizeMove(event);
+	case canvas::MouseMode::MovingMultiple:
+        finalizeMove();
 		break;
 	default:
 		break;
@@ -223,7 +219,7 @@ void huabu::mouseReleaseEvent(QMouseEvent* event)
 
 }
 
-void huabu::mouseDoubleClickEvent(QMouseEvent* event)
+void canvas::mouseDoubleClickEvent(QMouseEvent* event)
 {
 	if (event->button() == Qt::LeftButton)
 	{
@@ -234,7 +230,7 @@ void huabu::mouseDoubleClickEvent(QMouseEvent* event)
 	}
 }
 
-void huabu::contextMenuEvent(QContextMenuEvent* event)
+void canvas::contextMenuEvent(QContextMenuEvent* event)
 {
 	QMenu menu(this);
 
@@ -246,9 +242,9 @@ void huabu::contextMenuEvent(QContextMenuEvent* event)
 
 	QAction* selectedAction = menu.exec(event->globalPos());
 
-	if (selectedAction == copyAction) 
+	if (selectedAction == copyAction)
 		onCopyTuinxg();
-	else if (selectedAction == pasteAction) 
+	else if (selectedAction == pasteAction)
 		onpasteTuxing();
 	else if (selectedAction == selectAllAction)
 		onSelectAllTuxing();
@@ -256,7 +252,7 @@ void huabu::contextMenuEvent(QContextMenuEvent* event)
 		onDeleteTuxing();
 }
 
-void huabu::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
+void canvas::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
 {
 	m_drawParams = params;
 	if (params->getType() == myqtsvg::ShapeType::choose)
@@ -269,44 +265,43 @@ void huabu::onDiagramClicked(std::shared_ptr<IDidgramDrawParams> params)
 	}
 }
 
-void huabu::onSaveToSvg(QString filepath)
+void canvas::onSaveToSvg(QString filepath)
 {
 	QSvgGenerator generator;
-	generator.setFileName(filepath); // 设置SVG文件路径
+	generator.setFileName(filepath);
 	QSize size = this->size();
-	generator.setSize(size); // 设置画布大小
-	generator.setViewBox(QRect(0, 0, size.width(), size.height())); // 设置视图框
-	generator.setTitle(QObject::tr("SVG Generator Example Drawing"));
-	generator.setDescription(QObject::tr("This SVG drawing was generated using Qt"));
+	generator.setSize(size);
+	generator.setViewBox(QRect(0, 0, size.width(), size.height()));
+	generator.setTitle("保存svg");
+	generator.setDescription("使用qt来生成svg图形");
 
 	QPainter painter;
-	painter.begin(&generator); // 开始在SVG设备上绘制
+	painter.begin(&generator);
 
 	if (m_svgRenderer != nullptr)
 	{
 		m_svgRenderer->render(&painter);
 	}
 
-	// 遍历所有形状，并根据它们的属性进行绘制
-	for (const auto& shape : m_tuxingvec) {
-		shape->m_drawer->draw(painter);
+
+	for (const auto& diagram : m_tuxingvec) {
+		diagram->getDrawer()->draw(painter);
 	}
 
-	painter.end(); // 结束绘制
 
-	QMessageBox::information(this, tr("保存成功"), tr("文件已成功保存为SVG格式。"));
+	QMessageBox::information(this, "保存成功", "文件已成功保存为SVG格式。");
 }
 
 
-void huabu::onLoadSvg(QString filepath)
+void canvas::onLoadSvg(QString filepath)
 {
 	m_svgRenderer = new QSvgRenderer(filepath, this);
-	QObject::connect(m_svgRenderer, &QSvgRenderer::repaintNeeded, this, qOverload<>(&huabu::update));
+	QObject::connect(m_svgRenderer, &QSvgRenderer::repaintNeeded, this, qOverload<>(&canvas::update));
 	update();
 }
 
 
-void huabu::onSaveToPng(QString filepath)
+void canvas::onSaveToPng(QString filepath)
 {
 	QPixmap pixmap(size());
 	QPainter painter(&pixmap);
@@ -316,13 +311,14 @@ void huabu::onSaveToPng(QString filepath)
 }
 
 
-void huabu::onnewHuabu()
+void canvas::onnewHuabu()
 {
 	m_tuxingvec.clear();
+    m_svgRenderer = nullptr;
 	update();
 }
 
-void huabu::onCopyTuinxg()
+void canvas::onCopyTuinxg()
 {
 	m_copyParamsVec.clear();
 	if (m_choosedParamsvec.size() == 0)
@@ -333,7 +329,7 @@ void huabu::onCopyTuinxg()
 	m_lastPasteDelta = QPoint(0, 0);
 }
 
-void huabu::onpasteTuxing()
+void canvas::onpasteTuxing()
 {
 
 	if (m_copyParamsVec.size() > 0)
@@ -341,40 +337,33 @@ void huabu::onpasteTuxing()
 		for (auto& params : m_copyParamsVec)
 		{
 			auto p = params->clone();
-			//p->m_center += m_pasteOffset + m_lastPasteDelta;
 			p->setCenter(p->getCenter() + m_pasteOffset + m_lastPasteDelta);
-			//if (p->m_type == myqtsvg::ShapeType::Mouse)
-			if(p->getType() == myqtsvg::ShapeType::Mouse)
+            m_lastPasteDelta += m_pasteOffset;
+			if (p->getType() == myqtsvg::ShapeType::Mouse)
 			{
 				std::dynamic_pointer_cast<DiagramDrawParamsMouse>(p)->getPaht()->translate(m_pasteOffset + m_lastPasteDelta);
 			}
 			auto drawer = DiagramDrawInterface::getInstance().getDrawer(p);
-			//if (p->m_type == myqtsvg::ShapeType::Text)
-			//{
-				//auto castparams = std::dynamic_pointer_cast<DiagramDrawParamsText>(p);
-				//if (castparams == nullptr)
-					//throw std::runtime_error("error");
-				//TextLineEdit::createTextLineEdit(castparams, this);
-			//}
 			createTuxing(p, drawer);
 		}
 	}
+    update();
 }
 
-void huabu::onSelectAllTuxing()
+void canvas::onSelectAllTuxing()
 {
 	m_choosedParamsvec.clear();
 	QRect rect;
 	for (auto& tuxing : m_tuxingvec)
 	{
-		m_choosedParamsvec.push_back(tuxing->m_params);
+		m_choosedParamsvec.push_back(tuxing->getParams());
 		if (rect.isNull())
 		{
-			rect = tuxing->m_drawer->getResult()->getBoundingRect();
+			rect = tuxing->getDrawer()->getResult()->getBoundingRect();
 		}
 		else
 		{
-			rect = rect.united(tuxing->m_drawer->getResult()->getBoundingRect());
+			rect = rect.united(tuxing->getDrawer()->getResult()->getBoundingRect());
 		}
 
 	}
@@ -383,13 +372,13 @@ void huabu::onSelectAllTuxing()
 
 }
 
-void huabu::onDeleteTuxing()
+void canvas::onDeleteTuxing()
 {
 	for (auto& params : m_choosedParamsvec)
 	{
 		for (auto it = m_tuxingvec.begin(); it != m_tuxingvec.end(); it++)
 		{
-			auto p = (*it)->m_params;
+			auto p = (*it)->getParams();
 			if (params.get() == p.get())
 			{
 				m_tuxingvec.erase(it);
@@ -402,7 +391,7 @@ void huabu::onDeleteTuxing()
 	update();
 }
 
-void huabu::closeEvent(QCloseEvent* event)
+void canvas::closeEvent(QCloseEvent* event)
 {
 
 	m_setting.setValue("canvas/size", size());
@@ -411,25 +400,25 @@ void huabu::closeEvent(QCloseEvent* event)
 	QWidget::closeEvent(event);
 }
 
-void huabu::adjustcanvassize()
+void canvas::adjustcanvassize()
 {
 	QSize size = m_basesize * m_scale;
 	setFixedSize(size);
 }
 
-void huabu::onHeightChanged(int height)
+void canvas::onHeightChanged(int height)
 {
 	m_basesize.setHeight(height);
 	adjustcanvassize();
 }
 
-void huabu::onWidthChanged(int width)
+void canvas::onWidthChanged(int width)
 {
 	m_basesize.setWidth(width);
 	adjustcanvassize();
 }
 
-void huabu::onScaleChagned(double scale)
+void canvas::onScaleChagned(double scale)
 {
 	m_scale = scale;
 	adjustcanvassize();
@@ -437,13 +426,13 @@ void huabu::onScaleChagned(double scale)
 
 
 
-void huabu::initPainter(QPainter& painter)
+void canvas::myinitPainter(QPainter& painter)
 {
 	painter.setRenderHint(QPainter::Antialiasing, true);
 	painter.setRenderHint(QPainter::TextAntialiasing, true);
 }
 
-std::shared_ptr<IDidgramDrawParams> huabu::deserParams(QByteArray& array)
+std::shared_ptr<IDidgramDrawParams> canvas::deserParams(QByteArray& array)
 {
 	QDataStream stream(array);
 	stream.setVersion(QDataStream::Qt_DefaultCompiledVersion);
@@ -458,7 +447,7 @@ std::shared_ptr<IDidgramDrawParams> huabu::deserParams(QByteArray& array)
 	return params;
 }
 
-void huabu::loadSetting()
+void canvas::loadSetting()
 {
 	QSize canvassize;
 	if (m_setting.contains("canvas/size"))
@@ -478,34 +467,32 @@ void huabu::loadSetting()
 
 }
 
-void huabu::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer)
+void canvas::createTuxing(std::shared_ptr<IDidgramDrawParams> params, std::shared_ptr<IDiagramDrawer> drawer)
 {
 	auto& config = myconfig::getInstance();
-	std::shared_ptr<huabutuxing> tuxing = std::make_shared<huabutuxing>();
-	tuxing->m_drawer = drawer;
-	tuxing->m_params = params;
-	tuxing->m_propertySetManager = initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->getType())
+	std::shared_ptr<canvasDiagram> tuxing = std::make_shared<canvasDiagram>();
+	tuxing->setDrawer(drawer);
+	tuxing->setParams(params);
+	tuxing->setSetManager(initPropertySetManager::createPropertySetManager(myqtsvg::huabuShapetypeToPropertyWidgetType(params->getType())
 		, params
 		, [tuxing]()
 		{
 			emit tuxing->signalRepaint();
 		}
-		, {
+		,
+		{
 			config.getCenterVOffsetName()
 			, config.getCenterHOffsetName()
-		});
+		}
+	));
 
-		QObject::connect(tuxing.get(), &huabutuxing::signalRepaint, this, qOverload<>(&huabu::update));
+	QObject::connect(tuxing.get(), &canvasDiagram::signalRepaint, this, qOverload<>(&canvas::update));
 
-		m_tuxingvec.push_back(tuxing);
+	m_tuxingvec.push_back(tuxing);
 }
 
-huabutuxing::huabutuxing()
-{
 
-}
-
-void huabu::handleSelectPress(QMouseEvent* event)
+void canvas::handleSelectPress()
 {
 	if (m_choosedParamsvec.size() > 0)
 	{
@@ -519,7 +506,7 @@ void huabu::handleSelectPress(QMouseEvent* event)
 				params->setCenterVOffset(0);
 				m_offsetvec.push_back(params->getCenter() - m_currentpoint);
 			}
-			m_offset = m_chooseRect.center() - m_currentpoint;
+			m_rectOffset = m_chooseRect.center() - m_currentpoint;
 			m_currentMode = MouseMode::MovingMultiple;
 
 			return;
@@ -532,16 +519,14 @@ void huabu::handleSelectPress(QMouseEvent* event)
 	return;
 }
 
-void huabu::handleDrawPress(QMouseEvent* event)
+void canvas::handleDrawPress()
 {
 	m_drawingParams = m_drawParams->clone();
 	m_drawingDrawer = DiagramDrawInterface::getInstance().getDrawer(m_drawingParams);
 	m_isDrawing = true;
-	//m_drawingParams->m_isdrawInHuabu = true;
 	m_drawingParams->setIsDrawInCanvas(true);
 
-	//switch (m_drawParams->m_type)
-	switch(m_drawingParams->getType())
+	switch (m_drawingParams->getType())
 	{
 	case myqtsvg::ShapeType::Mouse:
 		m_currentDrawStragety = std::make_unique<mouseDrawStragety>(m_drawingParams);
@@ -556,38 +541,40 @@ void huabu::handleDrawPress(QMouseEvent* event)
 	m_currentDrawStragety->handlePress(m_startpoint);
 }
 
-void huabu::updateSelectingRect(QMouseEvent* event)
+void canvas::updateSelectingRect()
 {
 	m_chooseRect = QRect(m_startpoint, m_currentpoint);
 	m_chooseRect = m_chooseRect.normalized();
 	return;
 }
 
-void huabu::handleDrawing(QMouseEvent* event)
+void canvas::handleDrawing()
 {
 	m_currentDrawStragety->handleMove(m_currentpoint);
 }
 
-void huabu::handleMoveMultiple(QMouseEvent* event)
+void canvas::handleMoveMultiple()
 {
 	for (int i = 0; i < m_choosedParamsvec.size(); i++)
 	{
 		m_choosedParamsvec[i]->setCenterHOffset(m_currentpoint.x() - m_startpoint.x());
 		m_choosedParamsvec[i]->setCenterVOffset(m_currentpoint.y() - m_startpoint.y());
 	}
-	m_chooseRect.moveCenter(m_offset + m_currentpoint);
+	m_chooseRect.moveCenter(m_rectOffset + m_currentpoint);
 	return;
 }
 
-void huabu::finalizeSelection(QMouseEvent* event)
+void canvas::finalizeSelection()
 {
 	QRect totalrect;
 	QRect boundrect;
+	std::shared_ptr<propertySetManager> setmanager;
 	for (auto& tuxing : m_tuxingvec)
 	{
-		if (tuxing->m_drawer->getResult()->getPainterPath().intersects(m_chooseRect))
+		if (tuxing->getDrawer()->getResult()->getPainterPath().intersects(m_chooseRect))
 		{
-			boundrect = tuxing->m_drawer->getResult()->getBoundingRect();
+			boundrect = tuxing->getDrawer()->getResult()->getBoundingRect();
+			setmanager = tuxing->getSetManager();
 			if (totalrect.isNull())
 			{
 				totalrect = boundrect;
@@ -596,13 +583,17 @@ void huabu::finalizeSelection(QMouseEvent* event)
 			{
 				totalrect = totalrect.united(boundrect);
 			}
-			m_choosedParamsvec.push_back(tuxing->m_params);
+			m_choosedParamsvec.push_back(tuxing->getParams());
 		}
 	}
+	if (m_choosedParamsvec.size() == 0)
+		setmanager = m_setManager;
+	emit signalPropertyShow(setmanager);
+
 	m_chooseRect = totalrect;
 }
 
-void huabu::finalizeDrawing(QMouseEvent* event)
+void canvas::finalizeDrawing()
 {
 	createTuxing(m_drawingParams, m_drawingDrawer);
 	m_drawingDrawer.reset();
@@ -611,13 +602,13 @@ void huabu::finalizeDrawing(QMouseEvent* event)
 	m_currentDrawStragety.reset();
 }
 
-void huabu::finalizeMove(QMouseEvent* event)
+void canvas::finalizeMove()
 {
 	for (auto& params : m_choosedParamsvec)
 	{
 		params->setCenter(params->getCenter() + QPoint(params->getCenterHOffset(), params->getCenterVOffset()));
-		
-		if(params->getType() == myqtsvg::ShapeType::Mouse)
+
+		if (params->getType() == myqtsvg::ShapeType::Mouse)
 		{
 			std::dynamic_pointer_cast<DiagramDrawParamsMouse>(params)->getPaht()->translate(params->getCenterHOffset(), params->getCenterVOffset());
 		}
