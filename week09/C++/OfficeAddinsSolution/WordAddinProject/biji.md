@@ -11,3 +11,6 @@
 
 3. import msword.olb时注意，链接器提示msword.tlh和VBE6EXT.tlh中会重复定义IID_AddIn。
 	解决方法：只需要删掉import时的named_guids即可。查了好久最后排除法一点点试出来了。
+
+4. 问题
+    wordaddin.cpp中有一些错误，例如cstring，build后看提示信息

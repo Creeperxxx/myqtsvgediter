@@ -88,6 +88,7 @@ public:
 	}
 
 public:
+
 	STDMETHOD(CountWords)(LONG* pCount);
 
 	STDMETHOD(raw_OnConnection)(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
@@ -95,6 +96,11 @@ public:
 	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
+private:
+	void OnDocumentOpen();
+
+	DWORD m_cookie;
+	CComPtr<IDispatch> m_spApplication;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordAddin), CWordAddin)
