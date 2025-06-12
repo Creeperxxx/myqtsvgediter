@@ -353,26 +353,6 @@ KBlockNode::KBlockNode(void* start, size_t size)
 	, m_prevnode(nullptr)
 {
 }
-//
-//size_t KMemoryBlock::calcuTotalFreeSize()
-//{
-//	size_t totalSize = 0;
-//	KBlockNode* node = m_startnode;
-//	while (node->getNext() != nullptr)
-//	{
-//		KBlockNode* nextnode = node->getNext();
-//		if (node->getEnd() < nextnode->getStart())
-//		{
-//			size_t freesize = static_cast<char*>(nextnode->getStart()) - static_cast<char*>(node->getEnd()) - 1;
-//			totalSize += freesize;
-//		}
-//		else
-//		{
-//			throw std::runtime_error("error");
-//		}
-//	}
-//	return totalSize;
-//}
 
 void* KBlockNode::getStart()
 {
@@ -393,11 +373,6 @@ KBlockNode* KBlockNode::getPrev()
 {
 	return m_prevnode;
 }
-
-//void* KBlockNode::getStart()
-//{
-//	return m_start;
-//}
 
 size_t KMemoryBlock::findLargestFreeBlock(void*& start)
 {

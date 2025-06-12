@@ -5,6 +5,8 @@
 #include <memory>
 #include <diagramdrawparams.h>
 
+
+
 class drawStragety
 {
 public:

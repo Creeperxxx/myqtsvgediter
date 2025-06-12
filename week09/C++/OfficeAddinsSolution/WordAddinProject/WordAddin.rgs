@@ -1,0 +1,26 @@
+HKCR
+{
+	Creeper.WordAddin.1.1 = s 'WordAddin class'
+	{
+		CLSID = s '{45e9f4bf-9077-433e-b3b1-01c660c1cd07}'
+	}
+	Creeper.WordAddin.1 = s 'WordAddin class'
+	{		
+		CurVer = s 'Creeper.WordAddin.1.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {45e9f4bf-9077-433e-b3b1-01c660c1cd07} = s 'WordAddin class'
+		{
+			ProgID = s 'Creeper.WordAddin.1.1'
+			VersionIndependentProgID = s 'Creeper.WordAddin.1'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Free' //Apartment
+			}
+			TypeLib = s '{69001a9b-9ab6-4e30-b56f-c939d43dba8a}'
+			Version = s '1.0'
+		}
+	}
+}
