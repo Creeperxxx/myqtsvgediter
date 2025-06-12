@@ -34,3 +34,4 @@ yarn-error.log*
 *.svg
 *.png
 /week08/practice/kdialog/bin
+/ClassExamProject/QtChartSVG/QtChartSVG/.idea
