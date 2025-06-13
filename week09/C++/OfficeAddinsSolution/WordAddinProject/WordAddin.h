@@ -3,8 +3,6 @@
 #ifndef WORDADDIN_H
 #define WORDADDIN_H
 
-
-
 #import "libid:00020905-0000-0000-C000-000000000046" \
     rename("RGB", "WordRGB") \
     rename("DocumentProperties", "WordDocumentProperties") \
@@ -27,6 +25,7 @@
 #include "WordAddinProject_i.h"
 #include "_IWordAddinEvents_CP.h"
 
+
 using namespace AddInDesignerObjects;
 using namespace Office;
 using namespace Word;
@@ -40,6 +39,7 @@ using namespace Word;
 using namespace ATL;
 
 
+class CWordEvents;
 // CWordAddin
 
 class ATL_NO_VTABLE CWordAddin :
@@ -89,7 +89,8 @@ public:
 
 public:
 
-	STDMETHOD(CountWords)(LONG* pCount);
+	STDMETHOD(CountWords)(IDispatch* doc);
+	//STDMETHOD(CountWords)(LONG* pCount);
 
 	STDMETHOD(raw_OnConnection)(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
 	STDMETHOD(raw_OnDisconnection)(ext_DisconnectMode RemoveMode, SAFEARRAY** custom);
@@ -97,10 +98,14 @@ public:
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 private:
-	void OnDocumentOpen();
+	//void OnDocumentOpen();
+	void RegisterDocumentOpenEvent();
 
 	DWORD m_cookie;
 	CComPtr<IDispatch> m_spApplication;
+	IDispatch* m_spWordApp;
+	CWordEvents* m_spWordEvents;
+	
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordAddin), CWordAddin)

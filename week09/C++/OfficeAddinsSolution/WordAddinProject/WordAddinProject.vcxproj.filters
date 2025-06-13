@@ -46,6 +46,12 @@
     <ClInclude Include="WordAddin.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="_IWordEventsEvents_CP.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="WordEvents.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WordAddinProject.cpp">
@@ -66,6 +72,9 @@
     <ClCompile Include="WordAddin.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="WordEvents.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WordAddinProject.rc">
@@ -83,6 +92,9 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="biji.md" />
+    <None Include="WordEvents.rgs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="WordAddinProject.idl">

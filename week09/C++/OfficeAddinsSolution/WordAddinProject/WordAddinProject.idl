@@ -32,7 +32,19 @@ interface IComponentRegistrar : IDispatch
 ]
 interface IWordAddin : IDispatch
 {
-	[id(1)] HRESULT CountWords([out, retval] LONG* pCount);
+	//[id(1)] HRESULT CountWords([out, retval] LONG* pCount);
+	//[id(1)] HRESULT CountWords([out, retval] IDispatch** doc);
+	[id(1)] HRESULT CountWords([in] IDispatch* doc);
+};
+[
+	object,
+	uuid(c7b4ecd2-4283-4751-a421-85f736eecf89),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IWordEvents : IDispatch
+{
 };
 [
 	uuid(69001a9b-9ab6-4e30-b56f-c939d43dba8a),
@@ -65,6 +77,23 @@ library WordAddinProjectLib
 		[default] interface IWordAddin;
 		[default, source] dispinterface _IWordAddinEvents;
 	};
+	[
+		uuid(ce3a6373-18e5-4429-b3ee-6e5df77c6de6)
+	]
+	dispinterface _IWordEventsEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(93657f52-68e1-45f4-a0af-6b09375a0ed3)
+	]
+	coclass WordEvents
+	{
+		[default] interface IWordEvents;
+		[default, source] dispinterface _IWordEventsEvents;
+	};
 };
 
+import "shobjidl.idl";
 import "shobjidl.idl";

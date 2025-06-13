@@ -1,0 +1,16 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {93657f52-68e1-45f4-a0af-6b09375a0ed3} = s 'WordEvents class'
+		{
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{69001a9b-9ab6-4e30-b56f-c939d43dba8a}'
+			Version = s '1.0'
+		}
+	}
+}

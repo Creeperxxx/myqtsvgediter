@@ -66,6 +66,13 @@ typedef interface IWordAddin IWordAddin;
 #endif 	/* __IWordAddin_FWD_DEFINED__ */
 
 
+#ifndef __IWordEvents_FWD_DEFINED__
+#define __IWordEvents_FWD_DEFINED__
+typedef interface IWordEvents IWordEvents;
+
+#endif 	/* __IWordEvents_FWD_DEFINED__ */
+
+
 #ifndef __CompReg_FWD_DEFINED__
 #define __CompReg_FWD_DEFINED__
 
@@ -95,6 +102,25 @@ typedef struct WordAddin WordAddin;
 #endif /* __cplusplus */
 
 #endif 	/* __WordAddin_FWD_DEFINED__ */
+
+
+#ifndef ___IWordEventsEvents_FWD_DEFINED__
+#define ___IWordEventsEvents_FWD_DEFINED__
+typedef interface _IWordEventsEvents _IWordEventsEvents;
+
+#endif 	/* ___IWordEventsEvents_FWD_DEFINED__ */
+
+
+#ifndef __WordEvents_FWD_DEFINED__
+#define __WordEvents_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class WordEvents WordEvents;
+#else
+typedef struct WordEvents WordEvents;
+#endif /* __cplusplus */
+
+#endif 	/* __WordEvents_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -314,7 +340,7 @@ EXTERN_C const IID IID_IWordAddin;
     {
     public:
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE CountWords( 
-            /* [retval][out] */ LONG *pCount) = 0;
+            /* [in] */ IDispatch *doc) = 0;
         
     };
     
@@ -384,7 +410,7 @@ EXTERN_C const IID IID_IWordAddin;
         DECLSPEC_XFGVIRT(IWordAddin, CountWords)
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *CountWords )( 
             IWordAddin * This,
-            /* [retval][out] */ LONG *pCount);
+            /* [in] */ IDispatch *doc);
         
         END_INTERFACE
     } IWordAddinVtbl;
@@ -422,8 +448,8 @@ EXTERN_C const IID IID_IWordAddin;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IWordAddin_CountWords(This,pCount)	\
-    ( (This)->lpVtbl -> CountWords(This,pCount) ) 
+#define IWordAddin_CountWords(This,doc)	\
+    ( (This)->lpVtbl -> CountWords(This,doc) ) 
 
 #endif /* COBJMACROS */
 
@@ -434,6 +460,133 @@ EXTERN_C const IID IID_IWordAddin;
 
 
 #endif 	/* __IWordAddin_INTERFACE_DEFINED__ */
+
+
+#ifndef __IWordEvents_INTERFACE_DEFINED__
+#define __IWordEvents_INTERFACE_DEFINED__
+
+/* interface IWordEvents */
+/* [unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IWordEvents;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("c7b4ecd2-4283-4751-a421-85f736eecf89")
+    IWordEvents : public IDispatch
+    {
+    public:
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IWordEventsVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IWordEvents * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IWordEvents * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IWordEvents * This);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IWordEvents * This,
+            /* [out] */ UINT *pctinfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IWordEvents * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IWordEvents * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        DECLSPEC_XFGVIRT(IDispatch, Invoke)
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IWordEvents * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        END_INTERFACE
+    } IWordEventsVtbl;
+
+    interface IWordEvents
+    {
+        CONST_VTBL struct IWordEventsVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IWordEvents_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IWordEvents_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IWordEvents_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IWordEvents_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IWordEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IWordEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IWordEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IWordEvents_INTERFACE_DEFINED__ */
 
 
 
@@ -582,6 +735,136 @@ EXTERN_C const CLSID CLSID_WordAddin;
 
 class DECLSPEC_UUID("45e9f4bf-9077-433e-b3b1-01c660c1cd07")
 WordAddin;
+#endif
+
+#ifndef ___IWordEventsEvents_DISPINTERFACE_DEFINED__
+#define ___IWordEventsEvents_DISPINTERFACE_DEFINED__
+
+/* dispinterface _IWordEventsEvents */
+/* [uuid] */ 
+
+
+EXTERN_C const IID DIID__IWordEventsEvents;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+
+    MIDL_INTERFACE("ce3a6373-18e5-4429-b3ee-6e5df77c6de6")
+    _IWordEventsEvents : public IDispatch
+    {
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct _IWordEventsEventsVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            _IWordEventsEvents * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            _IWordEventsEvents * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            _IWordEventsEvents * This);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            _IWordEventsEvents * This,
+            /* [out] */ UINT *pctinfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            _IWordEventsEvents * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            _IWordEventsEvents * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        DECLSPEC_XFGVIRT(IDispatch, Invoke)
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            _IWordEventsEvents * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        END_INTERFACE
+    } _IWordEventsEventsVtbl;
+
+    interface _IWordEventsEvents
+    {
+        CONST_VTBL struct _IWordEventsEventsVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define _IWordEventsEvents_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define _IWordEventsEvents_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define _IWordEventsEvents_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define _IWordEventsEvents_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define _IWordEventsEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define _IWordEventsEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define _IWordEventsEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+#endif 	/* ___IWordEventsEvents_DISPINTERFACE_DEFINED__ */
+
+
+EXTERN_C const CLSID CLSID_WordEvents;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("93657f52-68e1-45f4-a0af-6b09375a0ed3")
+WordEvents;
 #endif
 #endif /* __WordAddinProjectLib_LIBRARY_DEFINED__ */
 
