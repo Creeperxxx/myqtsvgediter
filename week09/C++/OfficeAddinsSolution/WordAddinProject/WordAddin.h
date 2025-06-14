@@ -101,10 +101,11 @@ private:
 	//void OnDocumentOpen();
 	void RegisterDocumentOpenEvent();
 
-	DWORD m_cookie;
-	CComPtr<IDispatch> m_spApplication;
-	IDispatch* m_spWordApp;
-	CWordEvents* m_spWordEvents;
+	//DWORD m_cookie;
+	//IDispatch* m_spWordApp;
+	
+	CComPtr<Word::_Application> m_spWordApp;
+	//CWordEvents* m_spWordEvents;
 
 
 	void CreateCustomToolbar();

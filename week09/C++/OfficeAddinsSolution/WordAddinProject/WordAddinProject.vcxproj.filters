@@ -25,9 +25,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="dllmain.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -52,6 +49,12 @@
     <ClInclude Include="WordEvents.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="wordcountatldialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WordAddinProject.cpp">
@@ -73,6 +76,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WordEvents.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="wordcountatldialog.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

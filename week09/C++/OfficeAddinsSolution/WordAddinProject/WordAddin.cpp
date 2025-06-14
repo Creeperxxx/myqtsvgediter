@@ -101,20 +101,23 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc)
 
 	// 显示消息框
 	MessageBoxW(NULL, strMsg, L"字数统计", MB_OK);
-
 	return S_OK;
+
+	//CAtlString statusStrMsg;
+	//statusStrMsg.Format(L"中文字符: %d | 英文单词: %d",
+		//chineseCount, englishWordCount);
+	//hr = m_spWordApp->put_StatusBar(CComBSTR(statusStrMsg));
+	//hr = pApp->put_StatusBar(CComBSTR(statusStrMsg));
+	//return hr;
 }
 
 
 STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnConnection(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom)
 {
 	// 获取Word应用程序对象
-	m_spWordApp = Application;
-
-	// 注册文档打开事件
-	if (m_spWordApp)
+	HRESULT hr = Application->QueryInterface(__uuidof(Word::_Application), (void**)&m_spWordApp);
+	if (SUCCEEDED(hr))
 	{
-		// 这里需要注册DocumentOpen事件
 		RegisterDocumentOpenEvent();
 		return S_OK;
 	}
@@ -122,6 +125,18 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnConnection(IDispatch* Applica
 	{
 		return E_FAIL;
 	}
+
+	//// 注册文档打开事件
+	//if (m_spWordApp)
+	//{
+		// 这里需要注册DocumentOpen事件
+		//RegisterDocumentOpenEvent();
+		//return S_OK;
+	//}
+	//else
+	//{
+		//return E_FAIL;
+	//}
 }
 
 STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnDisconnection(ext_DisconnectMode RemoveMode, SAFEARRAY** custom)
@@ -164,24 +179,24 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnBeginShutdown(SAFEARRAY** cus
 
 void CWordAddin::RegisterDocumentOpenEvent()
 {
-	if (!m_spWordApp)
-		return;
-
 	CComObject<CWordEvents>* pWordEvents = nullptr;
 	HRESULT hr = CComObject<CWordEvents>::CreateInstance(&pWordEvents);
-	if (SUCCEEDED(hr))
+	if (SUCCEEDED(hr) && pWordEvents!= nullptr)
 	{
-		pWordEvents->AddRef();
+		//pWordEvents->AddRef();
 		pWordEvents->m_pAddIn = this;
-		m_spWordEvents = pWordEvents;
-		m_spWordEvents->DispEventAdvise(m_spWordApp);
+		hr = pWordEvents->DispEventAdvise(m_spWordApp);
+		if (FAILED(hr))
+		{
+			pWordEvents->Release();
+		}
+		//m_spWordEvents = pWordEvents;
+		//m_spWordEvents->DispEventAdvise(m_spWordApp);
 	}
 	else
 	{
 		ATLTRACE("CWordAddin::RegisterDocumentOpenEvent() failed to create CWordEvents instance");
 	}
-
-
 	//// 创建事件接收器
 	//m_spWordEvents = new CWordEvents(this);
 

@@ -47,6 +47,16 @@ interface IWordEvents : IDispatch
 {
 };
 [
+	object,
+	uuid(f953bbe1-cb67-45fb-8b08-f46858a87014),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IATLwordcountdialog : IDispatch
+{
+};
+[
 	uuid(69001a9b-9ab6-4e30-b56f-c939d43dba8a),
 	version(1.0),
 	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{7a62e261-5fb4-4f08-9ea7-50f65496ddcf}")
@@ -93,7 +103,15 @@ library WordAddinProjectLib
 		[default] interface IWordEvents;
 		[default, source] dispinterface _IWordEventsEvents;
 	};
+	[
+		uuid(e1198813-41df-4b7b-88e9-848b6890651e)
+	]
+	coclass ATLwordcountdialog
+	{
+		[default] interface IATLwordcountdialog;
+	};
 };
 
+import "shobjidl.idl";
 import "shobjidl.idl";
 import "shobjidl.idl";
