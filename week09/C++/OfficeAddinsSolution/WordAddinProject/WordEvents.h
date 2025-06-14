@@ -60,7 +60,7 @@ public:
 DECLARE_REGISTRY_RESOURCEID(107)
 
 BEGIN_SINK_MAP(CWordEvents)
-	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 12, OnDocumentOpen)
+	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 4, OnDocumentOpen)
 END_SINK_MAP()
 
 STDMETHOD(OnDocumentOpen)(IDispatch* Doc);

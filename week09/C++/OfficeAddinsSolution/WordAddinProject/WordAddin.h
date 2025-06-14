@@ -105,6 +105,9 @@ private:
 	CComPtr<IDispatch> m_spApplication;
 	IDispatch* m_spWordApp;
 	CWordEvents* m_spWordEvents;
+
+
+	void CreateCustomToolbar();
 	
 };
 
