@@ -50,6 +50,7 @@ public:
 	CWordEvents()
 	{
 		m_pUnkMarshaler = nullptr;
+		m_pCurrentActivateDoc = nullptr;
 	}
 	CWordEvents(CWordAddin* pAddIn)
 		:m_pAddIn(pAddIn)
@@ -61,10 +62,19 @@ public:
 DECLARE_REGISTRY_RESOURCEID(107)
 
 BEGIN_SINK_MAP(CWordEvents)
-	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 4, OnDocumentOpen)
+	//SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 4, OnDocumentOpen)
+	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 10, OnWindowActivate)
+	//SINK_ENTRY_EX(2, __uuidof(DocumentEvents2), 5, OnDocumentOpen)
+	//SINK_ENTRY_EX(2, __uuidof(DocumentEvents2), 17, OnContentControlBeforeStoreUpdate)
+	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 3, OnDocumentChange)
 END_SINK_MAP()
 
-STDMETHOD(OnDocumentOpen)(IDispatch* Doc);
+
+//STDMETHOD(OnDocumentOpen)(IDispatch* Doc);
+STDMETHOD(OnWindowActivate)(_Document* Doc, Window* Wn);
+STDMETHOD(OnDocumentOpen)();
+//STDMETHOD(OnContentControlBeforeStoreUpdate)(ContentControl* ContentControl, BSTR* Content);
+STDMETHOD(OnDocumentChange)();
 
 BEGIN_COM_MAP(CWordEvents)
 	COM_INTERFACE_ENTRY(IWordEvents)
@@ -102,6 +112,9 @@ public:
 
 
 	CWordAddin* m_pAddIn;
+
+	//_Document* m_pCurrentActivateDoc;
+	CComPtr<_Document> m_pCurrentActivateDoc;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordEvents), CWordEvents)

@@ -37,7 +37,7 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc, LONG* pChineseCount, LONG* 
 	*pChineseCount = 0;
 	*pEnglishCount = 0;
 
-	// 获取文档对象
+	//获取文档对象
 	CComPtr<Word::_Document> spDocument;
 	HRESULT hr = pDoc->QueryInterface(__uuidof(Word::_Document), (void**)&spDocument);
 	if (FAILED(hr) || !spDocument)
@@ -168,7 +168,7 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnBeginShutdown(SAFEARRAY** cus
 	return E_NOTIMPL;
 }
 
-void CWordAddin::countAndShow(IDispatch* doc)
+void CWordAddin::countAndShow(_Document* doc)
 {
 	LONG chineseCount = 0;
 	LONG englishCount = 0;
@@ -199,11 +199,13 @@ void CWordAddin::RegisterDocumentOpenEvent()
 {
 	CComObject<CWordEvents>* pWordEvents = nullptr;
 	HRESULT hr = CComObject<CWordEvents>::CreateInstance(&pWordEvents);
-	if (SUCCEEDED(hr) && pWordEvents!= nullptr)
+	if (SUCCEEDED(hr) && pWordEvents != nullptr)
 	{
 		//pWordEvents->AddRef();
 		pWordEvents->m_pAddIn = this;
-		hr = pWordEvents->DispEventAdvise(m_spWordApp);
+		//hr = pWordEvents->DispEventAdvise(m_spWordApp);
+
+		hr = pWordEvents->IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>::DispEventAdvise(m_spWordApp);
 		if (FAILED(hr))
 		{
 			pWordEvents->Release();
@@ -223,6 +225,22 @@ void CWordAddin::RegisterDocumentOpenEvent()
 	//}
 }
 
+HWND CWordAddin::getDocWindow()
+{
+	CComPtr<Word::Window> spWindow;
+	HRESULT hr = m_spWordApp->get_ActiveWindow(&spWindow);
+	if (SUCCEEDED(hr))
+	{
+		long hwnd;
+		hr = spWindow->get_Hwnd(&hwnd);
+		if (SUCCEEDED(hr))
+		{
+			return reinterpret_cast<HWND>(static_cast<ULONG_PTR>(hwnd));
+		}
+	}
+	return nullptr;
+}
+
 void CWordAddin::CreateCustomToolbar()
 {
 
@@ -230,9 +248,49 @@ void CWordAddin::CreateCustomToolbar()
 
 void CWordAddin::initializeCountDialog()
 {
-	m_countDialog = std::make_unique<Cwordcountatldialog>();
-	m_countDialog->Create(nullptr);
-	m_countDialog->ShowWindow(SW_SHOW);
+	//if (m_countDialog == nullptr || m_countDialog.get() == nullptr)
+	//{
+	//	m_countDialog = std::make_unique<Cwordcountatldialog>();
+	//	m_countDialog->Create(getDocWindow());
+	//	//m_countDialog->Create(nullptr);
+	//	//m_countDialog->ShowWindow(SW_SHOW);
+	//	m_countDialog->ShowWindowAsync(SW_SHOW);
+	//}
+	//else if (m_countDialog->m_hWnd == nullptr)
+	//{
+	//	//m_countDialog->Create(nullptr);
+	//	m_countDialog->Create(getDocWindow());
+	//	m_countDialog->ShowWindowAsync(SW_SHOW);
+	//}
+
+	//	// 销毁旧窗口（如果存在）
+	//if (m_countDialog && m_countDialog->m_hWnd) {
+	//	m_countDialog->DestroyWindow();
+	//}
+
+	//// 创建新窗口
+	//m_countDialog = std::make_unique<Cwordcountatldialog>();
+	//HWND hWndParent = getDocWindow();  // 确保父窗口有效
+	//if (!hWndParent) 
+	//	hWndParent = ::GetDesktopWindow();  // 回退到桌面
+
+	//m_countDialog->Create(hWndParent);
+	//m_countDialog->ShowWindow(SW_SHOW);  // 使用同步显示
+
+	if (m_countDialog != nullptr)
+	{
+		if (m_countDialog->m_hWnd != nullptr)
+		{
+			m_countDialog->DestroyWindow();
+		}
+	}
+
+	m_countDialog = new Cwordcountatldialog();
+	if (m_countDialog != nullptr)
+	{
+		m_countDialog->Create(getDocWindow());
+		m_countDialog->ShowWindow(SW_SHOW);
+	}
 }
 
 

@@ -59,6 +59,8 @@ class ATL_NO_VTABLE CWordAddin :
 public:
 	CWordAddin()
 	{
+		m_countDialog = nullptr;
+		m_spWordApp = nullptr;
 	}
 
 	DECLARE_REGISTRY_RESOURCEID(106)
@@ -103,22 +105,26 @@ public:
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
-	void countAndShow(IDispatch* doc);
+	//void countAndShow(IDispatch* doc);
+	void countAndShow(_Document* doc);
 	void initializeCountDialog();
+	CComPtr<Word::_Application> m_spWordApp;
 private:
 	//void OnDocumentOpen();
 	void RegisterDocumentOpenEvent();
 
+	HWND getDocWindow();
+
 	//DWORD m_cookie;
 	//IDispatch* m_spWordApp;
 	
-	CComPtr<Word::_Application> m_spWordApp;
 	//CWordEvents* m_spWordEvents;
 
 
 	void CreateCustomToolbar();
 	
-	std::unique_ptr<Cwordcountatldialog> m_countDialog;
+	//std::unique_ptr<Cwordcountatldialog> m_countDialog;
+	Cwordcountatldialog* m_countDialog;
 
 };
 
