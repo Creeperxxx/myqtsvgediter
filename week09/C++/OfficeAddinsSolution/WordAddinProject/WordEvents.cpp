@@ -29,7 +29,8 @@ STDMETHODIMP CWordEvents::OnDocumentOpen(IDispatch* Doc)
 		// 文档打开后，调用插件的统计字数函数
 		//m_pAddIn->CountWords();
 		//m_pAddin->CountWordsInDocument(Doc);
-		m_pAddIn->CountWords(Doc);
+		m_pAddIn->initializeCountDialog();
+		m_pAddIn->countAndShow(Doc);
 		return S_OK;
 	}
 	else

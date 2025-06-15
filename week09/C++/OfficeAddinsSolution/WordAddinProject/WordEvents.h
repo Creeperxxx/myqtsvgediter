@@ -43,7 +43,8 @@ class ATL_NO_VTABLE CWordEvents :
 	public IConnectionPointContainerImpl<CWordEvents>,
 	public CProxy_IWordEventsEvents<CWordEvents>,
 	public IDispatchImpl<IWordEvents, &IID_IWordEvents, &LIBID_WordAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>, 
-	public IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>
+	public IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>,
+	public IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>
 {
 public:
 	CWordEvents()

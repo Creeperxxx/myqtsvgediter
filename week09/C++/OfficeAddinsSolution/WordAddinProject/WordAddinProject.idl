@@ -34,7 +34,7 @@ interface IWordAddin : IDispatch
 {
 	//[id(1)] HRESULT CountWords([out, retval] LONG* pCount);
 	//[id(1)] HRESULT CountWords([out, retval] IDispatch** doc);
-	[id(1)] HRESULT CountWords([in] IDispatch* doc);
+	[id(1)] HRESULT CountWords([in] IDispatch* doc, [out] LONG* pChineseCount, [out] LONG* pEnglishCount);
 };
 [
 	object,

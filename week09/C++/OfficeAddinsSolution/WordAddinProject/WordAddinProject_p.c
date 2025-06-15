@@ -46,8 +46,8 @@
 
 #include "WordAddinProject_i.h"
 
-#define TYPE_FORMAT_STRING_SIZE   1195                              
-#define PROC_FORMAT_STRING_SIZE   261                               
+#define TYPE_FORMAT_STRING_SIZE   1199                              
+#define PROC_FORMAT_STRING_SIZE   273                               
 #define EXPR_FORMAT_STRING_SIZE   1                                 
 #define TRANSMIT_AS_TABLE_SIZE    0            
 #define WIRE_MARSHAL_TABLE_SIZE   2            
@@ -175,6 +175,19 @@ extern const MIDL_STUB_DESC Object_StubDesc;
 
 extern const MIDL_SERVER_INFO IWordEvents_ServerInfo;
 extern const MIDL_STUBLESS_PROXY_INFO IWordEvents_ProxyInfo;
+
+#ifdef __cplusplus
+namespace {
+#endif
+
+extern const MIDL_STUB_DESC Object_StubDesc;
+#ifdef __cplusplus
+}
+#endif
+
+
+extern const MIDL_SERVER_INFO IATLwordcountdialog_ServerInfo;
+extern const MIDL_STUBLESS_PROXY_INFO IATLwordcountdialog_ProxyInfo;
 
 
 extern const USER_MARSHAL_ROUTINE_QUADRUPLE NDR64_UserMarshalRoutines[ WIRE_MARSHAL_TABLE_SIZE ];extern const USER_MARSHAL_ROUTINE_QUADRUPLE UserMarshalRoutines[ WIRE_MARSHAL_TABLE_SIZE ];
@@ -374,11 +387,11 @@ static const WordAddinProject_MIDL_PROC_FORMAT_STRING WordAddinProject__MIDL_Pro
 			0x6c,		/* Old Flags:  object, Oi2 */
 /* 224 */	NdrFcLong( 0x0 ),	/* 0 */
 /* 228 */	NdrFcShort( 0x7 ),	/* 7 */
-/* 230 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
+/* 230 */	NdrFcShort( 0x28 ),	/* X64 Stack size/offset = 40 */
 /* 232 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 234 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 234 */	NdrFcShort( 0x40 ),	/* 64 */
 /* 236 */	0x46,		/* Oi2 Flags:  clt must size, has return, has ext, */
-			0x2,		/* 2 */
+			0x4,		/* 4 */
 /* 238 */	0xa,		/* 10 */
 			0x41,		/* Ext Flags:  new corr desc, has range on conformance */
 /* 240 */	NdrFcShort( 0x0 ),	/* 0 */
@@ -392,11 +405,25 @@ static const WordAddinProject_MIDL_PROC_FORMAT_STRING WordAddinProject__MIDL_Pro
 /* 250 */	NdrFcShort( 0x8 ),	/* X64 Stack size/offset = 8 */
 /* 252 */	NdrFcShort( 0x106 ),	/* Type Offset=262 */
 
-	/* Return value */
+	/* Parameter pChineseCount */
 
-/* 254 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 254 */	NdrFcShort( 0x2150 ),	/* Flags:  out, base type, simple ref, srv alloc size=8 */
 /* 256 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
 /* 258 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+	/* Parameter pEnglishCount */
+
+/* 260 */	NdrFcShort( 0x2150 ),	/* Flags:  out, base type, simple ref, srv alloc size=8 */
+/* 262 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
+/* 264 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+	/* Return value */
+
+/* 266 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 268 */	NdrFcShort( 0x20 ),	/* X64 Stack size/offset = 32 */
+/* 270 */	0x8,		/* FC_LONG */
 			0x0,		/* 0 */
 
 			0x0
@@ -1126,6 +1153,10 @@ static const WordAddinProject_MIDL_TYPE_FORMAT_STRING WordAddinProject__MIDL_Typ
 /* 1188 */	NdrFcShort( 0x8 ),	/* 8 */
 /* 1190 */	NdrFcShort( 0x0 ),	/* 0 */
 /* 1192 */	NdrFcShort( 0xfb8c ),	/* Offset= -1140 (52) */
+/* 1194 */	
+			0x11, 0xc,	/* FC_RP [alloced_on_stack] [simple_pointer] */
+/* 1196 */	0x8,		/* FC_LONG */
+			0x5c,		/* FC_PAD */
 
 			0x0
         }
@@ -1216,6 +1247,21 @@ static const unsigned short IWordEvents_FormatStringOffsetTable[] =
 
 
 
+/* Object interface: IATLwordcountdialog, ver. 0.0,
+   GUID={0xf953bbe1,0xcb67,0x45fb,{0x8b,0x08,0xf4,0x68,0x58,0xa8,0x70,0x14}} */
+
+#pragma code_seg(".orpc")
+static const unsigned short IATLwordcountdialog_FormatStringOffsetTable[] =
+    {
+    (unsigned short) -1,
+    (unsigned short) -1,
+    (unsigned short) -1,
+    (unsigned short) -1,
+    0
+    };
+
+
+
 #endif /* defined(_M_AMD64)*/
 
 
@@ -1256,8 +1302,13 @@ namespace {
 
 typedef 
 NDR64_FORMAT_CHAR
-__midl_frag175_t;
-extern const __midl_frag175_t __midl_frag175;
+__midl_frag179_t;
+extern const __midl_frag179_t __midl_frag179;
+
+typedef 
+struct _NDR64_POINTER_FORMAT
+__midl_frag177_t;
+extern const __midl_frag177_t __midl_frag177;
 
 typedef 
 struct _NDR64_CONSTANT_IID_FORMAT
@@ -1275,6 +1326,8 @@ struct
     struct _NDR64_PROC_FORMAT frag1;
     struct _NDR64_PARAM_FORMAT frag2;
     struct _NDR64_PARAM_FORMAT frag3;
+    struct _NDR64_PARAM_FORMAT frag4;
+    struct _NDR64_PARAM_FORMAT frag5;
 }
 __midl_frag172_t;
 extern const __midl_frag172_t __midl_frag172;
@@ -2136,8 +2189,17 @@ NDR64_FORMAT_UINT32
 __midl_frag1_t;
 extern const __midl_frag1_t __midl_frag1;
 
-static const __midl_frag175_t __midl_frag175 =
+static const __midl_frag179_t __midl_frag179 =
 0x5    /* FC64_INT32 */;
+
+static const __midl_frag177_t __midl_frag177 =
+{ 
+/* *LONG */
+    0x20,    /* FC64_RP */
+    (NDR64_UINT8) 12 /* 0xc */,
+    (NDR64_UINT16) 0 /* 0x0 */,
+    &__midl_frag179
+};
 
 static const __midl_frag174_t __midl_frag174 =
 { 
@@ -2168,12 +2230,12 @@ static const __midl_frag172_t __midl_frag172 =
     { 
     /* CountWords */      /* procedure CountWords */
         (NDR64_UINT32) 786755 /* 0xc0143 */,    /* auto handle */ /* IsIntrepreted, [object], ClientMustSize, HasReturn */
-        (NDR64_UINT32) 24 /* 0x18 */ ,  /* Stack size */
+        (NDR64_UINT32) 40 /* 0x28 */ ,  /* Stack size */
         (NDR64_UINT32) 0 /* 0x0 */,
-        (NDR64_UINT32) 8 /* 0x8 */,
+        (NDR64_UINT32) 72 /* 0x48 */,
         (NDR64_UINT16) 0 /* 0x0 */,
         (NDR64_UINT16) 0 /* 0x0 */,
-        (NDR64_UINT16) 2 /* 0x2 */,
+        (NDR64_UINT16) 4 /* 0x4 */,
         (NDR64_UINT16) 0 /* 0x0 */
     },
     { 
@@ -2201,8 +2263,56 @@ static const __midl_frag172_t __midl_frag172 =
         8 /* 0x8 */,   /* Stack offset */
     },
     { 
+    /* pChineseCount */      /* parameter pChineseCount */
+        &__midl_frag179,
+        { 
+        /* pChineseCount */
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            1
+        },    /* [out], Basetype, SimpleRef, UseCache */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        16 /* 0x10 */,   /* Stack offset */
+    },
+    { 
+    /* pEnglishCount */      /* parameter pEnglishCount */
+        &__midl_frag179,
+        { 
+        /* pEnglishCount */
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            1
+        },    /* [out], Basetype, SimpleRef, UseCache */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        24 /* 0x18 */,   /* Stack offset */
+    },
+    { 
     /* HRESULT */      /* parameter HRESULT */
-        &__midl_frag175,
+        &__midl_frag179,
         { 
         /* HRESULT */
             0,
@@ -2222,7 +2332,7 @@ static const __midl_frag172_t __midl_frag172 =
             0
         },    /* [out], IsReturn, Basetype, ByValue */
         (NDR64_UINT16) 0 /* 0x0 */,
-        16 /* 0x10 */,   /* Stack offset */
+        32 /* 0x20 */,   /* Stack offset */
     }
 };
 
@@ -5097,6 +5207,99 @@ CInterfaceStubVtbl _IWordEventsStubVtbl =
     CStdStubBuffer_DELEGATING_METHODS
 };
 
+
+/* Object interface: IATLwordcountdialog, ver. 0.0,
+   GUID={0xf953bbe1,0xcb67,0x45fb,{0x8b,0x08,0xf4,0x68,0x58,0xa8,0x70,0x14}} */
+
+#pragma code_seg(".orpc")
+static const FormatInfoRef IATLwordcountdialog_Ndr64ProcTable[] =
+    {
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    0
+    };
+
+
+static const MIDL_SYNTAX_INFO IATLwordcountdialog_SyntaxInfo [  2 ] = 
+    {
+    {
+    {{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}},
+    0,
+    WordAddinProject__MIDL_ProcFormatString.Format,
+    &IATLwordcountdialog_FormatStringOffsetTable[-3],
+    WordAddinProject__MIDL_TypeFormatString.Format,
+    UserMarshalRoutines,
+    0,
+    0
+    }
+    ,{
+    {{0x71710533,0xbeba,0x4937,{0x83,0x19,0xb5,0xdb,0xef,0x9c,0xcc,0x36}},{1,0}},
+    0,
+    0 ,
+    (unsigned short *) &IATLwordcountdialog_Ndr64ProcTable[-3],
+    0,
+    NDR64_UserMarshalRoutines,
+    0,
+    0
+    }
+    };
+
+static const MIDL_STUBLESS_PROXY_INFO IATLwordcountdialog_ProxyInfo =
+    {
+    &Object_StubDesc,
+    WordAddinProject__MIDL_ProcFormatString.Format,
+    &IATLwordcountdialog_FormatStringOffsetTable[-3],
+    (RPC_SYNTAX_IDENTIFIER*)&_RpcTransferSyntax_2_0,
+    2,
+    (MIDL_SYNTAX_INFO*)IATLwordcountdialog_SyntaxInfo
+    
+    };
+
+
+static const MIDL_SERVER_INFO IATLwordcountdialog_ServerInfo = 
+    {
+    &Object_StubDesc,
+    0,
+    WordAddinProject__MIDL_ProcFormatString.Format,
+    (unsigned short *) &IATLwordcountdialog_FormatStringOffsetTable[-3],
+    0,
+    (RPC_SYNTAX_IDENTIFIER*)&_NDR64_RpcTransferSyntax_1_0,
+    2,
+    (MIDL_SYNTAX_INFO*)IATLwordcountdialog_SyntaxInfo
+    };
+CINTERFACE_PROXY_VTABLE(7) _IATLwordcountdialogProxyVtbl = 
+{
+    0,
+    &IID_IATLwordcountdialog,
+    IUnknown_QueryInterface_Proxy,
+    IUnknown_AddRef_Proxy,
+    IUnknown_Release_Proxy ,
+    0 /* IDispatch::GetTypeInfoCount */ ,
+    0 /* IDispatch::GetTypeInfo */ ,
+    0 /* IDispatch::GetIDsOfNames */ ,
+    0 /* IDispatch_Invoke_Proxy */
+};
+
+
+EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION IATLwordcountdialog_table[] =
+{
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION
+};
+
+CInterfaceStubVtbl _IATLwordcountdialogStubVtbl =
+{
+    &IID_IATLwordcountdialog,
+    &IATLwordcountdialog_ServerInfo,
+    7,
+    &IATLwordcountdialog_table[-3],
+    CStdStubBuffer_DELEGATING_METHODS
+};
+
 #ifdef __cplusplus
 namespace {
 #endif
@@ -5132,6 +5335,7 @@ const CInterfaceProxyVtbl * const _WordAddinProject_ProxyVtblList[] =
     ( CInterfaceProxyVtbl *) &_IWordAddinProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IComponentRegistrarProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IWordEventsProxyVtbl,
+    ( CInterfaceProxyVtbl *) &_IATLwordcountdialogProxyVtbl,
     0
 };
 
@@ -5140,6 +5344,7 @@ const CInterfaceStubVtbl * const _WordAddinProject_StubVtblList[] =
     ( CInterfaceStubVtbl *) &_IWordAddinStubVtbl,
     ( CInterfaceStubVtbl *) &_IComponentRegistrarStubVtbl,
     ( CInterfaceStubVtbl *) &_IWordEventsStubVtbl,
+    ( CInterfaceStubVtbl *) &_IATLwordcountdialogStubVtbl,
     0
 };
 
@@ -5148,11 +5353,13 @@ PCInterfaceName const _WordAddinProject_InterfaceNamesList[] =
     "IWordAddin",
     "IComponentRegistrar",
     "IWordEvents",
+    "IATLwordcountdialog",
     0
 };
 
 const IID *  const _WordAddinProject_BaseIIDList[] = 
 {
+    &IID_IDispatch,
     &IID_IDispatch,
     &IID_IDispatch,
     &IID_IDispatch,
@@ -5166,9 +5373,9 @@ int __stdcall _WordAddinProject_IID_Lookup( const IID * pIID, int * pIndex )
 {
     IID_BS_LOOKUP_SETUP
 
-    IID_BS_LOOKUP_INITIAL_TEST( _WordAddinProject, 3, 2 )
+    IID_BS_LOOKUP_INITIAL_TEST( _WordAddinProject, 4, 2 )
     IID_BS_LOOKUP_NEXT_TEST( _WordAddinProject, 1 )
-    IID_BS_LOOKUP_RETURN_RESULT( _WordAddinProject, 3, *pIndex )
+    IID_BS_LOOKUP_RETURN_RESULT( _WordAddinProject, 4, *pIndex )
     
 }
 
@@ -5179,7 +5386,7 @@ EXTERN_C const ExtendedProxyFileInfo WordAddinProject_ProxyFileInfo =
     (const PCInterfaceName * ) & _WordAddinProject_InterfaceNamesList,
     (const IID ** ) & _WordAddinProject_BaseIIDList,
     & _WordAddinProject_IID_Lookup, 
-    3,
+    4,
     2,
     0, /* table of [async_uuid] interfaces */
     0, /* Filler1 */

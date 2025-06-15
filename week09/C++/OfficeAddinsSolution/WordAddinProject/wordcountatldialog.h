@@ -2,6 +2,7 @@
 
 #include "resource.h"
 #include <atlhost.h>
+#include <atlstr.h>
 
 using namespace ATL;
 
@@ -17,6 +18,10 @@ public:
 
 	~Cwordcountatldialog()
 	{
+		if (m_hWnd != nullptr)
+		{
+			DestroyWindow();
+		}
 	}
 
 	enum { IDD = IDD_DIALOG1 };
@@ -36,20 +41,30 @@ END_MSG_MAP()
 	LRESULT OnInitDialog(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		CAxDialogImpl<Cwordcountatldialog>::OnInitDialog(uMsg, wParam, lParam, bHandled);
-		GetDlgItem(IDC_STATIC2);
+		m_chineseCountWindow = GetDlgItem(IDC_STATIC2);
+		m_englishCountWindow = GetDlgItem(IDC_STATIC4);
+		m_chineseCountWindow.SetWindowTextW(L"0");
+		m_englishCountWindow.SetWindowTextW(L"0");
 		bHandled = TRUE;
 		return 1;  // 让系统设置焦点
 	}
 
 	LRESULT OnClickedOK(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 	{
-		EndDialog(wID);
+		//EndDialog(wID); //这是关闭模态对话框的
+		DestroyWindow();
 		return 0;
 	}
 
 	LRESULT OnClickedCancel(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
 	{
-		EndDialog(wID);
+		//EndDialog(wID);
+		DestroyWindow();
 		return 0;
 	}
+
+	void showCount(LONG chineseCount, LONG englishCount);
+public:
+	CWindow m_chineseCountWindow;
+	CWindow m_englishCountWindow;
 };

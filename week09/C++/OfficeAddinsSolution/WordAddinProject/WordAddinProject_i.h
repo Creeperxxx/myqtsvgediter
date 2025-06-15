@@ -73,6 +73,13 @@ typedef interface IWordEvents IWordEvents;
 #endif 	/* __IWordEvents_FWD_DEFINED__ */
 
 
+#ifndef __IATLwordcountdialog_FWD_DEFINED__
+#define __IATLwordcountdialog_FWD_DEFINED__
+typedef interface IATLwordcountdialog IATLwordcountdialog;
+
+#endif 	/* __IATLwordcountdialog_FWD_DEFINED__ */
+
+
 #ifndef __CompReg_FWD_DEFINED__
 #define __CompReg_FWD_DEFINED__
 
@@ -121,6 +128,18 @@ typedef struct WordEvents WordEvents;
 #endif /* __cplusplus */
 
 #endif 	/* __WordEvents_FWD_DEFINED__ */
+
+
+#ifndef __ATLwordcountdialog_FWD_DEFINED__
+#define __ATLwordcountdialog_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class ATLwordcountdialog ATLwordcountdialog;
+#else
+typedef struct ATLwordcountdialog ATLwordcountdialog;
+#endif /* __cplusplus */
+
+#endif 	/* __ATLwordcountdialog_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -340,7 +359,9 @@ EXTERN_C const IID IID_IWordAddin;
     {
     public:
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE CountWords( 
-            /* [in] */ IDispatch *doc) = 0;
+            /* [in] */ IDispatch *doc,
+            /* [out] */ LONG *pChineseCount,
+            /* [out] */ LONG *pEnglishCount) = 0;
         
     };
     
@@ -410,7 +431,9 @@ EXTERN_C const IID IID_IWordAddin;
         DECLSPEC_XFGVIRT(IWordAddin, CountWords)
         /* [id] */ HRESULT ( STDMETHODCALLTYPE *CountWords )( 
             IWordAddin * This,
-            /* [in] */ IDispatch *doc);
+            /* [in] */ IDispatch *doc,
+            /* [out] */ LONG *pChineseCount,
+            /* [out] */ LONG *pEnglishCount);
         
         END_INTERFACE
     } IWordAddinVtbl;
@@ -448,8 +471,8 @@ EXTERN_C const IID IID_IWordAddin;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IWordAddin_CountWords(This,doc)	\
-    ( (This)->lpVtbl -> CountWords(This,doc) ) 
+#define IWordAddin_CountWords(This,doc,pChineseCount,pEnglishCount)	\
+    ( (This)->lpVtbl -> CountWords(This,doc,pChineseCount,pEnglishCount) ) 
 
 #endif /* COBJMACROS */
 
@@ -587,6 +610,133 @@ EXTERN_C const IID IID_IWordEvents;
 
 
 #endif 	/* __IWordEvents_INTERFACE_DEFINED__ */
+
+
+#ifndef __IATLwordcountdialog_INTERFACE_DEFINED__
+#define __IATLwordcountdialog_INTERFACE_DEFINED__
+
+/* interface IATLwordcountdialog */
+/* [unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IATLwordcountdialog;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("f953bbe1-cb67-45fb-8b08-f46858a87014")
+    IATLwordcountdialog : public IDispatch
+    {
+    public:
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct IATLwordcountdialogVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IATLwordcountdialog * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IATLwordcountdialog * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IATLwordcountdialog * This);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IATLwordcountdialog * This,
+            /* [out] */ UINT *pctinfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IATLwordcountdialog * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IATLwordcountdialog * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        DECLSPEC_XFGVIRT(IDispatch, Invoke)
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IATLwordcountdialog * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        END_INTERFACE
+    } IATLwordcountdialogVtbl;
+
+    interface IATLwordcountdialog
+    {
+        CONST_VTBL struct IATLwordcountdialogVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IATLwordcountdialog_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IATLwordcountdialog_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IATLwordcountdialog_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IATLwordcountdialog_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IATLwordcountdialog_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IATLwordcountdialog_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IATLwordcountdialog_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IATLwordcountdialog_INTERFACE_DEFINED__ */
 
 
 
@@ -865,6 +1015,14 @@ EXTERN_C const CLSID CLSID_WordEvents;
 
 class DECLSPEC_UUID("93657f52-68e1-45f4-a0af-6b09375a0ed3")
 WordEvents;
+#endif
+
+EXTERN_C const CLSID CLSID_ATLwordcountdialog;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("e1198813-41df-4b7b-88e9-848b6890651e")
+ATLwordcountdialog;
 #endif
 #endif /* __WordAddinProjectLib_LIBRARY_DEFINED__ */
 

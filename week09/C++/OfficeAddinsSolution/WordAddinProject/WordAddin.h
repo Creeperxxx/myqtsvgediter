@@ -25,6 +25,9 @@
 #include "WordAddinProject_i.h"
 #include "_IWordAddinEvents_CP.h"
 
+#include <memory>
+#include "wordcountatldialog.h"
+
 
 using namespace AddInDesignerObjects;
 using namespace Office;
@@ -37,6 +40,7 @@ using namespace Word;
 #endif
 
 using namespace ATL;
+
 
 
 class CWordEvents;
@@ -89,7 +93,8 @@ public:
 
 public:
 
-	STDMETHOD(CountWords)(IDispatch* doc);
+	STDMETHOD(CountWords)(IDispatch* doc, LONG* pChineseCount, LONG* pEnglishCount);
+	//STDMETHOD(CountWords)(IDispatch* doc);
 	//STDMETHOD(CountWords)(LONG* pCount);
 
 	STDMETHOD(raw_OnConnection)(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
@@ -97,6 +102,9 @@ public:
 	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
+
+	void countAndShow(IDispatch* doc);
+	void initializeCountDialog();
 private:
 	//void OnDocumentOpen();
 	void RegisterDocumentOpenEvent();
@@ -110,6 +118,8 @@ private:
 
 	void CreateCustomToolbar();
 	
+	std::unique_ptr<Cwordcountatldialog> m_countDialog;
+
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordAddin), CWordAddin)

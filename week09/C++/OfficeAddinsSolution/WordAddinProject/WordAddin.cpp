@@ -8,6 +8,8 @@
 
 #include "WordEvents.h"
 
+#include "wordcountatldialog.h"
+
 
 // CWordAddin
 
@@ -27,10 +29,13 @@ STDMETHODIMP CWordAddin::InterfaceSupportsErrorInfo(REFIID riid)
 }
 
 
-STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc)
+STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc, LONG* pChineseCount, LONG* pEnglishCount)
 {
 	if (!pDoc)
 		return E_POINTER; // 必须返回 HRESULT
+
+	*pChineseCount = 0;
+	*pEnglishCount = 0;
 
 	// 获取文档对象
 	CComPtr<Word::_Document> spDocument;
@@ -86,6 +91,9 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc)
 		}
 	}
 
+	*pChineseCount = chineseCount;
+	*pEnglishCount = englishWordCount;
+
 	// 释放BSTR
 	//SysFreeString(bstrText);
 
@@ -95,12 +103,12 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc)
 	//MessageBox(NULL, msg.c_str(), L"字数统计", MB_OK);
 
 		// 使用 CAtlString 构建消息
-	CAtlString strMsg;
-	strMsg.Format(L"统计结果:\n中文字符: %d 个\n英文单词: %d 个",
-		chineseCount, englishWordCount);
+	//CAtlString strMsg;
+	//strMsg.Format(L"统计结果:\n中文字符: %d 个\n英文单词: %d 个",
+	//	chineseCount, englishWordCount);
 
-	// 显示消息框
-	MessageBoxW(NULL, strMsg, L"字数统计", MB_OK);
+	//// 显示消息框
+	//MessageBoxW(NULL, strMsg, L"字数统计", MB_OK);
 	return S_OK;
 
 	//CAtlString statusStrMsg;
@@ -116,6 +124,7 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnConnection(IDispatch* Applica
 {
 	// 获取Word应用程序对象
 	HRESULT hr = Application->QueryInterface(__uuidof(Word::_Application), (void**)&m_spWordApp);
+
 	if (SUCCEEDED(hr))
 	{
 		RegisterDocumentOpenEvent();
@@ -159,6 +168,15 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnBeginShutdown(SAFEARRAY** cus
 	return E_NOTIMPL;
 }
 
+void CWordAddin::countAndShow(IDispatch* doc)
+{
+	LONG chineseCount = 0;
+	LONG englishCount = 0;
+
+	CountWords(doc, &chineseCount, &englishCount);
+	m_countDialog->showCount(chineseCount, englishCount);
+}
+
 // 这里的调用并不安全
 // 这个方法是从事件回调中调用的，没有检查当前是否有 ActiveDocument。
 // 如果没有打开任何文档就触发此函数，可能导致访问空指针。
@@ -190,8 +208,6 @@ void CWordAddin::RegisterDocumentOpenEvent()
 		{
 			pWordEvents->Release();
 		}
-		//m_spWordEvents = pWordEvents;
-		//m_spWordEvents->DispEventAdvise(m_spWordApp);
 	}
 	else
 	{
@@ -211,4 +227,12 @@ void CWordAddin::CreateCustomToolbar()
 {
 
 }
+
+void CWordAddin::initializeCountDialog()
+{
+	m_countDialog = std::make_unique<Cwordcountatldialog>();
+	m_countDialog->Create(nullptr);
+	m_countDialog->ShowWindow(SW_SHOW);
+}
+
 
