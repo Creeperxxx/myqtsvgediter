@@ -13,6 +13,23 @@
 
 // CWordAddin
 
+CWordAddin::~CWordAddin()
+{
+	if (m_countDialog != nullptr)
+	{
+		if (m_countDialog->IsWindow())
+		{
+			m_countDialog->m_isDelete = true;
+			m_countDialog->DestroyWindow();
+			m_countDialog->myDestroy();
+		}
+		else
+		{
+			delete m_countDialog;
+		}
+	}
+}
+
 STDMETHODIMP CWordAddin::InterfaceSupportsErrorInfo(REFIID riid)
 {
 	static const IID* const arr[] =
@@ -94,29 +111,8 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc, LONG* pChineseCount, LONG* 
 	*pChineseCount = chineseCount;
 	*pEnglishCount = englishWordCount;
 
-	// 释放BSTR
-	//SysFreeString(bstrText);
-
-	//// 显示统计结果（可替换为你自己的函数）
-	//std::wstring msg = std::to_wstring(chineseCount) + L" 个中文字符\n" +
-	//	std::to_wstring(englishWordCount) + L" 个英文单词";
-	//MessageBox(NULL, msg.c_str(), L"字数统计", MB_OK);
-
-		// 使用 CAtlString 构建消息
-	//CAtlString strMsg;
-	//strMsg.Format(L"统计结果:\n中文字符: %d 个\n英文单词: %d 个",
-	//	chineseCount, englishWordCount);
-
-	//// 显示消息框
-	//MessageBoxW(NULL, strMsg, L"字数统计", MB_OK);
 	return S_OK;
 
-	//CAtlString statusStrMsg;
-	//statusStrMsg.Format(L"中文字符: %d | 英文单词: %d",
-		//chineseCount, englishWordCount);
-	//hr = m_spWordApp->put_StatusBar(CComBSTR(statusStrMsg));
-	//hr = pApp->put_StatusBar(CComBSTR(statusStrMsg));
-	//return hr;
 }
 
 
@@ -128,6 +124,7 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnConnection(IDispatch* Applica
 	if (SUCCEEDED(hr))
 	{
 		RegisterDocumentOpenEvent();
+		CreateCustomToolbar();
 		return S_OK;
 	}
 	else
@@ -177,34 +174,16 @@ void CWordAddin::countAndShow(_Document* doc)
 	m_countDialog->showCount(chineseCount, englishCount);
 }
 
-// 这里的调用并不安全
-// 这个方法是从事件回调中调用的，没有检查当前是否有 ActiveDocument。
-// 如果没有打开任何文档就触发此函数，可能导致访问空指针。
-//✅ 建议：
-
-// 在调用前判断是否存在活动文档。
-// CComVariant result;
-// HRESULT hr = m_spApplication.GetPropertyByName(L"ActiveDocument", &result);
-// if (SUCCEEDED(hr) && result.vt == VT_DISPATCH && result.pdispVal) {
-// 	CountWords(&wordCount);
-// }
-
-//void CWordAddin::OnDocumentOpen()
-//{
-//	LONG wordCount = 0;
-//	CountWords(&wordCount);
-//}
 
 void CWordAddin::RegisterDocumentOpenEvent()
 {
+
 	CComObject<CWordEvents>* pWordEvents = nullptr;
 	HRESULT hr = CComObject<CWordEvents>::CreateInstance(&pWordEvents);
 	if (SUCCEEDED(hr) && pWordEvents != nullptr)
 	{
-		//pWordEvents->AddRef();
+		m_pWordEvents = pWordEvents;
 		pWordEvents->m_pAddIn = this;
-		//hr = pWordEvents->DispEventAdvise(m_spWordApp);
-
 		hr = pWordEvents->IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>::DispEventAdvise(m_spWordApp);
 		if (FAILED(hr))
 		{
@@ -215,14 +194,15 @@ void CWordAddin::RegisterDocumentOpenEvent()
 	{
 		ATLTRACE("CWordAddin::RegisterDocumentOpenEvent() failed to create CWordEvents instance");
 	}
-	//// 创建事件接收器
-	//m_spWordEvents = new CWordEvents(this);
+}
 
-	//// 连接事件接收器到Word应用程序
-	//if (m_spWordEvents)
-	//{
-	//	m_spWordEvents->DispEventAdvise(m_spWordApp);
-	//}
+void CWordAddin::RegisterFormatButtonClickEvent(CComPtr<CommandBarControl> spCtrls)
+{
+	HRESULT hr = m_pWordEvents->IDispEventImpl<3, CWordEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>::DispEventAdvise(spCtrls);
+	if (SUCCEEDED(hr))
+	{
+		int a = 0;
+	}
 }
 
 HWND CWordAddin::getDocWindow()
@@ -235,7 +215,7 @@ HWND CWordAddin::getDocWindow()
 		hr = spWindow->get_Hwnd(&hwnd);
 		if (SUCCEEDED(hr))
 		{
-			return reinterpret_cast<HWND>(static_cast<ULONG_PTR>(hwnd));
+			return reinterpret_cast<HWND>(hwnd);
 		}
 	}
 	return nullptr;
@@ -243,53 +223,88 @@ HWND CWordAddin::getDocWindow()
 
 void CWordAddin::CreateCustomToolbar()
 {
+	if (m_spWordApp == nullptr)
+	{
+		return;
+	}
+	CComPtr<Office::_CommandBars> spCommandBars;
+	HRESULT hr = m_spWordApp->get_CommandBars(&spCommandBars);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	CComVariant name(L"格式化");
+	CComPtr<CommandBar> spCommandBar;
+	CComVariant vartemp;
+	spCommandBar = spCommandBars->Add(name, msoBarTop, vartemp, VARIANT_TRUE);
+	if (spCommandBar == nullptr)
+	{
+		return;
+	}
+	m_spFormatToolbar = spCommandBar;
+	CComPtr<CommandBarControls> spCtrls;
+	hr = spCommandBar->get_Controls(&spCtrls);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	CComPtr<CommandBarControl> spCtrl;
+	spCtrl = spCtrls->Add(CComVariant(1), vtMissing, vtMissing, vtMissing, vtMissing);
+	if (spCtrl == nullptr)
+	{
+		return;
+	}
 
+	spCtrl->put_Caption(CComBSTR(L"格式化"));
+
+	spCtrl->put_Tag(CComBSTR(L"FormatButton"));
+	spCtrl->put_Enabled(VARIANT_TRUE);
+
+
+	//ATLTRACE(L"Button Caption: %s\n", spCtrl->GetCaption().GetBSTR());
+	//ATLTRACE(L"Button Width: %d\n", spCtrl->GetWidth());
+	//ATLTRACE(L"Button Height: %d\n", spCtrl->GetHeight());
+	//ATLTRACE(L"Button Visible: %d\n", spCtrl->GetVisibleD() == VARIANT_TRUE ? 1 : 0);
+	//ATLTRACE(L"Button Enabled: %d\n", spCtrl->GetEnabled() == VARIANT_TRUE ? 1 : 0);
+	//spCtrl->put_OnAction(CComBSTR(L"?Click")); //当这样绑定动作时，点击会触发无法找到宏
+	//弄清楚了，这里动作绑定的是名为”？Click"的vba宏，不是c++中的。
+	spCommandBar->put_Visible(VARIANT_TRUE);
+
+	RegisterFormatButtonClickEvent(spCtrl);
 }
 
 void CWordAddin::initializeCountDialog()
 {
-	//if (m_countDialog == nullptr || m_countDialog.get() == nullptr)
-	//{
-	//	m_countDialog = std::make_unique<Cwordcountatldialog>();
-	//	m_countDialog->Create(getDocWindow());
-	//	//m_countDialog->Create(nullptr);
-	//	//m_countDialog->ShowWindow(SW_SHOW);
-	//	m_countDialog->ShowWindowAsync(SW_SHOW);
-	//}
-	//else if (m_countDialog->m_hWnd == nullptr)
-	//{
-	//	//m_countDialog->Create(nullptr);
-	//	m_countDialog->Create(getDocWindow());
-	//	m_countDialog->ShowWindowAsync(SW_SHOW);
-	//}
-
-	//	// 销毁旧窗口（如果存在）
-	//if (m_countDialog && m_countDialog->m_hWnd) {
-	//	m_countDialog->DestroyWindow();
-	//}
-
-	//// 创建新窗口
-	//m_countDialog = std::make_unique<Cwordcountatldialog>();
-	//HWND hWndParent = getDocWindow();  // 确保父窗口有效
-	//if (!hWndParent) 
-	//	hWndParent = ::GetDesktopWindow();  // 回退到桌面
-
-	//m_countDialog->Create(hWndParent);
-	//m_countDialog->ShowWindow(SW_SHOW);  // 使用同步显示
-
-	if (m_countDialog != nullptr)
+	if (m_countDialog == nullptr)
 	{
-		if (m_countDialog->m_hWnd != nullptr)
-		{
-			m_countDialog->DestroyWindow();
-		}
-	}
-
-	m_countDialog = new Cwordcountatldialog();
-	if (m_countDialog != nullptr)
-	{
+		m_countDialog = new Cwordcountatldialog();
+		m_countDialog->m_pAddIn = this;
 		m_countDialog->Create(getDocWindow());
 		m_countDialog->ShowWindow(SW_SHOW);
+		return;
+	}
+	else
+	{
+		if (m_countDialog->IsWindow())
+		{
+			m_countDialog->SetParent(getDocWindow());
+			return;
+		}
+		else
+		{
+			HWND hwnd = getDocWindow();
+			hwnd = m_countDialog->Create(hwnd);
+			m_countDialog->ShowWindow(SW_SHOW);
+			return;
+		}
+	}
+}
+
+void CWordAddin::formatSelectionText()
+{
+	if (m_spWordApp == nullptr)
+	{
+		return;
 	}
 }
 

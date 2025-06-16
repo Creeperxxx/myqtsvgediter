@@ -124,4 +124,14 @@ STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnDocumentChange()
 		return S_OK;
 	}
 	return E_FAIL;
+
+}
+
+STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnFormatButtonClick(Office::_CommandBarButton* ctrl, VARIANT_BOOL* CancelDefault)
+{
+	if (m_pAddIn != nullptr)
+	{
+		m_pAddIn->formatSelectionText();
+	}
+	return S_OK;
 }

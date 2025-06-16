@@ -26,7 +26,8 @@
 #include "_IWordAddinEvents_CP.h"
 
 #include <memory>
-#include "wordcountatldialog.h"
+//#include "wordcountatldialog.h"
+//#include "myresource.h"
 
 
 using namespace AddInDesignerObjects;
@@ -42,6 +43,7 @@ using namespace Word;
 using namespace ATL;
 
 
+class Cwordcountatldialog;
 
 class CWordEvents;
 // CWordAddin
@@ -54,14 +56,16 @@ class ATL_NO_VTABLE CWordAddin :
 	public CProxy_IWordAddinEvents<CWordAddin>,
 	public IObjectWithSiteImpl<CWordAddin>,
 	public IDispatchImpl<IWordAddin, &IID_IWordAddin, &LIBID_WordAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>
+	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>,
+	public IDispatchImpl<Office::_CommandBarButtonEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>
 {
 public:
 	CWordAddin()
+		:m_countDialog(nullptr)
+		, m_spWordApp(nullptr)
 	{
-		m_countDialog = nullptr;
-		m_spWordApp = nullptr;
 	}
+	~CWordAddin();
 
 	DECLARE_REGISTRY_RESOURCEID(106)
 
@@ -69,6 +73,7 @@ public:
 	BEGIN_COM_MAP(CWordAddin)
 		COM_INTERFACE_ENTRY(IWordAddin)
 		COM_INTERFACE_ENTRY(_IDTExtensibility2)
+		COM_INTERFACE_ENTRY(_CommandBarButtonEvents)
 		COM_INTERFACE_ENTRY2(IDispatch, IWordAddin)
 		COM_INTERFACE_ENTRY(ISupportErrorInfo)
 		COM_INTERFACE_ENTRY(IConnectionPointContainer)
@@ -96,8 +101,6 @@ public:
 public:
 
 	STDMETHOD(CountWords)(IDispatch* doc, LONG* pChineseCount, LONG* pEnglishCount);
-	//STDMETHOD(CountWords)(IDispatch* doc);
-	//STDMETHOD(CountWords)(LONG* pCount);
 
 	STDMETHOD(raw_OnConnection)(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
 	STDMETHOD(raw_OnDisconnection)(ext_DisconnectMode RemoveMode, SAFEARRAY** custom);
@@ -105,27 +108,29 @@ public:
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
+
 	//void countAndShow(IDispatch* doc);
 	void countAndShow(_Document* doc);
 	void initializeCountDialog();
 	CComPtr<Word::_Application> m_spWordApp;
+	void formatSelectionText();
 private:
 	//void OnDocumentOpen();
 	void RegisterDocumentOpenEvent();
+	void RegisterFormatButtonClickEvent(CComPtr<CommandBarControl> spCtrls);
+	//DWORD m_dwButtonEventCookie;
 
 	HWND getDocWindow();
-
-	//DWORD m_cookie;
-	//IDispatch* m_spWordApp;
-	
-	//CWordEvents* m_spWordEvents;
 
 
 	void CreateCustomToolbar();
 	
-	//std::unique_ptr<Cwordcountatldialog> m_countDialog;
 	Cwordcountatldialog* m_countDialog;
+	//std::unique_ptr<Cwordcountatldialog> m_countDialog;
 
+	CComPtr<CommandBar> m_spFormatToolbar;
+
+	CComObject<CWordEvents>* m_pWordEvents;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordAddin), CWordAddin)
