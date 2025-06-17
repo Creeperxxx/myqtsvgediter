@@ -1,0 +1,26 @@
+HKCR
+{
+	ExcelAddIn.Creeper.1 = s 'ExcelAddIn class'
+	{
+		CLSID = s '{d7103993-ef1b-405c-a940-a3584e82a760}'
+	}
+	ExcelAddIn.Creeper = s 'ExcelAddIn class'
+	{		
+		CurVer = s 'ExcelAddIn.Creeper.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {d7103993-ef1b-405c-a940-a3584e82a760} = s 'ExcelAddIn class'
+		{
+			ProgID = s 'ExcelAddIn.Creeper.1'
+			VersionIndependentProgID = s 'ExcelAddIn.Creeper'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{5535cf69-cdca-474a-9ce3-fe70852b9f5f}'
+			Version = s '1.0'
+		}
+	}
+}

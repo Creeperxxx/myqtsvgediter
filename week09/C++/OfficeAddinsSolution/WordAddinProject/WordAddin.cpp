@@ -3,6 +3,7 @@
 #include "pch.h"
 #include <atlbase.h>
 #include <atlstr.h>
+#include <regex>
 
 #include "WordAddin.h"
 
@@ -61,55 +62,58 @@ STDMETHODIMP CWordAddin::CountWords(IDispatch* pDoc, LONG* pChineseCount, LONG* 
 		return hr; // 返回错误码
 
 	// 获取文档内容
-	CComPtr<Word::Range> spRange;
+	CComPtr<Word::Range> spRange = nullptr;
 	hr = spDocument->get_Content(&spRange);
 	if (FAILED(hr) || !spRange)
 		return hr;
 
 	// 获取文本
-	CComBSTR bstrText = NULL;
+	CComBSTR bstrText = nullptr;
 	hr = spRange->get_Text(&bstrText);
 	if (FAILED(hr))
 		return hr;
 
-	//// 获取文本
-	//BSTR bstrText = NULL;
-	//hr = spRange->get_Text(&bstrText);
-	//if (FAILED(hr) || !bstrText)
-	//	return hr;
+	//// 统计字数
+	//int chineseCount = 0;
+	//int englishWordCount = 0;
+	//bool inEnglishWord = false;
 
-	// 统计字数
-	int chineseCount = 0;
-	int englishWordCount = 0;
-	bool inEnglishWord = false;
+	//// 遍历文本，统计中文字数和英文字数
+	//for (int i = 0; bstrText[i] != L'\0'; i++)
+	//{
+	//	// 中文字符范围：0x4E00-0x9FFF
+	//	if (bstrText[i] >= 0x4E00 && bstrText[i] <= 0x9FFF)
+	//	{
+	//		chineseCount++;
+	//		inEnglishWord = false; // 结束英文词
+	//	}
+	//	// 英文字符范围：A-Z, a-z
+	//	else if ((bstrText[i] >= L'A' && bstrText[i] <= L'Z') ||
+	//		(bstrText[i] >= L'a' && bstrText[i] <= L'z'))
+	//	{
+	//		if (!inEnglishWord)
+	//		{
+	//			englishWordCount++;
+	//			inEnglishWord = true;
+	//		}
+	//	}
+	//	else
+	//	{
+	//		inEnglishWord = false; // 非字母，结束英文词
+	//	}
+	//}
 
-	// 遍历文本，统计中文字数和英文字数
-	for (int i = 0; bstrText[i] != L'\0'; i++)
-	{
-		// 中文字符范围：0x4E00-0x9FFF
-		if (bstrText[i] >= 0x4E00 && bstrText[i] <= 0x9FFF)
-		{
-			chineseCount++;
-			inEnglishWord = false; // 结束英文词
-		}
-		// 英文字符范围：A-Z, a-z
-		else if ((bstrText[i] >= L'A' && bstrText[i] <= L'Z') ||
-			(bstrText[i] >= L'a' && bstrText[i] <= L'z'))
-		{
-			if (!inEnglishWord)
-			{
-				englishWordCount++;
-				inEnglishWord = true;
-			}
-		}
-		else
-		{
-			inEnglishWord = false; // 非字母，结束英文词
-		}
-	}
+	std::wstring text(bstrText);
 
-	*pChineseCount = chineseCount;
-	*pEnglishCount = englishWordCount;
+	std::wregex chineseRegex(L"[\\u4E00-\\u9FFF]");
+	auto chineseBegin = std::wsregex_iterator(text.begin(), text.end(), chineseRegex);
+	auto chineseEnd = std::wsregex_iterator();
+	*pChineseCount = static_cast<int>(std::distance(chineseBegin, chineseEnd));
+
+	std::wregex englishRegex(L"\\b[A-Za-z]+\\b");
+	auto englishBegin = std::wsregex_iterator(text.begin(), text.end(), englishRegex);
+	auto englishEnd = std::wsregex_iterator();
+	*pEnglishCount = static_cast<int>(std::distance(englishBegin, englishEnd));
 
 	return S_OK;
 
@@ -198,7 +202,7 @@ void CWordAddin::RegisterDocumentOpenEvent()
 
 void CWordAddin::RegisterFormatButtonClickEvent(CComPtr<CommandBarControl> spCtrls)
 {
-	HRESULT hr = m_pWordEvents->IDispEventImpl<3, CWordEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>::DispEventAdvise(spCtrls);
+	HRESULT hr = m_pWordEvents->IDispEventImpl<2, CWordEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>::DispEventAdvise(spCtrls);
 	if (SUCCEEDED(hr))
 	{
 		int a = 0;
@@ -211,8 +215,9 @@ HWND CWordAddin::getDocWindow()
 	HRESULT hr = m_spWordApp->get_ActiveWindow(&spWindow);
 	if (SUCCEEDED(hr))
 	{
-		long hwnd;
-		hr = spWindow->get_Hwnd(&hwnd);
+		//long hwnd;
+		LONG_PTR hwnd;
+		hr = spWindow->get_Hwnd(reinterpret_cast<long*>(&hwnd));
 		if (SUCCEEDED(hr))
 		{
 			return reinterpret_cast<HWND>(hwnd);
@@ -303,6 +308,41 @@ void CWordAddin::initializeCountDialog()
 void CWordAddin::formatSelectionText()
 {
 	if (m_spWordApp == nullptr)
+	{
+		return;
+	}
+	CComPtr<Word::Selection> spSelection;
+	HRESULT hr = m_spWordApp->get_Selection(&spSelection);
+	if (FAILED(hr))
+	{
+		return;
+	}
+
+	CComPtr<Word::Range> spRange;
+	hr = spSelection->get_Range(&spRange);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	float indent = 24;
+	CComPtr<Word::_ParagraphFormat> spParaFormat;
+	hr = spRange->get_ParagraphFormat(&spParaFormat);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = spParaFormat->put_FirstLineIndent(indent);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = spParaFormat->put_LineSpacingRule(Word::wdLineSpace1pt5);
+	if (FAILED(hr))
+	{
+		return;
+	}
+	hr = m_spWordApp->Activate();
+	if (FAILED(hr))
 	{
 		return;
 	}

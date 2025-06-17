@@ -56,8 +56,8 @@ class ATL_NO_VTABLE CWordAddin :
 	public CProxy_IWordAddinEvents<CWordAddin>,
 	public IObjectWithSiteImpl<CWordAddin>,
 	public IDispatchImpl<IWordAddin, &IID_IWordAddin, &LIBID_WordAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>,
-	public IDispatchImpl<Office::_CommandBarButtonEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>
+	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>
+	//public IDispatchImpl<Office::_CommandBarButtonEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>
 {
 public:
 	CWordAddin()
@@ -73,7 +73,7 @@ public:
 	BEGIN_COM_MAP(CWordAddin)
 		COM_INTERFACE_ENTRY(IWordAddin)
 		COM_INTERFACE_ENTRY(_IDTExtensibility2)
-		COM_INTERFACE_ENTRY(_CommandBarButtonEvents)
+		//COM_INTERFACE_ENTRY(_CommandBarButtonEvents)
 		COM_INTERFACE_ENTRY2(IDispatch, IWordAddin)
 		COM_INTERFACE_ENTRY(ISupportErrorInfo)
 		COM_INTERFACE_ENTRY(IConnectionPointContainer)

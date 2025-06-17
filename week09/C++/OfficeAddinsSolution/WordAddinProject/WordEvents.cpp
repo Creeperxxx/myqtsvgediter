@@ -39,58 +39,58 @@ STDMETHODIMP CWordEvents::InterfaceSupportsErrorInfo(REFIID riid)
 //	}
 //}
 
-STDMETHODIMP CWordEvents::OnWindowActivate(Word::_Document* Doc, Word::Window* Wn)
-{
-	HRESULT hr = S_OK;
+//STDMETHODIMP CWordEvents::OnWindowActivate(Word::_Document* Doc, Word::Window* Wn)
+//{
+	//HRESULT hr = S_OK;
 
-	if (!Doc)
-	{
-		return E_POINTER;
-	}
+	//if (!Doc)
+	//{
+	//	return E_POINTER;
+	//}
 
-	// 先解绑旧文档
-	if (m_pCurrentActivateDoc != nullptr)
-	{
-		hr = IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>::DispEventUnadvise(m_pCurrentActivateDoc);
-		if (FAILED(hr))
-		{
-			OutputDebugStringW(L"[Error] DispEventUnadvise failed.\n");
-		}
-		//m_pCurrentActivateDoc->Release();
-		//m_pCurrentActivateDoc = nullptr;
-	}
+	//// 先解绑旧文档
+	//if (m_pCurrentActivateDoc != nullptr)
+	//{
+	//	hr = IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>::DispEventUnadvise(m_pCurrentActivateDoc);
+	//	if (FAILED(hr))
+	//	{
+	//		OutputDebugStringW(L"[Error] DispEventUnadvise failed.\n");
+	//	}
+	//	//m_pCurrentActivateDoc->Release();
+	//	//m_pCurrentActivateDoc = nullptr;
+	//}
 
-	// 绑定新文档
-	hr = IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>::DispEventAdvise(Doc);
-	if (SUCCEEDED(hr))
-	{
-		m_pCurrentActivateDoc = Doc;
-	}
+	//// 绑定新文档
+	//hr = IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>::DispEventAdvise(Doc);
+	//if (SUCCEEDED(hr))
+	//{
+	//	m_pCurrentActivateDoc = Doc;
+	//}
 
-	return hr;
-}
+	//return hr;
+//}
 
-STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnDocumentOpen()
-{
-	if (m_pAddIn != nullptr)
-	{
-		m_pAddIn->initializeCountDialog();
-		CComPtr<Word::_Document> doc;
-		HRESULT hr = m_pAddIn->m_spWordApp->get_ActiveDocument(&doc);
-		if (SUCCEEDED(hr))
-		{
-			m_pAddIn->countAndShow(doc);
-			return S_OK;
-		}
-		//if (SUCCEEDED(m_pCurrentActivateDoc->AddRef()))
-		//{
-			//m_pCurrentActivateDoc->Release();
-			//m_pAddIn->countAndShow(m_pCurrentActivateDoc);
-			//return S_OK;
-		//}
-	}
-	return E_FAIL;
-}
+//STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnDocumentOpen()
+//{
+//	if (m_pAddIn != nullptr)
+//	{
+//		m_pAddIn->initializeCountDialog();
+//		CComPtr<Word::_Document> doc;
+//		HRESULT hr = m_pAddIn->m_spWordApp->get_ActiveDocument(&doc);
+//		if (SUCCEEDED(hr))
+//		{
+//			m_pAddIn->countAndShow(doc);
+//			return S_OK;
+//		}
+//		//if (SUCCEEDED(m_pCurrentActivateDoc->AddRef()))
+//		//{
+//			//m_pCurrentActivateDoc->Release();
+//			//m_pAddIn->countAndShow(m_pCurrentActivateDoc);
+//			//return S_OK;
+//		//}
+//	}
+//	return E_FAIL;
+//}
 
 //STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnContentControlBeforeStoreUpdate(ContentControl* ContentControl, BSTR* Content)
 //{

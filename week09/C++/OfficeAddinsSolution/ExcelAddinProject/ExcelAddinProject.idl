@@ -1,0 +1,96 @@
+﻿// ExcelAddinProject.idl: ExcelAddinProject 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 生成类型库(ExcelAddinProject.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(a817e7a2-43fa-11d0-9e44-00aa00b6770a),
+	dual,
+	pointer_default(unique)
+]
+interface IComponentRegistrar : IDispatch
+{
+	[id(1)]	HRESULT Attach([in] BSTR bstrPath);
+	[id(2)]	HRESULT RegisterAll();
+	[id(3)]	HRESULT UnregisterAll();
+	[id(4)]	HRESULT GetComponents([out] SAFEARRAY(BSTR)* pbstrCLSIDs, [out] SAFEARRAY(BSTR)* pbstrDescriptions);
+	[id(5)]	HRESULT RegisterComponent([in] BSTR bstrCLSID);
+	[id(6)] HRESULT UnregisterComponent([in] BSTR bstrCLSID);
+};
+
+[
+	object,
+	uuid(3ed0be35-1b1c-4880-b4a2-55ced6458443),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IExcelAddIn : IDispatch
+{
+};
+[
+	object,
+	uuid(588c6341-d823-4ad8-aa66-cf9ce4c466e5),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IExcelAddInEvents : IDispatch
+{
+};
+[
+	uuid(5535cf69-cdca-474a-9ce3-fe70852b9f5f),
+	version(1.0),
+	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{c90e825b-d7e8-45eb-bbea-b23c007c964d}")
+]
+library ExcelAddinProjectLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(c90e825b-d7e8-45eb-bbea-b23c007c964d)
+	]
+	coclass CompReg
+	{
+		[default] interface IComponentRegistrar;
+	};
+	[
+		uuid(6d1beac0-e95c-4c40-b766-d6e00ffd6860)
+	]
+	dispinterface _IExcelAddInEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(d7103993-ef1b-405c-a940-a3584e82a760)
+	]
+	coclass ExcelAddIn
+	{
+		[default] interface IExcelAddIn;
+		[default, source] dispinterface _IExcelAddInEvents;
+	};
+	[
+		uuid(99ca7653-3df2-47cd-84d7-2e8cf88eb2fc)
+	]
+	dispinterface _IExcelAddInEventsEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(558fc52b-415a-4f44-ace9-a0de26ea80e3)
+	]
+	coclass ExcelAddInEvents
+	{
+		[default] interface IExcelAddInEvents;
+		[default, source] dispinterface _IExcelAddInEventsEvents;
+	};
+};
+
+import "shobjidl.idl";
+import "shobjidl.idl";

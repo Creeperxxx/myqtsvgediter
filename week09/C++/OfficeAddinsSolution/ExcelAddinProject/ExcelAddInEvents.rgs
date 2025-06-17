@@ -1,0 +1,26 @@
+HKCR
+{
+	ExcelAddInEvents.Creeper.1 = s 'ExcelAddInEvents class'
+	{
+		CLSID = s '{558fc52b-415a-4f44-ace9-a0de26ea80e3}'
+	}
+	ExcelAddInEvents.Creeper = s 'ExcelAddInEvents class'
+	{		
+		CurVer = s 'ExcelAddInEvents.Creeper.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {558fc52b-415a-4f44-ace9-a0de26ea80e3} = s 'ExcelAddInEvents class'
+		{
+			ProgID = s 'ExcelAddInEvents.Creeper.1'
+			VersionIndependentProgID = s 'ExcelAddInEvents.Creeper'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{5535cf69-cdca-474a-9ce3-fe70852b9f5f}'
+			Version = s '1.0'
+		}
+	}
+}

@@ -33,7 +33,8 @@
 	1. 配合资源文件创建对话框：
 	    1. 首先创建资源文件，每个控件都对应一个id用来标记控件。
 		1. 在atl对话框类中使用资源文件中设计的对话框，只需要enum {IDD = id},将id设置为主窗口的id即可
-	1. BEGIN_MSG_MAP意思是，将消息映射到对应的处理函数。可以理解为qt中的信号和槽。一般要映射的有以下：		    1. WM_INITDIALOG对OnInitDialog，初始化对话框，create时会调用
+	1. BEGIN_MSG_MAP意思是，将消息映射到对应的处理函数。可以理解为qt中的信号和槽。一般要映射的有以下：		    
+	    1. WM_INITDIALOG对OnInitDialog，初始化对话框，create时会调用
 		1. WM_CLOSE对OnCLose，点击叉会调用
 		1. WM_DESTROY对OnDestroy。调用destroyWindow时会发出。
 		1. WM_NCDESTROY对应OnFinalMessage。这是调用destroyWindow最后的一个消息，一般delete this。
@@ -56,6 +57,12 @@
 	1. 通过BEGIN_SINK_MAP来绑定类型的事件与其回调函数。参数依次为id 类型id 事件dispid(就是idl中指明了的) 回调函数
 	1. 使用DispEventAdvise来绑定某个对象到该事件类，DispEventUnAdvise解绑。如果继承了多个类型的IDispEventImpl，须指明类型。
 	1. 怎么找dispid？使用oleview.exe找到对应的dll库，可以查看对应的idl文件，查看dispid。
+1. 关于ISupportErrorInfo,
+	1. 用来打印错误信息的。当调用接口的某个方法时返回了fail，就会触发，此时可通过GetErrorInfo()获取信息。
+	1. 要实现InterfaceSupportsErrorInfo，并且指定要支持的接口iid。
+	1. 使用的时候得创建ICreateErrorInfo。
+1. _在类前面
+	表示这个类是个接口，而不加这个破折号，就表示这个com对象实现这个接口。
 
 
 
