@@ -47,17 +47,21 @@ class ATL_NO_VTABLE CExcelAddInEvents :
 {
 public:
 	CExcelAddInEvents()
+		:m_pUnkMarshaler(nullptr)
+		, m_pAddIn(nullptr)
 	{
-		m_pUnkMarshaler = nullptr;
-		m_pAddIn = nullptr;
 	}
 
 DECLARE_REGISTRY_RESOURCEID(107)
 
 BEGIN_SINK_MAP(CExcelAddInEvents)
-	SINK_ENTRY_EX(1, __uuidof(Excel::AppEvents), 1, OnWorkBookOpen) //1568
+	SINK_ENTRY_EX(1, __uuidof(Excel::AppEvents), 1568, OnWorkBookActivate) //1568
+	SINK_ENTRY_EX(1, __uuidof(Excel::AppEvents), 1561, OnSheetActivate)
+	SINK_ENTRY_EX(1, __uuidof(Excel::AppEvents), 1564, OnSheetChange)
 END_SINK_MAP()
-STDMETHOD(OnWorkBookOpen)(Excel::_Workbook* wk);
+STDMETHOD(OnWorkBookActivate)(Excel::_Workbook* wk);
+STDMETHOD(OnSheetActivate)(IDispatch* sheet);
+STDMETHOD(OnSheetChange)(IDispatch* sheet, Range* Target);
 
 BEGIN_COM_MAP(CExcelAddInEvents)
 	COM_INTERFACE_ENTRY(IExcelAddInEvents)

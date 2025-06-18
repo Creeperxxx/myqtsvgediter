@@ -129,6 +129,7 @@ STDMETHODIMP_(HRESULT __stdcall) CWordAddin::raw_OnConnection(IDispatch* Applica
 	{
 		RegisterDocumentOpenEvent();
 		CreateCustomToolbar();
+		//initializeCountDialog();
 		return S_OK;
 	}
 	else

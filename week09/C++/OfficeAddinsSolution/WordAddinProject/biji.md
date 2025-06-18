@@ -16,9 +16,6 @@
 
 5. ui界面
     使用ribbon，继承接口：IRibbonExtensibility，创建ribbon.xml文件，并实现GetCustomUI方法
-6. 解决不了的问题：
-    在word中添加com加载项。
-    解决方法：在word插件对应的注册表路径那里手动注册，记住：插件名称必须和com组件的progid一致，这样word才能找到对应的com组件。
 1. 调试
 	不要使用附加调试，那样必须启动word才能调试，导致启动完成前的代码无法调试。
     解决方法：使用启动调试，将word程序设置为调试命令。
@@ -63,7 +60,20 @@
 	1. 使用的时候得创建ICreateErrorInfo。
 1. _在类前面
 	表示这个类是个接口，而不加这个破折号，就表示这个com对象实现这个接口。
-
+1. 方法
+	写代码比较烦的就是，根本不知道这个库有哪些类类中有哪些方法，问ai吧它也不知道，并且它还会骗我，还是得我自己一个一个试。
+1. 获取dispid。
+	1. 写事件回调时需要知道事件的dispid。当然也不是一定要dispid，只有在使用atl提供的事件框架，也就是idispeventimpl时写SINK_ENTRY_EX要用dispid。
+	1. 获取方法：使用oleview.exe中view typelib，打开想要查看的库。于是就能看到库的idl文件，然后到interface中找那个事件类然后找dispid。
+1. 关于office中插件的添加
+	常规的方法是：到开发者工具中com加载项添加你的库，但一般失败（反正我是死都添加补上）。
+    个人方法，基本能成功：
+		1. 打开注册表，找到office 插件所在。以excel为例，位置在计算机\HKEY_CURRENT_USER\Software\Microsoft\Office\Excel\Addins
+        1. 新建一个项，起名为：你的coclass的progid。找到项目中继承了_IDTExtensibility2的类的rgs文件，找到progid对应的值。
+        1. 基本就可以了，office会自动根据progid找到你的com组件。以下是可选添加的：
+		1. LoadBehavior：DWORD，决定了加载时的行为，建议写3，表示启动时加载
+        1. FriendlyName：字符串，就是重起一个名
+        1. Description：字符串，描述
 
 
 

@@ -228,6 +228,7 @@
     <ClInclude Include="ExcelAddInEvents.h" />
     <ClInclude Include="ExcelAddinProject_i.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="nonemptycellscountdialog.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -268,6 +269,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="nonemptycellscountdialog.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -289,6 +291,7 @@
     <ResourceCompile Include="ExcelAddinProject.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp.hint" />
     <None Include="ExcelAddIn.rgs" />
     <None Include="ExcelAddInEvents.rgs" />
     <None Include="ExcelAddinProject.def" />

@@ -55,6 +55,9 @@
     <ClInclude Include="ExcelAddInEvents.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="nonemptycellscountdialog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ExcelAddinProject.cpp">
@@ -81,6 +84,9 @@
     <ClCompile Include="ExcelAddInEvents.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="nonemptycellscountdialog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ExcelAddinProject.rc">
@@ -100,6 +106,7 @@
     <None Include="ExcelAddInEvents.rgs">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="ExcelAddinProject.idl">

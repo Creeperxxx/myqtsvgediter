@@ -27,6 +27,8 @@
 #include "ExcelAddinProject_i.h"
 #include "_IExcelAddInEvents_CP.h"
 
+#include <memory>
+#include "nonemptycellscountdialog.h"
 
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
@@ -54,29 +56,41 @@ class ATL_NO_VTABLE CExcelAddIn :
 {
 public:
 	CExcelAddIn()
+		:m_spExcelApp(nullptr)
+		, m_pUnkMarshaler(nullptr)
+		, m_pExcelEvents(nullptr)
+		, m_countDialog(new Cnonemptycellscountdialog(), [](Cnonemptycellscountdialog* p)
+			{
+				if (p->IsWindow())
+				{
+					p->m_isdelete = true;
+					p->DestroyWindow();
+				}
+				else
+				{
+					delete p;
+				}
+			})
 	{
-		m_pUnkMarshaler = nullptr;
-		m_spExcelApp = nullptr;
-		m_pExcelEvents = nullptr;
 	}
 
-DECLARE_REGISTRY_RESOURCEID(106)
+	DECLARE_REGISTRY_RESOURCEID(106)
 
 
-BEGIN_COM_MAP(CExcelAddIn)
-	COM_INTERFACE_ENTRY(IExcelAddIn)
-	COM_INTERFACE_ENTRY(_IDTExtensibility2)
-	COM_INTERFACE_ENTRY2(IDispatch, IExcelAddIn)
-	COM_INTERFACE_ENTRY(ISupportErrorInfo)
-	COM_INTERFACE_ENTRY(IConnectionPointContainer)
-	COM_INTERFACE_ENTRY(IObjectWithSite)
-	COM_INTERFACE_ENTRY_AGGREGATE(IID_IMarshal, m_pUnkMarshaler.p)
-END_COM_MAP()
+	BEGIN_COM_MAP(CExcelAddIn)
+		COM_INTERFACE_ENTRY(IExcelAddIn)
+		COM_INTERFACE_ENTRY(_IDTExtensibility2)
+		COM_INTERFACE_ENTRY2(IDispatch, IExcelAddIn)
+		COM_INTERFACE_ENTRY(ISupportErrorInfo)
+		COM_INTERFACE_ENTRY(IConnectionPointContainer)
+		COM_INTERFACE_ENTRY(IObjectWithSite)
+		COM_INTERFACE_ENTRY_AGGREGATE(IID_IMarshal, m_pUnkMarshaler.p)
+	END_COM_MAP()
 
-BEGIN_CONNECTION_POINT_MAP(CExcelAddIn)
-	CONNECTION_POINT_ENTRY(__uuidof(_IExcelAddInEvents))
-END_CONNECTION_POINT_MAP()
-// ISupportsErrorInfo
+	BEGIN_CONNECTION_POINT_MAP(CExcelAddIn)
+		CONNECTION_POINT_ENTRY(__uuidof(_IExcelAddInEvents))
+	END_CONNECTION_POINT_MAP()
+	// ISupportsErrorInfo
 	STDMETHOD(InterfaceSupportsErrorInfo)(REFIID riid);
 
 
@@ -105,14 +119,33 @@ public:
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
 
-	STDMETHOD(initializeExcelEvents)();
+	//STDMETHOD(initializeExcelEvents)();
+	void initializeExcelEvents();
+
 	Excel::_ApplicationPtr m_spExcelApp;
 	CComObject<CExcelAddInEvents>* m_pExcelEvents;
-	
 
-	STDMETHOD(OnWorkBookActivate)(Excel::_Workbook* pBook);
-	STDMETHOD(countNonEmptyCells)(Excel::_WorksheetPtr pSheet, LONG* count);
-	STDMETHOD(RegisterApplicationEvents)(Excel::_ApplicationPtr pApp);
+
+
+	void ShowNonEmptyCells(LONG count);
+	void RegisterApplicationEvents(Excel::_ApplicationPtr pApp);
+
+	void OnSheetActivate(CComPtr<IDispatch> pSheet);
+	void OnWorkBookActivate(Excel::_WorkbookPtr pBook);
+	void OnSheetChange(IDispatchPtr sh, Excel::RangePtr rg);
+	void CountAndShowNonEmptyCells(Excel::_WorksheetPtr pSheet);
+	void CountNonEmptyCells(Excel::_WorksheetPtr pSheet, LONG* count);
+
+	void InitializeCountDialog();
+	std::unique_ptr<Cnonemptycellscountdialog, void(*)(Cnonemptycellscountdialog*)> m_countDialog;
+
+	HWND getActivateWindow();
+
+	void setupCountDialog();
+	//STDMETHOD(OnSheetActivate)(IDispatch* sheet);
+	//STDMETHOD(OnWorkBookActivate)(Excel::_Workbook* pBook);
+	//STDMETHOD(CountAndShowNonEmptyCells)(Excel::_WorksheetPtr pSheet);
+	//STDMETHOD(countNonEmptyCells)(Excel::_WorksheetPtr pSheet, LONG* count);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(ExcelAddIn), CExcelAddIn)

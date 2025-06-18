@@ -7,13 +7,34 @@
 
 // CExcelAddInEvents
 
-STDMETHODIMP_(HRESULT __stdcall) CExcelAddInEvents::OnWorkBookOpen(Excel::_Workbook* wk)
+STDMETHODIMP_(HRESULT __stdcall) CExcelAddInEvents::OnWorkBookActivate(Excel::_Workbook* wk)
 {
 	if (wk == nullptr || m_pAddIn == nullptr)
 	{
 		return E_FAIL;
 	}
-	return m_pAddIn->OnWorkBookActivate(wk);
+	m_pAddIn->OnWorkBookActivate(Excel::_WorkbookPtr(wk));
+	return S_OK;
+}
+
+STDMETHODIMP_(HRESULT __stdcall) CExcelAddInEvents::OnSheetActivate(IDispatch* sheet)
+{
+	if (sheet == nullptr || m_pAddIn == nullptr)
+	{
+		return E_FAIL;
+	}
+	m_pAddIn->OnSheetActivate(CComPtr<IDispatch>(sheet));
+	return S_OK;
+}
+
+STDMETHODIMP_(HRESULT __stdcall) CExcelAddInEvents::OnSheetChange(IDispatch* sheet, Range* Target)
+{
+	if (sheet == nullptr || Target == nullptr)
+	{
+		return E_FAIL;
+	}
+	m_pAddIn->OnSheetChange(IDispatchPtr(sheet), Excel::RangePtr(Target));
+	return S_OK;
 }
 
 STDMETHODIMP CExcelAddInEvents::InterfaceSupportsErrorInfo(REFIID riid)
@@ -30,3 +51,4 @@ STDMETHODIMP CExcelAddInEvents::InterfaceSupportsErrorInfo(REFIID riid)
 	}
 	return S_FALSE;
 }
+
