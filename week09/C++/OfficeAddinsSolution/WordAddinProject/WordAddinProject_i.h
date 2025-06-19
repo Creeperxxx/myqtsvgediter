@@ -358,10 +358,11 @@ EXTERN_C const IID IID_IWordAddin;
     IWordAddin : public IDispatch
     {
     public:
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE CountWords( 
-            /* [in] */ IDispatch *doc,
-            /* [out] */ LONG *pChineseCount,
-            /* [out] */ LONG *pEnglishCount) = 0;
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnFormatSelection( 
+            /* [in] */ IDispatch *pControl) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE OnCountWords( 
+            /* [in] */ IDispatch *pControl) = 0;
         
     };
     
@@ -428,12 +429,15 @@ EXTERN_C const IID IID_IWordAddin;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
-        DECLSPEC_XFGVIRT(IWordAddin, CountWords)
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *CountWords )( 
+        DECLSPEC_XFGVIRT(IWordAddin, OnFormatSelection)
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *OnFormatSelection )( 
             IWordAddin * This,
-            /* [in] */ IDispatch *doc,
-            /* [out] */ LONG *pChineseCount,
-            /* [out] */ LONG *pEnglishCount);
+            /* [in] */ IDispatch *pControl);
+        
+        DECLSPEC_XFGVIRT(IWordAddin, OnCountWords)
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *OnCountWords )( 
+            IWordAddin * This,
+            /* [in] */ IDispatch *pControl);
         
         END_INTERFACE
     } IWordAddinVtbl;
@@ -471,8 +475,11 @@ EXTERN_C const IID IID_IWordAddin;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IWordAddin_CountWords(This,doc,pChineseCount,pEnglishCount)	\
-    ( (This)->lpVtbl -> CountWords(This,doc,pChineseCount,pEnglishCount) ) 
+#define IWordAddin_OnFormatSelection(This,pControl)	\
+    ( (This)->lpVtbl -> OnFormatSelection(This,pControl) ) 
+
+#define IWordAddin_OnCountWords(This,pControl)	\
+    ( (This)->lpVtbl -> OnCountWords(This,pControl) ) 
 
 #endif /* COBJMACROS */
 

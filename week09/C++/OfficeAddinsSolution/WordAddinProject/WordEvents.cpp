@@ -110,28 +110,36 @@ STDMETHODIMP CWordEvents::InterfaceSupportsErrorInfo(REFIID riid)
 //	return E_FAIL;
 //}
 
-STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnDocumentChange()
-{
-	if (m_pAddIn != nullptr)
-	{
-		CComPtr<_Document> doc;
-        HRESULT hr = m_pAddIn->m_spWordApp->get_ActiveDocument(&doc);
-		if (SUCCEEDED(hr))
-		{
-			m_pAddIn->initializeCountDialog();
-			m_pAddIn->countAndShow(doc);
-		}
-		return S_OK;
-	}
-	return E_FAIL;
+//STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnDocumentChange()
+//{
+//	if (m_pAddIn == nullptr)
+//	{
+//		return E_FAIL;
+//	}
+//	if (!m_pAddIn->OnDocumentChange())
+//	{
+//		return E_FAIL;
+//	}
+//	return S_OK;
+//	//if (m_pAddIn != nullptr)
+//	//{
+//		//CComPtr<_Document> doc;
+//        //HRESULT hr = m_pAddIn->m_spWordApp->get_ActiveDocument(&doc);
+//		//if (SUCCEEDED(hr))
+//		//{
+//			//m_pAddIn->countAndShow(doc);
+//		//}
+//		//return S_OK;
+//	//}
+//	//return E_FAIL;
+//
+//}
 
-}
-
-STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnFormatButtonClick(Office::_CommandBarButton* ctrl, VARIANT_BOOL* CancelDefault)
-{
-	if (m_pAddIn != nullptr)
-	{
-		m_pAddIn->formatSelectionText();
-	}
-	return S_OK;
-}
+//STDMETHODIMP_(HRESULT __stdcall) CWordEvents::OnFormatButtonClick(Office::_CommandBarButton* ctrl, VARIANT_BOOL* CancelDefault)
+//{
+//	if (m_pAddIn != nullptr)
+//	{
+//		m_pAddIn->formatSelectionText();
+//	}
+//	return S_OK;
+//}

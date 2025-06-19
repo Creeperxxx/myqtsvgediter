@@ -339,6 +339,9 @@ EXTERN_C const IID IID_IExcelAddIn;
     IExcelAddIn : public IDispatch
     {
     public:
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE onGenerateChartButtonClick( 
+            /* [in] */ IDispatch *pControl) = 0;
+        
     };
     
     
@@ -404,6 +407,11 @@ EXTERN_C const IID IID_IExcelAddIn;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
+        DECLSPEC_XFGVIRT(IExcelAddIn, onGenerateChartButtonClick)
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *onGenerateChartButtonClick )( 
+            IExcelAddIn * This,
+            /* [in] */ IDispatch *pControl);
+        
         END_INTERFACE
     } IExcelAddInVtbl;
 
@@ -439,6 +447,9 @@ EXTERN_C const IID IID_IExcelAddIn;
 #define IExcelAddIn_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
+
+#define IExcelAddIn_onGenerateChartButtonClick(This,pControl)	\
+    ( (This)->lpVtbl -> onGenerateChartButtonClick(This,pControl) ) 
 
 #endif /* COBJMACROS */
 

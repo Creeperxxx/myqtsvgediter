@@ -8,6 +8,9 @@
 
 #include "nonemptycellscountdialog.h"
 
+#include <vector>
+
+#include "Resource.h"
 
 // CExcelAddIn
 
@@ -33,8 +36,10 @@ STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::raw_OnConnection(IDispatch* Applic
 	{
 		return hr;
 	}
+	//CreateCommandBar();
 	initializeExcelEvents();
 	RegisterApplicationEvents(m_spExcelApp);
+	//CreateCommandBar();
 	//InitializeCountDialog();
 
 
@@ -54,6 +59,7 @@ STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::raw_OnAddInsUpdate(SAFEARRAY** cus
 STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::raw_OnStartupComplete(SAFEARRAY** custom)
 {
 	InitializeCountDialog();
+	//CreateCommandBar();
 	return S_OK;
 }
 
@@ -62,6 +68,93 @@ STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::raw_OnBeginShutdown(SAFEARRAY** cu
 	return E_NOTIMPL;
 }
 
+
+STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::raw_GetCustomUI(BSTR RibbonID, BSTR* RibbonXml)
+{
+	UNREFERENCED_PARAMETER(RibbonID);
+
+	HRSRC hResource = FindResourceW(_AtlBaseModule.GetModuleInstance(), MAKEINTRESOURCEW(IDR_XML_RESOURCE1), L"XML_RESOURCE");
+	if (hResource == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	HGLOBAL hLoadedResource = LoadResource(_AtlBaseModule.GetModuleInstance(), hResource);
+	if (hLoadedResource == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	LPVOID pResourceData = LockResource(hLoadedResource);
+	if (pResourceData == nullptr)
+	{
+		return E_FAIL;
+	}
+
+	DWORD size = SizeofResource(_AtlBaseModule.GetModuleInstance(), hResource);
+	if (size == 0)
+	{
+		FreeResource(hLoadedResource);
+		return E_FAIL;
+	}
+
+	LPWSTR ribbonXmlContent = static_cast<LPWSTR>(pResourceData);
+
+	// 分配并复制字符串，因为 SysAllocString 需要一个可以持久存在的字符串
+	*RibbonXml = SysAllocString(ribbonXmlContent);
+
+	// 解锁和释放资源
+	UnlockResource(hLoadedResource);
+	FreeResource(hLoadedResource);
+
+	return S_OK;
+
+
+
+
+
+	//// 假设 XML 文件与 DLL 在同一目录下
+	//WCHAR path[MAX_PATH];
+	//GetModuleFileNameW(_AtlBaseModule.GetModuleInstance(), path, MAX_PATH);
+	//PathRemoveFileSpecW(path);  // 获取模块路径
+	//wcscat_s(path, L"\\myRibbon.xml");
+
+	//HANDLE hFile = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ, NULL,
+	//	OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	//if (hFile == INVALID_HANDLE_VALUE)
+	//{
+	//	return E_FAIL;
+	//}
+
+	//DWORD size = GetFileSize(hFile, NULL);
+	//std::vector<char> buffer(size + 1);
+	//DWORD read;
+	//ReadFile(hFile, buffer.data(), size, &read, NULL);
+	//CloseHandle(hFile);
+
+	//buffer[read] = '\0';
+
+	//// 将 UTF-8 转换为 Unicode
+	//int wlen = MultiByteToWideChar(CP_UTF8, 0, buffer.data(), -1, NULL, 0);
+	//std::vector<WCHAR> wbuffer(wlen);
+	//MultiByteToWideChar(CP_UTF8, 0, buffer.data(), -1, wbuffer.data(), wlen);
+
+	//*RibbonXml = SysAllocString(wbuffer.data());
+	//return S_OK;
+}
+
+
+STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::onGenerateChartButtonClick(IDispatch* ribbonPtr)
+{
+	if (generateChart())
+	{
+		return S_OK;
+	}
+	else
+	{
+		return E_FAIL;
+	}
+}
 
 //STDMETHODIMP_(HRESULT __stdcall) CExcelAddIn::initializeExcelEvents()
 //{
@@ -270,7 +363,7 @@ void CExcelAddIn::CountAndShowNonEmptyCells(Excel::_WorksheetPtr pSheet)
 	}
 	LONG count = 0;
 	CountNonEmptyCells(pSheet, &count);
-	setupCountDialog();
+	SetupCountDialog();
 	ShowNonEmptyCells(count);
 	return;
 }
@@ -336,7 +429,7 @@ HWND CExcelAddIn::getActivateWindow()
 	return reinterpret_cast<HWND>((LONG_PTR)spExcelWindow->GetHwnd());
 }
 
-void CExcelAddIn::setupCountDialog()
+void CExcelAddIn::SetupCountDialog()
 {
 	if (m_countDialog == nullptr || m_countDialog.get() == nullptr)
 	{
@@ -356,5 +449,130 @@ void CExcelAddIn::setupCountDialog()
 	}
 }
 
+bool CExcelAddIn::generateChart()
+{
+	IDispatchPtr dpActiveSheet;
+	HRESULT hr = m_spExcelApp->get_ActiveSheet(&dpActiveSheet);
+	if (FAILED(hr))
+	{
+		ATLTRACE("获取活跃sheet失败");
+		return false;
+	}
+	Excel::_WorksheetPtr spActiveSheet;
+	hr = dpActiveSheet->QueryInterface(__uuidof(Excel::_Worksheet), (void**)&spActiveSheet);
+	if (FAILED(hr))
+	{
+		ATLTRACE("查询sheet接口失败");
+		return false;
+	}
+
+	IDispatchPtr dpSelectedRange;
+	Excel::RangePtr spSelectedRange;
+	hr = m_spExcelApp->get_Selection(LOCALE_USER_DEFAULT, &dpSelectedRange);
+	if (FAILED(hr))
+	{
+		ATLTRACE("获取选中区域失败");
+		return false;
+	}
+	hr = dpSelectedRange->QueryInterface(__uuidof(Excel::Range), (void**)&spSelectedRange);
+	if (FAILED(hr))
+	{
+		ATLTRACE("查询range接口失败");
+		return false;
+	}
+
+	IDispatchPtr dpChartObjs;
+	hr = spActiveSheet->raw_ChartObjects(vtMissing, LOCALE_USER_DEFAULT, &dpChartObjs);
+	if (FAILED(hr))
+	{
+		ATLTRACE("获取ChartObjects失败");
+		return false;
+	}
+
+	Excel::ChartObjectsPtr spChartObjs;
+	hr = dpChartObjs->QueryInterface(__uuidof(Excel::ChartObjects), (void**)&spChartObjs);
+	if (FAILED(hr))
+	{
+		ATLTRACE("查询ChartObjects接口失败");
+		return false;
+	}
+
+	double left = spSelectedRange->GetLeft();
+	double top = spSelectedRange->GetTop();
+	double width = spSelectedRange->GetWidth();
+	double height = spSelectedRange->GetHeight();
+
+	Excel::ChartObjectPtr spChartObj = spChartObjs->Add(left, top, width, height);
+	if (spChartObj == nullptr)
+	{
+		ATLTRACE("添加ChartObj失败");
+		return false;
+	}
+
+	Excel::_ChartPtr spChart = spChartObj->GetChart();
+	if (spChart == nullptr)
+	{
+		ATLTRACE("获取图表失败");
+		return false;
+	}
+
+	hr = spChart->SetSourceData(spSelectedRange, xlColumns);
+	if (FAILED(hr))
+	{
+		ATLTRACE("设置源数据失败");
+		return false;
+	}
+
+	hr = spChart->put_ChartType(xlColumnClustered);
+	if (FAILED(hr))
+	{
+		ATLTRACE("设置图表类型失败");
+		return false;
+	}
+	return true;
+}
+
+//void CExcelAddIn::CreateCommandBar()
+//{
+//	Office::_CommandBarsPtr spCommandBars;
+//	HRESULT hr = m_spExcelApp->get_CommandBars(&spCommandBars);
+//	if (FAILED(hr))
+//	{
+//		ATLASSERT("获取命令栏失败");
+//		return;
+//	}
+//	CComVariant vtName("aaaaa");
+//	CComVariant vtPosition(Office::msoBarFloating);
+//	CComVariant vtMenuBar(VARIANT_TRUE);
+//	CComVariant vtTemporary(VARIANT_TRUE);
+//	Office::CommandBarPtr spCommandBar = spCommandBars->Add(vtName, vtPosition, vtMenuBar, vtTemporary);
+//	if (spCommandBar == nullptr)
+//	{
+//		ATLASSERT("创建命令栏错误");
+//		return;
+//	}
+//
+//	Office::CommandBarControlsPtr spCommandBarControls;
+//	hr = spCommandBar->get_Controls(&spCommandBarControls);
+//	if (FAILED(hr))
+//	{
+//		ATLASSERT("获取命令栏的controls错误");
+//		return;
+//	}
+//	CComVariant vtType(Office::msoControlButton);
+//	CComVariant vtId(1);
+//	CComVariant vtInsertBefore(1);
+//	CComVariant vtTemporaryTrue(VARIANT_TRUE);
+//
+//	Office::CommandBarControlPtr spButton = spCommandBarControls->Add(vtType, vtId, vtMissing, vtInsertBefore, vtTemporaryTrue);
+//	if (spButton == nullptr)
+//	{
+//		ATLASSERT("按钮错误");
+//		return;
+//	}
+//
+//	spButton->put_Caption(CComBSTR(L"a"));
+//	spButton->put_Visible(VARIANT_TRUE);
+//}
 
 

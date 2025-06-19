@@ -32,6 +32,8 @@ interface IComponentRegistrar : IDispatch
 ]
 interface IExcelAddIn : IDispatch
 {
+	[id(1), helpstring("method onGenerateChartButtonClick")]
+	HRESULT onGenerateChartButtonClick([in] IDispatch* pControl);
 };
 [
 	object,

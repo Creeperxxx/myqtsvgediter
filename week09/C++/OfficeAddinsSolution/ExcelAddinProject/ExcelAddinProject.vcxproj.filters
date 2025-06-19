@@ -113,4 +113,7 @@
       <Filter>源文件</Filter>
     </Midl>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="myRibbon.xml" />
+  </ItemGroup>
 </Project>

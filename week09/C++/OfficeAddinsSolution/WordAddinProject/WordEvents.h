@@ -43,15 +43,15 @@ class ATL_NO_VTABLE CWordEvents :
 	public IConnectionPointContainerImpl<CWordEvents>,
 	public CProxy_IWordEventsEvents<CWordEvents>,
 	public IDispatchImpl<IWordEvents, &IID_IWordEvents, &LIBID_WordAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>, 
-	public IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>,
+	public IDispEventImpl<1, CWordEvents, &__uuidof(ApplicationEvents4), &__uuidof(__Word), 8, 6>
 	//public IDispEventImpl<2, CWordEvents, &__uuidof(DocumentEvents2), &__uuidof(__Word), 8, 6>,
-	public IDispEventImpl<2, CWordEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(Office::__Office), 2, 0>
+	//public IDispEventImpl<2, CWordEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(Office::__Office), 2, 0>
 {
 public:
 	CWordEvents()
 	{
 		m_pUnkMarshaler = nullptr;
-		m_pCurrentActivateDoc = nullptr;
+		//m_pCurrentActivateDoc = nullptr;
 	}
 	CWordEvents(CWordAddin* pAddIn)
 		:m_pAddIn(pAddIn)
@@ -67,8 +67,8 @@ BEGIN_SINK_MAP(CWordEvents)
 	//SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 10, OnWindowActivate)
 	//SINK_ENTRY_EX(2, __uuidof(DocumentEvents2), 5, OnDocumentOpen)
 	//SINK_ENTRY_EX(2, __uuidof(DocumentEvents2), 17, OnContentControlBeforeStoreUpdate)
-	SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 3, OnDocumentChange)
-	SINK_ENTRY_EX(2, __uuidof(Office::_CommandBarButtonEvents), 1, OnFormatButtonClick)
+	//SINK_ENTRY_EX(1, __uuidof(ApplicationEvents4), 3, OnDocumentChange)
+	//SINK_ENTRY_EX(2, __uuidof(Office::_CommandBarButtonEvents), 1, OnFormatButtonClick)
 END_SINK_MAP()
 
 
@@ -76,8 +76,8 @@ END_SINK_MAP()
 //STDMETHOD(OnWindowActivate)(_Document* Doc, Window* Wn);
 //STDMETHOD(OnDocumentOpen)();
 //STDMETHOD(OnContentControlBeforeStoreUpdate)(ContentControl* ContentControl, BSTR* Content);
-STDMETHOD(OnDocumentChange)();
-STDMETHOD(OnFormatButtonClick)(Office::_CommandBarButton* Ctrl, VARIANT_BOOL* CancelDefault);
+//STDMETHOD(OnDocumentChange)();
+//STDMETHOD(OnFormatButtonClick)(Office::_CommandBarButton* Ctrl, VARIANT_BOOL* CancelDefault);
 
 BEGIN_COM_MAP(CWordEvents)
 	COM_INTERFACE_ENTRY(IWordEvents)
@@ -117,7 +117,7 @@ public:
 	CWordAddin* m_pAddIn;
 
 	//_Document* m_pCurrentActivateDoc;
-	CComPtr<_Document> m_pCurrentActivateDoc;
+	//CComPtr<_Document> m_pCurrentActivateDoc;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordEvents), CWordEvents)

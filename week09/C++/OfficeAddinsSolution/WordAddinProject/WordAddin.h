@@ -45,7 +45,8 @@ using namespace ATL;
 
 class Cwordcountatldialog;
 
-class CWordEvents;
+//class CWordEvents;
+
 // CWordAddin
 
 class ATL_NO_VTABLE CWordAddin :
@@ -56,15 +57,12 @@ class ATL_NO_VTABLE CWordAddin :
 	public CProxy_IWordAddinEvents<CWordAddin>,
 	public IObjectWithSiteImpl<CWordAddin>,
 	public IDispatchImpl<IWordAddin, &IID_IWordAddin, &LIBID_WordAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>
+	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 2, 0>,
+	public IDispatchImpl<Office::IRibbonExtensibility, &__uuidof(Office::IRibbonExtensibility), &__uuidof(Office::__Office), 2, 0>
 	//public IDispatchImpl<Office::_CommandBarButtonEvents, &__uuidof(Office::_CommandBarButtonEvents), &__uuidof(__Office), 2, 0>
 {
 public:
-	CWordAddin()
-		:m_countDialog(nullptr)
-		, m_spWordApp(nullptr)
-	{
-	}
+	CWordAddin();
 	~CWordAddin();
 
 	DECLARE_REGISTRY_RESOURCEID(106)
@@ -73,6 +71,7 @@ public:
 	BEGIN_COM_MAP(CWordAddin)
 		COM_INTERFACE_ENTRY(IWordAddin)
 		COM_INTERFACE_ENTRY(_IDTExtensibility2)
+		COM_INTERFACE_ENTRY(Office::IRibbonExtensibility)
 		//COM_INTERFACE_ENTRY(_CommandBarButtonEvents)
 		COM_INTERFACE_ENTRY2(IDispatch, IWordAddin)
 		COM_INTERFACE_ENTRY(ISupportErrorInfo)
@@ -100,37 +99,41 @@ public:
 
 public:
 
-	STDMETHOD(CountWords)(IDispatch* doc, LONG* pChineseCount, LONG* pEnglishCount);
-
 	STDMETHOD(raw_OnConnection)(IDispatch* Application, ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
 	STDMETHOD(raw_OnDisconnection)(ext_DisconnectMode RemoveMode, SAFEARRAY** custom);
 	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
+	STDMETHOD(raw_GetCustomUI)(BSTR RibbonID, BSTR* RibbonXml) override;
+	STDMETHOD(OnCountWords)(IDispatch* ribbonPtr);
+	STDMETHOD(OnFormatSelection)(IDispatch* ribbonPtr);
 
-	//void countAndShow(IDispatch* doc);
-	void countAndShow(_Document* doc);
-	void initializeCountDialog();
-	CComPtr<Word::_Application> m_spWordApp;
-	void formatSelectionText();
+	//bool OnDocumentChange();
 private:
-	//void OnDocumentOpen();
-	void RegisterDocumentOpenEvent();
-	void RegisterFormatButtonClickEvent(CComPtr<CommandBarControl> spCtrls);
-	//DWORD m_dwButtonEventCookie;
+	bool MyGetCountResult(uint64_t* pChineseCount, uint64_t* pEnglishCount);
+	Word::_DocumentPtr MyGetActiveDoc();
+	bool MyCalculateWords(Word::_DocumentPtr spDocument, uint64_t* pChineseCount, uint64_t* pEnglishCount);
+	void MyShowCountResult(uint64_t chineseCount, uint64_t englishCount);
+	void SetupCountDialog();
 
-	HWND getDocWindow();
+	bool formatSelectionText();
+
+	HWND GetActiveDocWindow();
 
 
-	void CreateCustomToolbar();
-	
-	Cwordcountatldialog* m_countDialog;
-	//std::unique_ptr<Cwordcountatldialog> m_countDialog;
+	//bool countAndShow(Word::_DocumentPtr doc);
+	//bool CountWords(Word::_DocumentPtr doc, uint64_t* pChineseCount, uint64_t* pEnglishCount);
+	//void ShowWordsCount(uint64_t chineseCount, uint64_t englishCount);
+	//void initializeCountDialog();
 
-	CComPtr<CommandBar> m_spFormatToolbar;
+	//void RegisterDocumentOpenEvent();
 
-	CComObject<CWordEvents>* m_pWordEvents;
+	std::unique_ptr<Cwordcountatldialog, void(*)(Cwordcountatldialog*)> m_countDialog;
+
+	//CComObject<CWordEvents>* m_pWordEvents;
+
+	CComPtr<Word::_Application> m_spWordApp;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(WordAddin), CWordAddin)

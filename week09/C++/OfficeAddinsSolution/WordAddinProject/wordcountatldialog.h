@@ -50,17 +50,17 @@ public:
 	{
 		bHandled = FALSE;
 		DestroyWindow();
-		myDestroy();
 		return 0;
 	}
 	void OnFinalMessage(HWND hWnd) override
 	{
+		myDestroy();
 		if (m_isDelete)
 		{
 			delete this;
 		}
 	}
-	void showCount(LONG chineseCount, LONG englishCount);
+	void showCount(uint64_t chineseCount, uint64_t englishCount);
 	void myDestroy();
 public:
 	CWindow m_chineseCountWindow;

@@ -39,7 +39,6 @@ using namespace ATL;
 using namespace AddInDesignerObjects;
 using namespace Excel;
 
-
 class CExcelAddInEvents;
 
 // CExcelAddIn
@@ -52,7 +51,8 @@ class ATL_NO_VTABLE CExcelAddIn :
 	public CProxy_IExcelAddInEvents<CExcelAddIn>,
 	public IObjectWithSiteImpl<CExcelAddIn>,
 	public IDispatchImpl<IExcelAddIn, &IID_IExcelAddIn, &LIBID_ExcelAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
-	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 1, 0>
+	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 1, 0>,
+	public IDispatchImpl<Office::IRibbonExtensibility, &__uuidof(Office::IRibbonExtensibility), &__uuidof(Office::__Office), 2,0>
 {
 public:
 	CExcelAddIn()
@@ -80,6 +80,7 @@ public:
 	BEGIN_COM_MAP(CExcelAddIn)
 		COM_INTERFACE_ENTRY(IExcelAddIn)
 		COM_INTERFACE_ENTRY(_IDTExtensibility2)
+		COM_INTERFACE_ENTRY(Office::IRibbonExtensibility)
 		COM_INTERFACE_ENTRY2(IDispatch, IExcelAddIn)
 		COM_INTERFACE_ENTRY(ISupportErrorInfo)
 		COM_INTERFACE_ENTRY(IConnectionPointContainer)
@@ -118,6 +119,11 @@ public:
 	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
 	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
+	STDMETHOD(raw_GetCustomUI)(BSTR RibbonID, BSTR* RibbonXml) override;
+
+public:
+	STDMETHOD(onGenerateChartButtonClick)(IDispatch* ribbonPtr) override;
+
 
 	//STDMETHOD(initializeExcelEvents)();
 	void initializeExcelEvents();
@@ -141,7 +147,11 @@ public:
 
 	HWND getActivateWindow();
 
-	void setupCountDialog();
+	void SetupCountDialog();
+
+	bool generateChart();
+
+	//void CreateCommandBar();
 	//STDMETHOD(OnSheetActivate)(IDispatch* sheet);
 	//STDMETHOD(OnWorkBookActivate)(Excel::_Workbook* pBook);
 	//STDMETHOD(CountAndShowNonEmptyCells)(Excel::_WorksheetPtr pSheet);

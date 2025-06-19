@@ -34,7 +34,12 @@ interface IWordAddin : IDispatch
 {
 	//[id(1)] HRESULT CountWords([out, retval] LONG* pCount);
 	//[id(1)] HRESULT CountWords([out, retval] IDispatch** doc);
-	[id(1)] HRESULT CountWords([in] IDispatch* doc, [out] LONG* pChineseCount, [out] LONG* pEnglishCount);
+	//[id(1)] HRESULT CountWords([in] IDispatch* doc, [out] LONG* pChineseCount, [out] LONG* pEnglishCount);
+	[id(1), helpstring("method onFormatSelection")]
+	HRESULT OnFormatSelection([in] IDispatch* pControl);
+
+	[id(2), helpstring("method OnCountWords")]
+	HRESULT OnCountWords([in] IDispatch* pControl);
 };
 [
 	object,

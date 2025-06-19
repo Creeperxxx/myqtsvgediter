@@ -6,7 +6,7 @@
 // Cwordcountatldialog
 
 
-void Cwordcountatldialog::showCount(LONG chineseCount, LONG englishCount)
+void Cwordcountatldialog::showCount(uint64_t chineseCount, uint64_t englishCount)
 {
 	CAtlString chineseCountStr;
 	CAtlString englishCountStr;

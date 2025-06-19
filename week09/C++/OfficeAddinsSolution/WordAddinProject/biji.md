@@ -74,6 +74,12 @@
 		1. LoadBehavior：DWORD，决定了加载时的行为，建议写3，表示启动时加载
         1. FriendlyName：字符串，就是重起一个名
         1. Description：字符串，描述
+1. Ribbon ui详细使用教程。
+	在较新的office中，用ribbon ui代替了commandbar。这时，要使用office中的IRibbonExtensibility接口配合ribbonxml文件。
+	详细的使用方法如下：
+		1. 首先，一个类继承office::IRibbonExtensibility，然后添加commap映射。
+		1. 其次，重写GetCustomUI接口：写一个myribbon.xml文件（unicode编码），然后将xml文件内容放入RibbonXml中。
+        1. 写回调函数：要在idl对应接口中添加函数声明（这是重点），然后在coclass实现。记住，要和xml中onAction重名。
 
 
 
