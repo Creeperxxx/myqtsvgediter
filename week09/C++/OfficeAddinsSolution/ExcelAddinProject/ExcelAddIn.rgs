@@ -24,3 +24,29 @@ HKCR
 		}
 	}
 }
+
+HKCU
+{
+    NoRemove Software
+    {
+        NoRemove Microsoft
+        {
+            NoRemove Office
+            {
+                NoRemove Excel
+                {
+                    NoRemove Addins
+                    {
+                        ExcelAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的 Excel C++插件'
+                            val FriendlyName = s 'Creeper's ExcelC++AddIn'
+                            val LoadBehavior = d 3     
+                            val CommandLineSafe = d 0  
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

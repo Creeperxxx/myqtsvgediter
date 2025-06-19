@@ -24,3 +24,29 @@ HKCR
 		}
 	}
 }
+
+HKCU
+{
+    NoRemove Software
+    {
+        NoRemove Microsoft
+        {
+            NoRemove Office
+            {
+                NoRemove PowerPoint
+                {
+                    NoRemove Addins
+                    {
+                        PPTAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的PPT C++ 插件'
+                            val FriendlyName = s 'Creeper's PTTC++AddIn'
+                            val LoadBehavior = d 3    
+                            val CommandLineSafe = d 0   
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
