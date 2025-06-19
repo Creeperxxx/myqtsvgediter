@@ -1,0 +1,26 @@
+HKCR
+{
+	PPTAddIn.Creeper.1 = s 'PPTAddIn class'
+	{
+		CLSID = s '{834eea5e-726d-465e-9b5c-001b869dc449}'
+	}
+	PPTAddIn.Creeper = s 'PPTAddIn class'
+	{		
+		CurVer = s 'PPTAddIn.Creeper.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {834eea5e-726d-465e-9b5c-001b869dc449} = s 'PPTAddIn class'
+		{
+			ProgID = s 'PPTAddIn.Creeper.1'
+			VersionIndependentProgID = s 'PPTAddIn.Creeper'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{ed6bc220-018c-4b8f-9f88-8121de3881fc}'
+			Version = s '1.0'
+		}
+	}
+}

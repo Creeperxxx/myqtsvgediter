@@ -1,0 +1,69 @@
+﻿// PPTAddinProject.idl: PPTAddinProject 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 生成类型库(PPTAddinProject.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(a817e7a2-43fa-11d0-9e44-00aa00b6770a),
+	dual,
+	pointer_default(unique)
+]
+interface IComponentRegistrar : IDispatch
+{
+	[id(1)]	HRESULT Attach([in] BSTR bstrPath);
+	[id(2)]	HRESULT RegisterAll();
+	[id(3)]	HRESULT UnregisterAll();
+	[id(4)]	HRESULT GetComponents([out] SAFEARRAY(BSTR)* pbstrCLSIDs, [out] SAFEARRAY(BSTR)* pbstrDescriptions);
+	[id(5)]	HRESULT RegisterComponent([in] BSTR bstrCLSID);
+	[id(6)] HRESULT UnregisterComponent([in] BSTR bstrCLSID);
+};
+
+[
+	object,
+	uuid(76858161-98c4-4635-a02b-690df99dccfd),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IPPTAddIn : IDispatch
+{
+};
+[
+	uuid(ed6bc220-018c-4b8f-9f88-8121de3881fc),
+	version(1.0),
+	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{467bb58e-9b24-4a6c-8d95-5ecaae0a7b10}")
+]
+library PPTAddinProjectLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(467bb58e-9b24-4a6c-8d95-5ecaae0a7b10)
+	]
+	coclass CompReg
+	{
+		[default] interface IComponentRegistrar;
+	};
+	[
+		uuid(04e8b9f6-b0c3-40e6-9793-695be950fae7)
+	]
+	dispinterface _IPPTAddInEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(834eea5e-726d-465e-9b5c-001b869dc449)
+	]
+	coclass PPTAddIn
+	{
+		[default] interface IPPTAddIn;
+		[default, source] dispinterface _IPPTAddInEvents;
+	};
+};
+
+import "shobjidl.idl";
