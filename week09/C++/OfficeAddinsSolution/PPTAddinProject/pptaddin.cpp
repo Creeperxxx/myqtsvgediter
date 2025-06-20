@@ -17,17 +17,28 @@ CPPTAddIn::CPPTAddIn()
 
 STDMETHODIMP CPPTAddIn::InterfaceSupportsErrorInfo(REFIID riid)
 {
-	static const IID* const arr[] = 
+	static const IID* const arr[] =
 	{
 		&IID_IPPTAddIn
 	};
 
-	for (int i=0; i < sizeof(arr) / sizeof(arr[0]); i++)
+	for (int i = 0; i < sizeof(arr) / sizeof(arr[0]); i++)
 	{
-		if (InlineIsEqualGUID(*arr[i],riid))
+		if (InlineIsEqualGUID(*arr[i], riid))
 			return S_OK;
 	}
 	return S_FALSE;
+}
+
+HRESULT CPPTAddIn::FinalConstruct()
+{
+	return CoCreateFreeThreadedMarshaler(
+		GetControllingUnknown(), &m_pUnkMarshaler.p);
+}
+
+void CPPTAddIn::FinalRelease()
+{
+	m_pUnkMarshaler.Release();
 }
 
 STDMETHODIMP_(HRESULT __stdcall) CPPTAddIn::raw_OnConnection(IDispatch* Application, AddInDesignerObjects::ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom)
@@ -251,5 +262,87 @@ STDMETHODIMP_(HRESULT __stdcall) CPPTAddIn::OnInsertSlideAndSetThemeBackground(I
 		return E_FAIL;
 	}
 	PPT::_PresentationPtr spPresentation;
-	HRESULT hr = m_spPPTApp
+	HRESULT hr = m_spPPTApp->get_ActivePresentation(&spPresentation);
+	if (FAILED(hr) || spPresentation == nullptr)
+	{
+		PPT::PresentationsPtr spPresentations;
+		hr = m_spPPTApp->get_Presentations(&spPresentations);
+		if (FAILED(hr) || spPresentations == nullptr)
+		{
+			ATLTRACE("获取presentations失败");
+			return E_FAIL;
+		}
+
+		spPresentation = spPresentations->Add(Office::MsoTriState::msoTrue);
+		if (spPresentation == nullptr)
+		{
+			ATLTRACE("创建presentation失败");
+			return E_FAIL;
+		}
+	}
+
+	PPT::SlidesPtr spSlides;
+	hr = spPresentation->get_Slides(&spSlides);
+	if (FAILED(hr) || spSlides == nullptr)
+	{
+		ATLTRACE("获取slides失败");
+		return E_FAIL;
+	}
+
+	long slideCount = 0;
+	hr = spSlides->get_Count(&slideCount);
+	if (FAILED(hr))
+	{
+		ATLTRACE("获取slides的count失败");
+		return E_FAIL;
+	}
+
+	PPT::_SlidePtr spNewSlide = spSlides->Add(slideCount + 1, PPT::PpSlideLayout::ppLayoutBlank);
+	if (spNewSlide == nullptr)
+	{
+		ATLTRACE("新建slide失败");
+		return E_FAIL;
+	}
+
+	PPT::ShapeRangePtr spBackground = nullptr;
+	hr = spNewSlide->get_Background(&spBackground);
+	if (FAILED(hr) || spBackground == nullptr)
+	{
+		ATLTRACE("获取slide的background失败");
+		return E_FAIL;
+	}
+
+	PPT::FillFormatPtr spFill;
+	hr = spBackground->get_Fill(&spFill);
+	if (FAILED(hr) || spFill == nullptr)
+	{
+		ATLTRACE("获取background的Fill失败");
+		return E_FAIL;
+	}
+
+	hr = spFill->OneColorGradient(Office::msoGradientHorizontal, 1, 1.0);
+	if (FAILED(hr))
+	{
+		ATLTRACE("为fill设置oneColorGradient失败");
+		return E_FAIL;
+	}
+
+	PPT::ColorFormatPtr spColor;
+	hr = spFill->get_ForeColor(&spColor);
+	if (FAILED(hr) || spColor == nullptr)
+	{
+		ATLTRACE("获取colorFormat失败");
+		return E_FAIL;
+	}
+
+	hr = spColor->put_ObjectThemeColor(Office::MsoThemeColorIndex::msoThemeColorAccent1);
+	if (FAILED(hr))
+	{
+		ATLTRACE("设置color的themeColor失败");
+		return E_FAIL;
+	}
+
+	return S_OK;
+
 }
+

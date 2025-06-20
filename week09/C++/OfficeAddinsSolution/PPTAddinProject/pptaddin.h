@@ -12,7 +12,6 @@
     rename("Shape", "PPT_Shape") \
     rename("TextRange", "PPT_TextRange")
 
-// Microsoft Add-in Designer (MSADDNDR.DLL)
 #import "libid:AC0714F2-3D04-11D1-AE7D-00A0C90F26F4" \
     named_guids, auto_search \
     rename_namespace("AddInDesignerObjects") \
@@ -69,34 +68,27 @@ END_CONNECTION_POINT_MAP()
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 	DECLARE_GET_CONTROLLING_UNKNOWN()
 
-	HRESULT FinalConstruct()
-	{
-		return CoCreateFreeThreadedMarshaler(
-			GetControllingUnknown(), &m_pUnkMarshaler.p);
-	}
+	HRESULT FinalConstruct();
 
-	void FinalRelease()
-	{
-		m_pUnkMarshaler.Release();
-	}
+	void FinalRelease();
 
 	CComPtr<IUnknown> m_pUnkMarshaler;
 
 public:
-	STDMETHOD(raw_OnConnection)(IDispatch* Application, AddInDesignerObjects::ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
-	STDMETHOD(raw_OnDisconnection)(AddInDesignerObjects::ext_DisconnectMode RemoveMode, SAFEARRAY** custom);
-	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom);
-	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
-	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
+	STDMETHOD(raw_OnConnection)(IDispatch* Application, AddInDesignerObjects::ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom) override;
+	STDMETHOD(raw_OnDisconnection)(AddInDesignerObjects::ext_DisconnectMode RemoveMode, SAFEARRAY** custom) override;
+	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom) override;
+	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom) override;
+	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom) override;
 
 	STDMETHOD(raw_GetCustomUI)(BSTR RibbonID, BSTR* RibbonXml) override;
 
 	STDMETHOD(OnCountNonEmptyTextShapes)(IDispatch* ribbonPtr) override;
+	STDMETHOD(OnInsertSlideAndSetThemeBackground)(IDispatch* ribbonPtr) override;
+private:
 	bool getNonEmptyTextShapesCount(uint64_t& count);
 	void showNonEmptyTextShapesCount(uint64_t count);
 
-	STDMETHOD(OnInsertSlideAndSetThemeBackground)(IDispatch* ribbonPtr) override;
-	
 	PPT::_ApplicationPtr m_spPPTApp;
 };
 
