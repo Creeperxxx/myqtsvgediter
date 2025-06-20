@@ -1,0 +1,82 @@
+HKCR
+{
+	OfficeAddIn.Creeper.1 = s 'CreeperAddIn class'
+	{
+		CLSID = s '{be85fdc6-3d20-4d9f-9a91-d5bfe299ec1b}'
+	}
+	OfficeAddIn.Creeper = s 'CreeperAddIn class'
+	{		
+		CurVer = s 'OfficeAddIn.Creeper.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {be85fdc6-3d20-4d9f-9a91-d5bfe299ec1b} = s 'CreeperAddIn class'
+		{
+			ProgID = s 'OfficeAddIn.Creeper.1'
+			VersionIndependentProgID = s 'OfficeAddIn.Creeper'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			TypeLib = s '{6589578e-3253-4ecf-835e-9fb71496a44b}'
+			Version = s '1.0'
+		}
+	}
+}
+
+HKCU
+{
+    NoRemove Software
+    {
+        NoRemove Microsoft
+        {
+            NoRemove Office
+            {
+                NoRemove Excel
+                {
+                    NoRemove Addins
+                    {
+                        OfficeAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的 C++插件'
+                            val FriendlyName = s 'Creeper's C++AddIn'
+                            val LoadBehavior = d 3     
+                            val CommandLineSafe = d 0  
+                        }
+                    }
+                }
+
+				NoRemove Word
+				{
+					NoRemove Addins
+					{
+						OfficeAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的 C++插件'
+                            val FriendlyName = s 'Creeper's C++AddIn'
+                            val LoadBehavior = d 3     
+                            val CommandLineSafe = d 0  
+                        }	
+					}
+				}
+
+				NoRemove PowerPoint 
+				{
+					NoRemove Addins
+					{
+						OfficeAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的 C++插件'
+                            val FriendlyName = s 'Creeper's C++AddIn'
+                            val LoadBehavior = d 3     
+                            val CommandLineSafe = d 0  
+                        }	
+					}
+				}
+            }
+        }
+    }
+}
+
+

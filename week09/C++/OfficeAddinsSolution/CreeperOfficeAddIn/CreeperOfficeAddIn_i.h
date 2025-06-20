@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0628 */
 /* at Tue Jan 19 11:14:07 2038
  */
-/* Compiler settings for PPTAddinProject.idl:
+/* Compiler settings for CreeperOfficeAddIn.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0628 
     protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -35,8 +35,8 @@
 #include "ole2.h"
 #endif /*COM_NO_WINDOWS_H*/
 
-#ifndef __PPTAddinProject_i_h__
-#define __PPTAddinProject_i_h__
+#ifndef __CreeperOfficeAddIn_i_h__
+#define __CreeperOfficeAddIn_i_h__
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1020)
 #pragma once
@@ -59,18 +59,18 @@ typedef interface IComponentRegistrar IComponentRegistrar;
 #endif 	/* __IComponentRegistrar_FWD_DEFINED__ */
 
 
-#ifndef __IPPTAddIn_FWD_DEFINED__
-#define __IPPTAddIn_FWD_DEFINED__
-typedef interface IPPTAddIn IPPTAddIn;
+#ifndef __ICreeperAddIn_FWD_DEFINED__
+#define __ICreeperAddIn_FWD_DEFINED__
+typedef interface ICreeperAddIn ICreeperAddIn;
 
-#endif 	/* __IPPTAddIn_FWD_DEFINED__ */
+#endif 	/* __ICreeperAddIn_FWD_DEFINED__ */
 
 
-#ifndef __Imytestevent_FWD_DEFINED__
-#define __Imytestevent_FWD_DEFINED__
-typedef interface Imytestevent Imytestevent;
+#ifndef __ICreeperAddInEvent_FWD_DEFINED__
+#define __ICreeperAddInEvent_FWD_DEFINED__
+typedef interface ICreeperAddInEvent ICreeperAddInEvent;
 
-#endif 	/* __Imytestevent_FWD_DEFINED__ */
+#endif 	/* __ICreeperAddInEvent_FWD_DEFINED__ */
 
 
 #ifndef __CompReg_FWD_DEFINED__
@@ -85,42 +85,42 @@ typedef struct CompReg CompReg;
 #endif 	/* __CompReg_FWD_DEFINED__ */
 
 
-#ifndef ___IPPTAddInEvents_FWD_DEFINED__
-#define ___IPPTAddInEvents_FWD_DEFINED__
-typedef interface _IPPTAddInEvents _IPPTAddInEvents;
+#ifndef ___ICreeperAddInEvents_FWD_DEFINED__
+#define ___ICreeperAddInEvents_FWD_DEFINED__
+typedef interface _ICreeperAddInEvents _ICreeperAddInEvents;
 
-#endif 	/* ___IPPTAddInEvents_FWD_DEFINED__ */
-
-
-#ifndef __PPTAddIn_FWD_DEFINED__
-#define __PPTAddIn_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class PPTAddIn PPTAddIn;
-#else
-typedef struct PPTAddIn PPTAddIn;
-#endif /* __cplusplus */
-
-#endif 	/* __PPTAddIn_FWD_DEFINED__ */
+#endif 	/* ___ICreeperAddInEvents_FWD_DEFINED__ */
 
 
-#ifndef ___ImytesteventEvents_FWD_DEFINED__
-#define ___ImytesteventEvents_FWD_DEFINED__
-typedef interface _ImytesteventEvents _ImytesteventEvents;
-
-#endif 	/* ___ImytesteventEvents_FWD_DEFINED__ */
-
-
-#ifndef __mytestevent_FWD_DEFINED__
-#define __mytestevent_FWD_DEFINED__
+#ifndef __CreeperAddIn_FWD_DEFINED__
+#define __CreeperAddIn_FWD_DEFINED__
 
 #ifdef __cplusplus
-typedef class mytestevent mytestevent;
+typedef class CreeperAddIn CreeperAddIn;
 #else
-typedef struct mytestevent mytestevent;
+typedef struct CreeperAddIn CreeperAddIn;
 #endif /* __cplusplus */
 
-#endif 	/* __mytestevent_FWD_DEFINED__ */
+#endif 	/* __CreeperAddIn_FWD_DEFINED__ */
+
+
+#ifndef ___ICreeperAddInEventEvents_FWD_DEFINED__
+#define ___ICreeperAddInEventEvents_FWD_DEFINED__
+typedef interface _ICreeperAddInEventEvents _ICreeperAddInEventEvents;
+
+#endif 	/* ___ICreeperAddInEventEvents_FWD_DEFINED__ */
+
+
+#ifndef __CreeperAddInEvent_FWD_DEFINED__
+#define __CreeperAddInEvent_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class CreeperAddInEvent CreeperAddInEvent;
+#else
+typedef struct CreeperAddInEvent CreeperAddInEvent;
+#endif /* __cplusplus */
+
+#endif 	/* __CreeperAddInEvent_FWD_DEFINED__ */
 
 
 /* header files for imported files */
@@ -324,66 +324,60 @@ EXTERN_C const IID IID_IComponentRegistrar;
 #endif 	/* __IComponentRegistrar_INTERFACE_DEFINED__ */
 
 
-#ifndef __IPPTAddIn_INTERFACE_DEFINED__
-#define __IPPTAddIn_INTERFACE_DEFINED__
+#ifndef __ICreeperAddIn_INTERFACE_DEFINED__
+#define __ICreeperAddIn_INTERFACE_DEFINED__
 
-/* interface IPPTAddIn */
+/* interface ICreeperAddIn */
 /* [unique][nonextensible][dual][uuid][object] */ 
 
 
-EXTERN_C const IID IID_IPPTAddIn;
+EXTERN_C const IID IID_ICreeperAddIn;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
     
-    MIDL_INTERFACE("76858161-98c4-4635-a02b-690df99dccfd")
-    IPPTAddIn : public IDispatch
+    MIDL_INTERFACE("76a166b0-d95b-47d9-8a5d-c4b7a342ce49")
+    ICreeperAddIn : public IDispatch
     {
     public:
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE OnCountNonEmptyTextShapes( 
-            /* [in] */ IDispatch *ribbonPtr) = 0;
-        
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE OnInsertSlideAndSetThemeBackground( 
-            /* [in] */ IDispatch *ribbonPtr) = 0;
-        
     };
     
     
 #else 	/* C style interface */
 
-    typedef struct IPPTAddInVtbl
+    typedef struct ICreeperAddInVtbl
     {
         BEGIN_INTERFACE
         
         DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IPPTAddIn * This,
+            ICreeperAddIn * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IPPTAddIn * This);
+            ICreeperAddIn * This);
         
         DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            IPPTAddIn * This);
+            ICreeperAddIn * This);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            IPPTAddIn * This,
+            ICreeperAddIn * This,
             /* [out] */ UINT *pctinfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            IPPTAddIn * This,
+            ICreeperAddIn * This,
             /* [in] */ UINT iTInfo,
             /* [in] */ LCID lcid,
             /* [out] */ ITypeInfo **ppTInfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
         HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            IPPTAddIn * This,
+            ICreeperAddIn * This,
             /* [in] */ REFIID riid,
             /* [size_is][in] */ LPOLESTR *rgszNames,
             /* [range][in] */ UINT cNames,
@@ -392,150 +386,7 @@ EXTERN_C const IID IID_IPPTAddIn;
         
         DECLSPEC_XFGVIRT(IDispatch, Invoke)
         /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            IPPTAddIn * This,
-            /* [annotation][in] */ 
-            _In_  DISPID dispIdMember,
-            /* [annotation][in] */ 
-            _In_  REFIID riid,
-            /* [annotation][in] */ 
-            _In_  LCID lcid,
-            /* [annotation][in] */ 
-            _In_  WORD wFlags,
-            /* [annotation][out][in] */ 
-            _In_  DISPPARAMS *pDispParams,
-            /* [annotation][out] */ 
-            _Out_opt_  VARIANT *pVarResult,
-            /* [annotation][out] */ 
-            _Out_opt_  EXCEPINFO *pExcepInfo,
-            /* [annotation][out] */ 
-            _Out_opt_  UINT *puArgErr);
-        
-        DECLSPEC_XFGVIRT(IPPTAddIn, OnCountNonEmptyTextShapes)
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *OnCountNonEmptyTextShapes )( 
-            IPPTAddIn * This,
-            /* [in] */ IDispatch *ribbonPtr);
-        
-        DECLSPEC_XFGVIRT(IPPTAddIn, OnInsertSlideAndSetThemeBackground)
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *OnInsertSlideAndSetThemeBackground )( 
-            IPPTAddIn * This,
-            /* [in] */ IDispatch *ribbonPtr);
-        
-        END_INTERFACE
-    } IPPTAddInVtbl;
-
-    interface IPPTAddIn
-    {
-        CONST_VTBL struct IPPTAddInVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IPPTAddIn_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IPPTAddIn_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IPPTAddIn_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IPPTAddIn_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define IPPTAddIn_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define IPPTAddIn_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define IPPTAddIn_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-
-#define IPPTAddIn_OnCountNonEmptyTextShapes(This,ribbonPtr)	\
-    ( (This)->lpVtbl -> OnCountNonEmptyTextShapes(This,ribbonPtr) ) 
-
-#define IPPTAddIn_OnInsertSlideAndSetThemeBackground(This,ribbonPtr)	\
-    ( (This)->lpVtbl -> OnInsertSlideAndSetThemeBackground(This,ribbonPtr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IPPTAddIn_INTERFACE_DEFINED__ */
-
-
-#ifndef __Imytestevent_INTERFACE_DEFINED__
-#define __Imytestevent_INTERFACE_DEFINED__
-
-/* interface Imytestevent */
-/* [unique][nonextensible][dual][uuid][object] */ 
-
-
-EXTERN_C const IID IID_Imytestevent;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("bb669518-5a79-41ad-a4b1-124eab99448b")
-    Imytestevent : public IDispatch
-    {
-    public:
-    };
-    
-    
-#else 	/* C style interface */
-
-    typedef struct ImytesteventVtbl
-    {
-        BEGIN_INTERFACE
-        
-        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            Imytestevent * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        DECLSPEC_XFGVIRT(IUnknown, AddRef)
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            Imytestevent * This);
-        
-        DECLSPEC_XFGVIRT(IUnknown, Release)
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            Imytestevent * This);
-        
-        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            Imytestevent * This,
-            /* [out] */ UINT *pctinfo);
-        
-        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            Imytestevent * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            Imytestevent * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        DECLSPEC_XFGVIRT(IDispatch, Invoke)
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            Imytestevent * This,
+            ICreeperAddIn * This,
             /* [annotation][in] */ 
             _In_  DISPID dispIdMember,
             /* [annotation][in] */ 
@@ -554,11 +405,11 @@ EXTERN_C const IID IID_Imytestevent;
             _Out_opt_  UINT *puArgErr);
         
         END_INTERFACE
-    } ImytesteventVtbl;
+    } ICreeperAddInVtbl;
 
-    interface Imytestevent
+    interface ICreeperAddIn
     {
-        CONST_VTBL struct ImytesteventVtbl *lpVtbl;
+        CONST_VTBL struct ICreeperAddInVtbl *lpVtbl;
     };
 
     
@@ -566,26 +417,26 @@ EXTERN_C const IID IID_Imytestevent;
 #ifdef COBJMACROS
 
 
-#define Imytestevent_QueryInterface(This,riid,ppvObject)	\
+#define ICreeperAddIn_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define Imytestevent_AddRef(This)	\
+#define ICreeperAddIn_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define Imytestevent_Release(This)	\
+#define ICreeperAddIn_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define Imytestevent_GetTypeInfoCount(This,pctinfo)	\
+#define ICreeperAddIn_GetTypeInfoCount(This,pctinfo)	\
     ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
 
-#define Imytestevent_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+#define ICreeperAddIn_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
 
-#define Imytestevent_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+#define ICreeperAddIn_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
 
-#define Imytestevent_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+#define ICreeperAddIn_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
@@ -597,79 +448,206 @@ EXTERN_C const IID IID_Imytestevent;
 
 
 
-#endif 	/* __Imytestevent_INTERFACE_DEFINED__ */
+#endif 	/* __ICreeperAddIn_INTERFACE_DEFINED__ */
+
+
+#ifndef __ICreeperAddInEvent_INTERFACE_DEFINED__
+#define __ICreeperAddInEvent_INTERFACE_DEFINED__
+
+/* interface ICreeperAddInEvent */
+/* [unique][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_ICreeperAddInEvent;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("19bf8e99-383c-4c69-84eb-5116dd1a043b")
+    ICreeperAddInEvent : public IDispatch
+    {
+    public:
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ICreeperAddInEventVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ICreeperAddInEvent * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ICreeperAddInEvent * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ICreeperAddInEvent * This);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            ICreeperAddInEvent * This,
+            /* [out] */ UINT *pctinfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            ICreeperAddInEvent * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            ICreeperAddInEvent * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        DECLSPEC_XFGVIRT(IDispatch, Invoke)
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            ICreeperAddInEvent * This,
+            /* [annotation][in] */ 
+            _In_  DISPID dispIdMember,
+            /* [annotation][in] */ 
+            _In_  REFIID riid,
+            /* [annotation][in] */ 
+            _In_  LCID lcid,
+            /* [annotation][in] */ 
+            _In_  WORD wFlags,
+            /* [annotation][out][in] */ 
+            _In_  DISPPARAMS *pDispParams,
+            /* [annotation][out] */ 
+            _Out_opt_  VARIANT *pVarResult,
+            /* [annotation][out] */ 
+            _Out_opt_  EXCEPINFO *pExcepInfo,
+            /* [annotation][out] */ 
+            _Out_opt_  UINT *puArgErr);
+        
+        END_INTERFACE
+    } ICreeperAddInEventVtbl;
+
+    interface ICreeperAddInEvent
+    {
+        CONST_VTBL struct ICreeperAddInEventVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ICreeperAddInEvent_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ICreeperAddInEvent_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ICreeperAddInEvent_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ICreeperAddInEvent_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define ICreeperAddInEvent_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define ICreeperAddInEvent_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define ICreeperAddInEvent_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
 
 
 
-#ifndef __PPTAddinProjectLib_LIBRARY_DEFINED__
-#define __PPTAddinProjectLib_LIBRARY_DEFINED__
 
-/* library PPTAddinProjectLib */
+#endif 	/* __ICreeperAddInEvent_INTERFACE_DEFINED__ */
+
+
+
+#ifndef __CreeperOfficeAddInLib_LIBRARY_DEFINED__
+#define __CreeperOfficeAddInLib_LIBRARY_DEFINED__
+
+/* library CreeperOfficeAddInLib */
 /* [custom][version][uuid] */ 
 
 
-EXTERN_C const IID LIBID_PPTAddinProjectLib;
+EXTERN_C const IID LIBID_CreeperOfficeAddInLib;
 
 EXTERN_C const CLSID CLSID_CompReg;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("467bb58e-9b24-4a6c-8d95-5ecaae0a7b10")
+class DECLSPEC_UUID("49277317-a6fe-4148-916d-a6c486f8de6b")
 CompReg;
 #endif
 
-#ifndef ___IPPTAddInEvents_DISPINTERFACE_DEFINED__
-#define ___IPPTAddInEvents_DISPINTERFACE_DEFINED__
+#ifndef ___ICreeperAddInEvents_DISPINTERFACE_DEFINED__
+#define ___ICreeperAddInEvents_DISPINTERFACE_DEFINED__
 
-/* dispinterface _IPPTAddInEvents */
+/* dispinterface _ICreeperAddInEvents */
 /* [uuid] */ 
 
 
-EXTERN_C const IID DIID__IPPTAddInEvents;
+EXTERN_C const IID DIID__ICreeperAddInEvents;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
 
-    MIDL_INTERFACE("04e8b9f6-b0c3-40e6-9793-695be950fae7")
-    _IPPTAddInEvents : public IDispatch
+    MIDL_INTERFACE("4165c139-d17c-472b-bcf5-8211f12fae8e")
+    _ICreeperAddInEvents : public IDispatch
     {
     };
     
 #else 	/* C style interface */
 
-    typedef struct _IPPTAddInEventsVtbl
+    typedef struct _ICreeperAddInEventsVtbl
     {
         BEGIN_INTERFACE
         
         DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IPPTAddInEvents * This,
+            _ICreeperAddInEvents * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IPPTAddInEvents * This);
+            _ICreeperAddInEvents * This);
         
         DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IPPTAddInEvents * This);
+            _ICreeperAddInEvents * This);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IPPTAddInEvents * This,
+            _ICreeperAddInEvents * This,
             /* [out] */ UINT *pctinfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IPPTAddInEvents * This,
+            _ICreeperAddInEvents * This,
             /* [in] */ UINT iTInfo,
             /* [in] */ LCID lcid,
             /* [out] */ ITypeInfo **ppTInfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
         HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IPPTAddInEvents * This,
+            _ICreeperAddInEvents * This,
             /* [in] */ REFIID riid,
             /* [size_is][in] */ LPOLESTR *rgszNames,
             /* [range][in] */ UINT cNames,
@@ -678,7 +656,7 @@ EXTERN_C const IID DIID__IPPTAddInEvents;
         
         DECLSPEC_XFGVIRT(IDispatch, Invoke)
         /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IPPTAddInEvents * This,
+            _ICreeperAddInEvents * This,
             /* [annotation][in] */ 
             _In_  DISPID dispIdMember,
             /* [annotation][in] */ 
@@ -697,11 +675,11 @@ EXTERN_C const IID DIID__IPPTAddInEvents;
             _Out_opt_  UINT *puArgErr);
         
         END_INTERFACE
-    } _IPPTAddInEventsVtbl;
+    } _ICreeperAddInEventsVtbl;
 
-    interface _IPPTAddInEvents
+    interface _ICreeperAddInEvents
     {
-        CONST_VTBL struct _IPPTAddInEventsVtbl *lpVtbl;
+        CONST_VTBL struct _ICreeperAddInEventsVtbl *lpVtbl;
     };
 
     
@@ -709,26 +687,26 @@ EXTERN_C const IID DIID__IPPTAddInEvents;
 #ifdef COBJMACROS
 
 
-#define _IPPTAddInEvents_QueryInterface(This,riid,ppvObject)	\
+#define _ICreeperAddInEvents_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define _IPPTAddInEvents_AddRef(This)	\
+#define _ICreeperAddInEvents_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define _IPPTAddInEvents_Release(This)	\
+#define _ICreeperAddInEvents_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define _IPPTAddInEvents_GetTypeInfoCount(This,pctinfo)	\
+#define _ICreeperAddInEvents_GetTypeInfoCount(This,pctinfo)	\
     ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
 
-#define _IPPTAddInEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+#define _ICreeperAddInEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
 
-#define _IPPTAddInEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+#define _ICreeperAddInEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
 
-#define _IPPTAddInEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+#define _ICreeperAddInEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 #endif /* COBJMACROS */
@@ -737,69 +715,69 @@ EXTERN_C const IID DIID__IPPTAddInEvents;
 #endif 	/* C style interface */
 
 
-#endif 	/* ___IPPTAddInEvents_DISPINTERFACE_DEFINED__ */
+#endif 	/* ___ICreeperAddInEvents_DISPINTERFACE_DEFINED__ */
 
 
-EXTERN_C const CLSID CLSID_PPTAddIn;
+EXTERN_C const CLSID CLSID_CreeperAddIn;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("834eea5e-726d-465e-9b5c-001b869dc449")
-PPTAddIn;
+class DECLSPEC_UUID("be85fdc6-3d20-4d9f-9a91-d5bfe299ec1b")
+CreeperAddIn;
 #endif
 
-#ifndef ___ImytesteventEvents_DISPINTERFACE_DEFINED__
-#define ___ImytesteventEvents_DISPINTERFACE_DEFINED__
+#ifndef ___ICreeperAddInEventEvents_DISPINTERFACE_DEFINED__
+#define ___ICreeperAddInEventEvents_DISPINTERFACE_DEFINED__
 
-/* dispinterface _ImytesteventEvents */
+/* dispinterface _ICreeperAddInEventEvents */
 /* [uuid] */ 
 
 
-EXTERN_C const IID DIID__ImytesteventEvents;
+EXTERN_C const IID DIID__ICreeperAddInEventEvents;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
 
-    MIDL_INTERFACE("5ffa9497-3973-4b69-80cc-a3b23ae4aca0")
-    _ImytesteventEvents : public IDispatch
+    MIDL_INTERFACE("eda8c18f-1125-4e3d-9a97-4919364b8493")
+    _ICreeperAddInEventEvents : public IDispatch
     {
     };
     
 #else 	/* C style interface */
 
-    typedef struct _ImytesteventEventsVtbl
+    typedef struct _ICreeperAddInEventEventsVtbl
     {
         BEGIN_INTERFACE
         
         DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _ImytesteventEvents * This,
+            _ICreeperAddInEventEvents * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
             _COM_Outptr_  void **ppvObject);
         
         DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _ImytesteventEvents * This);
+            _ICreeperAddInEventEvents * This);
         
         DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
-            _ImytesteventEvents * This);
+            _ICreeperAddInEventEvents * This);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfoCount)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _ImytesteventEvents * This,
+            _ICreeperAddInEventEvents * This,
             /* [out] */ UINT *pctinfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetTypeInfo)
         HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _ImytesteventEvents * This,
+            _ICreeperAddInEventEvents * This,
             /* [in] */ UINT iTInfo,
             /* [in] */ LCID lcid,
             /* [out] */ ITypeInfo **ppTInfo);
         
         DECLSPEC_XFGVIRT(IDispatch, GetIDsOfNames)
         HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _ImytesteventEvents * This,
+            _ICreeperAddInEventEvents * This,
             /* [in] */ REFIID riid,
             /* [size_is][in] */ LPOLESTR *rgszNames,
             /* [range][in] */ UINT cNames,
@@ -808,7 +786,7 @@ EXTERN_C const IID DIID__ImytesteventEvents;
         
         DECLSPEC_XFGVIRT(IDispatch, Invoke)
         /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _ImytesteventEvents * This,
+            _ICreeperAddInEventEvents * This,
             /* [annotation][in] */ 
             _In_  DISPID dispIdMember,
             /* [annotation][in] */ 
@@ -827,11 +805,11 @@ EXTERN_C const IID DIID__ImytesteventEvents;
             _Out_opt_  UINT *puArgErr);
         
         END_INTERFACE
-    } _ImytesteventEventsVtbl;
+    } _ICreeperAddInEventEventsVtbl;
 
-    interface _ImytesteventEvents
+    interface _ICreeperAddInEventEvents
     {
-        CONST_VTBL struct _ImytesteventEventsVtbl *lpVtbl;
+        CONST_VTBL struct _ICreeperAddInEventEventsVtbl *lpVtbl;
     };
 
     
@@ -839,26 +817,26 @@ EXTERN_C const IID DIID__ImytesteventEvents;
 #ifdef COBJMACROS
 
 
-#define _ImytesteventEvents_QueryInterface(This,riid,ppvObject)	\
+#define _ICreeperAddInEventEvents_QueryInterface(This,riid,ppvObject)	\
     ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
-#define _ImytesteventEvents_AddRef(This)	\
+#define _ICreeperAddInEventEvents_AddRef(This)	\
     ( (This)->lpVtbl -> AddRef(This) ) 
 
-#define _ImytesteventEvents_Release(This)	\
+#define _ICreeperAddInEventEvents_Release(This)	\
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define _ImytesteventEvents_GetTypeInfoCount(This,pctinfo)	\
+#define _ICreeperAddInEventEvents_GetTypeInfoCount(This,pctinfo)	\
     ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
 
-#define _ImytesteventEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+#define _ICreeperAddInEventEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
 
-#define _ImytesteventEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+#define _ICreeperAddInEventEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
 
-#define _ImytesteventEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+#define _ICreeperAddInEventEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 #endif /* COBJMACROS */
@@ -867,17 +845,17 @@ EXTERN_C const IID DIID__ImytesteventEvents;
 #endif 	/* C style interface */
 
 
-#endif 	/* ___ImytesteventEvents_DISPINTERFACE_DEFINED__ */
+#endif 	/* ___ICreeperAddInEventEvents_DISPINTERFACE_DEFINED__ */
 
 
-EXTERN_C const CLSID CLSID_mytestevent;
+EXTERN_C const CLSID CLSID_CreeperAddInEvent;
 
 #ifdef __cplusplus
 
-class DECLSPEC_UUID("33e720eb-ea2e-4417-bbfc-b738fd0f38a4")
-mytestevent;
+class DECLSPEC_UUID("4df74bb8-4dee-4fe4-846a-db1962482d64")
+CreeperAddInEvent;
 #endif
-#endif /* __PPTAddinProjectLib_LIBRARY_DEFINED__ */
+#endif /* __CreeperOfficeAddInLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
 

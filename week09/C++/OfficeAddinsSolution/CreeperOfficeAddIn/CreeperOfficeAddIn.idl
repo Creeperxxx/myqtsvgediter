@@ -1,0 +1,96 @@
+﻿// CreeperOfficeAddIn.idl: CreeperOfficeAddIn 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 生成类型库(CreeperOfficeAddIn.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(a817e7a2-43fa-11d0-9e44-00aa00b6770a),
+	dual,
+	pointer_default(unique)
+]
+interface IComponentRegistrar : IDispatch
+{
+	[id(1)]	HRESULT Attach([in] BSTR bstrPath);
+	[id(2)]	HRESULT RegisterAll();
+	[id(3)]	HRESULT UnregisterAll();
+	[id(4)]	HRESULT GetComponents([out] SAFEARRAY(BSTR)* pbstrCLSIDs, [out] SAFEARRAY(BSTR)* pbstrDescriptions);
+	[id(5)]	HRESULT RegisterComponent([in] BSTR bstrCLSID);
+	[id(6)] HRESULT UnregisterComponent([in] BSTR bstrCLSID);
+};
+
+[
+	object,
+	uuid(76a166b0-d95b-47d9-8a5d-c4b7a342ce49),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ICreeperAddIn : IDispatch
+{
+};
+[
+	object,
+	uuid(19bf8e99-383c-4c69-84eb-5116dd1a043b),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface ICreeperAddInEvent : IDispatch
+{
+};
+[
+	uuid(6589578e-3253-4ecf-835e-9fb71496a44b),
+	version(1.0),
+	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{49277317-a6fe-4148-916d-a6c486f8de6b}")
+]
+library CreeperOfficeAddInLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(49277317-a6fe-4148-916d-a6c486f8de6b)
+	]
+	coclass CompReg
+	{
+		[default] interface IComponentRegistrar;
+	};
+	[
+		uuid(4165c139-d17c-472b-bcf5-8211f12fae8e)
+	]
+	dispinterface _ICreeperAddInEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(be85fdc6-3d20-4d9f-9a91-d5bfe299ec1b)
+	]
+	coclass CreeperAddIn
+	{
+		[default] interface ICreeperAddIn;
+		[default, source] dispinterface _ICreeperAddInEvents;
+	};
+	[
+		uuid(eda8c18f-1125-4e3d-9a97-4919364b8493)
+	]
+	dispinterface _ICreeperAddInEventEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(4df74bb8-4dee-4fe4-846a-db1962482d64)
+	]
+	coclass CreeperAddInEvent
+	{
+		[default] interface ICreeperAddInEvent;
+		[default, source] dispinterface _ICreeperAddInEventEvents;
+	};
+};
+
+import "shobjidl.idl";
+import "shobjidl.idl";

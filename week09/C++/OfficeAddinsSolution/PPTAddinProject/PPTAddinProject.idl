@@ -36,6 +36,16 @@ interface IPPTAddIn : IDispatch
 	[id(2)]	HRESULT OnInsertSlideAndSetThemeBackground([in] IDispatch* ribbonPtr);
 };
 [
+	object,
+	uuid(bb669518-5a79-41ad-a4b1-124eab99448b),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface Imytestevent : IDispatch
+{
+};
+[
 	uuid(ed6bc220-018c-4b8f-9f88-8121de3881fc),
 	version(1.0),
 	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{467bb58e-9b24-4a6c-8d95-5ecaae0a7b10}")
@@ -66,6 +76,23 @@ library PPTAddinProjectLib
 		[default] interface IPPTAddIn;
 		[default, source] dispinterface _IPPTAddInEvents;
 	};
+	[
+		uuid(5ffa9497-3973-4b69-80cc-a3b23ae4aca0)
+	]
+	dispinterface _ImytesteventEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(33e720eb-ea2e-4417-bbfc-b738fd0f38a4)
+	]
+	coclass mytestevent
+	{
+		[default] interface Imytestevent;
+		[default, source] dispinterface _ImytesteventEvents;
+	};
 };
 
+import "shobjidl.idl";
 import "shobjidl.idl";

@@ -46,6 +46,20 @@ HKCU
                         }
                     }
                 }
+                NoRemove Word 
+                {
+                    NoRemove Addins
+                    {
+                        PPTAddIn.Creeper.1
+                        {
+                            val Description = s 'Creeper的PPT C++ 插件'
+                            val FriendlyName = s 'Creeper-PTTC++AddIn'
+                            val LoadBehavior = d 3    
+                            val CommandLineSafe = d 0   
+                        }
+                    }
+                }
+
             }
         }
     }

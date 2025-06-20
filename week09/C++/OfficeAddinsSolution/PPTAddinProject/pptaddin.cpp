@@ -49,6 +49,7 @@ STDMETHODIMP_(HRESULT __stdcall) CPPTAddIn::raw_OnConnection(IDispatch* Applicat
 		ATLASSERT("查询ppt Application接口失败");
 		return E_FAIL;
 	}
+
 	return S_OK;
 }
 

@@ -6,7 +6,7 @@
  /* File created by MIDL compiler version 8.01.0628 */
 /* at Tue Jan 19 11:14:07 2038
  */
-/* Compiler settings for PPTAddinProject.idl:
+/* Compiler settings for CreeperOfficeAddIn.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0628 
     protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -44,31 +44,31 @@
 #endif /* __RPCPROXY_H_VERSION__ */
 
 
-#include "PPTAddinProject_i.h"
+#include "CreeperOfficeAddIn_i.h"
 
 #define TYPE_FORMAT_STRING_SIZE   1195                              
-#define PROC_FORMAT_STRING_SIZE   299                               
+#define PROC_FORMAT_STRING_SIZE   223                               
 #define EXPR_FORMAT_STRING_SIZE   1                                 
 #define TRANSMIT_AS_TABLE_SIZE    0            
 #define WIRE_MARSHAL_TABLE_SIZE   2            
 
-typedef struct _PPTAddinProject_MIDL_TYPE_FORMAT_STRING
+typedef struct _CreeperOfficeAddIn_MIDL_TYPE_FORMAT_STRING
     {
     short          Pad;
     unsigned char  Format[ TYPE_FORMAT_STRING_SIZE ];
-    } PPTAddinProject_MIDL_TYPE_FORMAT_STRING;
+    } CreeperOfficeAddIn_MIDL_TYPE_FORMAT_STRING;
 
-typedef struct _PPTAddinProject_MIDL_PROC_FORMAT_STRING
+typedef struct _CreeperOfficeAddIn_MIDL_PROC_FORMAT_STRING
     {
     short          Pad;
     unsigned char  Format[ PROC_FORMAT_STRING_SIZE ];
-    } PPTAddinProject_MIDL_PROC_FORMAT_STRING;
+    } CreeperOfficeAddIn_MIDL_PROC_FORMAT_STRING;
 
-typedef struct _PPTAddinProject_MIDL_EXPR_FORMAT_STRING
+typedef struct _CreeperOfficeAddIn_MIDL_EXPR_FORMAT_STRING
     {
     long          Pad;
     unsigned char  Format[ EXPR_FORMAT_STRING_SIZE ];
-    } PPTAddinProject_MIDL_EXPR_FORMAT_STRING;
+    } CreeperOfficeAddIn_MIDL_EXPR_FORMAT_STRING;
 
 
 static const RPC_SYNTAX_IDENTIFIER  _RpcTransferSyntax_2_0 = 
@@ -133,9 +133,9 @@ ObjectType ## _unbind((ObjectType) pObject, ServerHandle);\
 
 
 
-extern const PPTAddinProject_MIDL_TYPE_FORMAT_STRING PPTAddinProject__MIDL_TypeFormatString;
-extern const PPTAddinProject_MIDL_PROC_FORMAT_STRING PPTAddinProject__MIDL_ProcFormatString;
-extern const PPTAddinProject_MIDL_EXPR_FORMAT_STRING PPTAddinProject__MIDL_ExprFormatString;
+extern const CreeperOfficeAddIn_MIDL_TYPE_FORMAT_STRING CreeperOfficeAddIn__MIDL_TypeFormatString;
+extern const CreeperOfficeAddIn_MIDL_PROC_FORMAT_STRING CreeperOfficeAddIn__MIDL_ProcFormatString;
+extern const CreeperOfficeAddIn_MIDL_EXPR_FORMAT_STRING CreeperOfficeAddIn__MIDL_ExprFormatString;
 
 #ifdef __cplusplus
 namespace {
@@ -160,8 +160,8 @@ extern const MIDL_STUB_DESC Object_StubDesc;
 #endif
 
 
-extern const MIDL_SERVER_INFO IPPTAddIn_ServerInfo;
-extern const MIDL_STUBLESS_PROXY_INFO IPPTAddIn_ProxyInfo;
+extern const MIDL_SERVER_INFO ICreeperAddIn_ServerInfo;
+extern const MIDL_STUBLESS_PROXY_INFO ICreeperAddIn_ProxyInfo;
 
 #ifdef __cplusplus
 namespace {
@@ -173,8 +173,8 @@ extern const MIDL_STUB_DESC Object_StubDesc;
 #endif
 
 
-extern const MIDL_SERVER_INFO Imytestevent_ServerInfo;
-extern const MIDL_STUBLESS_PROXY_INFO Imytestevent_ProxyInfo;
+extern const MIDL_SERVER_INFO ICreeperAddInEvent_ServerInfo;
+extern const MIDL_STUBLESS_PROXY_INFO ICreeperAddInEvent_ProxyInfo;
 
 
 extern const USER_MARSHAL_ROUTINE_QUADRUPLE NDR64_UserMarshalRoutines[ WIRE_MARSHAL_TABLE_SIZE ];extern const USER_MARSHAL_ROUTINE_QUADRUPLE UserMarshalRoutines[ WIRE_MARSHAL_TABLE_SIZE ];
@@ -183,7 +183,7 @@ extern const USER_MARSHAL_ROUTINE_QUADRUPLE NDR64_UserMarshalRoutines[ WIRE_MARS
 #error  Invalid build platform for this stub.
 #endif
 
-static const PPTAddinProject_MIDL_PROC_FORMAT_STRING PPTAddinProject__MIDL_ProcFormatString =
+static const CreeperOfficeAddIn_MIDL_PROC_FORMAT_STRING CreeperOfficeAddIn__MIDL_ProcFormatString =
     {
         0,
         {
@@ -368,73 +368,11 @@ static const PPTAddinProject_MIDL_PROC_FORMAT_STRING PPTAddinProject__MIDL_ProcF
 /* 220 */	0x8,		/* FC_LONG */
 			0x0,		/* 0 */
 
-	/* Procedure OnCountNonEmptyTextShapes */
-
-/* 222 */	0x33,		/* FC_AUTO_HANDLE */
-			0x6c,		/* Old Flags:  object, Oi2 */
-/* 224 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 228 */	NdrFcShort( 0x7 ),	/* 7 */
-/* 230 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
-/* 232 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 234 */	NdrFcShort( 0x8 ),	/* 8 */
-/* 236 */	0x46,		/* Oi2 Flags:  clt must size, has return, has ext, */
-			0x2,		/* 2 */
-/* 238 */	0xa,		/* 10 */
-			0x41,		/* Ext Flags:  new corr desc, has range on conformance */
-/* 240 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 242 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 244 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 246 */	NdrFcShort( 0x0 ),	/* 0 */
-
-	/* Parameter ribbonPtr */
-
-/* 248 */	NdrFcShort( 0xb ),	/* Flags:  must size, must free, in, */
-/* 250 */	NdrFcShort( 0x8 ),	/* X64 Stack size/offset = 8 */
-/* 252 */	NdrFcShort( 0x106 ),	/* Type Offset=262 */
-
-	/* Return value */
-
-/* 254 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
-/* 256 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
-/* 258 */	0x8,		/* FC_LONG */
-			0x0,		/* 0 */
-
-	/* Procedure OnInsertSlideAndSetThemeBackground */
-
-/* 260 */	0x33,		/* FC_AUTO_HANDLE */
-			0x6c,		/* Old Flags:  object, Oi2 */
-/* 262 */	NdrFcLong( 0x0 ),	/* 0 */
-/* 266 */	NdrFcShort( 0x8 ),	/* 8 */
-/* 268 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
-/* 270 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 272 */	NdrFcShort( 0x8 ),	/* 8 */
-/* 274 */	0x46,		/* Oi2 Flags:  clt must size, has return, has ext, */
-			0x2,		/* 2 */
-/* 276 */	0xa,		/* 10 */
-			0x41,		/* Ext Flags:  new corr desc, has range on conformance */
-/* 278 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 280 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 282 */	NdrFcShort( 0x0 ),	/* 0 */
-/* 284 */	NdrFcShort( 0x0 ),	/* 0 */
-
-	/* Parameter ribbonPtr */
-
-/* 286 */	NdrFcShort( 0xb ),	/* Flags:  must size, must free, in, */
-/* 288 */	NdrFcShort( 0x8 ),	/* X64 Stack size/offset = 8 */
-/* 290 */	NdrFcShort( 0x106 ),	/* Type Offset=262 */
-
-	/* Return value */
-
-/* 292 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
-/* 294 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
-/* 296 */	0x8,		/* FC_LONG */
-			0x0,		/* 0 */
-
 			0x0
         }
     };
 
-static const PPTAddinProject_MIDL_TYPE_FORMAT_STRING PPTAddinProject__MIDL_TypeFormatString =
+static const CreeperOfficeAddIn_MIDL_TYPE_FORMAT_STRING CreeperOfficeAddIn__MIDL_TypeFormatString =
     {
         0,
         {
@@ -1217,27 +1155,26 @@ static const unsigned short IComponentRegistrar_FormatStringOffsetTable[] =
 
 
 
-/* Object interface: IPPTAddIn, ver. 0.0,
-   GUID={0x76858161,0x98c4,0x4635,{0xa0,0x2b,0x69,0x0d,0xf9,0x9d,0xcc,0xfd}} */
+/* Object interface: ICreeperAddIn, ver. 0.0,
+   GUID={0x76a166b0,0xd95b,0x47d9,{0x8a,0x5d,0xc4,0xb7,0xa3,0x42,0xce,0x49}} */
 
 #pragma code_seg(".orpc")
-static const unsigned short IPPTAddIn_FormatStringOffsetTable[] =
+static const unsigned short ICreeperAddIn_FormatStringOffsetTable[] =
     {
     (unsigned short) -1,
     (unsigned short) -1,
     (unsigned short) -1,
     (unsigned short) -1,
-    222,
-    260
+    0
     };
 
 
 
-/* Object interface: Imytestevent, ver. 0.0,
-   GUID={0xbb669518,0x5a79,0x41ad,{0xa4,0xb1,0x12,0x4e,0xab,0x99,0x44,0x8b}} */
+/* Object interface: ICreeperAddInEvent, ver. 0.0,
+   GUID={0x19bf8e99,0x383c,0x4c69,{0x84,0xeb,0x51,0x16,0xdd,0x1a,0x04,0x3b}} */
 
 #pragma code_seg(".orpc")
-static const unsigned short Imytestevent_FormatStringOffsetTable[] =
+static const unsigned short ICreeperAddInEvent_FormatStringOffsetTable[] =
     {
     (unsigned short) -1,
     (unsigned short) -1,
@@ -1258,7 +1195,7 @@ static const unsigned short Imytestevent_FormatStringOffsetTable[] =
  /* File created by MIDL compiler version 8.01.0628 */
 /* at Tue Jan 19 11:14:07 2038
  */
-/* Compiler settings for PPTAddinProject.idl:
+/* Compiler settings for CreeperOfficeAddIn.idl:
     Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0628 
     protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
@@ -1285,56 +1222,6 @@ extern const USER_MARSHAL_ROUTINE_QUADRUPLE NDR64_UserMarshalRoutines[ WIRE_MARS
 namespace {
 #endif
 
-
-typedef 
-NDR64_FORMAT_CHAR
-__midl_frag179_t;
-extern const __midl_frag179_t __midl_frag179;
-
-typedef 
-struct _NDR64_CONSTANT_IID_FORMAT
-__midl_frag178_t;
-extern const __midl_frag178_t __midl_frag178;
-
-typedef 
-struct _NDR64_POINTER_FORMAT
-__midl_frag177_t;
-extern const __midl_frag177_t __midl_frag177;
-
-typedef 
-struct 
-{
-    struct _NDR64_PROC_FORMAT frag1;
-    struct _NDR64_PARAM_FORMAT frag2;
-    struct _NDR64_PARAM_FORMAT frag3;
-}
-__midl_frag176_t;
-extern const __midl_frag176_t __midl_frag176;
-
-typedef 
-NDR64_FORMAT_CHAR
-__midl_frag175_t;
-extern const __midl_frag175_t __midl_frag175;
-
-typedef 
-struct _NDR64_CONSTANT_IID_FORMAT
-__midl_frag174_t;
-extern const __midl_frag174_t __midl_frag174;
-
-typedef 
-struct _NDR64_POINTER_FORMAT
-__midl_frag173_t;
-extern const __midl_frag173_t __midl_frag173;
-
-typedef 
-struct 
-{
-    struct _NDR64_PROC_FORMAT frag1;
-    struct _NDR64_PARAM_FORMAT frag2;
-    struct _NDR64_PARAM_FORMAT frag3;
-}
-__midl_frag172_t;
-extern const __midl_frag172_t __midl_frag172;
 
 typedef 
 NDR64_FORMAT_CHAR
@@ -2192,186 +2079,6 @@ typedef
 NDR64_FORMAT_UINT32
 __midl_frag1_t;
 extern const __midl_frag1_t __midl_frag1;
-
-static const __midl_frag179_t __midl_frag179 =
-0x5    /* FC64_INT32 */;
-
-static const __midl_frag178_t __midl_frag178 =
-{ 
-/* struct _NDR64_CONSTANT_IID_FORMAT */
-    0x24,    /* FC64_IP */
-    (NDR64_UINT8) 1 /* 0x1 */,
-    (NDR64_UINT16) 0 /* 0x0 */,
-    {
-        0x00020400,
-        0x0000,
-        0x0000,
-        {0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46}
-    }
-};
-
-static const __midl_frag177_t __midl_frag177 =
-{ 
-/* *struct _NDR64_POINTER_FORMAT */
-    0x24,    /* FC64_IP */
-    (NDR64_UINT8) 0 /* 0x0 */,
-    (NDR64_UINT16) 0 /* 0x0 */,
-    &__midl_frag178
-};
-
-static const __midl_frag176_t __midl_frag176 =
-{ 
-/* OnInsertSlideAndSetThemeBackground */
-    { 
-    /* OnInsertSlideAndSetThemeBackground */      /* procedure OnInsertSlideAndSetThemeBackground */
-        (NDR64_UINT32) 786755 /* 0xc0143 */,    /* auto handle */ /* IsIntrepreted, [object], ClientMustSize, HasReturn */
-        (NDR64_UINT32) 24 /* 0x18 */ ,  /* Stack size */
-        (NDR64_UINT32) 0 /* 0x0 */,
-        (NDR64_UINT32) 8 /* 0x8 */,
-        (NDR64_UINT16) 0 /* 0x0 */,
-        (NDR64_UINT16) 0 /* 0x0 */,
-        (NDR64_UINT16) 2 /* 0x2 */,
-        (NDR64_UINT16) 0 /* 0x0 */
-    },
-    { 
-    /* ribbonPtr */      /* parameter ribbonPtr */
-        &__midl_frag177,
-        { 
-        /* ribbonPtr */
-            1,
-            1,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            (NDR64_UINT16) 0 /* 0x0 */,
-            0
-        },    /* MustSize, MustFree, [in] */
-        (NDR64_UINT16) 0 /* 0x0 */,
-        8 /* 0x8 */,   /* Stack offset */
-    },
-    { 
-    /* HRESULT */      /* parameter HRESULT */
-        &__midl_frag179,
-        { 
-        /* HRESULT */
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            (NDR64_UINT16) 0 /* 0x0 */,
-            0
-        },    /* [out], IsReturn, Basetype, ByValue */
-        (NDR64_UINT16) 0 /* 0x0 */,
-        16 /* 0x10 */,   /* Stack offset */
-    }
-};
-
-static const __midl_frag175_t __midl_frag175 =
-0x5    /* FC64_INT32 */;
-
-static const __midl_frag174_t __midl_frag174 =
-{ 
-/* struct _NDR64_CONSTANT_IID_FORMAT */
-    0x24,    /* FC64_IP */
-    (NDR64_UINT8) 1 /* 0x1 */,
-    (NDR64_UINT16) 0 /* 0x0 */,
-    {
-        0x00020400,
-        0x0000,
-        0x0000,
-        {0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46}
-    }
-};
-
-static const __midl_frag173_t __midl_frag173 =
-{ 
-/* *struct _NDR64_POINTER_FORMAT */
-    0x24,    /* FC64_IP */
-    (NDR64_UINT8) 0 /* 0x0 */,
-    (NDR64_UINT16) 0 /* 0x0 */,
-    &__midl_frag174
-};
-
-static const __midl_frag172_t __midl_frag172 =
-{ 
-/* OnCountNonEmptyTextShapes */
-    { 
-    /* OnCountNonEmptyTextShapes */      /* procedure OnCountNonEmptyTextShapes */
-        (NDR64_UINT32) 786755 /* 0xc0143 */,    /* auto handle */ /* IsIntrepreted, [object], ClientMustSize, HasReturn */
-        (NDR64_UINT32) 24 /* 0x18 */ ,  /* Stack size */
-        (NDR64_UINT32) 0 /* 0x0 */,
-        (NDR64_UINT32) 8 /* 0x8 */,
-        (NDR64_UINT16) 0 /* 0x0 */,
-        (NDR64_UINT16) 0 /* 0x0 */,
-        (NDR64_UINT16) 2 /* 0x2 */,
-        (NDR64_UINT16) 0 /* 0x0 */
-    },
-    { 
-    /* ribbonPtr */      /* parameter ribbonPtr */
-        &__midl_frag173,
-        { 
-        /* ribbonPtr */
-            1,
-            1,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            (NDR64_UINT16) 0 /* 0x0 */,
-            0
-        },    /* MustSize, MustFree, [in] */
-        (NDR64_UINT16) 0 /* 0x0 */,
-        8 /* 0x8 */,   /* Stack offset */
-    },
-    { 
-    /* HRESULT */      /* parameter HRESULT */
-        &__midl_frag175,
-        { 
-        /* HRESULT */
-            0,
-            0,
-            0,
-            0,
-            1,
-            1,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            (NDR64_UINT16) 0 /* 0x0 */,
-            0
-        },    /* [out], IsReturn, Basetype, ByValue */
-        (NDR64_UINT16) 0 /* 0x0 */,
-        16 /* 0x10 */,   /* Stack offset */
-    }
-};
 
 static const __midl_frag171_t __midl_frag171 =
 0x5    /* FC64_INT32 */;
@@ -4247,7 +3954,7 @@ static const __midl_frag37_t __midl_frag37 =
                 0x24,    /* FC64_IP */
                 (NDR64_UINT8) 0 /* 0x0 */,
                 (NDR64_UINT16) 0 /* 0x0 */,
-                &__midl_frag174
+                &__midl_frag98
             }
         },
         0x93    /* FC64_END */
@@ -4255,7 +3962,7 @@ static const __midl_frag37_t __midl_frag37 =
     { 
     /* struct _NDR64_ARRAY_ELEMENT_INFO */
         (NDR64_UINT32) 8 /* 0x8 */,
-        &__midl_frag173
+        &__midl_frag97
     }
 };
 
@@ -4971,9 +4678,9 @@ static const MIDL_SYNTAX_INFO IComponentRegistrar_SyntaxInfo [  2 ] =
     {
     {{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}},
     0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
     &IComponentRegistrar_FormatStringOffsetTable[-3],
-    PPTAddinProject__MIDL_TypeFormatString.Format,
+    CreeperOfficeAddIn__MIDL_TypeFormatString.Format,
     UserMarshalRoutines,
     0,
     0
@@ -4993,7 +4700,7 @@ static const MIDL_SYNTAX_INFO IComponentRegistrar_SyntaxInfo [  2 ] =
 static const MIDL_STUBLESS_PROXY_INFO IComponentRegistrar_ProxyInfo =
     {
     &Object_StubDesc,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
     &IComponentRegistrar_FormatStringOffsetTable[-3],
     (RPC_SYNTAX_IDENTIFIER*)&_RpcTransferSyntax_2_0,
     2,
@@ -5006,7 +4713,7 @@ static const MIDL_SERVER_INFO IComponentRegistrar_ServerInfo =
     {
     &Object_StubDesc,
     0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
     (unsigned short *) &IComponentRegistrar_FormatStringOffsetTable[-3],
     0,
     (RPC_SYNTAX_IDENTIFIER*)&_NDR64_RpcTransferSyntax_1_0,
@@ -5057,29 +4764,28 @@ CInterfaceStubVtbl _IComponentRegistrarStubVtbl =
 };
 
 
-/* Object interface: IPPTAddIn, ver. 0.0,
-   GUID={0x76858161,0x98c4,0x4635,{0xa0,0x2b,0x69,0x0d,0xf9,0x9d,0xcc,0xfd}} */
+/* Object interface: ICreeperAddIn, ver. 0.0,
+   GUID={0x76a166b0,0xd95b,0x47d9,{0x8a,0x5d,0xc4,0xb7,0xa3,0x42,0xce,0x49}} */
 
 #pragma code_seg(".orpc")
-static const FormatInfoRef IPPTAddIn_Ndr64ProcTable[] =
+static const FormatInfoRef ICreeperAddIn_Ndr64ProcTable[] =
     {
     (FormatInfoRef)(LONG_PTR) -1,
     (FormatInfoRef)(LONG_PTR) -1,
     (FormatInfoRef)(LONG_PTR) -1,
     (FormatInfoRef)(LONG_PTR) -1,
-    &__midl_frag172,
-    &__midl_frag176
+    0
     };
 
 
-static const MIDL_SYNTAX_INFO IPPTAddIn_SyntaxInfo [  2 ] = 
+static const MIDL_SYNTAX_INFO ICreeperAddIn_SyntaxInfo [  2 ] = 
     {
     {
     {{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}},
     0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    &IPPTAddIn_FormatStringOffsetTable[-3],
-    PPTAddinProject__MIDL_TypeFormatString.Format,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    &ICreeperAddIn_FormatStringOffsetTable[-3],
+    CreeperOfficeAddIn__MIDL_TypeFormatString.Format,
     UserMarshalRoutines,
     0,
     0
@@ -5088,7 +4794,7 @@ static const MIDL_SYNTAX_INFO IPPTAddIn_SyntaxInfo [  2 ] =
     {{0x71710533,0xbeba,0x4937,{0x83,0x19,0xb5,0xdb,0xef,0x9c,0xcc,0x36}},{1,0}},
     0,
     0 ,
-    (unsigned short *) &IPPTAddIn_Ndr64ProcTable[-3],
+    (unsigned short *) &ICreeperAddIn_Ndr64ProcTable[-3],
     0,
     NDR64_UserMarshalRoutines,
     0,
@@ -5096,130 +4802,33 @@ static const MIDL_SYNTAX_INFO IPPTAddIn_SyntaxInfo [  2 ] =
     }
     };
 
-static const MIDL_STUBLESS_PROXY_INFO IPPTAddIn_ProxyInfo =
+static const MIDL_STUBLESS_PROXY_INFO ICreeperAddIn_ProxyInfo =
     {
     &Object_StubDesc,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    &IPPTAddIn_FormatStringOffsetTable[-3],
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    &ICreeperAddIn_FormatStringOffsetTable[-3],
     (RPC_SYNTAX_IDENTIFIER*)&_RpcTransferSyntax_2_0,
     2,
-    (MIDL_SYNTAX_INFO*)IPPTAddIn_SyntaxInfo
+    (MIDL_SYNTAX_INFO*)ICreeperAddIn_SyntaxInfo
     
     };
 
 
-static const MIDL_SERVER_INFO IPPTAddIn_ServerInfo = 
+static const MIDL_SERVER_INFO ICreeperAddIn_ServerInfo = 
     {
     &Object_StubDesc,
     0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    (unsigned short *) &IPPTAddIn_FormatStringOffsetTable[-3],
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    (unsigned short *) &ICreeperAddIn_FormatStringOffsetTable[-3],
     0,
     (RPC_SYNTAX_IDENTIFIER*)&_NDR64_RpcTransferSyntax_1_0,
     2,
-    (MIDL_SYNTAX_INFO*)IPPTAddIn_SyntaxInfo
+    (MIDL_SYNTAX_INFO*)ICreeperAddIn_SyntaxInfo
     };
-CINTERFACE_PROXY_VTABLE(9) _IPPTAddInProxyVtbl = 
-{
-    &IPPTAddIn_ProxyInfo,
-    &IID_IPPTAddIn,
-    IUnknown_QueryInterface_Proxy,
-    IUnknown_AddRef_Proxy,
-    IUnknown_Release_Proxy ,
-    0 /* IDispatch::GetTypeInfoCount */ ,
-    0 /* IDispatch::GetTypeInfo */ ,
-    0 /* IDispatch::GetIDsOfNames */ ,
-    0 /* IDispatch_Invoke_Proxy */ ,
-    (void *) (INT_PTR) -1 /* IPPTAddIn::OnCountNonEmptyTextShapes */ ,
-    (void *) (INT_PTR) -1 /* IPPTAddIn::OnInsertSlideAndSetThemeBackground */
-};
-
-
-EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION IPPTAddIn_table[] =
-{
-    STUB_FORWARDING_FUNCTION,
-    STUB_FORWARDING_FUNCTION,
-    STUB_FORWARDING_FUNCTION,
-    STUB_FORWARDING_FUNCTION,
-    NdrStubCall3,
-    NdrStubCall3
-};
-
-CInterfaceStubVtbl _IPPTAddInStubVtbl =
-{
-    &IID_IPPTAddIn,
-    &IPPTAddIn_ServerInfo,
-    9,
-    &IPPTAddIn_table[-3],
-    CStdStubBuffer_DELEGATING_METHODS
-};
-
-
-/* Object interface: Imytestevent, ver. 0.0,
-   GUID={0xbb669518,0x5a79,0x41ad,{0xa4,0xb1,0x12,0x4e,0xab,0x99,0x44,0x8b}} */
-
-#pragma code_seg(".orpc")
-static const FormatInfoRef Imytestevent_Ndr64ProcTable[] =
-    {
-    (FormatInfoRef)(LONG_PTR) -1,
-    (FormatInfoRef)(LONG_PTR) -1,
-    (FormatInfoRef)(LONG_PTR) -1,
-    (FormatInfoRef)(LONG_PTR) -1,
-    0
-    };
-
-
-static const MIDL_SYNTAX_INFO Imytestevent_SyntaxInfo [  2 ] = 
-    {
-    {
-    {{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}},
-    0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    &Imytestevent_FormatStringOffsetTable[-3],
-    PPTAddinProject__MIDL_TypeFormatString.Format,
-    UserMarshalRoutines,
-    0,
-    0
-    }
-    ,{
-    {{0x71710533,0xbeba,0x4937,{0x83,0x19,0xb5,0xdb,0xef,0x9c,0xcc,0x36}},{1,0}},
-    0,
-    0 ,
-    (unsigned short *) &Imytestevent_Ndr64ProcTable[-3],
-    0,
-    NDR64_UserMarshalRoutines,
-    0,
-    0
-    }
-    };
-
-static const MIDL_STUBLESS_PROXY_INFO Imytestevent_ProxyInfo =
-    {
-    &Object_StubDesc,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    &Imytestevent_FormatStringOffsetTable[-3],
-    (RPC_SYNTAX_IDENTIFIER*)&_RpcTransferSyntax_2_0,
-    2,
-    (MIDL_SYNTAX_INFO*)Imytestevent_SyntaxInfo
-    
-    };
-
-
-static const MIDL_SERVER_INFO Imytestevent_ServerInfo = 
-    {
-    &Object_StubDesc,
-    0,
-    PPTAddinProject__MIDL_ProcFormatString.Format,
-    (unsigned short *) &Imytestevent_FormatStringOffsetTable[-3],
-    0,
-    (RPC_SYNTAX_IDENTIFIER*)&_NDR64_RpcTransferSyntax_1_0,
-    2,
-    (MIDL_SYNTAX_INFO*)Imytestevent_SyntaxInfo
-    };
-CINTERFACE_PROXY_VTABLE(7) _ImytesteventProxyVtbl = 
+CINTERFACE_PROXY_VTABLE(7) _ICreeperAddInProxyVtbl = 
 {
     0,
-    &IID_Imytestevent,
+    &IID_ICreeperAddIn,
     IUnknown_QueryInterface_Proxy,
     IUnknown_AddRef_Proxy,
     IUnknown_Release_Proxy ,
@@ -5230,7 +4839,7 @@ CINTERFACE_PROXY_VTABLE(7) _ImytesteventProxyVtbl =
 };
 
 
-EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION Imytestevent_table[] =
+EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION ICreeperAddIn_table[] =
 {
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
@@ -5238,12 +4847,105 @@ EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION Imytestevent_table[] =
     STUB_FORWARDING_FUNCTION
 };
 
-CInterfaceStubVtbl _ImytesteventStubVtbl =
+CInterfaceStubVtbl _ICreeperAddInStubVtbl =
 {
-    &IID_Imytestevent,
-    &Imytestevent_ServerInfo,
+    &IID_ICreeperAddIn,
+    &ICreeperAddIn_ServerInfo,
     7,
-    &Imytestevent_table[-3],
+    &ICreeperAddIn_table[-3],
+    CStdStubBuffer_DELEGATING_METHODS
+};
+
+
+/* Object interface: ICreeperAddInEvent, ver. 0.0,
+   GUID={0x19bf8e99,0x383c,0x4c69,{0x84,0xeb,0x51,0x16,0xdd,0x1a,0x04,0x3b}} */
+
+#pragma code_seg(".orpc")
+static const FormatInfoRef ICreeperAddInEvent_Ndr64ProcTable[] =
+    {
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    (FormatInfoRef)(LONG_PTR) -1,
+    0
+    };
+
+
+static const MIDL_SYNTAX_INFO ICreeperAddInEvent_SyntaxInfo [  2 ] = 
+    {
+    {
+    {{0x8A885D04,0x1CEB,0x11C9,{0x9F,0xE8,0x08,0x00,0x2B,0x10,0x48,0x60}},{2,0}},
+    0,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    &ICreeperAddInEvent_FormatStringOffsetTable[-3],
+    CreeperOfficeAddIn__MIDL_TypeFormatString.Format,
+    UserMarshalRoutines,
+    0,
+    0
+    }
+    ,{
+    {{0x71710533,0xbeba,0x4937,{0x83,0x19,0xb5,0xdb,0xef,0x9c,0xcc,0x36}},{1,0}},
+    0,
+    0 ,
+    (unsigned short *) &ICreeperAddInEvent_Ndr64ProcTable[-3],
+    0,
+    NDR64_UserMarshalRoutines,
+    0,
+    0
+    }
+    };
+
+static const MIDL_STUBLESS_PROXY_INFO ICreeperAddInEvent_ProxyInfo =
+    {
+    &Object_StubDesc,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    &ICreeperAddInEvent_FormatStringOffsetTable[-3],
+    (RPC_SYNTAX_IDENTIFIER*)&_RpcTransferSyntax_2_0,
+    2,
+    (MIDL_SYNTAX_INFO*)ICreeperAddInEvent_SyntaxInfo
+    
+    };
+
+
+static const MIDL_SERVER_INFO ICreeperAddInEvent_ServerInfo = 
+    {
+    &Object_StubDesc,
+    0,
+    CreeperOfficeAddIn__MIDL_ProcFormatString.Format,
+    (unsigned short *) &ICreeperAddInEvent_FormatStringOffsetTable[-3],
+    0,
+    (RPC_SYNTAX_IDENTIFIER*)&_NDR64_RpcTransferSyntax_1_0,
+    2,
+    (MIDL_SYNTAX_INFO*)ICreeperAddInEvent_SyntaxInfo
+    };
+CINTERFACE_PROXY_VTABLE(7) _ICreeperAddInEventProxyVtbl = 
+{
+    0,
+    &IID_ICreeperAddInEvent,
+    IUnknown_QueryInterface_Proxy,
+    IUnknown_AddRef_Proxy,
+    IUnknown_Release_Proxy ,
+    0 /* IDispatch::GetTypeInfoCount */ ,
+    0 /* IDispatch::GetTypeInfo */ ,
+    0 /* IDispatch::GetIDsOfNames */ ,
+    0 /* IDispatch_Invoke_Proxy */
+};
+
+
+EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION ICreeperAddInEvent_table[] =
+{
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION,
+    STUB_FORWARDING_FUNCTION
+};
+
+CInterfaceStubVtbl _ICreeperAddInEventStubVtbl =
+{
+    &IID_ICreeperAddInEvent,
+    &ICreeperAddInEvent_ServerInfo,
+    7,
+    &ICreeperAddInEvent_table[-3],
     CStdStubBuffer_DELEGATING_METHODS
 };
 
@@ -5260,7 +4962,7 @@ static const MIDL_STUB_DESC Object_StubDesc =
     0,
     0,
     0,
-    PPTAddinProject__MIDL_TypeFormatString.Format,
+    CreeperOfficeAddIn__MIDL_TypeFormatString.Format,
     1, /* -error bounds_check flag */
     0x60001, /* Ndr library version */
     0,
@@ -5277,31 +4979,31 @@ static const MIDL_STUB_DESC Object_StubDesc =
 }
 #endif
 
-const CInterfaceProxyVtbl * const _PPTAddinProject_ProxyVtblList[] = 
+const CInterfaceProxyVtbl * const _CreeperOfficeAddIn_ProxyVtblList[] = 
 {
-    ( CInterfaceProxyVtbl *) &_ImytesteventProxyVtbl,
-    ( CInterfaceProxyVtbl *) &_IPPTAddInProxyVtbl,
+    ( CInterfaceProxyVtbl *) &_ICreeperAddInEventProxyVtbl,
     ( CInterfaceProxyVtbl *) &_IComponentRegistrarProxyVtbl,
+    ( CInterfaceProxyVtbl *) &_ICreeperAddInProxyVtbl,
     0
 };
 
-const CInterfaceStubVtbl * const _PPTAddinProject_StubVtblList[] = 
+const CInterfaceStubVtbl * const _CreeperOfficeAddIn_StubVtblList[] = 
 {
-    ( CInterfaceStubVtbl *) &_ImytesteventStubVtbl,
-    ( CInterfaceStubVtbl *) &_IPPTAddInStubVtbl,
+    ( CInterfaceStubVtbl *) &_ICreeperAddInEventStubVtbl,
     ( CInterfaceStubVtbl *) &_IComponentRegistrarStubVtbl,
+    ( CInterfaceStubVtbl *) &_ICreeperAddInStubVtbl,
     0
 };
 
-PCInterfaceName const _PPTAddinProject_InterfaceNamesList[] = 
+PCInterfaceName const _CreeperOfficeAddIn_InterfaceNamesList[] = 
 {
-    "Imytestevent",
-    "IPPTAddIn",
+    "ICreeperAddInEvent",
     "IComponentRegistrar",
+    "ICreeperAddIn",
     0
 };
 
-const IID *  const _PPTAddinProject_BaseIIDList[] = 
+const IID *  const _CreeperOfficeAddIn_BaseIIDList[] = 
 {
     &IID_IDispatch,
     &IID_IDispatch,
@@ -5310,25 +5012,25 @@ const IID *  const _PPTAddinProject_BaseIIDList[] =
 };
 
 
-#define _PPTAddinProject_CHECK_IID(n)	IID_GENERIC_CHECK_IID( _PPTAddinProject, pIID, n)
+#define _CreeperOfficeAddIn_CHECK_IID(n)	IID_GENERIC_CHECK_IID( _CreeperOfficeAddIn, pIID, n)
 
-int __stdcall _PPTAddinProject_IID_Lookup( const IID * pIID, int * pIndex )
+int __stdcall _CreeperOfficeAddIn_IID_Lookup( const IID * pIID, int * pIndex )
 {
     IID_BS_LOOKUP_SETUP
 
-    IID_BS_LOOKUP_INITIAL_TEST( _PPTAddinProject, 3, 2 )
-    IID_BS_LOOKUP_NEXT_TEST( _PPTAddinProject, 1 )
-    IID_BS_LOOKUP_RETURN_RESULT( _PPTAddinProject, 3, *pIndex )
+    IID_BS_LOOKUP_INITIAL_TEST( _CreeperOfficeAddIn, 3, 2 )
+    IID_BS_LOOKUP_NEXT_TEST( _CreeperOfficeAddIn, 1 )
+    IID_BS_LOOKUP_RETURN_RESULT( _CreeperOfficeAddIn, 3, *pIndex )
     
 }
 
-EXTERN_C const ExtendedProxyFileInfo PPTAddinProject_ProxyFileInfo = 
+EXTERN_C const ExtendedProxyFileInfo CreeperOfficeAddIn_ProxyFileInfo = 
 {
-    (PCInterfaceProxyVtblList *) & _PPTAddinProject_ProxyVtblList,
-    (PCInterfaceStubVtblList *) & _PPTAddinProject_StubVtblList,
-    (const PCInterfaceName * ) & _PPTAddinProject_InterfaceNamesList,
-    (const IID ** ) & _PPTAddinProject_BaseIIDList,
-    & _PPTAddinProject_IID_Lookup, 
+    (PCInterfaceProxyVtblList *) & _CreeperOfficeAddIn_ProxyVtblList,
+    (PCInterfaceStubVtblList *) & _CreeperOfficeAddIn_StubVtblList,
+    (const PCInterfaceName * ) & _CreeperOfficeAddIn_InterfaceNamesList,
+    (const IID ** ) & _CreeperOfficeAddIn_BaseIIDList,
+    & _CreeperOfficeAddIn_IID_Lookup, 
     3,
     2,
     0, /* table of [async_uuid] interfaces */
