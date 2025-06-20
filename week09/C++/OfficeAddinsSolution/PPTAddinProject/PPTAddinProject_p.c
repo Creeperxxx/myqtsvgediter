@@ -47,7 +47,7 @@
 #include "PPTAddinProject_i.h"
 
 #define TYPE_FORMAT_STRING_SIZE   1195                              
-#define PROC_FORMAT_STRING_SIZE   223                               
+#define PROC_FORMAT_STRING_SIZE   299                               
 #define EXPR_FORMAT_STRING_SIZE   1                                 
 #define TRANSMIT_AS_TABLE_SIZE    0            
 #define WIRE_MARSHAL_TABLE_SIZE   2            
@@ -353,6 +353,68 @@ static const PPTAddinProject_MIDL_PROC_FORMAT_STRING PPTAddinProject__MIDL_ProcF
 /* 216 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
 /* 218 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
 /* 220 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+	/* Procedure OnCountNonEmptyTextShapes */
+
+/* 222 */	0x33,		/* FC_AUTO_HANDLE */
+			0x6c,		/* Old Flags:  object, Oi2 */
+/* 224 */	NdrFcLong( 0x0 ),	/* 0 */
+/* 228 */	NdrFcShort( 0x7 ),	/* 7 */
+/* 230 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
+/* 232 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 234 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 236 */	0x46,		/* Oi2 Flags:  clt must size, has return, has ext, */
+			0x2,		/* 2 */
+/* 238 */	0xa,		/* 10 */
+			0x41,		/* Ext Flags:  new corr desc, has range on conformance */
+/* 240 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 242 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 244 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 246 */	NdrFcShort( 0x0 ),	/* 0 */
+
+	/* Parameter ribbonPtr */
+
+/* 248 */	NdrFcShort( 0xb ),	/* Flags:  must size, must free, in, */
+/* 250 */	NdrFcShort( 0x8 ),	/* X64 Stack size/offset = 8 */
+/* 252 */	NdrFcShort( 0x106 ),	/* Type Offset=262 */
+
+	/* Return value */
+
+/* 254 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 256 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
+/* 258 */	0x8,		/* FC_LONG */
+			0x0,		/* 0 */
+
+	/* Procedure OnInsertSlideAndSetThemeBackground */
+
+/* 260 */	0x33,		/* FC_AUTO_HANDLE */
+			0x6c,		/* Old Flags:  object, Oi2 */
+/* 262 */	NdrFcLong( 0x0 ),	/* 0 */
+/* 266 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 268 */	NdrFcShort( 0x18 ),	/* X64 Stack size/offset = 24 */
+/* 270 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 272 */	NdrFcShort( 0x8 ),	/* 8 */
+/* 274 */	0x46,		/* Oi2 Flags:  clt must size, has return, has ext, */
+			0x2,		/* 2 */
+/* 276 */	0xa,		/* 10 */
+			0x41,		/* Ext Flags:  new corr desc, has range on conformance */
+/* 278 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 280 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 282 */	NdrFcShort( 0x0 ),	/* 0 */
+/* 284 */	NdrFcShort( 0x0 ),	/* 0 */
+
+	/* Parameter ribbonPtr */
+
+/* 286 */	NdrFcShort( 0xb ),	/* Flags:  must size, must free, in, */
+/* 288 */	NdrFcShort( 0x8 ),	/* X64 Stack size/offset = 8 */
+/* 290 */	NdrFcShort( 0x106 ),	/* Type Offset=262 */
+
+	/* Return value */
+
+/* 292 */	NdrFcShort( 0x70 ),	/* Flags:  out, return, base type, */
+/* 294 */	NdrFcShort( 0x10 ),	/* X64 Stack size/offset = 16 */
+/* 296 */	0x8,		/* FC_LONG */
 			0x0,		/* 0 */
 
 			0x0
@@ -1152,7 +1214,8 @@ static const unsigned short IPPTAddIn_FormatStringOffsetTable[] =
     (unsigned short) -1,
     (unsigned short) -1,
     (unsigned short) -1,
-    0
+    222,
+    260
     };
 
 
@@ -1194,6 +1257,56 @@ extern const USER_MARSHAL_ROUTINE_QUADRUPLE NDR64_UserMarshalRoutines[ WIRE_MARS
 namespace {
 #endif
 
+
+typedef 
+NDR64_FORMAT_CHAR
+__midl_frag179_t;
+extern const __midl_frag179_t __midl_frag179;
+
+typedef 
+struct _NDR64_CONSTANT_IID_FORMAT
+__midl_frag178_t;
+extern const __midl_frag178_t __midl_frag178;
+
+typedef 
+struct _NDR64_POINTER_FORMAT
+__midl_frag177_t;
+extern const __midl_frag177_t __midl_frag177;
+
+typedef 
+struct 
+{
+    struct _NDR64_PROC_FORMAT frag1;
+    struct _NDR64_PARAM_FORMAT frag2;
+    struct _NDR64_PARAM_FORMAT frag3;
+}
+__midl_frag176_t;
+extern const __midl_frag176_t __midl_frag176;
+
+typedef 
+NDR64_FORMAT_CHAR
+__midl_frag175_t;
+extern const __midl_frag175_t __midl_frag175;
+
+typedef 
+struct _NDR64_CONSTANT_IID_FORMAT
+__midl_frag174_t;
+extern const __midl_frag174_t __midl_frag174;
+
+typedef 
+struct _NDR64_POINTER_FORMAT
+__midl_frag173_t;
+extern const __midl_frag173_t __midl_frag173;
+
+typedef 
+struct 
+{
+    struct _NDR64_PROC_FORMAT frag1;
+    struct _NDR64_PARAM_FORMAT frag2;
+    struct _NDR64_PARAM_FORMAT frag3;
+}
+__midl_frag172_t;
+extern const __midl_frag172_t __midl_frag172;
 
 typedef 
 NDR64_FORMAT_CHAR
@@ -2051,6 +2164,186 @@ typedef
 NDR64_FORMAT_UINT32
 __midl_frag1_t;
 extern const __midl_frag1_t __midl_frag1;
+
+static const __midl_frag179_t __midl_frag179 =
+0x5    /* FC64_INT32 */;
+
+static const __midl_frag178_t __midl_frag178 =
+{ 
+/* struct _NDR64_CONSTANT_IID_FORMAT */
+    0x24,    /* FC64_IP */
+    (NDR64_UINT8) 1 /* 0x1 */,
+    (NDR64_UINT16) 0 /* 0x0 */,
+    {
+        0x00020400,
+        0x0000,
+        0x0000,
+        {0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46}
+    }
+};
+
+static const __midl_frag177_t __midl_frag177 =
+{ 
+/* *struct _NDR64_POINTER_FORMAT */
+    0x24,    /* FC64_IP */
+    (NDR64_UINT8) 0 /* 0x0 */,
+    (NDR64_UINT16) 0 /* 0x0 */,
+    &__midl_frag178
+};
+
+static const __midl_frag176_t __midl_frag176 =
+{ 
+/* OnInsertSlideAndSetThemeBackground */
+    { 
+    /* OnInsertSlideAndSetThemeBackground */      /* procedure OnInsertSlideAndSetThemeBackground */
+        (NDR64_UINT32) 786755 /* 0xc0143 */,    /* auto handle */ /* IsIntrepreted, [object], ClientMustSize, HasReturn */
+        (NDR64_UINT32) 24 /* 0x18 */ ,  /* Stack size */
+        (NDR64_UINT32) 0 /* 0x0 */,
+        (NDR64_UINT32) 8 /* 0x8 */,
+        (NDR64_UINT16) 0 /* 0x0 */,
+        (NDR64_UINT16) 0 /* 0x0 */,
+        (NDR64_UINT16) 2 /* 0x2 */,
+        (NDR64_UINT16) 0 /* 0x0 */
+    },
+    { 
+    /* ribbonPtr */      /* parameter ribbonPtr */
+        &__midl_frag177,
+        { 
+        /* ribbonPtr */
+            1,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            0
+        },    /* MustSize, MustFree, [in] */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        8 /* 0x8 */,   /* Stack offset */
+    },
+    { 
+    /* HRESULT */      /* parameter HRESULT */
+        &__midl_frag179,
+        { 
+        /* HRESULT */
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            0
+        },    /* [out], IsReturn, Basetype, ByValue */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        16 /* 0x10 */,   /* Stack offset */
+    }
+};
+
+static const __midl_frag175_t __midl_frag175 =
+0x5    /* FC64_INT32 */;
+
+static const __midl_frag174_t __midl_frag174 =
+{ 
+/* struct _NDR64_CONSTANT_IID_FORMAT */
+    0x24,    /* FC64_IP */
+    (NDR64_UINT8) 1 /* 0x1 */,
+    (NDR64_UINT16) 0 /* 0x0 */,
+    {
+        0x00020400,
+        0x0000,
+        0x0000,
+        {0xc0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46}
+    }
+};
+
+static const __midl_frag173_t __midl_frag173 =
+{ 
+/* *struct _NDR64_POINTER_FORMAT */
+    0x24,    /* FC64_IP */
+    (NDR64_UINT8) 0 /* 0x0 */,
+    (NDR64_UINT16) 0 /* 0x0 */,
+    &__midl_frag174
+};
+
+static const __midl_frag172_t __midl_frag172 =
+{ 
+/* OnCountNonEmptyTextShapes */
+    { 
+    /* OnCountNonEmptyTextShapes */      /* procedure OnCountNonEmptyTextShapes */
+        (NDR64_UINT32) 786755 /* 0xc0143 */,    /* auto handle */ /* IsIntrepreted, [object], ClientMustSize, HasReturn */
+        (NDR64_UINT32) 24 /* 0x18 */ ,  /* Stack size */
+        (NDR64_UINT32) 0 /* 0x0 */,
+        (NDR64_UINT32) 8 /* 0x8 */,
+        (NDR64_UINT16) 0 /* 0x0 */,
+        (NDR64_UINT16) 0 /* 0x0 */,
+        (NDR64_UINT16) 2 /* 0x2 */,
+        (NDR64_UINT16) 0 /* 0x0 */
+    },
+    { 
+    /* ribbonPtr */      /* parameter ribbonPtr */
+        &__midl_frag173,
+        { 
+        /* ribbonPtr */
+            1,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            0
+        },    /* MustSize, MustFree, [in] */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        8 /* 0x8 */,   /* Stack offset */
+    },
+    { 
+    /* HRESULT */      /* parameter HRESULT */
+        &__midl_frag175,
+        { 
+        /* HRESULT */
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            (NDR64_UINT16) 0 /* 0x0 */,
+            0
+        },    /* [out], IsReturn, Basetype, ByValue */
+        (NDR64_UINT16) 0 /* 0x0 */,
+        16 /* 0x10 */,   /* Stack offset */
+    }
+};
 
 static const __midl_frag171_t __midl_frag171 =
 0x5    /* FC64_INT32 */;
@@ -3926,7 +4219,7 @@ static const __midl_frag37_t __midl_frag37 =
                 0x24,    /* FC64_IP */
                 (NDR64_UINT8) 0 /* 0x0 */,
                 (NDR64_UINT16) 0 /* 0x0 */,
-                &__midl_frag98
+                &__midl_frag174
             }
         },
         0x93    /* FC64_END */
@@ -3934,7 +4227,7 @@ static const __midl_frag37_t __midl_frag37 =
     { 
     /* struct _NDR64_ARRAY_ELEMENT_INFO */
         (NDR64_UINT32) 8 /* 0x8 */,
-        &__midl_frag97
+        &__midl_frag173
     }
 };
 
@@ -4746,7 +5039,8 @@ static const FormatInfoRef IPPTAddIn_Ndr64ProcTable[] =
     (FormatInfoRef)(LONG_PTR) -1,
     (FormatInfoRef)(LONG_PTR) -1,
     (FormatInfoRef)(LONG_PTR) -1,
-    0
+    &__midl_frag172,
+    &__midl_frag176
     };
 
 
@@ -4797,9 +5091,9 @@ static const MIDL_SERVER_INFO IPPTAddIn_ServerInfo =
     2,
     (MIDL_SYNTAX_INFO*)IPPTAddIn_SyntaxInfo
     };
-CINTERFACE_PROXY_VTABLE(7) _IPPTAddInProxyVtbl = 
+CINTERFACE_PROXY_VTABLE(9) _IPPTAddInProxyVtbl = 
 {
-    0,
+    &IPPTAddIn_ProxyInfo,
     &IID_IPPTAddIn,
     IUnknown_QueryInterface_Proxy,
     IUnknown_AddRef_Proxy,
@@ -4807,7 +5101,9 @@ CINTERFACE_PROXY_VTABLE(7) _IPPTAddInProxyVtbl =
     0 /* IDispatch::GetTypeInfoCount */ ,
     0 /* IDispatch::GetTypeInfo */ ,
     0 /* IDispatch::GetIDsOfNames */ ,
-    0 /* IDispatch_Invoke_Proxy */
+    0 /* IDispatch_Invoke_Proxy */ ,
+    (void *) (INT_PTR) -1 /* IPPTAddIn::OnCountNonEmptyTextShapes */ ,
+    (void *) (INT_PTR) -1 /* IPPTAddIn::OnInsertSlideAndSetThemeBackground */
 };
 
 
@@ -4816,14 +5112,16 @@ EXTERN_C DECLSPEC_SELECTANY const PRPC_STUB_FUNCTION IPPTAddIn_table[] =
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
     STUB_FORWARDING_FUNCTION,
-    STUB_FORWARDING_FUNCTION
+    STUB_FORWARDING_FUNCTION,
+    NdrStubCall3,
+    NdrStubCall3
 };
 
 CInterfaceStubVtbl _IPPTAddInStubVtbl =
 {
     &IID_IPPTAddIn,
     &IPPTAddIn_ServerInfo,
-    7,
+    9,
     &IPPTAddIn_table[-3],
     CStdStubBuffer_DELEGATING_METHODS
 };

@@ -313,6 +313,12 @@ EXTERN_C const IID IID_IPPTAddIn;
     IPPTAddIn : public IDispatch
     {
     public:
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE OnCountNonEmptyTextShapes( 
+            /* [in] */ IDispatch *ribbonPtr) = 0;
+        
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE OnInsertSlideAndSetThemeBackground( 
+            /* [in] */ IDispatch *ribbonPtr) = 0;
+        
     };
     
     
@@ -378,6 +384,16 @@ EXTERN_C const IID IID_IPPTAddIn;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
+        DECLSPEC_XFGVIRT(IPPTAddIn, OnCountNonEmptyTextShapes)
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *OnCountNonEmptyTextShapes )( 
+            IPPTAddIn * This,
+            /* [in] */ IDispatch *ribbonPtr);
+        
+        DECLSPEC_XFGVIRT(IPPTAddIn, OnInsertSlideAndSetThemeBackground)
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *OnInsertSlideAndSetThemeBackground )( 
+            IPPTAddIn * This,
+            /* [in] */ IDispatch *ribbonPtr);
+        
         END_INTERFACE
     } IPPTAddInVtbl;
 
@@ -413,6 +429,12 @@ EXTERN_C const IID IID_IPPTAddIn;
 #define IPPTAddIn_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
+
+#define IPPTAddIn_OnCountNonEmptyTextShapes(This,ribbonPtr)	\
+    ( (This)->lpVtbl -> OnCountNonEmptyTextShapes(This,ribbonPtr) ) 
+
+#define IPPTAddIn_OnInsertSlideAndSetThemeBackground(This,ribbonPtr)	\
+    ( (This)->lpVtbl -> OnInsertSlideAndSetThemeBackground(This,ribbonPtr) ) 
 
 #endif /* COBJMACROS */
 

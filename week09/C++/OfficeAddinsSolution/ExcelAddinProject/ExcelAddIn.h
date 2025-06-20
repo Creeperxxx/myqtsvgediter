@@ -52,7 +52,7 @@ class ATL_NO_VTABLE CExcelAddIn :
 	public IObjectWithSiteImpl<CExcelAddIn>,
 	public IDispatchImpl<IExcelAddIn, &IID_IExcelAddIn, &LIBID_ExcelAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
 	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &LIBID_AddInDesignerObjects, 1, 0>,
-	public IDispatchImpl<Office::IRibbonExtensibility, &__uuidof(Office::IRibbonExtensibility), &__uuidof(Office::__Office), 2,0>
+	public IDispatchImpl<Office::IRibbonExtensibility, &__uuidof(Office::IRibbonExtensibility), &__uuidof(Office::__Office), 2,8>
 {
 public:
 	CExcelAddIn()

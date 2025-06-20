@@ -32,6 +32,8 @@ interface IComponentRegistrar : IDispatch
 ]
 interface IPPTAddIn : IDispatch
 {
+	[id(1)]	HRESULT OnCountNonEmptyTextShapes([in] IDispatch* ribbonPtr);
+	[id(2)]	HRESULT OnInsertSlideAndSetThemeBackground([in] IDispatch* ribbonPtr);
 };
 [
 	uuid(ed6bc220-018c-4b8f-9f88-8121de3881fc),

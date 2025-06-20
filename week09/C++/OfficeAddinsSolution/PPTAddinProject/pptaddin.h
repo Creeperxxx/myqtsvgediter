@@ -3,7 +3,19 @@
 #pragma once
 #include "resource.h"       // 主符号
 
+#import "libid:91493440-5A91-11CF-8700-00AA0060263B" \
+    auto_search \
+    rename_namespace("PPT") \
+    rename("RGB", "PPT_RGB") \
+    rename("DocumentProperties", "PPT_DocumentProperties") \
+    rename("PageSetup", "PPT_PageSetup") \
+    rename("Shape", "PPT_Shape") \
+    rename("TextRange", "PPT_TextRange")
 
+// Microsoft Add-in Designer (MSADDNDR.DLL)
+#import "libid:AC0714F2-3D04-11D1-AE7D-00A0C90F26F4" \
+    named_guids, auto_search \
+    rename_namespace("AddInDesignerObjects") \
 
 #include "PPTAddinProject_i.h"
 #include "_IPPTAddInEvents_CP.h"
@@ -26,20 +38,21 @@ class ATL_NO_VTABLE CPPTAddIn :
 	public IConnectionPointContainerImpl<CPPTAddIn>,
 	public CProxy_IPPTAddInEvents<CPPTAddIn>,
 	public IObjectWithSiteImpl<CPPTAddIn>,
-	public IDispatchImpl<IPPTAddIn, &IID_IPPTAddIn, &LIBID_PPTAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>
+	public IDispatchImpl<IPPTAddIn, &IID_IPPTAddIn, &LIBID_PPTAddinProjectLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
+	public IDispatchImpl<AddInDesignerObjects::_IDTExtensibility2, &__uuidof(AddInDesignerObjects::_IDTExtensibility2), &AddInDesignerObjects::LIBID_AddInDesignerObjects,1,0>,
+	public IDispatchImpl<Office::IRibbonExtensibility, &__uuidof(Office::IRibbonExtensibility), &__uuidof(Office::__Office), 2,8>
 {
 public:
-	CPPTAddIn()
-	{
-		m_pUnkMarshaler = nullptr;
-	}
+	CPPTAddIn();
 
 DECLARE_REGISTRY_RESOURCEID(106)
 
 
 BEGIN_COM_MAP(CPPTAddIn)
 	COM_INTERFACE_ENTRY(IPPTAddIn)
-	COM_INTERFACE_ENTRY(IDispatch)
+	COM_INTERFACE_ENTRY(AddInDesignerObjects::_IDTExtensibility2)
+	COM_INTERFACE_ENTRY(Office::IRibbonExtensibility)
+	COM_INTERFACE_ENTRY2(IDispatch, IPPTAddIn)
 	COM_INTERFACE_ENTRY(ISupportErrorInfo)
 	COM_INTERFACE_ENTRY(IConnectionPointContainer)
 	COM_INTERFACE_ENTRY(IObjectWithSite)
@@ -70,9 +83,21 @@ END_CONNECTION_POINT_MAP()
 	CComPtr<IUnknown> m_pUnkMarshaler;
 
 public:
+	STDMETHOD(raw_OnConnection)(IDispatch* Application, AddInDesignerObjects::ext_ConnectMode ConnectMode, IDispatch* AddInInst, SAFEARRAY** custom);
+	STDMETHOD(raw_OnDisconnection)(AddInDesignerObjects::ext_DisconnectMode RemoveMode, SAFEARRAY** custom);
+	STDMETHOD(raw_OnAddInsUpdate)(SAFEARRAY** custom);
+	STDMETHOD(raw_OnStartupComplete)(SAFEARRAY** custom);
+	STDMETHOD(raw_OnBeginShutdown)(SAFEARRAY** custom);
 
+	STDMETHOD(raw_GetCustomUI)(BSTR RibbonID, BSTR* RibbonXml) override;
 
+	STDMETHOD(OnCountNonEmptyTextShapes)(IDispatch* ribbonPtr) override;
+	bool getNonEmptyTextShapesCount(uint64_t& count);
+	void showNonEmptyTextShapesCount(uint64_t count);
 
+	STDMETHOD(OnInsertSlideAndSetThemeBackground)(IDispatch* ribbonPtr) override;
+	
+	PPT::_ApplicationPtr m_spPPTApp;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(PPTAddIn), CPPTAddIn)

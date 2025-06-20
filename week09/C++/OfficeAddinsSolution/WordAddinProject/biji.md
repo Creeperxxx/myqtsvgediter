@@ -4,10 +4,11 @@
 	- msppt.olb: 提供了对 PowerPoint 对象模型的访问
 	- msword.olb : 提供了对 Word 对象模型的访问
 	- msexcel.olb : 提供了对 Excel 对象模型的访问
+获取上述库的libid的方法：
+	在everying中搜索电脑上该库的存放位置，然后搜索oleview工具，打开，使用view typelib打开那个库，然后
+	在得到的idl文件中就可以看到libid和版本号了。
 
 目前不用包含office也就是mso.dll了，因为olb中会包含这个。
-
-2. iwordaddin接口中有一个方法为	CountWords
 
 3. import msword.olb时注意，链接器提示msword.tlh和VBE6EXT.tlh中会重复定义IID_AddIn。
 	解决方法：只需要删掉import时的named_guids即可。查了好久最后排除法一点点试出来了。
