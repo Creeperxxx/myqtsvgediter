@@ -81,12 +81,20 @@
 		1. 首先，一个类继承office::IRibbonExtensibility，然后添加commap映射。
 		1. 其次，重写GetCustomUI接口：写一个myribbon.xml文件（unicode编码），然后将xml文件内容放入RibbonXml中。
         1. 写回调函数：要在idl对应接口中添加函数声明（这是重点），然后在coclass实现。记住，要和xml中onAction重名。
+1. 关于com中指针一般使用：
+	1. CComPtr，感觉类似shared_ptr。一般的库例如word会提供_Application和_ApplicationPtr，后者相当于CComPtr<_Application>
+	1. 然后如果是使用get相关函数为指针赋值，不仅检查hr还要检查指针是否为空，有时hr成功但指针为空
+1. 关于IdispatchImpl中，接口id和库id一般通过__uuidof()获取，然后office库一般定义为__库，word就是__word。
+1. 关于调试：
+	1. 最常见的就是看不到报错，例如加载com组件失败但没有任何报错也不知道到哪看报错。
+	1. 解决方案：在项目属性中调试中将启动命令设置为对应程序，然后到dllmain处打断点，然后一点点调试。
+1. 异常处理
+	1. ATLTRACE("")。debug中打印错误信息的。
+	1. ATLASSERT("")。断言。
+	1. _com_error_。用来在try catch中捕获com中异常的。
 
 
 
 
 
 
-
-提示词：
-1. ui设计方案：ATL 提供的能力结合 Office 的对象模型

@@ -1,0 +1,42 @@
+﻿// Created by Microsoft (R) C/C++ Compiler Version 14.43.34810.0 (e23837f0).
+//
+// D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\MSADDNDR.tli
+//
+// Wrapper implementations for type library AC0714F2-3D04-11D1-AE7D-00A0C90F26F4
+// compiler-generated file - DO NOT EDIT!
+
+#pragma once
+
+//
+// interface _IDTExtensibility2 wrapper method implementations
+//
+
+inline HRESULT _IDTExtensibility2::OnConnection ( IDispatch * Application, ext_ConnectMode ConnectMode, IDispatch * AddInInst, SAFEARRAY * * custom ) {
+    HRESULT _hr = raw_OnConnection(Application, ConnectMode, AddInInst, custom);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+inline HRESULT _IDTExtensibility2::OnDisconnection ( ext_DisconnectMode RemoveMode, SAFEARRAY * * custom ) {
+    HRESULT _hr = raw_OnDisconnection(RemoveMode, custom);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+inline HRESULT _IDTExtensibility2::OnAddInsUpdate ( SAFEARRAY * * custom ) {
+    HRESULT _hr = raw_OnAddInsUpdate(custom);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+inline HRESULT _IDTExtensibility2::OnStartupComplete ( SAFEARRAY * * custom ) {
+    HRESULT _hr = raw_OnStartupComplete(custom);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
+
+inline HRESULT _IDTExtensibility2::OnBeginShutdown ( SAFEARRAY * * custom ) {
+    HRESULT _hr = raw_OnBeginShutdown(custom);
+    if (FAILED(_hr)) _com_issue_errorex(_hr, this, __uuidof(this));
+    return _hr;
+}
