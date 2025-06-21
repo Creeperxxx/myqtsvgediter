@@ -75,10 +75,21 @@ public:
 
 	STDMETHOD(raw_GetCustomUI)(BSTR RibbonID, BSTR* RibbonXml) override;
 
+	STDMETHOD(OnCountWords)(IDispatch* ribbonPtr);
+	bool calculateActiveDocWords(uint64_t& chineseCount, uint64_t& englishCount);
+	void showDocWords(uint64_t chineseCount, uint64_t englishCount);
+	STDMETHOD(OnFormatSelection)(IDispatch* ribbonPtr);
+	STDMETHOD(OnCountNonEmptyTextCells)(IDispatch* ribbonPtr);
+	bool calcuActiveSheetNonEmptyCells(uint64_t& cellsCount);
+	void showSheetNonEmptyCellsCount(uint64_t cellsCount);
+	STDMETHOD(OnGenerateChart)(IDispatch* ribbonPtr);
+	STDMETHOD(OnCountNonEmptyTextShapes)(IDispatch* ribbonPtr);
+	bool calcuActiveSlideNonEmptyTextShapes(uint64_t& shapesCount);
+	void showShapesCount(uint64_t shapesCount);
+	STDMETHOD(OnInsertSlideAndSetThemeBackground)(IDispatch* ribbonPtr);
+
 	bool initApp(IDispatch* application);
-	bool isWordAppValid();
-	bool isExcelAppValid();
-	bool isPPTAppValid();
+
 	Word::_ApplicationPtr m_spWordApp;
 	Excel::_ApplicationPtr m_spExcelApp;
 	PPT::_ApplicationPtr m_spPPTApp;

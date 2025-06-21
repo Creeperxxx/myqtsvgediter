@@ -33,33 +33,33 @@ HKCU
         {
             NoRemove Office
             {
-                NoRemove Excel
-                {
-                    NoRemove Addins
-                    {
-                        OfficeAddIn.Creeper.1
-                        {
-                            val Description = s 'Creeper的 C++插件'
-                            val FriendlyName = s 'Creeper's C++AddIn'
-                            val LoadBehavior = d 3     
-                            val CommandLineSafe = d 0  
-                        }
-                    }
-                }
-
 				NoRemove Word
 				{
 					NoRemove Addins
 					{
 						OfficeAddIn.Creeper.1
                         {
-                            val Description = s 'Creeper的 C++插件'
-                            val FriendlyName = s 'Creeper's C++AddIn'
+                            val Description = s '由Creeper编写的C++插件,支持word excel ppt'
+                            val FriendlyName = s 'Creeper的C++AddIn'
                             val LoadBehavior = d 3     
                             val CommandLineSafe = d 0  
                         }	
 					}
 				}
+
+                NoRemove Excel
+                {
+                    NoRemove Addins
+                    {
+                        OfficeAddIn.Creeper.1
+                        {
+                            val Description = s '由Creeper编写的C++插件,支持word excel ppt'
+                            val FriendlyName = s 'Creeper的C++AddIn'
+                            val LoadBehavior = d 3     
+                            val CommandLineSafe = d 0  
+                        }
+                    }
+                }
 
 				NoRemove PowerPoint 
 				{
@@ -67,8 +67,8 @@ HKCU
 					{
 						OfficeAddIn.Creeper.1
                         {
-                            val Description = s 'Creeper的 C++插件'
-                            val FriendlyName = s 'Creeper's C++AddIn'
+                            val Description = s '由Creeper编写的C++插件,支持word excel ppt'
+                            val FriendlyName = s 'Creeper的C++AddIn'
                             val LoadBehavior = d 3     
                             val CommandLineSafe = d 0  
                         }	

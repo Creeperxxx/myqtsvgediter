@@ -32,16 +32,12 @@ interface IComponentRegistrar : IDispatch
 ]
 interface ICreeperAddIn : IDispatch
 {
-};
-[
-	object,
-	uuid(19bf8e99-383c-4c69-84eb-5116dd1a043b),
-	dual,
-	nonextensible,
-	pointer_default(unique)
-]
-interface ICreeperAddInEvent : IDispatch
-{
+	[id(1)]	HRESULT OnCountWords([in] IDispatch* ribbonPtr);
+	[id(2)]	HRESULT OnFormatSelection([in] IDispatch* ribbonPtr);
+	[id(3)]	HRESULT OnCountNonEmptyTextCells([in] IDispatch* ribbonPtr);
+	[id(4)]	HRESULT OnGenerateChart([in] IDispatch* ribbonPtr);
+	[id(5)]	HRESULT OnCountNonEmptyTextShapes([in] IDispatch* ribbonPtr);
+	[id(6)]	HRESULT OnInsertSlideAndSetThemeBackground([in] IDispatch* ribbonPtr);
 };
 [
 	uuid(6589578e-3253-4ecf-835e-9fb71496a44b),
@@ -73,22 +69,6 @@ library CreeperOfficeAddInLib
 	{
 		[default] interface ICreeperAddIn;
 		[default, source] dispinterface _ICreeperAddInEvents;
-	};
-	[
-		uuid(eda8c18f-1125-4e3d-9a97-4919364b8493)
-	]
-	dispinterface _ICreeperAddInEventEvents
-	{
-		properties:
-		methods:
-	};
-	[
-		uuid(4df74bb8-4dee-4fe4-846a-db1962482d64)
-	]
-	coclass CreeperAddInEvent
-	{
-		[default] interface ICreeperAddInEvent;
-		[default, source] dispinterface _ICreeperAddInEventEvents;
 	};
 };
 
