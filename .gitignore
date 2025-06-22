@@ -1,6 +1,9 @@
 .vs
 .vscode
 *.exe
+*.sln
+*.vcxproj
+*.filters
 *.obj
 Debug/
 x64/
