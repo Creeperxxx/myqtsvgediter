@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef __FRAMEWORD_H__
+#define __FRAMEWORD_H__
 
 #ifndef STRICT
 #define STRICT
@@ -35,3 +36,6 @@
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
+
+
+#endif

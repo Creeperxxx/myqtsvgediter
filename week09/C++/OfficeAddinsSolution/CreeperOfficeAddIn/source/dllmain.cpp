@@ -1,12 +1,12 @@
 ﻿// dllmain.cpp: DllMain 的实现。
 
-#include "pch.h"
-#include "framework.h"
-#include "resource.h"
-#include "CreeperOfficeAddIn_i.h"
-#include "dllmain.h"
-#include "compreg.h"
-#include "xdlldata.h"
+#include "../headers/pch.h"
+#include "../headers/framework.h"
+#include "../headers/resource.h"
+#include "../headers/creeperofficeaddini.h"
+#include "../headers/dllmain.h"
+#include "../headers/compreg.h"
+#include "../headers/xdlldata.h"
 
 CCreeperOfficeAddInModule _AtlModule;
 

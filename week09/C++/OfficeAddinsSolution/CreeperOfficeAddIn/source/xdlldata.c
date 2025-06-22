@@ -12,6 +12,6 @@
 #define ENTRY_PREFIX	Prx
 
 #include "dlldata.c"
-#include "CreeperOfficeAddIn_p.c"
+#include "creeperofficeaddinp.c"
 
 #endif //_MERGE_PROXYSTUB

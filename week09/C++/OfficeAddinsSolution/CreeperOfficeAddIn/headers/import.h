@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __IMPORT_H__
+#define __IMPORT_H__
 
 #import "libid:00020905-0000-0000-C000-000000000046" \
     rename("RGB", "WordRGB") \
@@ -42,3 +43,5 @@
 #import "libid:AC0714F2-3D04-11D1-AE7D-00A0C90F26F4" \
     named_guids, auto_search \
     rename_namespace("AddInDesignerObjects") \
+
+#endif

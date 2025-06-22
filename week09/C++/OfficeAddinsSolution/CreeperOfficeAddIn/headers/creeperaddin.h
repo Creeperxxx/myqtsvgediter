@@ -1,13 +1,16 @@
 ﻿// creeperaddin.h: CCreeperAddIn 的声明
+#ifndef __CREEPERADDIN_H_
+#define __CREEPERADDIN_H_
 
-#pragma once
 #include "resource.h"       // 主符号
 
 #include "import.h"
 
 
-#include "CreeperOfficeAddIn_i.h"
-#include "_ICreeperAddInEvents_CP.h"
+// #include "CreeperOfficeAddIn_i.h"
+#include "creeperofficeaddini.h"
+// #include "_ICreeperAddInEvents_CP.h"
+#include "icreeperaddineventscp.h"
 
 
 
@@ -97,3 +100,6 @@ public:
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(CreeperAddIn), CCreeperAddIn)
+
+
+#endif //__CREEPERADDIN_H__

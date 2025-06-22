@@ -19,9 +19,9 @@ add_definitions(-D_ATL_MIN_CRT -D_ATL_DLL_IMPL)
 include_directories(${PROJECT_SOURCE_DIR})
 
 # 收集所有源文件、头文件、资源文件
-file(GLOB_RECURSE SOURCE_FILES "*.cpp")
-file(GLOB_RECURSE HEADER_FILES "*.h" "*.tlh" "*.tli")
-file(GLOB_RECURSE RESOURCE_FILES "*.rc" "*.rgs")
+file(GLOB_RECURSE SOURCE_FILES "source/*.cpp" “source/**.tli")
+file(GLOB_RECURSE HEADER_FILES "headers/*.h" "headers/*.tlh")
+file(GLOB_RECURSE RESOURCE_FILES "resource/*.rgs")
 
 # 添加资源编译支持（Windows 资源文件）
 enable_language(RC)
@@ -59,15 +59,12 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     _AFX_ALL_WARNINGS
 )
 
-# 如果需要，可以添加额外依赖项
-# target_include_directories(${PROJECT_NAME} PRIVATE "路径到其他COM库")
 
 # 输出目录配置
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-# 可选：指定输出 DLL 名称格式
 set_target_properties(${PROJECT_NAME} PROPERTIES
     PREFIX ""
     SUFFIX ".dll"

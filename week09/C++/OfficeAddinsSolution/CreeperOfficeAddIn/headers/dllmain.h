@@ -1,4 +1,6 @@
 ﻿// dllmain.h: 模块类的声明。
+#ifndef __DLLMAIN_H__
+#define __DLLMAIN_H__
 
 class CCreeperOfficeAddInModule : public ATL::CAtlDllModuleT< CCreeperOfficeAddInModule >
 {
@@ -8,3 +10,5 @@ public :
 };
 
 extern class CCreeperOfficeAddInModule _AtlModule;
+
+#endif

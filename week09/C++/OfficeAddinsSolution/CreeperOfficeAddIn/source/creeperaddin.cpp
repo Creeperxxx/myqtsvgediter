@@ -1,9 +1,9 @@
 ﻿// creeperaddin.cpp: CCreeperAddIn 的实现
 
-#include "pch.h"
-#include "creeperaddin.h"
+#include "../headers/pch.h"
+#include "../headers/creeperaddin.h"
 
-#include "resource.h"
+#include "../headers/resource.h"
 
 #include <regex>
 

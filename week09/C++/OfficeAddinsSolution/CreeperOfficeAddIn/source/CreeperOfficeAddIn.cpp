@@ -5,13 +5,14 @@
 //      请记住运行 Microsoft Transaction Explorer 以安装组件。
 //      默认情况下不进行注册。
 
-#include "pch.h"
-#include "framework.h"
-#include "resource.h"
-#include "CreeperOfficeAddIn_i.h"
-#include "dllmain.h"
-#include "compreg.h"
-#include "xdlldata.h"
+#include "../headers/pch.h"
+#include "../headers/framework.h"
+#include "../headers/resource.h"
+// #include "CreeperOfficeAddIn_i.h"
+#include "../headers/creeperofficeaddini.h"
+#include "../headers/dllmain.h"
+#include "../headers/compreg.h"
+#include "../headers/xdlldata.h"
 
 
 using namespace ATL;

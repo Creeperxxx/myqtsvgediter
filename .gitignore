@@ -14,11 +14,14 @@ Release/
 x64
 .vs
 *.exe
+*.sln
+*.vcxproj
+*.filters
 
 # !是不忽略的意思
-!*.sln  
-!*.vcxproj
-!*.filters
+# !*.sln  
+# !*.vcxproj
+# !*.filters
 
 #忽略所有.user结尾的文件
 *.user

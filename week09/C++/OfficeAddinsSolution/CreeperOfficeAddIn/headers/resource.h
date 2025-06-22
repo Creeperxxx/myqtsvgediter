@@ -2,6 +2,10 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 CreeperOfficeAddIn.rc 使用
 //
+
+#ifndef __RESOURCE_H__
+#define __RESOURCE_H__
+
 #define IDS_PROJNAME                    100
 #define IDR_CREEPEROFFICEADDIN          101
 #define IDR_CREEPERADDIN                106
@@ -19,4 +23,6 @@
 #define _APS_NEXT_CONTROL_VALUE         201
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
+#endif
+
 #endif

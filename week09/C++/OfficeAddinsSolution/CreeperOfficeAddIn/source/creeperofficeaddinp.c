@@ -44,7 +44,8 @@
 #endif /* __RPCPROXY_H_VERSION__ */
 
 
-#include "CreeperOfficeAddIn_i.h"
+// #include "CreeperOfficeAddIn_i.h"
+#include "../headers/creeperofficeaddini.h"
 
 #define TYPE_FORMAT_STRING_SIZE   1195                              
 #define PROC_FORMAT_STRING_SIZE   451                               

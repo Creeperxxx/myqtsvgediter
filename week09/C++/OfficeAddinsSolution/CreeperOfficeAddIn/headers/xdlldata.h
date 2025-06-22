@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __XDLLDATA_H__
+#define __XDLLDATA_H__
 
 #ifdef _MERGE_PROXYSTUB
 
@@ -11,5 +12,7 @@ STDAPI PrxDllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv);
 STDAPI PrxDllRegisterServer(void);
 STDAPI PrxDllUnregisterServer(void);
 }
+
+#endif
 
 #endif
