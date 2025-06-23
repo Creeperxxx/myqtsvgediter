@@ -8,9 +8,12 @@
 //
 // Cross-referenced type libraries:
 //
-#include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\MSO.tlh"
-#include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\vbe6ext.tlh"
+//#include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\MSO.tlh"
+//#include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\vbe6ext.tlh"
 //
+
+#include "MSO.tlh"
+#include "vbe6ext.tlh"
 
 #pragma once
 #pragma pack(push, 8)

@@ -19,6 +19,8 @@
 /* @@MIDL_FILE_HEADING(  ) */
 
 
+#include "../headers/creeperofficeaddini.h"
+
 
 #ifdef __cplusplus
 extern "C"{
@@ -65,6 +67,7 @@ typedef IID CLSID;
         EXTERN_C __declspec(selectany) const type name = {l,w1,w2,{b1,b2,b3,b4,b5,b6,b7,b8}}
 
 #endif // !_MIDL_USE_GUIDDEF_
+
 
 MIDL_DEFINE_GUID(IID, IID_IComponentRegistrar,0xa817e7a2,0x43fa,0x11d0,0x9e,0x44,0x00,0xaa,0x00,0xb6,0x77,0x0a);
 

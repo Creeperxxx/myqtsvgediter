@@ -1,72 +1,59 @@
-# CMake 最低版本要求
-cmake_minimum_required(VERSION 3.20)
+# 设置 CMake 最低版本要求
+cmake_minimum_required(VERSION 3.10)
 
-# 项目名称与语言设置
-project(CreeperOfficeAddIn LANGUAGES CXX)
+# 项目名称
+project(CreeperOfficeAddIn)
 
-# 设置构建类型为 Release 或 Debug（可选）
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Build type" FORCE)
+
+set(SOURCE 
+  source/compreg.cpp
+  source/creeperaddin.cpp 
+  source/creeperofficeaddin.cpp 
+  source/creeperofficeaddini.c 
+  source/creeperofficeaddinp.c 
+  # source/dlldata.c 
+  source/dllmain.cpp 
+  source/EXCEL.tli 
+  source/MSADDNDR.tli 
+  source/MSO.tli 
+  source/MSPPT.tli 
+  source/MSWORD.tli
+  source/pch.cpp 
+  source/vbe6ext.tli 
+  source/xdlldata.c)
+
+set_source_files_properties(
+  source/creeperofficeaddini.c
+  source/creeperofficeaddinp.c
+  source/xdlldata.c
+  PROPERTIES LANGUAGE C
+)
+
+add_library(${PROJECT_NAME} SHARED ${SOURCE})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/headers)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  ${PROJECT_SOURCE_DIR}/lib/Ole32.Lib
+  ${PROJECT_SOURCE_DIR}/lib/OleAut32.Lib
+  ${PROJECT_SOURCE_DIR}/lib/RpcRt4.Lib
+  ${PROJECT_SOURCE_DIR}/lib/Uuid.Lib
+)
+
+
+
+
+# 设置输出目录（可选）
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+
+# Windows 特定设置（如果是 MSVC）
+if(MSVC)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE "WIN32;_WINDOWS;_USRDLL;_AFXDLL;_ATL_DLL")
 endif()
 
-# 设置 MFC 支持（静态或共享）
-set(CMAKE_MFC_FLAG 2) # 2 表示使用共享 MFC 库
-
-# 启用 ATL 支持
-add_definitions(-D_ATL_MIN_CRT -D_ATL_DLL_IMPL)
-
-
-include_directories(${PROJECT_SOURCE_DIR})
-
-# 收集所有源文件、头文件、资源文件
-file(GLOB_RECURSE SOURCE_FILES "source/*.cpp" “source/**.tli")
-file(GLOB_RECURSE HEADER_FILES "headers/*.h" "headers/*.tlh")
-file(GLOB_RECURSE RESOURCE_FILES "resource/*.rgs")
-
-# 添加资源编译支持（Windows 资源文件）
-enable_language(RC)
-
-# 定义 DLL 目标
-add_library(${PROJECT_NAME} SHARED
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-    ${RESOURCE_FILES}
-)
-
-# 指定 RC 文件（资源编译器输入）
-set_property(SOURCE CreeperOfficeAddIn.rc PROPERTY LANGUAGE RC)
-
-# 链接必要的 Windows 库
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    comctl32
-    ole32
-    uuid
-    atlthunk
-)
-
-# 添加预处理器定义
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    _WINDOWS
-    _USRDLL
-    WIN32
-    _UNICODE
-    UNICODE
-)
-
-# 设置 ATL 支持标志
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
-    _AFX_ALL_WARNINGS
-)
-
-
-# 输出目录配置
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    PREFIX ""
-    SUFFIX ".dll"
-    OUTPUT_NAME "${PROJECT_NAME}"
+target_compile_options(${PROJECT_NAME} PRIVATE
+  $<$<CONFIG:Debug>:/MDd>
+  $<$<CONFIG:Release>:/MD>
 )

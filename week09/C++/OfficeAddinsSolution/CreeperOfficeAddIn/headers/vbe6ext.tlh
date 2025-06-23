@@ -8,8 +8,10 @@
 //
 // Cross-referenced type libraries:
 //
-#include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\MSO.tlh"
+// #include "D:\Database\Code\vs\c++\KDevelop-Training\KDevelop-Training\week09\C++\OfficeAddinsSolution\CreeperOfficeAddIn\x64\Debug\MSO.tlh"
 //
+
+#include "MSO.tlh"
 
 #pragma once
 #pragma pack(push, 8)
